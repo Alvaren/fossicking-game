@@ -1,3 +1,4 @@
+import { stoneMaterial } from './materials.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { mulberry32, smoothstep } from './noise.js';
@@ -101,29 +102,83 @@ function modelGeometry(c, shape) {
   return m[{ prism4: 'topaz', block: 'feldspar', rhomb: 'calcite', cube: 'fluorite' }[shape]] || null;
 }
 
-export function makeCrystalMesh(c) {
+// A crystal's material: glassy faces with fine growth striations across the
+// prism, some with frosted, etched tips, quartz going milky toward its base,
+// and amethyst's colour gathered in the tips. hq makes it truly see-through.
+function crystalMaterial(c, def, hq, world = false) {
+  const len = c.len || 0.03;
+  const mat = stoneMaterial({
+    type: def.type, color: def.color, finish: 'crystal', hq, size: len * 0.3, opacity: def.opacity, broken: c.broken, world,
+  });
+  const h = Math.abs(Math.floor(((c.id ?? 7) + 3) * 2654435761)) % 100;
+  const quartz = def.type === 'quartz';
+  const etch = !c.broken && h < 25 ? 0.55 : 0;          // a quarter have frosted, etched tips
+  const striae = quartz || def.type === 'topaz' ? 1 : 0; // prism faces carry growth lines
+  const milky = quartz && def.opacity < 1 ? 1 : 0;
+  mat.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, { uZoned: { value: def.zoned ? 1 : 0 }, uEtch: { value: etch }, uStriae: { value: striae }, uMilky: { value: milky } });
+    sh.vertexShader = sh.vertexShader
+      .replace('void main() {', `varying vec3 vCPos;
+varying vec3 vCN;
+varying float vCLen;
+void main() {`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+vCPos = position;
+vCN = normal;
+vCLen = length((modelMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);`);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('void main() {', `varying vec3 vCPos;
+varying vec3 vCN;
+varying float vCLen;
+uniform float uZoned, uEtch, uStriae, uMilky;
+float cHash(float n) { return fract(sin(n) * 43758.5453); }
+void main() {`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+  // Amethyst: colour gathers toward the tips. Quartz: milky and cloudy toward the base.
+  diffuseColor.rgb = mix(diffuseColor.rgb, mix(vec3(0.92, 0.9, 0.95), diffuseColor.rgb, smoothstep(0.2, 0.85, vCPos.y)), uZoned);
+  float cBase = (1.0 - smoothstep(0.0, 0.35, vCPos.y)) * uMilky;
+  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.93, 0.92, 0.9), cBase * 0.7);
+  diffuseColor.a = mix(diffuseColor.a, 1.0, cBase * 0.6);`)
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+  float cTip = smoothstep(0.7, 0.8, vCPos.y) * uEtch;
+  roughnessFactor = max(roughnessFactor, cTip);
+  roughnessFactor = max(roughnessFactor, cBase * 0.35);`)
+      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+  {
+    // Fine horizontal growth lines across the prism faces (not the tips).
+    float prism = (1.0 - smoothstep(0.25, 0.5, abs(normalize(vCN).y))) * (1.0 - smoothstep(0.68, 0.74, vCPos.y)) * uStriae;
+    // (Height in world units: a fraction of the crystal's length.)
+    float sy = vCPos.y * 160.0;
+    float bh = (sin(sy + sin(sy * 0.37) * 2.0) * 0.5 + cHash(floor(sy * 0.5)) * 0.5) * prism * vCLen * 0.0004;
+    vec3 dpdx = dFdx(-vViewPosition), dpdy = dFdy(-vViewPosition);
+    vec3 r1 = cross(dpdy, normal), r2 = cross(normal, dpdx);
+    float det = dot(dpdx, r1);
+    vec3 grad = sign(det) * (dFdx(bh) * r1 + dFdy(bh) * r2);
+    normal = normalize(abs(det) * normal - grad);
+  }`);
+  };
+  mat.customProgramCacheKey = () => `crystal-v1-${hq ? 1 : 0}-${world ? 1 : 0}`;
+  return mat;
+}
+
+// Close up, a crystal can swap to its see-through version (and back when you walk off).
+export function crystalLOD(mesh, hq) {
+  const L = mesh.userData.lod;
+  if (!L || L.hq === hq) return;
+  if (hq && !L.hi) L.hi = crystalMaterial(L.c, L.def, true, true);
+  if (!hq && !L.lo) L.lo = crystalMaterial(L.c, L.def, false);
+  mesh.material = hq ? L.hi : L.lo;
+  L.hq = hq;
+}
+
+export function makeCrystalMesh(c, { hq = false } = {}) {
   const def = CRYSTALS[c.variety];
   const col = new THREE.Color(def.color);
   if (def.shape === 'chip') return makeOpalMesh(c, def, col);
-  const mat = new THREE.MeshStandardMaterial({
-    color: col,
-    roughness: c.broken ? 0.6 : 0.08,
-    metalness: 0.05,
-    transparent: def.opacity < 1,
-    opacity: def.opacity,
-    emissive: col.clone().multiplyScalar(0.12),
-  });
-  if (def.zoned) {
-    // Amethyst colour concentrates toward the tips.
-    mat.onBeforeCompile = (sh) => {
-      sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvZone = position.y;')
-        .replace('void main() {', 'varying float vZone;\nvoid main() {');
-      sh.fragmentShader = sh.fragmentShader.replace('void main() {', 'varying float vZone;\nvoid main() {')
-        .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = mix(vec3(0.92, 0.9, 0.95), diffuseColor.rgb, smoothstep(0.2, 0.85, vZone));');
-    };
-  }
+  const mat = crystalMaterial(c, def, hq);
   const model = modelGeometry(c, def.shape);
   const m = new THREE.Mesh(model || crystalGeometry(def.shape), mat);
+  m.userData.lod = { c, def, lo: hq ? null : mat, hi: hq ? mat : null, hq };
   // Blender blocks are already in proportion, so they scale more evenly.
   const r = c.len * (def.shape === 'point' ? 0.17 : def.shape === 'prism4' ? 0.2 : model ? 0.7 : 0.45);
   m.scale.set(r, c.broken ? c.len * 0.55 : c.len, r);
@@ -136,7 +191,7 @@ export function makeCrystalMesh(c) {
 
 // Opal: thin-film iridescence gives the shifting play-of-colour; brighter
 // stones get a stronger, wider spread of colour.
-function makeOpalMesh(c, def, col) {
+function makeOpalMesh(c, def, col, geo = null) {
   const bright = c.bright || 1;
   const mat = new THREE.MeshPhysicalMaterial({
     color: col,
@@ -151,7 +206,8 @@ function makeOpalMesh(c, def, col) {
     emissive: def.opal ? col.clone().multiplyScalar(0.05) : new THREE.Color(0),
   });
   if (def.opal) addPlayOfColour(mat, c, def, bright);
-  const m = new THREE.Mesh(crystalGeometry('chip'), mat);
+  const m = new THREE.Mesh(geo || crystalGeometry('chip'), mat);
+  if (geo) return m; // a cut cabochon sizes and places itself
   const len = c.broken ? c.len * 0.6 : c.len;
   m.scale.set(len * 0.9, len, len * 0.9);
   m.position.set(c.x, c.y, c.z);
@@ -161,12 +217,26 @@ function makeOpalMesh(c, def, col) {
   return m;
 }
 
+// A polished opal cabochon: the same play-of-colour on a smooth dome.
+export function makeOpalCab(item, geo) {
+  const def = CRYSTALS[item.variety];
+  const c = { ...(item.crystal || {}), variety: item.variety, broken: false, bright: item.crystal?.bright || 3, pattern: item.crystal?.pattern, id: item.crystal?.id || 1, polished: true };
+  const m = makeOpalMesh(c, def, new THREE.Color(def.color), geo);
+  m.material.roughness = 0.04;
+  m.material.clearcoat = 1;
+  m.material.transparent = false;
+  m.material.opacity = 1;
+  m.material.color.multiplyScalar(item.variety === 'milky opal' ? 0.7 : 0.4); // a glassy body: the colour shows against it
+  return m;
+}
+
 // Play-of-colour: patches of spectral colour, laid out by the stone's pattern,
 // whose hue slides as the angle between you, the light and the stone changes.
 function addPlayOfColour(mat, c, def, bright) {
   const freq = PATTERN_FREQ[c.pattern] || 16;
   const blocky = c.pattern === 'harlequin' ? 1 : 0;
-  const strength = (0.08 + bright * 0.12) * (def.color === 0x14161e ? 1.4 : def.opacity < 1 ? 1.35 : 0.8);
+  const strength = (0.08 + bright * 0.12) * (def.color === 0x14161e ? 1.4 : def.opacity < 1 ? 1.35 : 0.8)
+    * (c.polished ? 2.4 : 1); // a polished face shows the colour far better than a rough chip
   const seed = ((c.id || 1) * 0.6180339) % 1;
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uOpalLight = opalLight;

@@ -15,6 +15,7 @@ import { IS_TOUCH, TouchControls } from './touch.js';
 import { Wildlife } from './wildlife.js';
 import { Ute } from './vehicle.js';
 import { rollOrders } from './orders.js';
+import { cutStone, makeCutMesh } from './cutting.js';
 import { MILESTONES, findMilestones } from './milestones.js';
 import { DustDevils } from './dustdevil.js';
 import { FossilBed, makeFossil, makeFossilMesh, FOSSILS } from './fossils.js';
@@ -32,6 +33,9 @@ import { CrystalField, makeCrystalMesh, crystalToGem, opalLight } from './crysta
 import { Excavation, KNEEL_TOOLS, materialName } from './excavation.js';
 import { smoothstep } from './noise.js';
 import { SAVE_KEY, readSave, storeSave, packArray, unpackArray } from './save.js';
+import { settings, gemsRealistic } from './settings.js';
+import { makeEnvironment, goldMaterial, nuggetGeometry } from './materials.js';
+import { SettingsPanel } from './settingsui.js';
 
 // ---------- save ----------
 
@@ -66,6 +70,7 @@ function writeSave() {
     day: state.day,
     orders: state.orders,
     milestones: state.milestones,
+    cutting: state.cutting,
     panTests: state.panTests,
     leadTraced: state.leadTraced,
     discovered: state.discovered,
@@ -112,6 +117,7 @@ const state = {
   day: saved.day || 0,
   orders: saved.orders || null,
   milestones: saved.milestones || {},
+  cutting: saved.cutting || [],
   panTests: saved.panTests || [],
   leadTraced: !!saved.leadTraced,
   discovered: saved.discovered || {},
@@ -126,8 +132,8 @@ const state = {
 const canvas = document.getElementById('game');
 // Phones get a lighter setup: no MSAA, lower resolution, smaller shadow map.
 if (IS_TOUCH) document.body.classList.add('touch');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: !IS_TOUCH, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_TOUCH ? 1.25 : 2));
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: settings.aa, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, settings.res));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.62;
@@ -156,10 +162,10 @@ function makeSky(scale) {
 const sky = makeSky(2000);
 scene.add(sky);
 
-const pmrem = new THREE.PMREMGenerator(renderer);
-const envScene = new THREE.Scene();
-envScene.add(makeSky(50));
-const env = pmrem.fromScene(envScene, 0.02).texture;
+// What gold, water and gems reflect: the real sky, the ground and the gum line,
+// refreshed as the sun moves (how often depends on the Reflections setting).
+const envMaker = makeEnvironment(renderer, sky);
+let env = envMaker.update(1);
 scene.environment = env;
 scene.environmentIntensity = 0.6;
 scene.fog = new THREE.Fog(0xcdbfa8, 90, 650);
@@ -168,7 +174,7 @@ const hemi = new THREE.HemisphereLight(0xcfe0ff, 0x8a5a3a, 1.1);
 scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
 sun.castShadow = true;
-sun.shadow.mapSize.set(IS_TOUCH ? 1024 : 2048, IS_TOUCH ? 1024 : 2048);
+sun.shadow.mapSize.set(2048, 2048);
 const sc = sun.shadow.camera;
 sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 200;
 sun.shadow.bias = -0.0004;
@@ -238,6 +244,7 @@ loadAssets().then(() => {
 });
 const hud = new Hud();
 const view = new Viewmodel(env);
+const settingsPanel = new SettingsPanel({ onApply: () => applyGraphics(), beforeReload: () => writeSave() });
 view.setAspect(camera.aspect);
 view.setTool(state.tool);
 hud.tool(state.tool);
@@ -318,6 +325,16 @@ function newDay() {
   state.day++;
   state.orders = rollOrders(state.seed, state.day);
   setTimeout(() => hud.toast("The buyer's got new orders in. Have a look at camp."), 2500);
+  // Stones back from the cutter.
+  if (state.cutting.length) {
+    const back = state.cutting.splice(0);
+    for (const c of back) {
+      const { item, note } = cutStone(c.item, c.seed);
+      state.gems.push(item);
+      setTimeout(() => hud.toast(`Back from the cutter: ${item.label}, worth $${Math.round(item.value).toLocaleString()}.${note ? ` ${note}` : ''}`, 'gold'), 4500);
+    }
+    award('cut');
+  }
 }
 
 const shop = new Shop(state, {
@@ -331,7 +348,7 @@ const shop = new Shop(state, {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
-        milestones: state.milestones, day: state.day,
+        milestones: state.milestones, day: state.day, cutting: state.cutting,
       }));
     } catch { /* ignore */ }
     location.reload();
@@ -571,6 +588,48 @@ document.addEventListener('keydown', (e) => {
 });
 document.addEventListener('keyup', (e) => keys.delete(e.code));
 
+// Graphics settings that can change on the fly.
+const fpsEl = document.getElementById('fps');
+function applyGraphics() {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, settings.res));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const size = { low: 1024, high: 2048, ultra: 4096 }[settings.shadows];
+  sun.castShadow = !!size;
+  if (size && sun.shadow.mapSize.x !== size) {
+    sun.shadow.mapSize.set(size, size);
+    sun.shadow.map?.dispose();
+    sun.shadow.map = null;
+  }
+  fpsEl.classList.toggle('hidden', !settings.fps);
+  envTimer = 0;
+  envHour = -99;
+}
+
+let envTimer = 0, envHour = -99;
+function updateReflections(dt) {
+  envTimer -= dt;
+  const mode = settings.reflections;
+  const dh = Math.abs(daynight.hour - envHour);
+  if (mode === 'static' ? (dh < 1 || dh > 23) : envTimer > 0) return;
+  envTimer = mode === 'live' ? 1.5 : 8;
+  envHour = daynight.hour;
+  env = envMaker.update(daynight.daylight);
+  scene.environment = env;
+  view.scene.environment = env;
+}
+
+let fpsFrames = 0, fpsTime = 0;
+function countFps(raw) {
+  if (!settings.fps) return;
+  fpsFrames++;
+  fpsTime += raw;
+  if (fpsTime >= 0.5) {
+    fpsEl.textContent = `${Math.round(fpsFrames / fpsTime)} fps`;
+    fpsFrames = 0;
+    fpsTime = 0;
+  }
+}
+
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -620,9 +679,9 @@ function addFind(item, from, at = player.pos) {
 }
 
 // Inventory viewer meshes.
-const nuggetMat = new THREE.MeshStandardMaterial({ color: 0xffc23a, metalness: 1, roughness: 0.28 });
 const quartzMat = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.35, metalness: 0 });
 function inventoryMesh(item) {
+  if (item.cut) return makeCutMesh(item, { hq: gemsRealistic('inventory') });
   if (item.type === 'fine') {
     // A little glass bottle with the fine gold settled in the bottom.
     const g = new THREE.Group();
@@ -634,7 +693,7 @@ function inventoryMesh(item) {
     g.add(cap);
     const fill = Math.min(0.045, 0.002 + Math.cbrt(item.grams) * 0.006);
     if (item.grams > 0.0005) {
-      const gold = new THREE.Mesh(new THREE.CylinderGeometry(0.0112, 0.0112, fill, 24), nuggetMat);
+      const gold = new THREE.Mesh(new THREE.CylinderGeometry(0.0112, 0.0112, fill, 24), goldMaterial('fine'));
       gold.position.y = -0.025 + fill / 2;
       g.add(gold);
     }
@@ -644,7 +703,8 @@ function inventoryMesh(item) {
     const r = mulberry32(item.seed || 1);
     const g = new THREE.Group();
     const s = 0.004 * Math.cbrt(item.grams) + 0.003;
-    const n = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 2), 0.35, r), nuggetMat);
+    const style = item.style === 'quartz' || item.style === 'crystalline' ? 'crystalline' : 'waterworn';
+    const n = new THREE.Mesh(nuggetGeometry(item.seed || 1, { detail: 4, style }), goldMaterial(style));
     n.scale.set(s * 1.3, s * 0.75, s);
     g.add(n);
     if (item.style === 'quartz') {
@@ -655,7 +715,7 @@ function inventoryMesh(item) {
       g.add(q);
     } else if (item.style === 'crystalline') {
       for (let k = 0; k < 7; k++) {
-        const c = new THREE.Mesh(new THREE.OctahedronGeometry(s * 0.35), nuggetMat);
+        const c = new THREE.Mesh(new THREE.OctahedronGeometry(s * 0.35), goldMaterial('crystalline'));
         c.position.set((r() - 0.5) * s * 2, s * 0.5 + r() * s * 0.3, (r() - 0.5) * s * 1.6);
         c.rotation.set(r() * 3, r() * 3, r() * 3);
         g.add(c);
@@ -673,9 +733,9 @@ function inventoryMesh(item) {
   }
   if (item.crystal || ['quartz', 'feldspar', 'calcite', 'fluorite'].includes(item.type) || (item.type === 'topaz' && item.lengthCm)) {
     const c = item.crystal || { variety: item.variety, len: (item.lengthCm || 3) / 100, broken: false, damage: 0, id: 1, grade: item.grade };
-    return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 });
+    return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 }, { hq: gemsRealistic('inventory') });
   }
-  return makeGemMesh(item);
+  return makeGemMesh(item, { hq: gemsRealistic('inventory') });
 }
 
 function nearestPickup() {
@@ -1561,7 +1621,9 @@ const clock = new THREE.Clock();
 let motion = { moving: false, running: false, depth: 0 };
 
 function frame() {
-  const dt = Math.min(clock.getDelta(), 0.05);
+  const raw = clock.getDelta();
+  const dt = Math.min(raw, 0.05);
+  countFps(raw);
   if (touch && playing) {
     mouseHeld = touch.use;
     if (touch.use && !touchUseWas) clicked = true;
@@ -1613,6 +1675,8 @@ function frame() {
   water.update(dt, elapsed, player.pos, weather.flood);
   sluice.update(dt);
 
+  updateReflections(dt);
+  excav.updateLOD?.(camera.position);
   sky.position.copy(camera.position);
   if (sky.material.uniforms.time) sky.material.uniforms.time.value = elapsed;
   sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
@@ -1626,6 +1690,7 @@ function frame() {
 }
 
 restoreWorld();
+applyGraphics();
 view.setTool(viewTool());
 hud.tool(state.tool);
 
@@ -1648,7 +1713,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, fossils, devils, award, newDay, shop, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, fossils, devils, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

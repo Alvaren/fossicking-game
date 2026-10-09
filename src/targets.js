@@ -1,3 +1,4 @@
+import { goldMaterial, nuggetGeometry } from './materials.js';
 import * as THREE from 'three';
 import { mulberry32, smoothstep } from './noise.js';
 import { PLAY } from './terrain.js';
@@ -79,7 +80,8 @@ export class Targets {
     }
     for (const t of this.list) t.collected = collected.has(t.id);
 
-    this.goldMat = new THREE.MeshStandardMaterial({ color: 0xffc23a, metalness: 1, roughness: 0.28 });
+    this.goldMat = goldMaterial('waterworn');
+    this.reefGoldMat = goldMaterial('crystalline');
     this.rustMat = new THREE.MeshStandardMaterial({ color: 0x6b3a1f, roughness: 0.9, metalness: 0.2 });
     this.brassMat = new THREE.MeshStandardMaterial({ color: 0xc8a050, metalness: 0.9, roughness: 0.35 });
     this.copperMat = new THREE.MeshStandardMaterial({ color: 0x9a5a32, metalness: 0.85, roughness: 0.4 });
@@ -172,14 +174,14 @@ export class Targets {
       q.scale.set(s * 1.3, s * 0.8, s);
       mesh.add(q);
       for (let k = 0; k < 6; k++) {
-        const g = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 0), 0.4, r), this.goldMat);
+        const g = new THREE.Mesh(nuggetGeometry(t.id * 7 + k, { detail: 1, style: 'crystalline' }), this.reefGoldMat);
         g.scale.setScalar(s * (0.18 + r() * 0.22));
         g.position.set((r() - 0.5) * s * 1.8, (r() - 0.2) * s * 0.9, (r() - 0.5) * s * 1.4);
         mesh.add(g);
       }
     } else if (t.kind === 'gold') {
       const s = 0.035 + 0.022 * Math.cbrt(t.grams);
-      mesh = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 1), 0.35, r), this.goldMat);
+      mesh = new THREE.Mesh(nuggetGeometry(t.id + 1, { detail: 3 }), this.goldMat);
       mesh.scale.set(s * 1.3, s * 0.7, s);
       const glow = new THREE.Sprite(new THREE.SpriteMaterial({
         map: this.glowTex, color: 0xffd36a, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,

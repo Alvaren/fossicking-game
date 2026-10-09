@@ -24,6 +24,7 @@ export const MILESTONES = [
   { key: 'collection5', title: 'Cabinet of curiosities', desc: 'Have 5 pieces in your collection.', check: (s) => [...s.gems, ...s.nuggets].filter((i) => i.keep).length >= 5 },
   { key: 'explorer', title: 'Know your country', desc: 'Find every rock type on the claim.', check: (s, sources) => Object.keys(sources).every((k) => s.discovered[k]) },
   { key: 'drove', title: 'Took the ute out', desc: 'Go for a drive.' },
+  { key: 'cut', title: 'On the wheel', desc: 'Get a stone cut in town.' },
   { key: 'order', title: 'Filled an order', desc: "Hand over a piece for one of the buyer's orders." },
   { key: 'grand', title: 'Grand', desc: 'Have $1,000 in your pocket.', check: (s) => s.cash >= 1000 },
   { key: 'tenGrand', title: 'Flush', desc: 'Have $10,000 in your pocket.', check: (s) => s.cash >= 10000 },

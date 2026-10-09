@@ -1,3 +1,4 @@
+import { cuttable, cutFee, cutEstimate } from './cutting.js';
 // Gear upgrades and the gold buyer's table.
 
 export const GOLD_PRICE = 95; // dollars per gram
@@ -88,9 +89,10 @@ const $ = (id) => document.getElementById(id);
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export class Shop {
-  constructor(state, { onChange, onClose, onReset, onOrder, sound }) {
+  constructor(state, { onChange, onClose, onReset, onOrder, onCut, sound }) {
     this.state = state;
     this.onOrder = onOrder;
+    this.onCut = onCut;
     this.onChange = onChange;
     this.onClose = onClose;
     this.onReset = onReset;
@@ -200,6 +202,48 @@ export class Shop {
       note.className = 'desc';
       note.textContent = `${kept} piece${kept === 1 ? '' : 's'} in your collection aren't for sale. If you really want to part with one, sell it from your inventory (I).`;
       sell.append(note);
+    }
+
+    // The gem cutter: send rough stones off to be faceted or polished.
+    const cutter = $('shop-cutter');
+    cutter.innerHTML = '';
+    const away = s.cutting || [];
+    const intro = document.createElement('p');
+    intro.className = 'desc';
+    intro.textContent = away.length
+      ? `Kev's got ${away.length} of yours on the wheel: ${away.map((c) => c.item.label).join('; ')}. Back tomorrow morning.`
+      : "Kev in town cuts and polishes. Most of the rough gets ground away, but a good stone's worth a lot more cut. Agates and opal he polishes up.";
+    cutter.append(intro);
+    const rough = s.gems.filter((g) => cuttable(g)).sort((a, b) => (a.keep - b.keep) || b.value - a.value).slice(0, 8);
+    for (const g of rough) {
+      const fee = cutFee(g);
+      const [lo, hi] = cutEstimate(g);
+      const r = document.createElement('div');
+      r.className = 'item';
+      const info = document.createElement('div');
+      info.innerHTML = `<div class="name">${cap(g.label)}${g.keep ? ' <span class="h-note">collection</span>' : ''}</div>`
+        + `<div class="desc">Worth $${Math.round(g.value)} rough. Cut, maybe $${Math.round(lo)} to $${Math.round(hi)}.</div>`;
+      const btn = document.createElement('button');
+      btn.textContent = `Cut it ($${fee})`;
+      btn.disabled = s.cash < fee;
+      btn.onclick = () => {
+        if (g.specimen && !confirm(`${cap(g.label)} is a specimen piece. Cut it and it's a gem, not a specimen any more. Go ahead?`)) return;
+        s.cash -= fee;
+        s.gems.splice(s.gems.indexOf(g), 1);
+        (s.cutting ||= []).push({ item: g, seed: Math.floor(Math.random() * 1e9) });
+        this.onCut?.(g);
+        this.sound.coin();
+        this.onChange();
+        this.render();
+      };
+      r.append(info, btn);
+      cutter.append(r);
+    }
+    if (!rough.length && !away.length) {
+      const none = document.createElement('p');
+      none.className = 'desc';
+      none.textContent = 'Nothing worth cutting yet: sapphires, zircons, garnets, topaz, spinel, clear crystal points, agates and precious opal.';
+      cutter.append(none);
     }
 
     const items = $('shop-items');

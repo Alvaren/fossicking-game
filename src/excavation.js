@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { makeCrystalMesh } from './crystals.js';
+import { makeCrystalMesh, crystalLOD } from './crystals.js';
+import { gemsRealistic } from './settings.js';
 import { CELL } from './terrain.js';
 
 // Kneeling hand-excavation. Where you kneel, a small high-detail patch of
@@ -469,5 +470,21 @@ export class Excavation {
     if (!this.cursor.visible) return;
     this.cursor.position.set(p.x, p.y + 0.004, p.z);
     this.cursor.scale.setScalar(R);
+  }
+
+  // Crystals within arm's reach go truly see-through (if the settings allow);
+  // further off they use the cheap glassy version.
+  updateLOD(camPos) {
+    const allow = gemsRealistic('world');
+    for (const p of this.patches) {
+      if (Math.hypot(p.cx - camPos.x, p.cz - camPos.z) > 6) {
+        for (const e of p.crystals) crystalLOD(e.mesh, false);
+        continue;
+      }
+      for (const e of p.crystals) {
+        const near = allow && e.mesh.parent && e.mesh.position.distanceToSquared(camPos) < 2.4 * 2.4;
+        crystalLOD(e.mesh, near);
+      }
+    }
   }
 }

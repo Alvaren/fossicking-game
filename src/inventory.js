@@ -1,3 +1,4 @@
+import { CUTS } from './materials.js';
 import { FOSSILS } from './fossils.js';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -34,13 +35,31 @@ export class Inventory {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.toneMappingExposure = 0.9;
     this.scene = new THREE.Scene();
     const pm = new THREE.PMREMGenerator(this.renderer);
     this.scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
     const key = new THREE.DirectionalLight(0xfff2e0, 2.2);
     key.position.set(1, 2, 1.5);
     this.scene.add(key, new THREE.HemisphereLight(0xffffff, 0x554433, 0.6));
+    // The backdrop: dark and warm at the edges with a soft glow straight
+    // behind the stone, like holding it up to the light. See-through stones
+    // only show what's behind them, so this is what makes them glow.
+    // Worked out per pixel: the view is only ~15 degrees wide, too fine for vertex colours.
+    this.scene.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: { dark: { value: new THREE.Color(0x2a1d14) }, glow: { value: new THREE.Color(0xe2d4bd) } },
+      vertexShader: 'varying vec3 vDir; void main() { vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: `uniform vec3 dark, glow;
+varying vec3 vDir;
+void main() {
+  vec3 c = dark * (0.5 + 0.5 * smoothstep(-0.8, 0.8, vDir.y));
+  c = mix(c, glow, pow(smoothstep(0.962, 0.9995, -vDir.z), 1.8)); // the camera looks down -z
+  gl_FragColor = vec4(c, 1.0);
+  #include <colorspace_fragment>
+}`,
+    })));
     this.camera = new THREE.PerspectiveCamera(30, 1, 0.001, 50);
     this.holder = new THREE.Group();
     this.scene.add(this.holder);
@@ -187,6 +206,8 @@ export class Inventory {
     if (it.lengthCm) facts.push(['Length', `${it.lengthCm.toFixed(1)} cm`]);
     if (it.grade) facts.push(['Grade', it.grade]);
     facts.push(['Condition', it.broken ? 'broken' : it.chipped ? 'chipped' : 'good']);
+    if (it.cut) facts.push(['Cut', CUTS[it.cut]?.name || it.cut]);
+    if (it.rough) facts.push(['Rough', `${cap(it.rough.label)}, $${Math.round(it.rough.value)}`]);
     if (it.age) facts.push(['Age', it.age]);
     if (it.from) facts.push(['Found', it.from]);
     if (it.foundAt) facts.push(['When', new Date(it.foundAt).toLocaleString()]);

@@ -1,3 +1,5 @@
+import { gemsRealistic } from './settings.js';
+import { goldMaterial, nuggetGeometry } from './materials.js';
 import * as THREE from 'three';
 import { makeGemMesh } from './minerals.js';
 import { lumpy } from './world.js';
@@ -199,9 +201,12 @@ export class Viewmodel {
     this.panWater = water;
 
     const specks = new THREE.Group();
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xffc23a, metalness: 1, roughness: 0.25, emissive: 0x6a4a00 });
+    // Flakes, not balls: gold flattens out as it tumbles down the creek.
+    const goldMat = goldMaterial('fine', { emissive: 0x3a2600 });
     for (let i = 0; i < 14; i++) {
-      const s = new THREE.Mesh(new THREE.SphereGeometry(0.004 + Math.random() * 0.004, 5, 4), goldMat);
+      const s = new THREE.Mesh(nuggetGeometry(i + 1, { detail: 1 }), goldMat);
+      s.scale.set(0.006 + Math.random() * 0.004, 0.0018, 0.005 + Math.random() * 0.004);
+      s.rotation.y = Math.random() * 3;
       const a = Math.random() * Math.PI * 2;
       const r = Math.random() * 0.05;
       s.position.set(Math.cos(a) * r - 0.06, 0.02, Math.sin(a) * r + 0.02);
@@ -477,7 +482,7 @@ export class Viewmodel {
     this.sieveFinds.clear();
     const r = Math.random;
     finds.slice(0, 16).forEach((f) => {
-      const m = makeGemMesh(f);
+      const m = makeGemMesh(f, { hq: gemsRealistic('world'), world: true }); // right in front of you: worth the real thing
       m.scale.multiplyScalar(f.type === 'agate' ? 0.9 : 1.5);
       const a = r() * Math.PI * 2;
       const rad = f.type !== 'agate' ? r() * (0.025 + (1 - strat) * 0.14) : 0.05 + r() * 0.1;

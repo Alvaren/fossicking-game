@@ -113,10 +113,16 @@
         <span><kbd>N</kbd> field notes</span>
         <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
       </div>
+      <div id="phone-warn" class="warn hidden">
+        <b>Heads up: you're on a phone.</b> This game is made for a computer. It'll run here, but it's heavy going:
+        it can get warm and chew through the battery. Graphics are set to Medium; if it's slow or getting hot, try Low in Settings. Best played with your phone sideways.
+        <div class="warn-btns"><button id="phone-ok">Righto</button><button id="phone-settings" class="ghost">Settings</button></div>
+      </div>
       <button id="play">Click to play</button>
       <div class="pause-row">
         <button id="save-btn" class="ghost">Save game <kbd>F5</kbd></button>
         <button id="controls-btn" class="ghost">Controls <kbd>H</kbd></button>
+        <button id="settings-btn" class="ghost">Settings</button>
         <span id="save-status"></span>
       </div>
     </div>
@@ -204,6 +210,8 @@
       <div id="shop-orders"></div>
       <h3>Sell</h3>
       <div id="shop-sell"></div>
+      <h3>Gem cutter <span class="h-note">back next morning</span></h3>
+      <div id="shop-cutter"></div>
       <h3>Gear</h3>
       <div id="shop-items"></div>
       <div class="shop-footer">
@@ -212,6 +220,19 @@
       </div>
     </div>
   </div>
+
+  <div id="settings" class="hidden">
+    <div class="panel">
+      <h2>Settings</h2>
+      <h3>Graphics</h3>
+      <div id="set-presets" class="segs presets"></div>
+      <div id="set-rows"></div>
+      <p id="set-note" class="desc"></p>
+      <div class="shop-footer"><span></span><button id="settings-close">Done</button></div>
+    </div>
+  </div>
+
+  <div id="fps" class="hidden"></div>
 
   <div id="notes" class="hidden">
     <div class="panel wide">

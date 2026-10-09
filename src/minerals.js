@@ -1,3 +1,5 @@
+import { stoneMaterial, roundedHabit } from './materials.js';
+import { makeCutMesh } from './cutting.js';
 import * as THREE from 'three';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
@@ -188,7 +190,7 @@ export function summarise(finds) {
 // ---------- meshes ----------
 
 const agateTextures = new Map();
-function agateTexture(bands) {
+export function agateTexture(bands) {
   const key = bands.join(',');
   if (agateTextures.has(key)) return agateTextures.get(key);
   const s = 128;
@@ -243,6 +245,13 @@ function gemGeometry(type) {
   return g;
 }
 
+// Creek stones are waterworn: the crystal shape is still there, but the edges
+// and corners are rubbed round. Topaz, being softer and tumbled further, more so.
+const ROUNDNESS = { sapphire: 0.45, zircon: 0.5, spinel: 0.4, garnet: 0.45, topaz: 0.8 };
+function pebbleGeometry(type) {
+  return roundedHabit(`pebble-${type}`, gemGeometry(type), ROUNDNESS[type], type.length * 13);
+}
+
 // World-space size in metres, exaggerated a little so finds are visible.
 export function gemSize(gem) {
   if (gem.type === 'agate') return Math.cbrt(gem.grams / 2.6) * 0.012;
@@ -250,23 +259,21 @@ export function gemSize(gem) {
   return 0.006 * Math.cbrt(gem.ct) * 2.2;
 }
 
-export function makeGemMesh(gem) {
+export function makeGemMesh(gem, { hq = false, world = false } = {}) {
+  if (gem.cut) return makeCutMesh(gem, { hq });
   let mat;
   if (gem.type === 'scheelite') {
     mat = new THREE.MeshStandardMaterial({ color: gem.color, roughness: 0.55 }); // dull and greasy by day
   } else if (gem.type === 'agate') {
     mat = new THREE.MeshStandardMaterial({ map: agateTexture(gem.bands), roughness: 0.35 });
   } else {
-    const c = new THREE.Color(gem.color);
-    mat = new THREE.MeshStandardMaterial({
-      color: c, roughness: 0.12, metalness: 0.1,
-      emissive: c.clone().multiplyScalar(0.25),
-      transparent: gem.type !== 'spinel', opacity: 0.92,
-    });
+    mat = stoneMaterial({ type: gem.type, color: gem.color, finish: 'rough', hq, size: gemSize(gem), world });
   }
-  const m = new THREE.Mesh(gemGeometry(gem.type), mat);
+  const pebble = ROUNDNESS[gem.type] !== undefined;
+  const m = new THREE.Mesh(pebble ? pebbleGeometry(gem.type) : gemGeometry(gem.type), mat);
   const s = gemSize(gem);
   m.scale.set(s, gem.type === 'agate' ? s * 0.7 : s, s);
+  if (pebble) m.scale.multiplyScalar(1.15); // rounding takes a bit off the size
   m.castShadow = true;
   return m;
 }
