@@ -40,6 +40,7 @@ Touch screens get an on-screen stick and buttons automatically.
 ```bash
 npm install
 npm run dev        # local dev server
+npm run dev:codex  # isolated Codex preview on 127.0.0.1:5191 (strict port)
 npm run dev:lan    # serve to phones and other devices on your network (port 5190)
 npm run build      # static build in dist/
 ```
@@ -47,3 +48,7 @@ npm run build      # static build in dist/
 Models are built headlessly in Blender from the scripts in `blender/` (output goes to `public/models/`).
 
 Every push to `main` builds and publishes the game to GitHub Pages (`.github/workflows/deploy.yml`).
+
+## Working with coding agents
+
+Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md) before editing. Codex and Claude Code use separate worktrees and server ports, with file ownership checked before integration.
