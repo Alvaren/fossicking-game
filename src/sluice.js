@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { GEM_ORDER, makeGem } from './minerals.js';
+import { GEM_ORDER } from './minerals.js';
 
 // A sluice box set in the creek. Water runs through it, you shovel wash in at
 // the head, heavies drop behind the riffles and the rest is flushed out the
@@ -11,7 +11,16 @@ import { GEM_ORDER, makeGem } from './minerals.js';
 //  - Big stones (agates) go straight over the riffles and out the tail unless
 //    you classify the wash first and check the oversize.
 
-const CAPACITY = 14; // loads before the riffles are packed
+// A highbanker is a sluice up on the bank with its own water: a petrol pump
+// draws from the creek and sprays it through a hopper with a grizzly (bar
+// screen) on top. You shovel wash straight into the hopper. It doesn't need a
+// good run of current, just to be within reach of the water, and the longer
+// riffle tray holds more before it needs cleaning up.
+
+const CAPACITY = { sluice: 14, highbanker: 24 }; // loads before the riffles are packed
+export const PUMP_REACH = 9;  // m of intake hose to the water
+export const PUMP_LIFT = 3.2; // m the pump will lift water up the bank
+export const FUEL_PER_LOAD = 0.1; // litres
 
 export function sluiceEfficiency(speed, depth) {
   if (depth < 0.08) return { eff: 0.05, ok: 'bad', why: 'not enough water to run through it' };
@@ -65,6 +74,62 @@ export function makeSluiceModel(scale = 1) {
   return g;
 }
 
+// The highbanker in the same frame as the sluice (head at -z): the riffle tray
+// up on legs, a hopper with grizzly bars over the head, and the spray bar.
+export function makeHighbankerModel() {
+  const g = new THREE.Group();
+  const alu = new THREE.MeshStandardMaterial({ color: 0xa9adb0, metalness: 0.7, roughness: 0.4 });
+  const add = (geo, m, x, y, z, parent = g) => {
+    const o = new THREE.Mesh(geo, m);
+    o.position.set(x, y, z);
+    o.castShadow = true;
+    o.receiveShadow = true;
+    parent.add(o);
+    return o;
+  };
+  // The tray: a sluice, a touch longer, tilted toward the tail.
+  const tray = makeSluiceModel();
+  tray.scale.set(1.1, 1, 1.15);
+  tray.position.set(0, 0.62, 0.15);
+  tray.rotation.x = 0.1;
+  g.add(tray);
+  g.userData.cons = tray.userData.cons;
+  g.userData.tray = tray;
+  // Legs: tall at the head, short at the tail.
+  for (const [x, z, h] of [[-0.2, -0.75, 0.9], [0.2, -0.75, 0.9], [-0.2, 0.95, 0.5], [0.2, 0.95, 0.5]]) {
+    add(new THREE.BoxGeometry(0.035, h, 0.035), alu, x, h / 2, z);
+  }
+  // Hopper box over the head, open at the bottom into the tray.
+  const hz = -0.95, hy = 1.0;
+  add(new THREE.BoxGeometry(0.6, 0.3, 0.02), alu, 0, hy, hz - 0.25);
+  add(new THREE.BoxGeometry(0.6, 0.3, 0.02), alu, 0, hy, hz + 0.25);
+  add(new THREE.BoxGeometry(0.02, 0.3, 0.5), alu, -0.3, hy, hz);
+  add(new THREE.BoxGeometry(0.02, 0.3, 0.5), alu, 0.3, hy, hz);
+  // Grizzly bars across the top: anything bigger than the gaps rolls off.
+  for (let i = 0; i < 7; i++) add(new THREE.CylinderGeometry(0.008, 0.008, 0.58, 6).rotateZ(Math.PI / 2), alu, 0, hy + 0.16, hz - 0.21 + i * 0.07);
+  // Spray bar along the back of the hopper.
+  const blue = new THREE.MeshStandardMaterial({ color: 0x2a5a9a, roughness: 0.5 });
+  add(new THREE.CylinderGeometry(0.02, 0.02, 0.56, 10).rotateZ(Math.PI / 2), blue, 0, hy + 0.2, hz - 0.27);
+  return g;
+}
+
+// A little petrol pump that sits at the water's edge.
+export function makePumpModel() {
+  const g = new THREE.Group();
+  const add = (geo, color, x, y, z, extra = {}) => {
+    const o = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.6, ...extra }));
+    o.position.set(x, y, z);
+    o.castShadow = true;
+    g.add(o);
+    return o;
+  };
+  add(new THREE.BoxGeometry(0.36, 0.04, 0.3), 0x2a2a2a, 0, 0.02, 0);          // frame
+  add(new THREE.BoxGeometry(0.2, 0.18, 0.2), 0xb02018, -0.05, 0.14, 0);       // engine
+  add(new THREE.BoxGeometry(0.18, 0.08, 0.14), 0xc8c0b0, -0.05, 0.27, 0);     // fuel tank
+  add(new THREE.CylinderGeometry(0.07, 0.07, 0.1, 14).rotateZ(Math.PI / 2), 0x5a5a5a, 0.12, 0.12, 0, { metalness: 0.6 }); // pump volute
+  return g;
+}
+
 function stripeTexture() {
   const c = document.createElement('canvas');
   c.width = 32; c.height = 128;
@@ -85,35 +150,61 @@ export class Sluice {
     this.scene = scene;
     this.terrain = terrain;
     this.creek = terrain.creek;
-    this.model = makeSluiceModel();
-    this.model.rotation.order = 'YXZ';
-    this.model.visible = false;
+    this.kind = 'sluice';
     this.waterTex = stripeTexture();
     this.waterTex.repeat.set(1, 3);
-    const sheet = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.3, 1.55).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ map: this.waterTex, transparent: true, opacity: 0.85, roughness: 0.1, depthWrite: false }),
-    );
-    sheet.position.y = 0.065;
-    this.model.add(sheet);
-    scene.add(this.model);
-
-    this.ghost = makeSluiceModel();
-    this.ghost.rotation.order = 'YXZ';
     this.ghostMat = new THREE.MeshBasicMaterial({ color: 0x66ff88, transparent: true, opacity: 0.4, depthWrite: false });
-    this.ghost.traverse((o) => { if (o.isMesh) { o.material = this.ghostMat; o.castShadow = false; } });
-    this.ghost.visible = false;
-    scene.add(this.ghost);
+    this.build();
+    // The highbanker's pump and hoses, at the water's edge.
+    this.pump = makePumpModel();
+    this.pump.visible = false;
+    scene.add(this.pump);
+    this.hoseMat = new THREE.MeshStandardMaterial({ color: 0x1d3a6a, roughness: 0.6 });
+    this.hoses = [];
 
     this.placed = false;
     this.loads = 0;
     this.cons = null;
+    this.running = 0; // highbanker: seconds of pumping left since the last load
     this.flow = { x: 0, z: 0, speed: 0 };
+  }
+
+  // (Re)build the placed model and the placement ghost for the current kind.
+  build() {
+    for (const o of [this.model, this.ghost]) if (o) this.scene.remove(o);
+    const hb = this.kind === 'highbanker';
+    this.model = hb ? makeHighbankerModel() : makeSluiceModel();
+    this.model.rotation.order = 'YXZ';
+    this.model.visible = false;
+    this.sheet = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.3, 1.55).rotateX(-Math.PI / 2),
+      new THREE.MeshStandardMaterial({ map: this.waterTex, transparent: true, opacity: 0.85, roughness: 0.1, depthWrite: false }),
+    );
+    this.sheet.position.y = 0.065;
+    (hb ? this.model.userData.tray : this.model).add(this.sheet);
+    this.scene.add(this.model);
+    this.ghost = hb ? makeHighbankerModel() : makeSluiceModel();
+    this.ghost.rotation.order = 'YXZ';
+    this.ghost.traverse((o) => { if (o.isMesh) { o.material = this.ghostMat; o.castShadow = false; } });
+    this.ghost.visible = false;
+    this.scene.add(this.ghost);
+    if (this.blenderModel && !hb) this.applyModel(this.blenderModel);
+  }
+
+  // Upgrading: the sluice becomes a highbanker (once it's out of the water).
+  setKind(kind) {
+    if (kind === this.kind || this.placed) return false;
+    this.kind = kind;
+    this.stranded = null;
+    this.build();
+    return true;
   }
 
   // Swap the boxy trough for the Blender model (placed sluice and placement ghost).
   applyModel(model) {
     if (!model) return;
+    this.blenderModel = model;
+    if (this.kind !== 'sluice') return;
     for (const [group, ghost] of [[this.model, false], [this.ghost, true]]) {
       group.traverse((c) => { if (c.isMesh && c.userData.static) c.visible = false; });
       const o = model.clone(true);
@@ -122,12 +213,41 @@ export class Sluice {
     }
   }
 
-  // How good a spot is for a sluice. Returns null if it isn't in the creek.
+  // How good a spot is. A sluice needs to be in a good run of the creek;
+  // a highbanker needs dry, fairly level bank within reach of the water.
   evaluate(x, z) {
+    if (this.kind === 'highbanker') return this.evaluateBank(x, z);
     const depth = this.terrain.waterDepth(x, z);
     if (depth < 0) return null;
     const f = this.creek.velocity(x, z, {});
     return { x, z, depth, speed: f.speed, dir: Math.atan2(f.x, f.z), ...sluiceEfficiency(f.speed, depth) };
+  }
+
+  // Nearest water, walking straight toward the creek's centreline.
+  waterEdge(x, z) {
+    const L = this.creek.local(x, z, {});
+    const toward = L.n > 0 ? -1 : 1;
+    const nx = -L.tz * toward, nz = L.tx * toward; // across the creek, toward the water
+    for (let d = 0; d <= PUMP_REACH + 0.01; d += 0.25) {
+      const px = x + nx * d, pz = z + nz * d;
+      if (this.terrain.waterDepth(px, pz) > 0.12) return { x: px, z: pz, d };
+    }
+    return null;
+  }
+
+  evaluateBank(x, z) {
+    const L = this.creek.local(x, z, {});
+    const dir = Math.atan2(L.tx, L.tz);
+    const base = { x, z, dir, depth: 0.1, speed: 0.9 };
+    if (this.terrain.waterDepth(x, z) > -0.05) return { ...base, eff: 0.1, ok: 'bad', why: 'in the water: a highbanker goes up on the bank' };
+    const e = 0.5;
+    const slope = Math.hypot(this.terrain.getHeight(x + e, z) - this.terrain.getHeight(x - e, z), this.terrain.getHeight(x, z + e) - this.terrain.getHeight(x, z - e)) / (2 * e);
+    if (slope > 0.35) return { ...base, eff: 0.1, ok: 'bad', why: 'too steep to stand it up' };
+    const edge = this.waterEdge(x, z);
+    if (!edge) return { ...base, eff: 0.1, ok: 'bad', why: `too far from the water (the intake hose is ${PUMP_REACH} m)` };
+    const lift = this.terrain.getHeight(x, z) + 1 - this.creek.surfaceY(edge.z);
+    if (lift > PUMP_LIFT) return { ...base, eff: 0.1, ok: 'bad', why: 'too high above the water for the pump' };
+    return { ...base, edge, lift, eff: 0.86, ok: edge.d < PUMP_REACH * 0.7 ? 'good' : 'fair', why: `${edge.d.toFixed(1)} m to the water, ${Math.max(0, lift).toFixed(1)} m lift` };
   }
 
   pose(obj, x, z, dir) {
@@ -137,8 +257,8 @@ export class Sluice {
       const L = this.creek.local(x, z, {});
       yaw = Math.atan2(L.tx, L.tz);
     }
-    obj.position.set(x, this.terrain.getHeight(x, z) + 0.03, z);
-    obj.rotation.set(0.08, yaw, 0); // about an inch drop per foot toward the tail
+    obj.position.set(x, this.terrain.getHeight(x, z) + (this.kind === 'highbanker' ? 0 : 0.03), z);
+    obj.rotation.set(this.kind === 'highbanker' ? 0 : 0.08, yaw, 0); // about an inch drop per foot toward the tail
   }
 
   showGhost(spot) {
@@ -154,21 +274,71 @@ export class Sluice {
     this.model.visible = true;
     this.pose(this.model, spot.x, spot.z, spot.dir);
     this.ghost.visible = false;
+    if (this.kind === 'highbanker') this.layHoses();
+  }
+
+  // Pump at the water's edge, intake hose into the creek, delivery hose up to the spray bar.
+  layHoses() {
+    for (const h of this.hoses) this.scene.remove(h);
+    this.hoses = [];
+    const edge = this.spot.edge || this.waterEdge(this.spot.x, this.spot.z);
+    if (!edge) { this.pump.visible = false; return; }
+    const T = this.terrain;
+    // Sit the pump just back from the edge, on dry ground.
+    const bx = this.spot.x - edge.x, bz = this.spot.z - edge.z, bl = Math.hypot(bx, bz) || 1;
+    const px = edge.x + (bx / bl) * Math.min(1, bl * 0.5), pz = edge.z + (bz / bl) * Math.min(1, bl * 0.5);
+    this.pump.position.set(px, T.getHeight(px, pz), pz);
+    this.pump.rotation.y = Math.atan2(bx, bz);
+    this.pump.visible = true;
+    const hose = (pts, r) => {
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, r, 6), this.hoseMat);
+      m.castShadow = true;
+      this.scene.add(m);
+      this.hoses.push(m);
+    };
+    const wx = edge.x - (bx / bl) * 0.5, wz = edge.z - (bz / bl) * 0.5;
+    hose([
+      new THREE.Vector3(px, T.getHeight(px, pz) + 0.12, pz),
+      new THREE.Vector3((px + wx) / 2, T.getHeight((px + wx) / 2, (pz + wz) / 2) + 0.04, (pz + wz) / 2),
+      new THREE.Vector3(wx, T.getHeight(wx, wz) - 0.05, wz),
+    ], 0.022);
+    // Up to the spray bar over the hopper (head end, -z in the model).
+    const head = new THREE.Vector3(0, 1.2, -1.25).applyEuler(this.model.rotation).add(this.model.position);
+    const pts = [new THREE.Vector3(px, T.getHeight(px, pz) + 0.14, pz)];
+    for (let i = 1; i < 4; i++) {
+      const t = i / 4, x = px + (head.x - px) * t, z = pz + (head.z - pz) * t;
+      pts.push(new THREE.Vector3(x, T.getHeight(x, z) + 0.04 + (i === 3 ? 0.4 : 0), z));
+    }
+    pts.push(head);
+    hose(pts, 0.018);
   }
 
   // Current working condition (the flood changes it).
   status() {
     if (!this.placed) return null;
+    if (this.kind === 'highbanker') return { ...this.spot, eff: this.spot.eff, speed: 0.9, depth: 0.1 };
     return this.evaluate(this.spot.x, this.spot.z) || { ...this.spot, depth: 0, speed: 0, ...sluiceEfficiency(0, 0) };
   }
 
-  get fill() { return this.loads / CAPACITY; }
+  get capacity() { return CAPACITY[this.kind]; }
+  get fill() { return this.loads / this.capacity; }
 
-  // Shovel one load in. Agates go out the tail unless you checked the oversize.
-  feed(sample, classifier, rand = Math.random) {
+  // Where you shovel in: the head of the sluice, or the highbanker's hopper.
+  get head() {
+    const p = new THREE.Vector3(0, 0, this.kind === 'highbanker' ? -0.95 : -0.85).applyEuler(this.model.rotation).add(this.model.position);
+    return p;
+  }
+
+  // Shovel one load in.
+  //  - classified: the load went through a screen (on the bucket, the grizzly on
+  //    the hopper, or a classifier over the sluice head). Stones ride over the
+  //    riffles otherwise, stirring up the bed and packing the riffles faster.
+  //  - Agates and big stones go out the tail of an unclassified sluice.
+  feed(sample, classified) {
     const st = this.status();
     const packed = Math.max(0, Math.min(1, (this.fill - 0.6) / 0.6));
-    const eff = st.eff * (1 - 0.65 * packed);
+    const eff = st.eff * (1 - 0.65 * packed) * (classified ? 1 : 0.85);
     if (!this.cons) {
       this.cons = { cons: true, layer: 'cons', gold: 0, blackSand: 0, sizeBias: 0, loads: 0 };
       for (const t of GEM_ORDER) this.cons[t] = 0;
@@ -179,14 +349,9 @@ export class Sluice {
     c.blackSand += sample.blackSand * eff;
     c.sizeBias += sample.sizeBias;
     c.loads++;
-    this.loads++;
-    const agates = [];
-    if (classifier) {
-      let n = 0;
-      for (let L = Math.exp(-sample.agate), p = rand(); p > L; p *= rand()) n++;
-      for (let k = 0; k < n; k++) if (rand() < 0.9) agates.push(makeGem('agate', rand));
-    }
-    return { eff, agates };
+    this.loads += classified ? 1 : 1.6;
+    if (this.kind === 'highbanker') this.running = 8;
+    return { eff };
   }
 
   cleanUp() {
@@ -202,12 +367,22 @@ export class Sluice {
     const c = this.cleanUp();
     this.placed = false;
     this.model.visible = false;
+    this.pump.visible = false;
+    for (const h of this.hoses) this.scene.remove(h);
+    this.hoses = [];
     return c;
   }
 
   // The flood takes it. It fetches up on a bar somewhere downstream, empty.
+  // A highbanker up on the bank is only taken if the water reaches it.
   washAway(rand = Math.random) {
     if (!this.placed) return false;
+    if (this.kind === 'highbanker') {
+      if (this.terrain.waterDepth(this.spot.x, this.spot.z) < 0.15) return false;
+      this.pump.visible = false;
+      for (const h of this.hoses) this.scene.remove(h);
+      this.hoses = [];
+    }
     this.cons = null;
     this.loads = 0;
     const C = this.creek;
@@ -233,6 +408,7 @@ export class Sluice {
 
   snapshot() {
     return {
+      kind: this.kind,
       placed: this.placed,
       spot: this.placed ? { x: this.spot.x, z: this.spot.z, dir: this.spot.dir } : null,
       loads: this.loads,
@@ -243,6 +419,7 @@ export class Sluice {
 
   restore(s) {
     if (!s) return;
+    if (s.kind && s.kind !== this.kind) this.setKind(s.kind);
     if (s.placed && s.spot) {
       const spot = this.evaluate(s.spot.x, s.spot.z) || { ...s.spot, depth: 0, speed: 0, ok: 'bad', eff: 0.1, why: '' };
       this.place({ ...spot, dir: s.spot.dir });
@@ -265,8 +442,9 @@ export class Sluice {
     }
     if (this.placed) {
       const st = this.status();
+      this.running = Math.max(0, this.running - dt);
       this.waterTex.offset.y += dt * Math.max(0.2, st.speed) * 1.8;
-      this.model.children[this.model.children.length - 1].visible = st.depth > 0.05;
+      this.sheet.visible = this.kind === 'highbanker' ? this.running > 0 : st.depth > 0.05;
     }
   }
 }

@@ -42,6 +42,8 @@ import { makeEnvironment, goldMaterial, nuggetGeometry } from './materials.js';
 import { SettingsPanel } from './settingsui.js';
 import { PhotoMode } from './photo.js';
 import { WorldDetector } from './worlddetector.js';
+import { Oversize } from './oversize.js';
+import { FUEL_PER_LOAD } from './sluice.js';
 import { difficulty, setDifficulty, LEVELS, ORDER } from './difficulty.js';
 import { GemShow, ShowStall, isShowDay, daysUntilShow, OPENS, CLOSES } from './gemshow.js';
 import { SOURCES as PLACE_NAMES } from './map.js';
@@ -69,6 +71,7 @@ function writeSave() {
     patches: excav.patches.map((pt) => { const sn = pt.snapshot(); return { cx: sn.cx, cz: sn.cz, mm: packArray(sn.mm) }; }),
     crystalState: field.stateSnapshot(),
     sluice: sluice.snapshot(),
+    oversize: oversize.snapshot(),
     bucket: state.bucket,
     player: (() => {
       const pp = mine.inside || mine.climb ? mine.exitSpot() : player.pos;
@@ -83,6 +86,7 @@ function writeSave() {
     orders: state.orders,
     milestones: state.milestones,
     cutting: state.cutting,
+    fuel: state.fuel,
     difficulty: state.difficulty,
     show: state.show,
     photos: state.photos,
@@ -138,6 +142,7 @@ const state = {
   orders: saved.orders || null,
   milestones: saved.milestones || {},
   cutting: saved.cutting || [],
+  fuel: saved.fuel || 0,
   difficulty: difficulty.key,
   show: saved.show || null,
   photos: saved.photos || 0,
@@ -232,6 +237,8 @@ const boulders = new Boulders(scene, terrain, state.seed, saved.boulders, world.
 const excav = new Excavation(scene, terrain, field);
 const water = new Water(scene, terrain, sunDir);
 const sluice = new Sluice(scene, terrain);
+const oversize = new Oversize(scene, terrain);
+oversize.restore(saved.oversize);
 const targets = new Targets(scene, terrain, deposits, state.seed, new Set(saved.collected || []));
 const finds = new SurfaceFinds(scene, terrain, deposits, state.seed, new Set(saved.surface || []), world.colliders);
 // Quartz float lying downslope of the crystal pockets.
@@ -916,11 +923,20 @@ function interact() {
     writeSave();
     return;
   }
+  const pile = oversize.near(player.pos);
+  if (pile && !(nearSluice() && sluice.cons && Math.hypot(pile.x - player.pos.x, pile.z - player.pos.z) > 1)) {
+    const got = oversize.pickThrough(pile);
+    for (const g of got) addFind(g, 'Picked out of the classifier oversize');
+    hud.toast(got.length ? `Picked through the oversize: ${summarise(got)}. Tossed the rest.` : `Picked through ${pile.loads} load${pile.loads === 1 ? '' : 's'} of oversize. Nothing in it but gravel.`, got.length ? 'gold' : '');
+    sound.click();
+    writeSave();
+    return;
+  }
   if (sluice.placed && nearSluice() && sluice.cons) {
     const c = sluice.cleanUp();
     state.bucket.unshift(c);
     award('sluice');
-    hud.toast(`Cleaned up the sluice: concentrates from ${c.loads} load${c.loads === 1 ? '' : 's'}. Pan them.`, 'gold');
+    hud.toast(`Cleaned up the ${sluice.kind === 'highbanker' ? 'highbanker' : 'sluice'}: concentrates from ${c.loads} load${c.loads === 1 ? '' : 's'}. Pan them.`, 'gold');
     sound.coin();
     return;
   }
@@ -976,7 +992,8 @@ function rightClick() {
   else if (state.tool === 'sluice' && nearSluice()) {
     const c = sluice.pickUp();
     if (c) state.bucket.unshift(c);
-    hud.toast(c ? 'Lifted the sluice out and cleaned it up. Concentrates are in your bucket.' : 'Lifted the sluice out.');
+    const what = sluice.kind === 'highbanker' ? 'Packed up the highbanker' : 'Lifted the sluice out';
+    hud.toast(c ? `${what} and cleaned it up. Concentrates are in your bucket.` : `${what}.`);
   }
 }
 
@@ -1002,18 +1019,55 @@ function flipSieve() {
   resetJig();
 }
 
+const ownsClassifier = () => (state.up.classifier || 0) > 0;
+
+// A point to one side of you (or of something facing yaw), where a pile can go.
+function beside(p, d, yaw = player.yaw) {
+  return { x: p.x + Math.cos(yaw) * d, z: p.z - Math.sin(yaw) * d };
+}
+
+// The classifier screen: fines (gold, small gems) through into the bucket or the
+// sluice; the oversize (agates, big stones, gravel) onto a pile to pick through.
+function classify(sample, at) {
+  const rates = { agate: sample.agate, big: sample.sapphire * 0.12 + sample.zircon * 0.06 };
+  sample.agate = 0;
+  sample.sapphire *= 0.88;
+  sample.zircon *= 0.94;
+  sample.classified = true;
+  const first = !oversize.piles.length;
+  oversize.add(at.x, at.z, rates);
+  if (first) hint('oversize', 'The classifier keeps the stones back: they go on a pile beside you. Pick through it (E) for agates and big stones before you move on.', 900);
+}
+
 function feedSluice() {
   const sample = state.bucket.shift();
-  const r = sluice.feed(sample, gearInfo().classifier);
+  if (!feedBox(sample, false)) state.bucket.unshift(sample);
+}
+
+// One load into the sluice or highbanker. Screened at the head if there's a
+// screen there: the highbanker's grizzly always, a classifier over a sluice if you have one.
+function feedBox(sample, direct) {
+  const hb = sluice.kind === 'highbanker';
+  if (hb && state.fuel < FUEL_PER_LOAD - 1e-6) {
+    hud.toast("The pump's out of petrol. The buyer at camp sells jerry cans.", 'junk');
+    sound.denied();
+    return false;
+  }
+  if (hb) state.fuel = Math.max(0, state.fuel - FUEL_PER_LOAD);
+  let classified = !!sample.classified;
+  if (!classified && (hb || ownsClassifier())) {
+    const h = sluice.head;
+    classify(sample, beside(h, 0.75, sluice.model.rotation.y));
+    classified = true;
+  }
+  const r = sluice.feed(sample, classified);
   sound.dig();
   view.playDig();
-  view.dirtOnBlade = true;
-  for (const a of r.agates) {
-    addFind(a, 'Picked out of the sluice oversize');
-    hud.toast(`Picked out of the oversize: ${a.label}`, 'gold');
-  }
-  if (sluice.fill >= 1) hint('packed', "The riffles are chockers. Clean up the sluice (E) before you lose gold.", 20);
+  view.dirtOnBlade = !direct;
+  if (!classified) hint('unclassified', 'Unscreened wash: the stones roll over the riffles, stir the bed up and pack them fast, and agates go straight out the tail. A classifier ($150 at camp) screens it first.', 300);
+  if (sluice.fill >= 1) hint('packed', `The riffles are chockers. Clean up the ${hb ? 'highbanker' : 'sluice'} (E) before you lose gold.`, 20);
   if (r.eff < 0.4) hint('sluiceflow', `This spot isn't working well: ${sluice.status().why}. Try another run.`, 60);
+  return true;
 }
 
 function dig(hit) {
@@ -1070,7 +1124,11 @@ function dig(hit) {
   lastDig = { x: hit.x, z: hit.z, layer: sample.layer };
 
   const capacity = gear(state, 'bucket').cap;
-  if (state.bucket.length < capacity) {
+  if (sluice.placed && Math.hypot(player.pos.x - sluice.head.x, player.pos.z - sluice.head.z) < 2.6) {
+    // Digging right beside the sluice or highbanker: the shovelful goes straight in at the head.
+    feedBox(sample, true);
+  } else if (state.bucket.length < capacity) {
+    if (ownsClassifier()) classify(sample, beside(player.pos, 0.7));
     state.bucket.push(sample);
     view.dirtOnBlade = true;
   } else {
@@ -1858,14 +1916,25 @@ function updateTools(dt, motion) {
 
   let sluiceNoise = 0;
   sluice.showGhost(null);
+  if ((state.up.sluice || 0) >= 2 && sluice.kind !== 'highbanker') {
+    if (sluice.placed) hint('hbswap', 'Lift your sluice out (right-click with tool 5) and you can set up the highbanker instead.', 120);
+    else if (sluice.setKind('highbanker')) {
+      document.querySelector('.slot[data-tool="sluice"]').innerHTML = '<kbd>5</kbd>Highbanker';
+      view.setTool(viewTool());
+    }
+  }
   if (state.tool === 'sluice' && ownsSluice()) {
     if (sluice.placed) {
       const dist = Math.hypot(player.pos.x - sluice.spot.x, player.pos.z - sluice.spot.z);
       if (dist < 2.8) {
         const st = sluice.status();
         const n = state.bucket.length;
-        prompt = `${st.speed.toFixed(2)} m/s, ${st.depth.toFixed(2)} m (${st.why}) · riffles ${Math.round(sluice.fill * 100)}% · `
-          + (n ? `hold click to shovel in (${n})` : 'bucket empty') + (sluice.cons ? ' · E: clean up' : '') + ' · right-click: lift out';
+        const head = sluice.kind === 'highbanker'
+          ? `Highbanker · petrol ${state.fuel.toFixed(1)} L · `
+          : `${st.speed.toFixed(2)} m/s, ${st.depth.toFixed(2)} m (${st.why}) · `;
+        prompt = `${head}riffles ${Math.round(sluice.fill * 100)}% · `
+          + (n ? `hold click to shovel in your bucket (${n})` : 'or dig right beside it with the shovel (2)') + (sluice.cons ? ' · E: clean up' : '')
+          + ` · right-click: ${sluice.kind === 'highbanker' ? 'pack up' : 'lift out'}`;
         if (mouseHeld && n && !state.bucket[0].cons) {
           feedProgress += dt / 0.9;
           if (feedProgress >= 1) { feedProgress = 0; feedSluice(); }
@@ -1876,23 +1945,29 @@ function updateTools(dt, motion) {
     } else {
       const hit = terrain.raycast(camera.position, camDir, 7);
       const spot = hit && sluice.evaluate(hit.x, hit.z);
+      const hb = sluice.kind === 'highbanker';
       if (spot) {
         sluice.showGhost(spot);
-        prompt = `${spot.speed.toFixed(2)} m/s, ${spot.depth.toFixed(2)} m deep: ${spot.why}. Click to set the sluice here.`;
-        if (clicked) {
+        prompt = hb
+          ? (spot.ok === 'bad' ? `Can't set up here: ${spot.why}.` : `Bank, ${spot.why}. Click to set up the highbanker here.`)
+          : `${spot.speed.toFixed(2)} m/s, ${spot.depth.toFixed(2)} m deep: ${spot.why}. Click to set the sluice here.`;
+        if (clicked && !(hb && spot.ok === 'bad')) {
           sluice.place(spot);
           view.setTool(viewTool());
-          hud.toast(spot.ok === 'good' ? 'Sluice set in a good run.' : `Sluice set, but it's ${spot.why}.`);
+          hud.toast(hb ? 'Highbanker set up: pump at the water, hose to the spray bar. Shovel your wash into the hopper.' : spot.ok === 'good' ? 'Sluice set in a good run.' : `Sluice set, but it's ${spot.why}.`);
           sound.click();
         }
-      } else prompt = 'Aim at the creek to set the sluice';
+      } else prompt = sluice.kind === 'highbanker' ? 'Aim at the bank near the creek to set up the highbanker' : 'Aim at the creek to set the sluice';
     }
   }
   if (sluice.placed) {
     const dist = Math.hypot(player.pos.x - sluice.spot.x, player.pos.z - sluice.spot.z);
     if (sluice.status().depth > 0.05) sluiceNoise = Math.max(0, 1 - dist / 9);
   }
-  sound.setSluice(playing ? sluiceNoise : 0);
+  sound.setSluice(playing && sluice.kind !== 'highbanker' ? sluiceNoise : 0);
+  const pumpNear = sluice.placed && sluice.kind === 'highbanker' && sluice.running > 0
+    ? Math.max(0, 1 - Math.hypot(player.pos.x - sluice.pump.position.x, player.pos.z - sluice.pump.position.z) / 30) : 0;
+  sound.setPump?.(playing ? pumpNear : 0);
   view.setTool(viewTool());
   clicked = false;
 
@@ -1903,6 +1978,7 @@ function updateTools(dt, motion) {
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : near.find.gem.type === 'thunderegg' ? 'thunderegg' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
+  else if (oversize.near(player.pos)) { const pl = oversize.near(player.pos); prompt = `Classifier oversize (${pl.loads} load${pl.loads === 1 ? '' : 's'}) · E: pick through it`; }
   else if (ute.near(player.pos)) prompt = 'E: hop in the ute';
   else if (cabinet.near(player.pos)) prompt = 'Your collection cabinet · E to look through it';
   else if (stall.near(player.pos)) prompt = daynight.hour >= OPENS && daynight.hour < CLOSES
@@ -2212,6 +2288,7 @@ function frame() {
 }
 
 restoreWorld();
+if (sluice.kind === 'highbanker') document.querySelector('.slot[data-tool="sluice"]').innerHTML = '<kbd>5</kbd>Highbanker';
 applyGraphics();
 view.setTool(viewTool());
 hud.tool(state.tool);
@@ -2235,7 +2312,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, worldDet, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, worldDet, oversize, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };
