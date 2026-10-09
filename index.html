@@ -6,7 +6,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>Fossicking</title>
-  <link rel="stylesheet" href="/src/style.css" />
+  <meta name="theme-color" content="#1a120c" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Fossicking" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
   <canvas id="game"></canvas>
@@ -213,6 +219,6 @@
     </div>
   </div>
 
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>

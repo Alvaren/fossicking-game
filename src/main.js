@@ -1482,6 +1482,11 @@ right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
 hud.stats(state, gear(state, 'bucket').cap);
 frame();
 
+// Offline support for the published game (home-screen app with no signal).
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  navigator.serviceWorker.register('./sw.js').catch(() => { /* offline mode just won't be available */ });
+}
+
 // Handy for poking at the game from the console.
 window.fossick = {
   inventory, daynight, map, wildlife, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
