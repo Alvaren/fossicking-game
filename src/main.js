@@ -44,6 +44,9 @@ import { PhotoMode } from './photo.js';
 import { WorldDetector } from './worlddetector.js';
 import { Oversize } from './oversize.js';
 import { Bedload } from './bedload.js';
+import { restoreCamp, collectPractice, collectFieldPan } from './camp.js';
+import { CampUI } from './campui.js';
+import { CampStation } from './campstation.js';
 import { PanningUI } from './panningui.js';
 import { rollPanContents } from './minerals.js';
 import { FUEL_PER_LOAD } from './sluice.js';
@@ -78,6 +81,7 @@ function writeSave() {
     bedload: bedload.snapshot(),
     bucket: state.bucket,
     panSession: state.panSession,
+    camp: state.camp,
     player: (() => {
       const pp = mine.inside || mine.climb ? mine.exitSpot() : player.pos;
       return { x: pp.x, z: pp.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool };
@@ -157,6 +161,7 @@ const state = {
   discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
+  camp: restoreCamp(saved.camp),
   panSession: saved.panSession?.version === 1 ? saved.panSession : null,
   tool: 'detector',
   remaining: 0,
@@ -236,6 +241,7 @@ const creek = terrain.creek;
 const deposits = new Deposits(terrain);
 const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystals || []));
 const world = buildWorld(scene, terrain, state.seed, field.sites);
+const campStation = new CampStation(scene, terrain, state.camp, world.colliders);
 const mine = new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
 if (mine.ok) terrain.sources.mine = { x: mine.x, z: mine.z };
 const works = new OreWorks(scene, terrain, world.oreSpots, saved.works);
@@ -347,7 +353,7 @@ let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
 const map = new ClaimMap(state, terrain, { onClose: () => lock() });
-const modalOpen = () => panUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
+const modalOpen = () => panUI.isOpen || campUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
 
 function toggleHeadlamp() {
   headlamp = !headlamp;
@@ -409,6 +415,7 @@ const shop = new Shop(state, {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
+        camp: state.camp,
         milestones: state.milestones, day: state.day, cutting: state.cutting, difficulty: state.difficulty,
       }));
     } catch { /* ignore */ }
@@ -419,8 +426,22 @@ const notes = new Notes(state, { onClose: () => lock() });
 const panUI = new PanningUI(state, {
   assay: sample => rollPanContents(sample),
   onSave: () => writeSave(),
-  onCollect: (sample, result) => finishLoad('pan', { sample, result }),
-  onClose: () => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; lock(); },
+  onLoad: (session, context) => { session.captureTailings = !context.practice && (!!state.camp.built.kit || !!context.camp); },
+  onCollect: (sample, result, session, context) => {
+    if (context.practice) collectPractice(state.camp, session);
+    else { collectFieldPan(state, session); finishLoad('pan', { sample, result }); }
+    if (context.camp) panUI.close();
+  },
+  onClose: () => {
+    mouseHeld = false; keys.clear(); if (touch) touch.use = false;
+    if (panUI.context.camp) campUI.open(); else lock();
+  },
+});
+const campUI = new CampUI(state, {
+  onClose: () => lock(),
+  onChange: () => { campStation.sync(state.camp); writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
+  capacity: () => gear(state, 'bucket').cap,
+  onPan: context => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; panUI.open(context); },
 });
 const gemshow = new GemShow(state, {
   sound,
@@ -898,6 +919,7 @@ function interact() {
     if (mine.nearLadder(player.pos)) startClimb(false);
     return;
   }
+  if (campStation.near(player.pos)) { openModal(campUI); return; }
   if (mine.nearCollar(player.pos)) { startClimb(true); return; }
   if (works.nearMill(player.pos)) { useMill(); return; }
   if (works.nearDolly(player.pos) && (state.ore.length || works.dolly.crush > 0)) {
@@ -1204,7 +1226,7 @@ function finishLoad(method, opts = {}) {
   const parts = [];
   // Prospectors count "colours": the specks of gold left in the pan.
   let colours = 0;
-  if (method === 'pan' && !sample.cons) {
+  if (method === 'pan' && !sample.cons && !sample.repan && (sample.sourceClaim === undefined || sample.sourceClaim === state.seed)) {
     colours = Math.max(0, Math.round((res.gold * 1000) / 2.5 + (Math.random() - 0.5)));
     if (sample.x !== undefined) {
       state.panTests.push({ x: sample.x, z: sample.z, c: colours });
@@ -1990,7 +2012,8 @@ function updateTools(dt, motion) {
   hud.progress(state.tool === 'pan' ? panProgress : workProgress);
 
   const near = nearestPickup();
-  if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
+  if (campStation.near(player.pos)) prompt = 'E: wash bench · practise, recover tailings & build camp';
+  else if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : near.find.gem.type === 'thunderegg' ? 'thunderegg' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
@@ -2211,12 +2234,12 @@ function frame() {
   countFps(raw);
   // The pan is a close-up workstation. Keep the last world frame behind it
   // rather than rendering the whole claim on every mobile finger stroke.
-  if (panUI.isOpen) {
-    panUI.update(dt);
+  if (panUI.isOpen || campUI.isOpen) {
+    if (panUI.isOpen) panUI.update(dt);
     sound.setDetector(false, 0, null);
     sound.setSluice(0);
     sound.setPump?.(0);
-    sound.setAmbience(dt, 0.25, !!panUI.session && panUI.session.lastAction !== 'rest' && !panUI.session.finished);
+    sound.setAmbience(dt, 0.25, panUI.isOpen && !!panUI.session && panUI.session.lastAction !== 'rest' && !panUI.session.finished);
     requestAnimationFrame(frame);
     return;
   }
@@ -2322,7 +2345,7 @@ view.setTool(viewTool());
 hud.tool(state.tool);
 
 // Save on a timer while you play, when you pause, and when the tab is hidden or closed.
-setInterval(() => { if (playing || panUI.isOpen) writeSave(); }, 60000);
+setInterval(() => { if (playing || panUI.isOpen || campUI.isOpen) writeSave(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (document.hidden) writeSave(); });
 window.addEventListener('beforeunload', () => writeSave());
 
@@ -2340,6 +2363,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
+  campUI, campStation, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },

@@ -1,13 +1,18 @@
 import { PAN_TYPES, panType, materialFor, takePanLoad, stepPan, automaticStroke, lightMass, goldLeft, readyToReveal, panResult } from './panning.js';
 
+import { techniqueReport, mg } from './camp.js';
+
 const pct = n => `${Math.round(n * 100)}%`;
 const weight = g => g > 0 && g < 0.00001 ? '<0.01 mg' : g < 0.01 ? `${(g * 1000).toFixed(2)} mg` : `${g.toFixed(3)} g`;
 const fract = n => n - Math.floor(n);
 const noise = n => fract(Math.sin(n * 127.1 + 311.7) * 43758.5453);
 
 export class PanningUI {
-  constructor(state, { assay, onSave, onCollect, onClose }) {
+  constructor(state, { assay, onSave, onCollect, onClose, onLoad = () => {} }) {
     this.state = state;
+    this.defaultState = state;
+    this.onLoad = onLoad;
+    this.context = {};
     this.assay = assay;
     this.onSave = onSave;
     this.onCollect = onCollect;
@@ -66,7 +71,7 @@ export class PanningUI {
               <p id="pan-feedback" class="pan-feedback" role="status"></p>
               <p class="pan-muted">Heavies are dense minerals, not necessarily gold. Your pan keeps its contents when put aside.</p>
             </div>
-            <div id="pan-result" class="hidden" aria-live="polite"><span class="pan-eyebrow">THE REVEAL</span><h2 id="pan-result-title"></h2><p id="pan-result-detail"></p><div id="pan-result-finds"></div><button id="pan-collect" class="pan-primary">Bottle gold & keep finds</button></div>
+            <div id="pan-result" class="hidden" aria-live="polite"><span class="pan-eyebrow">THE REVEAL</span><h2 id="pan-result-title"></h2><p id="pan-result-detail"></p><div id="pan-result-finds"></div><div id="pan-report"></div><button id="pan-collect" class="pan-primary">Bottle gold & keep finds</button></div>
           </div>
         </div>
         <footer class="pan-footer"><span>STRATIFY → WASH A THIN LAYER → REPEAT → REVEAL</span><span id="pan-cycle"></span></footer>
@@ -121,7 +126,12 @@ export class PanningUI {
 
   get session() { return this.state.panSession; }
 
-  open() {
+  open(context = {}) {
+    this.context = context;
+    this.state = context.state || this.defaultState;
+    this.root.querySelector('.pan-eyebrow').textContent = context.practice ? 'CAMP PRACTICE · BORROWED GOLD' : context.camp ? 'CAMP TUB · YOUR WASH' : 'CREEKSIDE · GOLD RECOVERY';
+    this.accumulator = 0;
+    this.reportedSession = null;
     this.isOpen = true;
     this.auto = true;
     this.speed = 0;
@@ -166,6 +176,7 @@ export class PanningUI {
   load() {
     if (this.session || !this.state.bucket.length) return;
     this.state.panSession = takePanLoad(this.state.bucket, { panId: this.$('pan-type').value, fill: Number(this.$('pan-fill').value) / 100, difficulty: this.state.difficulty }, this.assay);
+    this.onLoad(this.session, this.context);
     this.choose(this.session.bed.clay > this.session.initialBulk * 0.03 ? 'clay' : 'stratify');
     this.onSave();
     this.refresh();
@@ -189,7 +200,7 @@ export class PanningUI {
     if (!result) return;
     // Clear before crediting: double clicks cannot award the same contents twice.
     this.state.panSession = null;
-    this.onCollect(s.sample, result);
+    this.onCollect(s.sample, result, s, this.context);
     this.onSave();
     this.loadingInfo();
     this.refresh();
@@ -255,14 +266,26 @@ export class PanningUI {
     this.$('pan-speed-bar').style.background = speed > 0.8 ? '#ed946a' : '#9cc8aa';
     this.$('pan-speed-label').textContent = speed < 0.03 ? 'Still' : speed > 0.8 ? 'Aggressive' : 'Controlled';
     if (this.$('pan-feedback').textContent !== s.message) this.$('pan-feedback').textContent = s.message;
-    if (s.finished) {
+    if (s.finished && this.reportedSession !== s) {
+      this.reportedSession = s;
       const result = panResult(s);
       this.$('pan-result-title').textContent = result.gold + result.picker > 0 ? `${weight(result.gold + result.picker)} recovered` : 'Not a colour this time.';
       this.$('pan-result-detail').textContent = `${result.lost > 0.000001 ? `${weight(result.lost)} washed out. ` : 'No gold lost during washing. '}${result.gold + result.picker === 0 ? 'A heavy black-sand streak can still be barren.' : 'Your gold is separated from the black sand and ready for the bottle.'}`;
       const finds = this.$('pan-result-finds');
       const labels = result.finds.map(f => f.label).join(' · ');
       finds.textContent = result.picker ? `Picker: ${weight(result.picker)}${labels ? ` · ${labels}` : ''}` : labels;
+      const report = techniqueReport(s);
+      const box = this.$('pan-report');
+      box.replaceChildren();
+      for (const line of [
+        `Recovery: ${report.recovery === null ? 'barren parcel' : pct(report.recovery)} · ${mg(report.total)} started in the pan`,
+        `Fine gold: ${mg(report.fineRecovered)} kept / ${mg(report.fineLost)} outflow`,
+        `Coarse gold: ${mg(report.coarseRecovered)} kept / ${mg(report.coarseLost)} outflow`,
+        ...report.tips,
+        this.context.practice ? 'Borrowed training gold. Recording this result does not pay gold or cash.' : s.captureTailings ? 'Outflow caught. Collect this pan, then rework its tailings at camp.' : 'Outflow was not caught. A portable kit captures tailings from new creek pans.',
+      ]) { const p = document.createElement('p'); p.textContent = line; box.append(p); }
       this.$('pan-collect').textContent = result.gold + result.picker > 0 || result.finds.length ? 'Bottle gold & keep finds' : 'Finish this pan';
+      if (this.context.practice) this.$('pan-collect').textContent = 'Record practice recovery';
     }
   }
 

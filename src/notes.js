@@ -4,6 +4,14 @@ import { GEMS, GEM_ORDER, CRYSTAL_ORDER } from './minerals.js';
 // The field notebook: how placers work, and what you've found so far.
 
 const RULES = [
+  ['Learn at the camp wash bench',
+    'Find the signed bench beside camp. Borrow any pan and compare clean gravel, clay-bound wash and black-sand concentrate with a known assay. '
+    + 'Choose the same parcel size and difficulty for a fair comparison: a larger pan will be less full. Easy demonstrates the method; Realistic uses your strokes. '
+    + 'Practice gold belongs to the bench and cannot be sold. The 95% challenge is a game teaching target, not a field recovery guarantee.'],
+  ['Catch what leaves the pan',
+    'Build a recovery tub with proceeds from your finds, then work your bucket wash at camp and re-pan its caught tailings. '
+    + 'A portable kit catches the outflow from newly loaded creek pans too. It does not change the pan itself or retrieve gold already washed into the creek. '
+    + 'The sample rack stores eight intact parcels. Fine gold, clay-bound gold and larger finds are conserved through repeated passes.'],
   ['Work the pan, one layer at a time',
     'Start around half full, or less with clay and concentrates. Submerge and rub clay clumps apart: bound gold can leave inside a lump. '
     + 'Short level shakes let dense grains settle. Lift to the waterline, tip the coarse riffles forward and wash off a thin top layer. '

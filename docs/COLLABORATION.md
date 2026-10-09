@@ -75,3 +75,13 @@ The user authorized the panning slice and confirmed Claude was finished for the 
 The implemented panning model, controls, pan profiles, saves and tests are documented in [PANNING.md](PANNING.md). Validation passed: 14 simulation tests, the production build, actual emulated-touch and mouse UI checks, and full-game entry/save/reward integration. Browser checks reported no page errors. Existing unrelated three.js warnings remain.
 
 The preview remains on port 5191. Main and Claude's checkout remain unchanged. No push or deployment was performed. Integrate the finished feature branch, including the setup instructions, when the user wants it in the main game; reload CLAUDE.md/AGENTS.md in Claude's checkout then.
+
+## Camp practice and progression handoff (10 October 2026)
+
+The earlier panning feature was integrated into local main at `90a8564` at the user's request. The user then authorized the camp practice, tailings, feedback and camp progression slice. Codex implemented it on `codex/camp-practice`, based on `90a8564`, in its existing isolated worktree. Claude's `realism-1` checkout remained clean at `ea39cfa`; no other agent was launched or messaged.
+
+Touched paths: `src/camp.js`, `src/campui.js`, `src/campstation.js`, `src/camp.css`, `src/main.js`, `src/panning.js`, `src/panningui.js`, `src/notes.js`, `tests/camp.test.js`, `tests/camp.game.mjs`, `README.md`, `docs/CAMP.md`, and this guide. No dependencies or Blender assets changed. See [CAMP.md](CAMP.md) for behavior, persistence, limitations and test commands.
+
+Checks: 23 simulation/progression tests, production build, existing mouse/emulated-touch panning checks and full-game panning save/reward checks. The new full-game camp check exercises desktop and touch entry, purchases, sample storage, independent practice/field sessions across reload, recovery without duplicate awards, tailings reprocessing, comparisons and returning borrowed parcels. Desktop also verifies portable capture through normal creek input. Screenshots of desktop, portrait phone, comparison table and the world bench were inspected. Completion is accelerated through the simulation in integration tests; actual stroke input is covered by the panning UI checks. Existing unrelated three.js deprecation warnings remain; no new page errors were observed.
+
+Integration is authorized into local main after validation. Remote main remains at `ea39cfa` at the pre-integration fetch. No push or deployment is included. The Codex preview remains at port 5191. The player and Claude preview ports were not listening at the pre-integration check, so updating local main will not hot-reload an active game. Resume Claude only in its own checkout and load these instructions before overlapping edits.

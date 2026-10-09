@@ -113,6 +113,8 @@ export function stepPan(s, input, dt) {
   const action = input.action;
   const pan = panType(s.panId);
   s.lastLoss = 0;
+  s.technique ||= { aggressive: 0, unsettled: 0, boundLoss: 0 };
+  s.boundOut ||= { fine: 0, coarse: 0 };
   s.time += dt;
   s.lastAction = speed > 0.015 ? action : 'rest';
   if (speed <= 0.015) return;
@@ -143,6 +145,8 @@ export function stepPan(s, input, dt) {
   }
   if (action !== 'wash' && action !== 'reveal') return;
   if (s.submerged || tilt < 3) { s.message = 'Lift to the waterline and tip the working lip slightly forward.'; return; }
+  if (speed > 0.65 || tilt > 26) s.technique.aggressive += dt;
+  if (s.strat < 0.7) s.technique.unsettled += dt;
   const beforeLight = lightMass(s);
   const trapping = s.lip === 'smooth' ? 0.03 : s.lip === 'fine' ? pan.fine : pan.coarse;
   const packed = overload * 0.65 + (beforeLight / s.initialBulk > 0.45 && s.lip === 'fine' ? 0.3 : 0);
@@ -156,6 +160,8 @@ export function stepPan(s, input, dt) {
     for (const k of ['fine', 'coarse']) {
       const carried = s.bound[k] * clayOut / s.bed.clay;
       s.bound[k] -= carried;
+      s.boundOut[k] += carried;
+      s.technique.boundLoss += carried;
       loseGold(s, k, carried);
     }
   }

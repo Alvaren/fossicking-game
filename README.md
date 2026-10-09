@@ -59,3 +59,5 @@ Every push to `main` builds and publishes the game to GitHub Pages (`.github/wor
 Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md) before editing. Codex and Claude Code use separate worktrees and server ports, with file ownership checked before integration.
 
 Gold panning: select the pan (3) in the creek, then click or tap Use. Drag on the close-up pan; the action buttons select clay breakup, stratification, washing and reveal. Put aside saves the partly worked pan. See [panning controls and model notes](docs/PANNING.md).
+
+At camp, find the signed **Wash Bench**. Practise on known parcels, compare pans, rework caught tailings and build a recovery tub, sample rack and portable tailings kit. See [camp progression and practice](docs/CAMP.md).
