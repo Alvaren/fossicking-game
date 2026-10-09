@@ -11,6 +11,7 @@ import { grade as gradeFind, makeNugget } from './specimens.js';
 import { Inventory } from './inventory.js';
 import { DayNight } from './daynight.js';
 import { ClaimMap } from './map.js';
+import { IS_TOUCH, TouchControls } from './touch.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
@@ -104,8 +105,10 @@ const state = {
 // ---------- renderer / scene ----------
 
 const canvas = document.getElementById('game');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Phones get a lighter setup: no MSAA, lower resolution, smaller shadow map.
+if (IS_TOUCH) document.body.classList.add('touch');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: !IS_TOUCH, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_TOUCH ? 1.25 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.62;
@@ -146,7 +149,7 @@ const hemi = new THREE.HemisphereLight(0xcfe0ff, 0x8a5a3a, 1.1);
 scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.mapSize.set(IS_TOUCH ? 1024 : 2048, IS_TOUCH ? 1024 : 2048);
 const sc = sun.shadow.camera;
 sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 200;
 sun.shadow.bias = -0.0004;
@@ -328,10 +331,12 @@ const TEST = new URLSearchParams(location.search).has('test');
 
 function lock() {
   sound.init();
-  if (TEST) {
+  if (TEST || IS_TOUCH) {
     playing = true;
     overlay.classList.add('hidden');
     hud.show(true);
+    touch?.show(IS_TOUCH);
+    if (IS_TOUCH) document.documentElement.requestFullscreen?.().catch(() => {});
     return;
   }
   const p = canvas.requestPointerLock?.();
@@ -370,10 +375,13 @@ function pause() {
   mouseHeld = false;
   keys.clear();
   playBtn.textContent = 'Paused. Click to resume';
-  if (TEST) {
+  if (TEST || IS_TOUCH) {
     playing = false;
     overlay.classList.remove('hidden');
     hud.show(false);
+    touch?.show(false);
+    writeSave();
+    updateSaveStatus();
   } else {
     document.exitPointerLock();
   }
@@ -383,7 +391,8 @@ function openModal(m) {
   state.forecast = weather.forecast();
   if (m === map) m.open(player, { sluice, patches: excav.patches, sources: terrain.sources, camp: terrain.camp });
   else m.open();
-  if (TEST) playing = false;
+  touch?.show(false);
+  if (TEST || IS_TOUCH) playing = false;
   else document.exitPointerLock();
 }
 
@@ -856,6 +865,7 @@ function kneelDown() {
   mouseHeld = false;
   view.setTool('trowel');
   hud.kneeling(true);
+  touch?.setKneeling(true);
   document.getElementById('controls').classList.add('kneeling');
   hud.tool('trowel');
   hint('kneel', 'Kneeling. Trowel the soil off, brush around crystals, rock pick for rock, hands to lift crystals out. C to stand.', 600);
@@ -865,6 +875,7 @@ function standUp() {
   kneel = null;
   excav.stand();
   hud.kneeling(false);
+  touch?.setKneeling(false);
   document.getElementById('controls').classList.remove('kneeling');
   hud.tool(state.tool);
   view.setTool(viewTool());
@@ -995,13 +1006,15 @@ function updatePlayer(dt) {
   if (keys.has('KeyS') || keys.has('ArrowDown')) wish.sub(fwd);
   if (keys.has('KeyD') || keys.has('ArrowRight')) wish.add(right);
   if (keys.has('KeyA') || keys.has('ArrowLeft')) wish.sub(right);
+  if (touch) { wish.addScaledVector(fwd, touch.move.y); wish.addScaledVector(right, touch.move.x); }
   const moving = wish.lengthSq() > 0;
-  const running = moving && (keys.has('ShiftLeft') || keys.has('ShiftRight'));
+  const running = moving && (keys.has('ShiftLeft') || keys.has('ShiftRight') || touch?.run);
   const depth = terrain.waterDepth(player.pos.x, player.pos.z);
   let speed = running ? 6.2 : 3.4;
   if (depth > 0.1) speed *= 0.55;
   if ((state.tool === 'pan' || state.tool === 'sieve') && mouseHeld) speed *= 0.3;
-  if (moving) wish.normalize().multiplyScalar(speed);
+  // A half-pushed stick walks slower; keys are always full speed.
+  if (moving) wish.multiplyScalar(speed / Math.max(1, wish.length()));
 
   const accel = player.grounded ? 12 : 3;
   const k = Math.min(1, dt * accel);
@@ -1037,7 +1050,7 @@ function updatePlayer(dt) {
   player.pos.x = THREE.MathUtils.clamp(player.pos.x, -lim, lim);
   player.pos.z = THREE.MathUtils.clamp(player.pos.z, -lim, lim);
 
-  if (player.grounded && keys.has('Space')) {
+  if (player.grounded && (keys.has('Space') || touch?.jump)) {
     player.vel.y = 5.6;
     player.grounded = false;
   }
@@ -1270,6 +1283,36 @@ function updateHud() {
 
 const uvDir = new THREE.Vector3();
 
+const touch = IS_TOUCH ? new TouchControls({
+  onLook: (dx, dy) => {
+    if (!playing) return;
+    player.yaw -= dx * 0.0022;
+    player.pitch = THREE.MathUtils.clamp(player.pitch - dy * 0.0022, -1.5, 1.45);
+    player.lookDX += dx;
+    player.lookDY += dy;
+  },
+  actions: {
+    interact: () => { if (!playing) return; if (kneel) { const c = excav.pickCrystal(camera.position, camDir); if (c) extract(c); } else interact(); },
+    kneel: () => { if (!playing) return; if (kneel) standUp(); else kneelDown(); },
+    flip: () => { if (playing) rightClick(); },
+    lamp: () => toggleHeadlamp(),
+    inventory: () => openModal(inventory),
+    map: () => openModal(map),
+    notes: () => openModal(notes),
+    save: () => saveNow(),
+    pause: () => pause(),
+  },
+}) : null;
+let touchUseWas = false;
+
+// Tool slots can be tapped (or clicked).
+for (const el of document.querySelectorAll('.slot[data-tool]')) {
+  el.addEventListener('click', () => {
+    const t = el.dataset.tool;
+    if (kneel) { if (KNEEL_TOOLS.includes(t)) setKneelTool(t); } else if (TOOLS.includes(t)) selectTool(t);
+  });
+}
+
 // The first time you get near each source rock, it goes on the map.
 const DISCOVERY = {
   reef: 'A white quartz reef. That is gold country: the creek downstream of here should carry gold.',
@@ -1311,6 +1354,11 @@ let motion = { moving: false, running: false, depth: 0 };
 
 function frame() {
   const dt = Math.min(clock.getDelta(), 0.05);
+  if (touch && playing) {
+    mouseHeld = touch.use;
+    if (touch.use && !touchUseWas) clicked = true;
+    touchUseWas = touch.use;
+  }
   elapsed += dt;
   if (kneel) {
     motion = updateKneel(dt);

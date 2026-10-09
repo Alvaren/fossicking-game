@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>Fossicking</title>
   <link rel="stylesheet" href="/src/style.css" />
 </head>
@@ -56,6 +58,28 @@
       <div class="slot"><kbd>C</kbd>Stand up</div>
     </div>
   </div>
+
+  <div id="touch" class="hidden">
+    <div id="touch-look"></div>
+    <div id="stick"><div id="stick-knob"></div></div>
+    <div class="t-top">
+      <button data-act="inventory">Finds</button>
+      <button data-act="map">Map</button>
+      <button data-act="notes">Notes</button>
+      <button data-act="lamp">Lamp</button>
+      <button data-act="save">Save</button>
+      <button data-act="pause">&#10074;&#10074;</button>
+    </div>
+    <div class="t-right">
+      <button id="t-use" class="t-big">Use</button>
+      <button id="t-jump" class="stand-only">Jump</button>
+      <button data-act="interact">Pick up</button>
+      <button data-act="kneel" class="stand-only">Kneel</button>
+      <button data-act="kneel" class="kneel-only">Stand</button>
+      <button data-act="flip" class="stand-only">Flip</button>
+    </div>
+  </div>
+  <div id="rotate-hint">Turn your phone sideways for the best view</div>
 
   <div id="overlay">
     <div class="panel">

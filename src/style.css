@@ -238,6 +238,51 @@ button.ghost { background: transparent; color: var(--muted); border: 1px solid v
 #jig-state.over { color: #ff8a6a; }
 .slot.locked { opacity: 0.45; }
 
+/* ---------- touch ---------- */
+#touch { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+#touch-look { position: absolute; inset: 0; pointer-events: auto; touch-action: none; }
+#stick {
+  position: absolute; left: calc(18px + env(safe-area-inset-left)); bottom: 70px;
+  width: 132px; height: 132px; border-radius: 50%;
+  background: rgba(20, 12, 8, 0.35); border: 2px solid rgba(255, 230, 190, 0.35);
+  pointer-events: auto; touch-action: none;
+}
+#stick-knob {
+  position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
+  border-radius: 50%; background: rgba(255, 220, 160, 0.55); border: 2px solid rgba(255, 240, 210, 0.8);
+}
+.t-top { position: absolute; top: 74px; right: calc(10px + env(safe-area-inset-right)); display: flex; gap: 6px; pointer-events: auto; }
+.t-right {
+  position: absolute; right: calc(14px + env(safe-area-inset-right)); bottom: 70px;
+  display: grid; grid-template-columns: repeat(2, auto); gap: 8px; justify-items: end; pointer-events: auto;
+}
+#touch button {
+  background: rgba(28, 18, 12, 0.6); color: var(--ink); border: 1px solid rgba(255, 220, 170, 0.35);
+  padding: 10px 12px; font-size: 13px; border-radius: 12px; min-width: 58px; touch-action: none;
+}
+#touch button.down { background: rgba(255, 207, 74, 0.55); color: #2a1a0c; }
+#touch .t-big { grid-column: 1 / -1; width: 96px; height: 96px; border-radius: 50%; font-size: 17px; background: rgba(255, 207, 74, 0.35); }
+#touch .kneel-only { display: none; }
+#touch.kneeling .kneel-only { display: inline-block; }
+#touch.kneeling .stand-only { display: none; }
+#rotate-hint { display: none; }
+body.touch #keyhint, body.touch #controls, body.touch #crosshair + .x { display: none !important; }
+body.touch #toolbar, body.touch #kneelbar {
+  pointer-events: auto; bottom: 8px; max-width: calc(100vw - 20px); overflow-x: auto; padding-bottom: 2px;
+}
+body.touch .slot { padding: 6px 8px; font-size: 12px; }
+body.touch .slot kbd { display: none; }
+body.touch #stats { left: 10px; top: 10px; gap: 6px; }
+body.touch .stat { min-width: 0; padding: 4px 8px; }
+body.touch .stat span:last-child { font-size: 14px; }
+body.touch #meter, body.touch #jig { bottom: 200px; width: min(300px, 60vw); }
+@media (orientation: portrait) {
+  body.touch #rotate-hint {
+    display: block; position: fixed; left: 50%; top: 40%; transform: translateX(-50%); z-index: 3;
+    background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 16px; font-weight: 600;
+  }
+}
+
 /* ---------- controls card ---------- */
 #controls {
   position: fixed; left: 16px; top: 78px; z-index: 1;
