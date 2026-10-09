@@ -14,9 +14,12 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Read the creek: heavies settle on the inside of bends, behind boulders and on bedrock
 - Trace a gold lead up the creek to its reef by counting colours in the pan
 - Kneel and excavate crystal pockets and quartz-vein vugs by hand (amethyst, smoky quartz, fluorite...)
-- Noodle the old opal mullock heaps for potch and precious opal
+- Noodle the old opal mullock heaps for potch, precious opal and the odd opalised shell
+- Split shale slabs with the rock hammer for Permian fossils: Glossopteris leaves, insects and fish
 - Night prospecting with a UV torch: scheelite and some agates glow
-- Floods, day and night, kangaroos, galahs and a kookaburra at dawn
+- Drive the ute around the claim
+- Fill the buyer's special orders for a bonus, and tick off milestones in your field notes
+- Floods, willy-willies, day and night, kangaroos, galahs and a kookaburra at dawn
 
 ## Controls
 

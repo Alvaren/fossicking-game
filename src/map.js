@@ -14,10 +14,11 @@ const SOURCES = {
   rhyolite: { label: 'Rhyolite', colour: '#d98f80' },
   granite: { label: 'Granite tors', colour: '#c9a89a' },
   opal: { label: 'Old opal workings', colour: '#f6f2ea' },
+  fossil: { label: 'Fossil shale', colour: '#6c7076' },
 };
 const DOT = {
   nugget: '#ffcf4a', fine: '#ffcf4a', sapphire: '#4f86ff', zircon: '#d9772e', topaz: '#bfe3ff', garnet: '#b0222e',
-  spinel: '#222', agate: '#f0a060', opal: '#7fe0d0', scheelite: '#9fd8ff', quartz: '#c49bff', feldspar: '#e8b090', calcite: '#ffd28a', fluorite: '#8d7aff',
+  spinel: '#222', agate: '#f0a060', opal: '#7fe0d0', fossil: '#8a8f96', scheelite: '#9fd8ff', quartz: '#c49bff', feldspar: '#e8b090', calcite: '#ffd28a', fluorite: '#8d7aff',
 };
 
 export class ClaimMap {

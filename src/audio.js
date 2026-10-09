@@ -176,6 +176,21 @@ export class Sound {
     for (let i = 0; i < 3; i++) this.syllable(out, t + i * 0.045, f, f, 0.03, 0.025 * vol, f, 'sine');
   }
 
+  // A willy-willy: a rushing, swirling roar that swells as it comes close.
+  // vol 0..1 by distance, close 0..1 when it's nearly on top of you.
+  setWhirl(vol, close) {
+    if (!this.ctx) return;
+    if (!this.whirl) {
+      if (vol <= 0) return;
+      this.whirl = { low: this.loop(260, 'bandpass', 0, 0.8), hiss: this.loop(1800, 'bandpass', 0, 1.2) };
+    }
+    const t = this.ctx.currentTime, w = this.whirl;
+    const swirl = 0.75 + 0.25 * Math.sin(t * 5.3) * Math.sin(t * 1.7);
+    w.low.gain.gain.setTargetAtTime(vol * 0.12 * swirl, t, 0.2);
+    w.low.filter.frequency.setTargetAtTime(200 + 160 * swirl + close * 200, t, 0.15);
+    w.hiss.gain.gain.setTargetAtTime((vol * 0.02 + close * 0.08) * swirl, t, 0.2);
+  }
+
   // Bush flies: no constant drone, just the odd fly zipping past one ear and
   // out the other. k (0..1) is how pestered you are; called every frame.
   setFlies(k) {

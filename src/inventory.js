@@ -1,3 +1,4 @@
+import { FOSSILS } from './fossils.js';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { GOLD_PRICE } from './shop.js';
@@ -9,7 +10,7 @@ const $ = (id) => document.getElementById(id);
 
 const TYPE_NAMES = {
   nugget: 'Nugget', sapphire: 'Sapphire', zircon: 'Zircon', topaz: 'Topaz', garnet: 'Garnet', spinel: 'Black spinel',
-  agate: 'Agate', opal: 'Opal', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
+  agate: 'Agate', opal: 'Opal', fossil: 'Fossil', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
 };
 
 export class Inventory {
@@ -172,10 +173,12 @@ export class Inventory {
     this.show(it);
     const lines = [];
     lines.push(`<h3>${cap(it.label)}</h3>`);
-    if (it.specimen) lines.push('<p class="spec-note">Specimen grade. A collector\'s piece: worth a lot more whole than melted down or sold by the carat.</p>');
+    if (it.specimen) lines.push(it.type === 'fossil'
+      ? '<p class="spec-note">Museum grade. Fossils this good are rare, and collectors and museums pay well for them.</p>'
+      : '<p class="spec-note">Specimen grade. A collector\'s piece: worth a lot more whole than melted down or sold by the carat.</p>');
     const facts = [];
     facts.push(['Type', TYPE_NAMES[it.type] || it.type]);
-    if (it.variety && it.type !== 'nugget') facts.push(['Variety', it.variety]);
+    if (it.variety && it.type !== 'nugget') facts.push(['Variety', it.type === 'fossil' ? cap(FOSSILS[it.variety]?.name || it.variety) : it.variety]);
     if (it.grams && it.type === 'nugget') facts.push(['Weight', `${it.grams.toFixed(2)} g`]);
     if (it.grams && (it.type === 'agate' || it.type === 'scheelite')) facts.push(['Weight', `${it.grams} g`]);
     if (it.fluor) facts.push(['Under UV', it.type === 'scheelite' ? 'glows bright blue-white' : it.type === 'opal' ? 'glows a soft green-white' : 'glows green']);
@@ -184,6 +187,7 @@ export class Inventory {
     if (it.lengthCm) facts.push(['Length', `${it.lengthCm.toFixed(1)} cm`]);
     if (it.grade) facts.push(['Grade', it.grade]);
     facts.push(['Condition', it.broken ? 'broken' : it.chipped ? 'chipped' : 'good']);
+    if (it.age) facts.push(['Age', it.age]);
     if (it.from) facts.push(['Found', it.from]);
     if (it.foundAt) facts.push(['When', new Date(it.foundAt).toLocaleString()]);
     facts.push(['Value', `$${Math.round(it.value).toLocaleString()}`]);

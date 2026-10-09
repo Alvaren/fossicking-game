@@ -28,9 +28,11 @@ export const CRYSTALS = {
   'milky opal': { type: 'opal', color: 0xf0eee6, opacity: 1, perCt: 18, shape: 'chip', opal: true },
   'crystal opal': { type: 'opal', color: 0xe6eef2, opacity: 0.82, perCt: 45, shape: 'chip', opal: true },
   'black opal': { type: 'opal', color: 0x14161e, opacity: 1, perCt: 60, shape: 'chip', opal: true },
+  'opalised shell': { type: 'opal', color: 0xe6dccb, opacity: 1, perCt: 70, shape: 'chip', opal: true },
 };
 
-const OPAL_MIX = [['potch', 52], ['milky opal', 32], ['crystal opal', 13], ['black opal', 3]];
+// Lightning Ridge is famous for shells and bones that turned to opal.
+const OPAL_MIX = [['potch', 52], ['milky opal', 32], ['crystal opal', 13], ['black opal', 3], ['opalised shell', 1.5]];
 const PATTERNS = [['pinfire', 50, 1], ['flash', 30, 1.5], ['broad flash', 15, 2.2], ['harlequin', 5, 4]];
 const PATTERN_FREQ = { pinfire: 38, flash: 16, 'broad flash': 7, harlequin: 9 };
 

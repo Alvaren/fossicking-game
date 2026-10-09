@@ -1,3 +1,4 @@
+import { MILESTONES } from './milestones.js';
 import { GEMS, GEM_ORDER, CRYSTAL_ORDER } from './minerals.js';
 
 // The field notebook: how placers work, and what you've found so far.
@@ -45,6 +46,10 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['Splitting shale for fossils',
+    'Shale is mud that settled in still water, layer on layer, and it splits along those layers. Tap along the edge of a slab with the rock hammer '
+    + 'to open it. Most are barren, but some hold Glossopteris leaves (the seed fern that covered Gondwana in the Permian), insect wings, or fish. '
+    + 'When the loose slabs run out, prise fresh ones off the ledge.'],
   ['Noodling for opal',
     'Opal forms where silica-rich water seeped into cracks and holes in weathered claystone. The old-timers sank shafts down to the opal level and '
     + 'hauled the clay up by windlass; their white mullock heaps still hold chips they missed. Kneel and scratch through a heap: most of it is potch '
@@ -94,6 +99,10 @@ export class Notes {
     const finds = `<section><h4>Finds on record</h4><table>
       <tr><td>Gold recovered</td><td colspan="2">${(log.goldTotal || 0).toFixed(2)} g (${log.nuggets || 0} nuggets)</td></tr>
       ${rows}</table></section>`;
-    $('notes-body').innerHTML = finds + RULES.map(([h, p]) => `<section><h4>${h}</h4><p>${p}</p></section>`).join('');
+    const ms = this.state.milestones || {};
+    const done = MILESTONES.filter((m) => ms[m.key]).length;
+    const ticks = MILESTONES.map((m) => `<li class="${ms[m.key] ? 'done' : ''}"><b>${m.title}</b> <span>${m.desc}</span></li>`).join('');
+    const milestones = `<section><h4>Milestones (${done} of ${MILESTONES.length})</h4><ul class="milestones">${ticks}</ul></section>`;
+    $('notes-body').innerHTML = milestones + finds + RULES.map(([h, p]) => `<section><h4>${h}</h4><p>${p}</p></section>`).join('');
   }
 }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { makeNoise, fbm, smoothstep } from './noise.js';
+import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
 
 // Diggable heightfield terrain built around the creek, with a simple geology:
@@ -58,6 +58,17 @@ export class Terrain {
     for (const h of this.heaps.slice(0, 6)) {
       const a = rand() * Math.PI * 2;
       this.shafts.push({ x: h.x + Math.cos(a) * (h.r + 1.8), z: h.z + Math.sin(a) * (h.r + 1.8) });
+    }
+    // A ledge of fossil-bearing shale on a slope, clear of everything else.
+    // Its own random stream, so older claims keep their heaps and shafts where they were.
+    const frand = mulberry32(seed * 59 + 31);
+    for (let k = 0; k < 60; k++) {
+      const cand = this.placeSource(-95 + frand() * 190, frand() < 0.5 ? 1 : -1, 26 + frand() * 14);
+      const clear = Object.values(this.sources).every((s) => Math.hypot(s.x - cand.x, s.z - cand.z) > 32)
+        && Math.hypot(cand.x - campX, cand.z) > 35
+        && this.heaps.every((h) => Math.hypot(h.x - cand.x, h.z - cand.z) > 25)
+        && this.shafts.every((h) => Math.hypot(h.x - cand.x, h.z - cand.z) > 25);
+      if ((clear && Math.abs(cand.z) < 95 && Math.abs(cand.x) < 95) || k === 59) { this.sources.fossil = cand; break; }
     }
     this.overlays = [];   // hand-excavation patches that replace the ground where they sit
     this.locked = null;   // terrain vertices tucked under a patch
@@ -467,6 +478,8 @@ export class Terrain {
 
     const grass = smoothstep(0.05, 0.55, n2(x * 0.05 + 100, z * 0.05)) * smoothstep(L.w + 2, L.w + 8, L.d) * 0.6;
     mix(grass, 0.62, 0.56, 0.32);
+    // The shale bed: dark grey ground, littered with weathered chips.
+    if (S.fossil) mix(0.95 * smoothstep(15, 7, Math.sqrt(dist2(S.fossil))) * (0.85 + 0.15 * n2(x * 0.7, z * 0.7)), 0.34, 0.335, 0.33);
 
     // Creek gravels: pale and dry on the bars, dark where wet.
     const inCh = q >= 0 ? smoothstep(2.4, 1.4, q) : smoothstep(-1.3, -0.95, q);

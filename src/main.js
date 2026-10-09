@@ -14,6 +14,10 @@ import { ClaimMap } from './map.js';
 import { IS_TOUCH, TouchControls } from './touch.js';
 import { Wildlife } from './wildlife.js';
 import { Ute } from './vehicle.js';
+import { rollOrders } from './orders.js';
+import { MILESTONES, findMilestones } from './milestones.js';
+import { DustDevils } from './dustdevil.js';
+import { FossilBed, makeFossil, makeFossilMesh, FOSSILS } from './fossils.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
@@ -58,6 +62,10 @@ function writeSave() {
     hour: daynight.hour,
     headlamp,
     findPoints: state.findPoints,
+    slabsSplit: state.slabsSplit,
+    day: state.day,
+    orders: state.orders,
+    milestones: state.milestones,
     panTests: state.panTests,
     leadTraced: state.leadTraced,
     discovered: state.discovered,
@@ -100,6 +108,10 @@ const state = {
   gems: saved.gems || [],
   nuggets: saved.nuggets || [],
   findPoints: saved.findPoints || [],
+  slabsSplit: saved.slabsSplit || [],
+  day: saved.day || 0,
+  orders: saved.orders || null,
+  milestones: saved.milestones || {},
   panTests: saved.panTests || [],
   leadTraced: !!saved.leadTraced,
   discovered: saved.discovered || {},
@@ -210,6 +222,9 @@ state.remaining = targets.remainingGold();
 
 const sound = new Sound();
 const wildlife = new Wildlife(scene, terrain, sound);
+const devils = new DustDevils(scene, terrain, sound);
+const fossils = new FossilBed(scene, terrain, state.seed, new Set(state.slabsSplit));
+if (fossils.colliders) world.colliders.push(...fossils.colliders);
 const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
 if (saved.ute) ute.placeAt(saved.ute.x, saved.ute.z, saved.ute.h);
 let driving = false;
@@ -276,8 +291,38 @@ function toggleHeadlamp() {
   hud.toast(headlamp ? 'Headlamp on.' : 'Headlamp off.');
 }
 
+if (!state.orders) state.orders = rollOrders(state.seed, state.day);
+
+// Tick off a milestone (once).
+function award(key) {
+  if (state.milestones[key]) return;
+  const m = MILESTONES.find((o) => o.key === key);
+  if (!m) return;
+  state.milestones[key] = Date.now();
+  hud.toast(`Milestone: ${m.title}. ${m.desc}`, 'gold');
+}
+
+// An older save: quietly tick off what's already been done, rather than a flood of toasts.
+if (!saved.milestones) for (const m of MILESTONES) if (m.check?.(state, terrain.sources)) state.milestones[m.key] = Date.now();
+
+let milestoneTick = 0;
+function checkMilestones(dt) {
+  milestoneTick -= dt;
+  if (milestoneTick > 0) return;
+  milestoneTick = 1;
+  for (const m of MILESTONES) if (m.check && !state.milestones[m.key] && m.check(state, terrain.sources)) award(m.key);
+}
+
+// A new day: the buyer has fresh orders.
+function newDay() {
+  state.day++;
+  state.orders = rollOrders(state.seed, state.day);
+  setTimeout(() => hud.toast("The buyer's got new orders in. Have a look at camp."), 2500);
+}
+
 const shop = new Shop(state, {
   sound,
+  onOrder: (o, item, pay) => { award('order'); hud.toast(`Handed over ${item.label}. $${pay.toLocaleString()}, cash in hand.`, 'gold'); },
   onChange: () => { writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
   onClose: () => lock(),
   onReset: () => {
@@ -285,7 +330,8 @@ const shop = new Shop(state, {
     state.seed = Math.floor(Math.random() * 1e9);
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
-        seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, log: state.log,
+        seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
+        milestones: state.milestones, day: state.day,
       }));
     } catch { /* ignore */ }
     location.reload();
@@ -569,6 +615,7 @@ function addFind(item, from, at = player.pos) {
     hud.toast(`Ripper! ${cap(item.label)}. That's going in the collection.`, 'gold');
     sound.gold();
   }
+  for (const k of findMilestones(item)) award(k);
   return item;
 }
 
@@ -616,6 +663,14 @@ function inventoryMesh(item) {
     }
     return g;
   }
+  if (item.type === 'fossil') {
+    // Stand the slab up so the split face, with the fossil on it, faces you.
+    const g = new THREE.Group();
+    const m = makeFossilMesh(item);
+    m.rotation.x = 1.15;
+    g.add(m);
+    return g;
+  }
   if (item.crystal || ['quartz', 'feldspar', 'calcite', 'fluorite'].includes(item.type) || (item.type === 'topaz' && item.lengthCm)) {
     const c = item.crystal || { variety: item.variety, len: (item.lengthCm || 3) / 100, broken: false, damage: 0, id: 1, grade: item.grade };
     return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 });
@@ -635,6 +690,7 @@ function nearestPickup() {
 
 function enterUte() {
   driving = true;
+  award('drove');
   document.body.classList.add('driving');
   ute.enter();
   mouseHeld = false;
@@ -698,6 +754,7 @@ function interact() {
   if (sluice.placed && nearSluice() && sluice.cons) {
     const c = sluice.cleanUp();
     state.bucket.unshift(c);
+    award('sluice');
     hud.toast(`Cleaned up the sluice: concentrates from ${c.loads} load${c.loads === 1 ? '' : 's'}. Pan them.`, 'gold');
     sound.coin();
     return;
@@ -711,6 +768,7 @@ function interact() {
   if (ute.near(player.pos)) { enterUte(); return; }
   if (nearTent()) {
     if (daynight.isNight) {
+      if (daynight.hour > 12) newDay(); // past midnight, sunrise ticks the day over by itself
       daynight.hour = 6;
       hud.toast('You crawl into the swag and kip till sunrise. Morning!');
       sound.click();
@@ -1213,7 +1271,29 @@ function updateTools(dt, motion) {
 
   camera.getWorldDirection(camDir);
 
-  if (state.tool === 'hammer') {
+  const fossilTarget = state.tool === 'hammer' ? fossils.pick(camera.position, camDir) : null;
+  if (fossilTarget) {
+    prompt = fossilTarget.slab ? 'Click to split the slab along its bedding' : 'Click to prise a slab off the ledge';
+    if (clicked && digCooldown <= 0) {
+      digCooldown = 0.3;
+      view.playTap();
+      sound.tap(0);
+      const r = fossils.tap(fossilTarget, player.pos);
+      if (r.message) hud.toast(r.message);
+      if (r.done) {
+        const sl = r.split;
+        if (sl.id < 500) state.slabsSplit.push(sl.id);
+        sound.crack();
+        if (sl.content) {
+          const fz = makeFossil(sl.content, mulberry32(sl.seed));
+          addFind(fz, 'Split out of a slab of Permian shale', sl);
+          if (!fz.specimen) hud.toast(sl.content === 'fish' ? 'Strewth, a fossil fish!' : `A ${FOSSILS[sl.content].name}!`, 'gold');
+          sound.gold();
+        } else hud.toast('Nothing in this one. Have a crack at another.', 'junk');
+        writeSave();
+      }
+    }
+  } else if (state.tool === 'hammer') {
     const hit = terrain.raycast(camera.position, camDir, 3.2);
     prompt = hit ? 'Click to tap the rock and listen' : 'Aim at the ground';
     if (hit && clicked && digCooldown <= 0) {
@@ -1444,6 +1524,7 @@ const DISCOVERY = {
   rhyolite: 'Pink rhyolite. Agates weather out of it and wash onto the bars downstream.',
   granite: 'Granite country, with quartz veins. Look for crystal pockets and vugs here.',
   opal: 'The old opal workings. Kneel at a mullock heap and noodle for chips the old-timers missed. Stay clear of the shafts!',
+  fossil: 'A ledge of grey shale. Split the slabs with the rock hammer (6): some hold fossil leaves, insects, even fish.',
 };
 let discoverTick = 0;
 function checkDiscoveries(dt) {
@@ -1452,7 +1533,7 @@ function checkDiscoveries(dt) {
   discoverTick = 1;
   for (const [key, src] of Object.entries(terrain.sources)) {
     if (state.discovered[key]) continue;
-    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'granite' || key === 'opal' ? 24 : 26)) {
+    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
       state.discovered[key] = true;
       if (key === 'reef') setTimeout(checkLead, 100);
       hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
@@ -1462,14 +1543,15 @@ function checkDiscoveries(dt) {
   }
 }
 
-let lastHour = 0;
+let lastHour = null;
 function duskHints() {
   const h = daynight.hour;
+  if (lastHour === null) lastHour = h; // not on the first frame after loading
   if (lastHour < 18.3 && h >= 18.3) {
     hud.toast(headlamp ? 'Sun going down.' : 'Getting dark. Press L for your headlamp.');
     if (ownsUv()) hud.toast('Good night for the UV torch (7) up around the reef.');
   }
-  if (lastHour < 5.8 && h >= 5.8) hud.toast('Sun\'s coming up.');
+  if (lastHour < 5.8 && h >= 5.8) { newDay(); hud.toast('Sun\'s coming up.'); }
   lastHour = h;
 }
 
@@ -1516,6 +1598,10 @@ function frame() {
   water.uniforms.sunDir.value.copy(daynight.lightDir);
   water.uniforms.sunColor.value.copy(daynight.base.sunColor).multiplyScalar(daynight.daylight > 0.05 ? 1 : 0.35);
   checkDiscoveries(dt);
+  checkMilestones(dt);
+  const willy = devils.update(dt, { hour: daynight.hour, storm: weather.storm, player: player.pos, active: playing });
+  if (willy === 'spawned') hint('willy', 'Willy-willy! A dust devil spinning up out on the flat. Hang onto your hat.', 900);
+  if (willy === 'hit') hud.toast(driving ? 'A willy-willy goes right over the ute. Dust everywhere.' : 'Strewth! A willy-willy went right over ya. Eyes full of dust.');
   wildlife.update(dt, {
     player: { x: player.pos.x, z: player.pos.z, speed: Math.hypot(player.vel.x, player.vel.z) },
     cam: camera.position, daylight: daynight.daylight, hour: daynight.hour, playing,
@@ -1562,7 +1648,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, fossils, devils, award, newDay, shop, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
-  setMouse: (v) => { mouseHeld = v; },
+  setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

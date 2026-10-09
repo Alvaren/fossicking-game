@@ -82,11 +82,15 @@ export const UPGRADES = {
 
 export const gear = (state, key) => UPGRADES[key].levels[state.up[key] || 0];
 
+import { ORDERS, orderPay, bestFor } from './orders.js';
+
 const $ = (id) => document.getElementById(id);
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export class Shop {
-  constructor(state, { onChange, onClose, onReset, sound }) {
+  constructor(state, { onChange, onClose, onReset, onOrder, sound }) {
     this.state = state;
+    this.onOrder = onOrder;
     this.onChange = onChange;
     this.onClose = onClose;
     this.onReset = onReset;
@@ -121,6 +125,40 @@ export class Shop {
       `"G'day. Gold's $${GOLD_PRICE} a gram, nuggets a bit better. Stones I'll grade and pay on the piece. `
       + `Reckon there's ${s.remaining} decent nuggets still in the ground on this claim. `
       + `${s.forecast ? `Radio says a storm's due this arvo, about ${s.forecast} minutes off. Creek'll come up, so don't leave your sluice in.` : 'Weather looks crook upstream.'}"`;
+
+    // Special orders: pay over the odds for the right piece.
+    const ord = $('shop-orders');
+    ord.innerHTML = '';
+    for (const o of s.orders || []) {
+      const def = ORDERS[o.key];
+      const r = document.createElement('div');
+      r.className = 'item' + (o.filled ? ' filled' : '');
+      const info = document.createElement('div');
+      const btn = document.createElement('button');
+      const have = o.filled ? null : bestFor(o, [...s.gems, ...s.nuggets]);
+      let desc;
+      if (o.filled) desc = 'Done. They were stoked.';
+      else if (have) desc = `You've got ${have.label}. They'll pay $${orderPay(o, have).toLocaleString()} for it (normally $${Math.round(have.value)}).`;
+      else desc = [...s.gems, ...s.nuggets].some((i) => i.keep && def.match(i))
+        ? "You've got one in your collection, but that's not for sale here."
+        : 'Nothing that fits yet.';
+      info.innerHTML = `<div class="name">${def.who} wants ${def.want}.</div><div class="desc">${desc}</div>`;
+      btn.textContent = o.filled ? 'Filled' : 'Hand over';
+      btn.disabled = !have;
+      btn.onclick = () => {
+        const pay = orderPay(o, have);
+        const list = have.type === 'nugget' ? s.nuggets : s.gems;
+        list.splice(list.indexOf(have), 1);
+        s.cash += pay;
+        o.filled = true;
+        this.onOrder?.(o, have, pay);
+        this.sound.coin();
+        this.onChange();
+        this.render();
+      };
+      r.append(info, btn);
+      ord.append(r);
+    }
 
     const sell = $('shop-sell');
     sell.innerHTML = '';

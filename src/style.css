@@ -221,6 +221,14 @@ button.ghost { background: transparent; color: var(--muted); border: 1px solid v
 }
 .item .name { font-weight: 650; }
 .item .desc { font-size: 13px; color: var(--muted); }
+.milestones { list-style: none; padding: 0; margin: 0; columns: 2 260px; column-gap: 24px; }
+.milestones li { break-inside: avoid; padding: 3px 0 3px 24px; position: relative; font-size: 13px; color: var(--muted); }
+.milestones li::before { content: ''; position: absolute; left: 2px; top: 6px; width: 11px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; opacity: 0.6; }
+.milestones li.done { color: inherit; }
+.milestones li.done::before { content: '¹3'; border-color: #f2c14e; color: #f2c14e; opacity: 1; font-size: 11px; line-height: 11px; text-align: center; }
+.milestones li b { font-weight: 650; }
+.h-note { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 6px; }
+.item.filled { opacity: 0.55; }
 .shop-footer { display: flex; justify-content: space-between; margin-top: 20px; gap: 12px; }
 
 #jig {

@@ -18,7 +18,9 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const chan = (x, z) => { creek.local(x, z, L); return L.d - L.w; }; // metres outside the wetted channel
 
   const nearCamp = (x, z, r) => Math.hypot(x - camp.x, z - camp.z) < r;
-  const blocked = (x, z, r) => avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r);
+  const fossil = terrain.sources.fossil;
+  const blocked = (x, z, r) => avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
+    || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < r + 7); // keep the shale bed clear
   const m4 = new THREE.Matrix4();
   const q = new THREE.Quaternion();
   const up = new THREE.Vector3(0, 1, 0);
@@ -32,7 +34,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     const x = (rand() * 2 - 1) * (half - 4);
     const z = (rand() * 2 - 1) * (half - 4);
     const c = chan(x, z);
-    if (c < 2.5 || nearCamp(x, z, 13)) continue;
+    if (c < 2.5 || nearCamp(x, z, 13) || blocked(x, z, 2)) continue;
     const p = c < 12 ? 0.55 : 0.07; // river red gums crowd the banks
     if (rand() > p) continue;
     const sc = 0.75 + rand() * 0.6;
@@ -156,7 +158,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   for (let tries = 0; tries < 60000 && placed < tuftCount; tries++) {
     const x = (rand() * 2 - 1) * (half - 3);
     const z = (rand() * 2 - 1) * (half - 3);
-    if (chan(x, z) < 2 || nearCamp(x, z, 6)) continue;
+    if (chan(x, z) < 2 || nearCamp(x, z, 6) || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < 6)) continue;
     const patch = terrain.n2(x * 0.05 + 100, z * 0.05) * 0.5 + 0.5;
     if (rand() > 0.15 + patch * 0.6) continue;
     const sc = 0.3 + rand() * 0.45;

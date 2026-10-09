@@ -87,7 +87,8 @@ GEMS.feldspar = { name: 'Feldspar', plural: 'feldspar crystals' };
 GEMS.calcite = { name: 'Calcite', plural: 'calcite crystals' };
 GEMS.fluorite = { name: 'Fluorite', plural: 'fluorite crystals' };
 GEMS.opal = { name: 'Opal', plural: 'opals' };
-export const CRYSTAL_ORDER = ['opal', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
+GEMS.fossil = { name: 'Fossil', plural: 'fossils' };
+export const CRYSTAL_ORDER = ['opal', 'fossil', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
 
 export function makeGem(type, rand, sizeBias = 1) {
   const def = GEMS[type];

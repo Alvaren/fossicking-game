@@ -21,8 +21,11 @@ function isSpecimen(item, r) {
       return A && item.ct >= 1 && r() < 0.3;
     case 'spinel':
       return false;
+    case 'fossil':
+      return item.variety === 'wholefish' || (item.grade === 'A' && (item.variety === 'fish' || item.variety === 'insect'));
     case 'opal':
       if (item.variety === 'potch' || item.broken || item.chipped) return false;
+      if (item.variety === 'opalised shell') return true;
       return (item.pattern === 'harlequin' && item.bright >= 4) || (item.variety === 'black opal' && item.bright >= 4) || (item.ct >= 12 && item.bright >= 5);
     case 'scheelite':
       return A && item.grams >= 20;
