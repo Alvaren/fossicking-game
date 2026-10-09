@@ -4,6 +4,14 @@ import { GEMS, GEM_ORDER, CRYSTAL_ORDER } from './minerals.js';
 // The field notebook: how placers work, and what you've found so far.
 
 const RULES = [
+  ['Work the pan, one layer at a time',
+    'Start around half full, or less with clay and concentrates. Submerge and rub clay clumps apart: bound gold can leave inside a lump. '
+    + 'Short level shakes let dense grains settle. Lift to the waterline, tip the coarse riffles forward and wash off a thin top layer. '
+    + 'Submerge and re-stratify after each layer. Too much tilt, fast strokes or a crowded pan can carry fine gold over the lip.'],
+  ['Concentrates and the reveal',
+    'Black sand is heavy mineral concentrate, not proof of gold. Once the light gravel is gone, slow down. Fine riffles suit a small finishing load; '
+    + 'the smooth lip lets you roll a shallow film of water across the black sand and fan it back for the reveal. '
+    + 'Easy demonstrates the same sequence. Realistic uses your mouse or touch strokes. This is a simplified teaching model, not calibrated fluid dynamics.'],
   ['Heavies drop where the water slows',
     'Gold (SG 19), zircon (4.7), sapphire and garnet (about 4) and black spinel (3.8) settle wherever the current loses speed: '
     + 'the upstream head of the point bar on the inside of a bend, the slack water behind boulders, and where a fast riffle runs into a pool.'],

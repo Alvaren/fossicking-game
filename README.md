@@ -11,6 +11,7 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Sweep a metal detector for nuggets and gold-in-quartz (and plenty of junk)
 - Dig, pan and wet-sieve creek wash for gold, sapphires, zircons, garnets, topaz and agates
 - Set a sluice box in the right run of water, clean up and pan the concentrates
+- Work a gold pan by hand: choose a load, break clay, stratify, wash over the riffles, repeat and reveal the concentrates. Mouse and touch strokes control Realistic mode; Easy demonstrates the technique.
 - Read the creek: heavies settle on the inside of bends, behind boulders and on bedrock
 - Trace a gold lead up the creek to its reef by counting colours in the pan
 - Kneel and excavate crystal pockets and quartz-vein vugs by hand (amethyst, smoky quartz, fluorite...)
@@ -56,3 +57,5 @@ Every push to `main` builds and publishes the game to GitHub Pages (`.github/wor
 ## Working with coding agents
 
 Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md) before editing. Codex and Claude Code use separate worktrees and server ports, with file ownership checked before integration.
+
+Gold panning: select the pan (3) in the creek, then click or tap Use. Drag on the close-up pan; the action buttons select clay breakup, stratification, washing and reveal. Put aside saves the partly worked pan. See [panning controls and model notes](docs/PANNING.md).

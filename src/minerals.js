@@ -1,3 +1,4 @@
+import { assayGold } from './panning.js';
 import { makeThundereggMesh, thundereggRadius } from './geodes.js';
 import { stoneMaterial, roundedHabit } from './materials.js';
 import { makeCutMesh } from './cutting.js';
@@ -157,9 +158,29 @@ function recovery(method, gear, gem, opts, cons) {
   return base * settled;
 }
 
+// Assay a panning parcel once, before splitting it between pans. The assay
+// describes what is present; pan upgrades never multiply its gold content.
+export function rollPanContents(sample, rand = Math.random) {
+  const oreRelease = sample.crushed ? (sample.roasted ? 0.9 : 0.55) : 1;
+  const gold = assayGold(Math.max(0, sample.gold || 0) * (sample.cons ? 0.8 + rand() * 0.4 : 0.4 + rand() * 1.2) * oreRelease, rand);
+  const picker = rand() < Math.min(0.5, (sample.gold || 0) * (sample.cons ? 0.3 : 0.6)) ? 0.2 + rand() * 0.8 : 0;
+  const finds = [];
+  for (const type of GEM_ORDER) {
+    const count = poisson(sample[type] || 0, rand);
+    for (let i = 0; i < count; i++) finds.push({ item: makeGem(type, rand, sample.sizeBias || 1), at: rand(), survival: rand() });
+  }
+  return { gold, picker, pickerAt: rand(), finds };
+}
+
 // Turn one load into actual finds.
 // opts (sieve only): strat 0..1 how well it was jigged, lost = seconds over-jigged.
 export function processLoad(sample, method, gear, rand = Math.random, opts = {}) {
+  // A bucket remainder already assayed for panning must not roll new finds.
+  if (sample.panContents) {
+    const c = sample.panContents;
+    return { gold: c.gold * (method === 'pan' ? 0.95 : 0.12), picker: c.picker,
+      finds: c.finds.filter(f => rand() < recovery(method, gear, f.item, opts, !!sample.cons)).map(f => f.item), blackSand: sample.blackSand };
+  }
   const out = { gold: 0, picker: 0, finds: [], blackSand: sample.blackSand };
   const cons = !!sample.cons;
   // Crushed reef ore: roasting frees the gold the sulphides were holding on to.

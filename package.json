@@ -8,6 +8,9 @@
     "dev:codex": "vite --host 127.0.0.1 --port 5191 --strictPort",
     "dev:lan": "vite --host --port 5190",
     "build": "vite build",
+    "test": "node --test tests/*.test.js",
+    "test:panning:browser": "node tests/panning.browser.mjs",
+    "test:panning:game": "node tests/panning.game.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

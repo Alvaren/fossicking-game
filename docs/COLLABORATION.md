@@ -68,3 +68,10 @@ Installed Blender: `C:/Program Files/Blender Foundation/Blender 5.2/blender.exe`
 - Blender 5.2.2 ran in a fresh headless process and saved a disposable .blend successfully. MCP failures are documented above.
 - Remote control was not enabled by the agent: there is no exposed toggle in this session. Pair the phone in Settings > Connections > Control this Mac or PC > Set up/Add, then scan the QR code. Official instructions: https://learn.chatgpt.com/docs/remote-connections
 - The user's main checkout and Claude's checkout were left untouched. No merge, push or deployment was performed.
+## Panning handoff (10 October 2026)
+
+The user authorized the panning slice and confirmed Claude was finished for the night. Codex created `codex/skill-based-panning` and merged local main at `ea39cfa` into its own worktree before implementation. Claude's hydrology, classification and highbanker commits are preserved.
+
+The implemented panning model, controls, pan profiles, saves and tests are documented in [PANNING.md](PANNING.md). Validation passed: 14 simulation tests, the production build, actual emulated-touch and mouse UI checks, and full-game entry/save/reward integration. Browser checks reported no page errors. Existing unrelated three.js warnings remain.
+
+The preview remains on port 5191. Main and Claude's checkout remain unchanged. No push or deployment was performed. Integrate the finished feature branch, including the setup instructions, when the user wants it in the main game; reload CLAUDE.md/AGENTS.md in Claude's checkout then.

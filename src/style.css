@@ -389,3 +389,75 @@ body.touch #photo-help { display: none; }
 .diff-row { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; margin: 0 0 14px; }
 .diff-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
 .diff-row .desc { grid-column: 1 / -1; margin: 0; font-size: 13px; color: var(--muted); }
+
+/* Close-up panning uses pointer events for the same mouse and touch technique. */
+#panning { position: fixed; inset: 0; z-index: 8; overflow: auto; background: #07120fe8; padding: 28px; overscroll-behavior: contain; }
+.pan-shell { max-width: 1160px; margin: auto; background: #11251e; border: 1px solid #59715c66; border-radius: 18px; box-shadow: 0 24px 90px #0009; overflow: hidden; color: #edf1e5; }
+.pan-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 25px 30px; border-bottom: 1px solid #9cbca329; }
+.pan-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; color: #a5bba6; }
+.pan-header h1 { font-size: clamp(24px, 3vw, 36px); font-weight: 600; letter-spacing: -0.035em; margin: 3px 0 0; color: #f2ead1; }
+#panning button, #panning select { font: inherit; color: inherit; background: #233a2d; border: 1px solid #71947766; border-radius: 8px; padding: 10px 13px; min-height: 42px; cursor: pointer; }
+#panning button:hover:not(:disabled) { background: #35533d; border-color: #b9c99a; }
+#panning button:focus-visible, #panning select:focus-visible, #panning input:focus-visible, #pan-canvas:focus-visible { outline: 2px solid #ead288; outline-offset: 3px; }
+#panning button:disabled { opacity: 0.55; cursor: default; }
+#pan-close { white-space: nowrap; font-size: 12px !important; }
+#pan-close span { margin-left: 12px; color: #9aaf9c; }
+.pan-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); }
+.pan-view { position: relative; padding: 20px 24px; background: radial-gradient(ellipse at 50% 45%, #203e32, #0c1c18 80%); min-width: 0; }
+.pan-view-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: #bdcdbd; }
+.pan-badge { border: 1px solid #9ab99b44; padding: 5px 8px; border-radius: 20px; font-size: 9px; letter-spacing: 0.07em; white-space: nowrap; }
+#pan-canvas { width: 100%; height: auto; display: block; touch-action: none; cursor: grab; }
+#pan-canvas:active { cursor: grabbing; }
+.pan-gesture { color: #c9d5bf; text-align: center; font-size: 12px; min-height: 35px; }
+.pan-speed { display: flex; gap: 12px; align-items: center; max-width: 370px; margin: 15px auto; font-size: 10px; letter-spacing: 0.08em; color: #8ea895; }
+.pan-speed > div { flex: 1; height: 4px; background: #344638; border-radius: 5px; overflow: hidden; }
+.pan-speed i { display: block; height: 100%; width: 0; background: #9cc8aa; }
+.pan-speed strong { width: 75px; font-weight: 500; letter-spacing: 0; }
+.pan-legend { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; font-size: 10px; color: #8fa390; }
+.pan-legend i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; }
+.pan-legend .gravel { background: #b49e7a; }.pan-legend .heavy { background: #53605b; }.pan-legend .clay { background: #a5714d; }
+.pan-workbench { padding: 26px; border-left: 1px solid #9cbca329; background: #172c22; }
+.pan-workbench h2 { font-size: 24px; line-height: 1.2; font-weight: 500; color: #f0e5c4; margin: 9px 0 22px; }
+.pan-muted { font-size: 12px; color: #9dae98; line-height: 1.6; }
+.pan-label { display: flex; justify-content: space-between; font-size: 12px; color: #c5d1ba; margin: 15px 0 7px; }
+#panning select { width: 100%; font-size: 13px; }
+#panning input[type=range] { width: 100%; accent-color: #dfc780; min-height: 28px; cursor: pointer; }
+.pan-scale { display: flex; justify-content: space-between; color: #849b86; font-size: 10px; }
+#pan-load-note { font-size: 12px; line-height: 1.6; color: #d9caa2; min-height: 40px; }
+.pan-source { padding: 16px; margin: 20px 0; border: 1px solid #71947744; border-radius: 8px; }
+.pan-source p { margin: 8px 0 0; font-size: 12px; color: #c3cdb9; line-height: 1.6; }
+#panning .pan-primary { width: 100%; background: #e7cf8c; color: #213126; font-weight: 700; border: 0; }
+#panning .pan-primary:hover { background: #f3dda4; }
+.pan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 14px; }
+.pan-actions button { text-align: left; font-size: 12px !important; padding: 9px !important; }
+.pan-actions span { margin-right: 7px; color: #b9aa7e; }
+#panning .pan-actions .active { background: #dfcb8830; border-color: #e2c985; opacity: 1; }
+.pan-instruction { font-size: 12px; color: #c5d2bd; line-height: 1.6; min-height: 57px; }
+.pan-adjustments { border-top: 1px solid #78937433; padding-top: 1px; }
+#pan-water { width: 100%; font-size: 12px !important; margin-top: 6px; }
+.pan-meters { display: grid; gap: 8px; margin-top: 20px; }
+.pan-meters label { display: grid; grid-template-columns: 1fr auto; color: #aabd9f; font-size: 11px; }
+.pan-meters meter { grid-column: span 2; width: 100%; height: 9px; accent-color: #9abe95; }
+.pan-feedback { padding: 12px 13px; border-left: 2px solid #dfc780; background: #d8c5850a; font-size: 12px; line-height: 1.6; color: #e5d6ae; min-height: 62px; }
+.pan-step-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#pan-auto { font-size: 10px !important; padding: 6px !important; min-height: 30px !important; }
+#pan-result-detail, #pan-result-finds { color: #bcccb7; font-size: 14px; line-height: 1.8; margin-bottom: 25px; }
+.pan-footer { display: flex; justify-content: space-between; gap: 15px; padding: 16px 26px; border-top: 1px solid #9cbca329; color: #8ca388; font-size: 9px; letter-spacing: 0.1em; }
+body.panning-open #rotate-hint, body.panning-open #hud, body.panning-open #touch { display: none !important; }
+@media (max-width: 700px) {
+  #panning { padding: 8px; }
+  .pan-header { padding: 17px; gap: 8px; }.pan-header h1 { font-size: 25px; }#pan-close span { display: none; }
+  .pan-layout { grid-template-columns: 1fr; }.pan-workbench { border-left: 0; border-top: 1px solid #9cbca329; padding: 20px; }
+  .pan-view { padding: 14px; }#pan-canvas { max-height: 330px; object-fit: contain; }.pan-gesture { min-height: 0; }.pan-speed { margin: 8px auto; }
+  .pan-footer { padding: 13px; font-size: 8px; }.pan-view-top { font-size: 11px; }.pan-badge { font-size: 8px; }
+}
+@media (orientation: landscape) and (max-height: 600px) {
+  #panning { padding: 6px; }.pan-header { padding: 12px 20px; }.pan-header h1 { font-size: 23px; }
+  .pan-layout { grid-template-columns: 1.1fr 1fr; }.pan-workbench { padding: 18px; }.pan-view { position: sticky; top: 0; align-self: start; }#pan-canvas { max-height: 330px; object-fit: contain; }
+}
+.pan-mobile-actions { display: none; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .pan-mobile-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 13px; }
+  #panning .pan-mobile-actions button { padding: 7px 4px; font-size: 10px; min-height: 40px; }
+  #panning .pan-mobile-actions .active { border-color: #e2c985; background: #dfcb8830; opacity: 1; }
+}

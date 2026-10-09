@@ -88,6 +88,9 @@ export class Deposits {
     const gk = base ? 1 : difficulty.gold, mk = base ? 1 : difficulty.gems;
     return {
       layer,
+      // Game-scale clay fraction: weathered topsoil/bench wash binds more than
+      // clean channel gravel. The value travels with the sample into the pan.
+      clay: Math.min(0.5, (layer === 'topsoil' ? 0.28 : layer === 'bedrock' ? 0.14 : 0.04) + bench * 0.18 + flat * 0.08),
       gold: 0.03 * gold * gk, // grams of fine gold per load
       sapphire: 0.16 * gem * mk,
       zircon: 0.28 * gem * mk,

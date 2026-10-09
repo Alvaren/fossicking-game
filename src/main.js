@@ -44,6 +44,8 @@ import { PhotoMode } from './photo.js';
 import { WorldDetector } from './worlddetector.js';
 import { Oversize } from './oversize.js';
 import { Bedload } from './bedload.js';
+import { PanningUI } from './panningui.js';
+import { rollPanContents } from './minerals.js';
 import { FUEL_PER_LOAD } from './sluice.js';
 import { difficulty, setDifficulty, LEVELS, ORDER } from './difficulty.js';
 import { GemShow, ShowStall, isShowDay, daysUntilShow, OPENS, CLOSES } from './gemshow.js';
@@ -75,6 +77,7 @@ function writeSave() {
     oversize: oversize.snapshot(),
     bedload: bedload.snapshot(),
     bucket: state.bucket,
+    panSession: state.panSession,
     player: (() => {
       const pp = mine.inside || mine.climb ? mine.exitSpot() : player.pos;
       return { x: pp.x, z: pp.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool };
@@ -154,6 +157,7 @@ const state = {
   discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
+  panSession: saved.panSession?.version === 1 ? saved.panSession : null,
   tool: 'detector',
   remaining: 0,
 };
@@ -343,7 +347,7 @@ let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
 const map = new ClaimMap(state, terrain, { onClose: () => lock() });
-const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
+const modalOpen = () => panUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
 
 function toggleHeadlamp() {
   headlamp = !headlamp;
@@ -412,6 +416,12 @@ const shop = new Shop(state, {
   },
 });
 const notes = new Notes(state, { onClose: () => lock() });
+const panUI = new PanningUI(state, {
+  assay: sample => rollPanContents(sample),
+  onSave: () => writeSave(),
+  onCollect: (sample, result) => finishLoad('pan', { sample, result }),
+  onClose: () => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; lock(); },
+});
 const gemshow = new GemShow(state, {
   sound,
   onChange: () => { writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
@@ -1168,10 +1178,13 @@ function gearInfo() {
 }
 
 function finishLoad(method, opts = {}) {
-  const sample = state.bucket.shift();
-  const res = processLoad(sample, method, gearInfo(), Math.random, opts);
-  const gold = Math.round(res.gold * 1000) / 1000;
-  if (gold > 0.0005) {
+  const sample = opts.sample || state.bucket.shift();
+  if (!sample) return;
+  const res = opts.result || processLoad(sample, method, gearInfo(), Math.random, opts);
+  // Preserve sub-milligram colours from the panning model instead of rounding
+  // away genuine recovery on Realistic. Sieve behaviour remains unchanged.
+  const gold = opts.result ? res.gold : Math.round(res.gold * 1000) / 1000;
+  if (gold > 0) {
     state.gold += gold;
     logGold(gold, false);
   }
@@ -1201,7 +1214,7 @@ function finishLoad(method, opts = {}) {
   }
   if (res.picker) parts.push(`bonza, a ${res.picker.toFixed(2)} g picker`);
   else if (colours) parts.push(`${colours} colour${colours === 1 ? '' : 's'} (${gold.toFixed(3)} g)`);
-  else if (gold >= 0.001) parts.push(`${gold.toFixed(3)} g fine gold`);
+  else if (gold > 0) parts.push(gold < 0.01 ? `${(gold * 1000).toFixed(2)} mg fine gold` : `${gold.toFixed(3)} g fine gold`);
   const stones = summarise(res.finds);
   if (stones) parts.push(stones);
   const notable = res.finds.filter((f) => f.type === 'sapphire' || f.type === 'topaz' || (f.type === 'agate' && f.grade === 'A'));
@@ -1211,7 +1224,7 @@ function finishLoad(method, opts = {}) {
 
   if (!parts.length) hud.toast(method === 'pan' ? 'Not a colour. Nothing but black sand. Bugger.' : 'Just gravel in the sieve.', 'junk');
   if (method === 'pan' && colours) hint('colours', 'Count the colours as you pan your way up the creek. Where they stop, the gold\'s source is close. Your tests go on the map (M).', 600);
-  else hud.toast(cap(parts.join(', ')) + '.', 'gold');
+  else if (parts.length) hud.toast(cap(parts.join(', ')) + '.', 'gold');
   for (const f of notable) hud.toast(cap(f.label) + '!', 'gold');
   if (res.picker || notable.length) sound.gold(); else if (parts.length) sound.coin();
 
@@ -1720,24 +1733,6 @@ function updatePlayer(dt) {
   return { moving: hspeed > 0.5 && player.grounded, running, depth };
 }
 
-// Shared logic for the two creek tools (pan and sieve).
-function washTool(dt, motion, progress, time, onDone) {
-  const inWater = motion.depth > 0.15;
-  const verb = state.tool === 'pan' ? 'pan' : 'sieve';
-  if (!inWater) {
-    return { progress: 0, active: false, prompt: state.bucket.length ? `Wade into the creek to ${verb}` : 'Dig some wash with the shovel first' };
-  }
-  if (!state.bucket.length && progress === 0) return { progress: 0, active: false, prompt: 'Bucket empty. Dig some wash first' };
-  if (mouseHeld) {
-    progress += dt / time;
-    if (progress >= 1) { progress = 0; onDone(); }
-    return { progress, active: true, prompt: '' };
-  }
-  const n = state.bucket.length;
-  const what = state.bucket[0]?.crushed ? 'the crushed ore' : state.bucket[0]?.cons ? 'the sluice concentrates' : `${n} load${n === 1 ? '' : 's'}`;
-  return { progress, active: false, prompt: `Hold click to ${verb === 'pan' ? 'pan' : 'jig the sieve'} (${what})` };
-}
-
 function updateTools(dt, motion) {
   if (works.dolly.active) {
     const msg = updateDollyPot();
@@ -1895,10 +1890,17 @@ function updateTools(dt, motion) {
   }
 
   if (state.tool === 'pan') {
-    const cons = state.bucket[0]?.cons;
-    const time = gear(state, 'pan').time * (cons ? 1.5 : gearInfo().classifier ? 0.65 : 1);
-    const r = washTool(dt, motion, panProgress, time, () => finishLoad('pan'));
-    panProgress = r.progress; panning = r.active; prompt = r.prompt;
+    panProgress = 0;
+    const available = state.panSession || state.bucket.length;
+    prompt = !available ? 'Dig some wash or clean up the sluice first'
+      : motion.depth <= 0.15 && !state.panSession ? 'Wade into the creek to load your pan'
+        : state.panSession ? 'Click / Use: return to your partly worked pan' : 'Click / Use: load and work your gold pan';
+    if (playing && (clicked || mouseHeld) && available && (motion.depth > 0.15 || state.panSession)) {
+      mouseHeld = false; clicked = false; keys.clear();
+      if (touch) { touch.use = false; touch.move.x = 0; touch.move.y = 0; }
+      openModal(panUI);
+      return;
+    }
   }
   let showJig = false;
   if (state.tool === 'sieve') {
@@ -2207,6 +2209,17 @@ function frame() {
   const raw = clock.getDelta();
   const dt = Math.min(raw, 0.05);
   countFps(raw);
+  // The pan is a close-up workstation. Keep the last world frame behind it
+  // rather than rendering the whole claim on every mobile finger stroke.
+  if (panUI.isOpen) {
+    panUI.update(dt);
+    sound.setDetector(false, 0, null);
+    sound.setSluice(0);
+    sound.setPump?.(0);
+    sound.setAmbience(dt, 0.25, !!panUI.session && panUI.session.lastAction !== 'rest' && !panUI.session.finished);
+    requestAnimationFrame(frame);
+    return;
+  }
   if (touch && playing) {
     mouseHeld = touch.use;
     if (touch.use && !touchUseWas) clicked = true;
@@ -2309,7 +2322,7 @@ view.setTool(viewTool());
 hud.tool(state.tool);
 
 // Save on a timer while you play, when you pause, and when the tab is hidden or closed.
-setInterval(() => { if (playing) writeSave(); }, 60000);
+setInterval(() => { if (playing || panUI.isOpen) writeSave(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (document.hidden) writeSave(); });
 window.addEventListener('beforeunload', () => writeSave());
 

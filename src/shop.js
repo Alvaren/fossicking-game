@@ -38,9 +38,9 @@ export const UPGRADES = {
   pan: {
     title: 'Gold pan',
     levels: [
-      { label: 'Plastic pan', time: 4, mult: 1 },
-      { label: 'Riffled pan', time: 2.8, mult: 1.3, cost: 180, desc: 'Faster, and keeps more fine gold.' },
-      { label: 'Pro pan', time: 1.8, mult: 1.6, cost: 800, desc: 'Fastest panning, best recovery.' },
+      { label: 'Standard riffled pan', time: 4, mult: 1 },
+      { label: 'Deep-riffle pan', time: 2.8, mult: 1, cost: 180, desc: 'More capacity and deeper coarse traps. Takes longer to stratify and clean out.' },
+      { label: 'Dual-riffle finishing pan', time: 1.8, mult: 1, cost: 800, desc: 'Small finishing riffles protect fine gold. Less capacity; choose any owned pan when loading.' },
     ],
   },
   classifier: {
