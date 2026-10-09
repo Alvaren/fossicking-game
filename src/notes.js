@@ -75,6 +75,10 @@ const RULES = [
     + 'so a scatter of glowing scheelite on a slope at night says gold country. Plenty of chalcedony agate glows green too.'],
   ['Old benches',
     'The flat terrace above the creek on one side is an old channel. Its wash is buried under topsoil, but it was sorted by the same water and can be rich.'],
+  ['Gem shows',
+    'Every third day a gem and mineral show sets up at camp. Enter up to three collection pieces: the judges favour specimen-grade, '
+    + 'perfect pieces, and a ribbon brings prize money and makes the collectors keener. Then each piece goes under the hammer. '
+    + 'You can knock back any bid and take the piece home.'],
   ['Metal detectors',
     'Detectors only hear metal: nuggets, and a lot of junk. Gems and agates make no sound at all.'],
 ];

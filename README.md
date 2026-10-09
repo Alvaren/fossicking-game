@@ -22,7 +22,8 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Treat reef ore the old way: roast it on the campfire, crush it in the dolly pot (or a petrol hammer mill), pan the grit
 - Tap loose boulders for hollow vugs, split them with plug and feathers and prise out the crystals
 - Pick up thundereggs below the rhyolite and have them sawn open to see the agate star inside
-- Show off your collection in the cabinet at camp
+- Show off your collection in the cabinet at camp, and enter your best pieces at the gem show every third day: judging, ribbons and a live auction
+- Photo mode: float the camera about, zoom, tilt, add a film filter and save the shot
 - Send rough stones to the gem cutter in town: faceted sapphires, zircons and amethyst, polished opal and agate
 - Physically based gold and see-through, light-bending gems; graphics settings (Low to Ultra) for slower devices and phones
 - Fill the buyer's special orders for a bonus, and tick off milestones in your field notes
@@ -30,7 +31,7 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 
 ## Controls
 
-Keyboard and mouse: **WASD** move, **mouse** look, **1-7** tools, **left click** use, **right click / F** flip sieve, **E** pick up / talk, **C** kneel, **I** inventory, **M** map, **N** field notes, **L** headlamp, **H** controls, **P** pause, **F5 / Ctrl+S** save.
+Keyboard and mouse: **WASD** move, **mouse** look, **1-7** tools, **left click** use, **right click / F** flip sieve, **E** pick up / talk, **C** kneel, **I** inventory, **M** map, **N** field notes, **L** headlamp, **K** photo mode, **H** controls, **P** pause, **F5 / Ctrl+S** save.
 
 Touch screens get an on-screen stick and buttons automatically.
 

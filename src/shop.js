@@ -1,4 +1,5 @@
 import { cuttable, cutFee, cutEstimate } from './cutting.js';
+import { daysUntilShow } from './gemshow.js';
 // Gear upgrades and the gold buyer's table.
 
 export const GOLD_PRICE = 95; // dollars per gram
@@ -107,6 +108,12 @@ import { ORDERS, orderPay, bestFor } from './orders.js';
 
 const $ = (id) => document.getElementById(id);
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const showNews = (day) => {
+  const n = daysUntilShow(day);
+  return n === 0 ? "Gem show's on over at the marquee today. Take your collection pieces over."
+    : n === 1 ? 'Gem show here tomorrow. Collectors pay well for a good specimen, better if it wins a ribbon.'
+      : `Next gem show's in ${n} days.`;
+};
 
 export class Shop {
   constructor(state, { onChange, onClose, onReset, onOrder, onCut, sound }) {
@@ -146,6 +153,7 @@ export class Shop {
     $('shop-blurb').textContent =
       `"G'day. Gold's $${GOLD_PRICE} a gram, nuggets a bit better. Stones I'll grade and pay on the piece. `
       + `Reckon there's ${s.remaining} decent nuggets still in the ground on this claim. `
+      + `${showNews(s.day)} `
       + `${s.forecast ? `Radio says a storm's due this arvo, about ${s.forecast} minutes off. Creek'll come up, so don't leave your sluice in.` : 'Weather looks crook upstream.'}"`;
 
     // Special orders: pay over the odds for the right piece.

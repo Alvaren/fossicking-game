@@ -40,6 +40,9 @@ import { SAVE_KEY, readSave, storeSave, packArray, unpackArray } from './save.js
 import { settings, gemsRealistic } from './settings.js';
 import { makeEnvironment, goldMaterial, nuggetGeometry } from './materials.js';
 import { SettingsPanel } from './settingsui.js';
+import { PhotoMode } from './photo.js';
+import { GemShow, ShowStall, isShowDay, daysUntilShow, OPENS, CLOSES } from './gemshow.js';
+import { SOURCES as PLACE_NAMES } from './map.js';
 
 // ---------- save ----------
 
@@ -78,6 +81,8 @@ function writeSave() {
     orders: state.orders,
     milestones: state.milestones,
     cutting: state.cutting,
+    show: state.show,
+    photos: state.photos,
     boulders: boulders.snapshot(),
     mine: mine.snapshot(),
     works: works.snapshot(),
@@ -129,6 +134,8 @@ const state = {
   orders: saved.orders || null,
   milestones: saved.milestones || {},
   cutting: saved.cutting || [],
+  show: saved.show || null,
+  photos: saved.photos || 0,
   ore: saved.ore || [],
   panTests: saved.panTests || [],
   leadTraced: !!saved.leadTraced,
@@ -245,6 +252,9 @@ state.remaining = targets.remainingGold();
 const sound = new Sound();
 const wildlife = new Wildlife(scene, terrain, sound);
 const devils = new DustDevils(scene, terrain, sound);
+// The gem show's marquee, put up at camp on show days.
+const stall = new ShowStall(scene, terrain, world.showSpot, terrain.camp);
+stall.setUp(isShowDay(state.day));
 const cabSpot = world.cabinetSpot;
 const cabinet = new Cabinet(scene, { x: cabSpot.x, y: terrain.getHeight(cabSpot.x, cabSpot.z), z: cabSpot.z }, terrain.camp,
   (it) => inventoryMesh(it, gemsRealistic('world')));
@@ -309,7 +319,7 @@ let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
 const map = new ClaimMap(state, terrain, { onClose: () => lock() });
-const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen;
+const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
 
 function toggleHeadlamp() {
   headlamp = !headlamp;
@@ -344,6 +354,9 @@ function newDay() {
   state.day++;
   state.orders = rollOrders(state.seed, state.day);
   setTimeout(() => hud.toast("The buyer's got new orders in. Have a look at camp."), 2500);
+  stall.setUp(isShowDay(state.day));
+  if (isShowDay(state.day)) setTimeout(() => hud.toast(`The gem show's on at camp today, ${OPENS} till ${CLOSES - 12}. Bring your best collection pieces.`, 'gold'), 6500);
+  else if (daysUntilShow(state.day) === 1) setTimeout(() => hud.toast("Radio says there's a gem and mineral show at camp tomorrow. Collectors coming in from all over."), 6500);
   // Stones back from the cutter.
   if (state.cutting.length) {
     const back = state.cutting.splice(0);
@@ -375,6 +388,16 @@ const shop = new Shop(state, {
   },
 });
 const notes = new Notes(state, { onClose: () => lock() });
+const gemshow = new GemShow(state, {
+  sound,
+  onChange: () => { writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
+  onClose: () => lock(),
+  onPrize: (prize, item) => {
+    if (prize.title === 'Best in Show') award('bestshow');
+    hud.toast(`${prize.title}: ${item.label}!${prize.cash ? ` $${prize.cash} prize money.` : ''}`, 'gold');
+  },
+  onSale: (item, amt, who) => { award('auction'); hud.toast(`Sold to ${who}: ${item.label}, $${amt.toLocaleString()}.`, 'gold'); },
+});
 const inventory = new Inventory(state, {
   sound,
   onClose: () => lock(),
@@ -449,6 +472,7 @@ canvas.addEventListener('click', () => { if (!playing && !modalOpen()) lock(); }
 
 document.addEventListener('pointerlockchange', () => {
   playing = document.pointerLockElement === canvas;
+  if (!playing) exitPhoto();
   overlay.classList.toggle('hidden', playing || modalOpen());
   hud.show(playing || modalOpen());
   if (!playing) {
@@ -500,6 +524,7 @@ function openModal(m) {
 
 document.addEventListener('mousemove', (e) => {
   if (!playing) return;
+  if (photo.active) { photo.look(e.movementX, e.movementY); return; }
   if (driving) { ute.look(e.movementX, e.movementY); return; }
   player.yaw -= e.movementX * 0.0022;
   player.pitch = THREE.MathUtils.clamp(player.pitch - e.movementY * 0.0022, -1.5, 1.45);
@@ -510,6 +535,7 @@ let clicked = false;
 let splitHold = 0, prise = 0, drillTick = 0, workProgress = 0;
 document.addEventListener('mousedown', (e) => {
   if (!playing) return;
+  if (photo.active) { if (e.button === 0) photo.snap(); return; }
   if (e.button === 0) { mouseHeld = true; clicked = true; }
   if (e.button === 2) rightClick();
 });
@@ -541,6 +567,7 @@ function selectTool(name) {
 }
 document.addEventListener('wheel', (e) => {
   if (!playing) return;
+  if (photo.active) { photo.zoom(e.deltaY); return; }
   if (driving) {
     keys.add(e.code);
     if (e.code === 'KeyE' && !e.repeat) exitUte();
@@ -580,12 +607,18 @@ document.addEventListener('keydown', (e) => {
     saveNow();
     return;
   }
+  if (photo.active) {
+    if ((e.code === 'KeyK' || e.code === 'Escape') && !e.repeat) { exitPhoto(); return; }
+    if (e.repeat || !photo.key(e.code)) keys.add(e.code);
+    return;
+  }
   if (e.code === 'KeyH' && !e.repeat) { toggleControls(); return; }
   if (e.code === 'KeyN' && notes.isOpen) { notes.close(); return; }
   if (e.code === 'KeyI' && inventory.isOpen) { inventory.close(); return; }
   if (e.code === 'KeyM' && map.isOpen) { map.close(); return; }
   if (e.code === 'KeyP' && playing && !e.repeat) { pause(); return; }
   if (!playing) return;
+  if (e.code === 'KeyK' && !e.repeat) { enterPhoto(); return; }
   if (kneel) {
     const k = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(e.code);
     if (k >= 0) setKneelTool(KNEEL_TOOLS[k]);
@@ -862,6 +895,11 @@ function interact() {
   }
   if (ute.near(player.pos)) { enterUte(); return; }
   if (cabinet.near(player.pos)) { openModal(inventory); inventory.setTab?.('collection'); return; }
+  if (stall.near(player.pos)) {
+    if (daynight.hour >= OPENS && daynight.hour < CLOSES) { openModal(gemshow); return; }
+    hud.toast(daynight.hour < OPENS ? `The show opens at ${OPENS}. The dealers are still unpacking.` : "They've packed up for the day. Next show's in a few days.");
+    return;
+  }
   if (nearTent()) {
     if (daynight.isNight) {
       if (daynight.hour > 12) newDay(); // past midnight, sunrise ticks the day over by itself
@@ -1821,6 +1859,9 @@ function updateTools(dt, motion) {
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
   else if (ute.near(player.pos)) prompt = 'E: hop in the ute';
   else if (cabinet.near(player.pos)) prompt = 'Your collection cabinet · E to look through it';
+  else if (stall.near(player.pos)) prompt = daynight.hour >= OPENS && daynight.hour < CLOSES
+    ? (state.show?.day === state.day && state.show.stage === 'done' ? 'Gem & Mineral Show · E: see how you went' : 'Gem & Mineral Show · E: talk to the steward')
+    : 'Gem & Mineral Show (closed)';
   else if (mine.nearCollar(player.pos)) prompt = 'The Lucky Strike shaft · E: climb down the ladder';
   else if (works.nearMill(player.pos)) prompt = works.mill.out.length ? `Hammer mill · E: shovel out the crushed ore (${works.mill.out.length})` : works.milling ? `Hammer mill crushing... (${works.mill.queue.length} to go)` : state.ore.length ? `Hammer mill · E: feed it your ore (${state.ore.length})` : 'Hammer mill';
   else if (works.nearDolly(player.pos)) prompt = state.ore.length ? `Dolly pot · E: crush your ore (${state.ore.length} lump${state.ore.length === 1 ? '' : 's'})` : 'Dolly pot: for crushing reef ore';
@@ -1871,6 +1912,7 @@ const uvDir = new THREE.Vector3();
 const touch = IS_TOUCH ? new TouchControls({
   onLook: (dx, dy) => {
     if (!playing) return;
+    if (photo.active) { photo.look(dx, dy); return; }
     if (driving) { ute.look(dx, dy); return; }
     player.yaw -= dx * 0.0022;
     player.pitch = THREE.MathUtils.clamp(player.pitch - dy * 0.0022, -1.5, 1.45);
@@ -1882,6 +1924,14 @@ const touch = IS_TOUCH ? new TouchControls({
     kneel: () => { if (!playing || driving) return; if (kneel) standUp(); else kneelDown(); },
     flip: () => { if (playing) rightClick(); },
     lamp: () => toggleHeadlamp(),
+    photo: () => enterPhoto(),
+    photoSnap: () => photo.snap(),
+    photoUp: () => { photo.pos.y += 0.6; },
+    photoDown: () => { photo.pos.y -= 0.6; },
+    photoZoomIn: () => photo.zoom(-1),
+    photoZoomOut: () => photo.zoom(1),
+    photoFilter: () => photo.key('KeyF'),
+    photoExit: () => exitPhoto(),
     inventory: () => openModal(inventory),
     map: () => openModal(map),
     notes: () => openModal(notes),
@@ -1963,6 +2013,51 @@ function duskHints() {
   lastHour = h;
 }
 
+// ---------- photo mode ----------
+
+// Where a photo was taken, for the date stamp.
+function placeName() {
+  if (mine.inside || mine.climb) return 'Lucky Strike mine';
+  const p = camera.position;
+  if (Math.hypot(p.x - terrain.camp.x, p.z - terrain.camp.z) < 14) return 'Camp';
+  let best = null, bd = 32;
+  for (const [key, src] of Object.entries(terrain.sources)) {
+    const d = Math.hypot(p.x - src.x, p.z - src.z);
+    if (d < bd && state.discovered[key] && PLACE_NAMES[key]) { bd = d; best = PLACE_NAMES[key].label; }
+  }
+  return best || (Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? 'The creek' : 'The claim');
+}
+
+const photo = new PhotoMode({
+  camera, renderer, terrain, sound,
+  caption: () => `${placeName()} · DAY ${state.day + 1} · ${daynight.clockText().toUpperCase()}`,
+  onSnap: () => { state.photos++; award('photo'); },
+});
+let photoHadControls = false;
+
+function enterPhoto() {
+  if (!playing || photo.active) return;
+  mouseHeld = false;
+  keys.clear();
+  const ctl = document.getElementById('controls');
+  photoHadControls = !ctl.classList.contains('hidden');
+  ctl.classList.add('hidden');
+  photo.enter({ still: mine.inside || !!mine.climb });
+  hud.show(false);
+  touch?.root.classList.add('photo');
+  touch?.root.classList.toggle('still', photo.still);
+  sound.click();
+}
+
+function exitPhoto() {
+  if (!photo.active) return;
+  photo.exit();
+  keys.clear();
+  hud.show(playing || modalOpen());
+  if (photoHadControls) toggleControls(true);
+  touch?.root.classList.remove('photo', 'still');
+}
+
 // ---------- loop ----------
 
 const clock = new THREE.Clock();
@@ -1978,7 +2073,10 @@ function frame() {
     touchUseWas = touch.use;
   }
   elapsed += dt;
-  if (mine.climb) {
+  if (photo.active) {
+    photo.update(dt, keys, touch);
+    motion.moving = false;
+  } else if (mine.climb) {
     motion = updateClimb(dt);
   } else if (mine.inside) {
     if (playing) motion = updateUnderground(dt);
@@ -1997,7 +2095,7 @@ function frame() {
     updateTools(dt, motion);
   }
   updateHud();
-  daynight.update(playing || kneel ? dt : 0, camera.position);
+  daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
   world.update(dt, night);
@@ -2044,6 +2142,7 @@ function frame() {
   excav.updateLOD?.(camera.position);
   boulders.update(dt, camera.position);
   cabinet.update(dt, player.pos, [...state.nuggets, ...state.gems].filter((i) => i.keep));
+  stall.update(dt);
   sky.position.copy(camera.position);
   if (sky.material.uniforms.time) sky.material.uniforms.time.value = elapsed;
   sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
@@ -2051,8 +2150,9 @@ function frame() {
 
   renderer.clear();
   renderer.render(scene, camera);
+  if (photo.active) photo.capture(() => { renderer.clear(); renderer.render(scene, camera); });
   renderer.clearDepth();
-  if (!driving) renderer.render(view.scene, view.camera);
+  if (!driving && !photo.active) renderer.render(view.scene, view.camera);
   requestAnimationFrame(frame);
 }
 
@@ -2080,7 +2180,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

@@ -122,7 +122,7 @@ kbd {
 .slot.active { color: var(--ink); border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
 
 /* ---------- Overlay / shop ---------- */
-#overlay, #shop, #settings {
+#overlay, #shop, #settings, #gemshow {
   position: fixed; inset: 0;
   display: grid; place-items: center;
   background: radial-gradient(ellipse at center, rgba(20, 12, 8, 0.55), rgba(10, 6, 4, 0.85));
@@ -153,7 +153,7 @@ button:disabled { opacity: 0.4; cursor: default; filter: none; }
 button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--edge); }
 #play { width: 100%; font-size: 17px; padding: 12px; }
 
-#overlay, #shop, #notes, #inventory, #map { z-index: 2; }
+#overlay, #shop, #notes, #inventory, #map, #gemshow { z-index: 2; }
 #settings { z-index: 3; }
 .segs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .segs.presets { margin-bottom: 6px; }
@@ -238,7 +238,7 @@ button.seg.on { color: #2a1a0c; background: var(--gold); border-color: var(--gol
 .milestones li { break-inside: avoid; padding: 3px 0 3px 24px; position: relative; font-size: 13px; color: var(--muted); }
 .milestones li::before { content: ''; position: absolute; left: 2px; top: 6px; width: 11px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; opacity: 0.6; }
 .milestones li.done { color: inherit; }
-.milestones li.done::before { content: '¹3'; border-color: #f2c14e; color: #f2c14e; opacity: 1; font-size: 11px; line-height: 11px; text-align: center; }
+.milestones li.done::before { content: '\2713'; border-color: #f2c14e; color: #f2c14e; opacity: 1; font-size: 11px; line-height: 11px; text-align: center; }
 .milestones li b { font-weight: 650; }
 .h-note { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 6px; }
 .item.filled { opacity: 0.55; }
@@ -333,3 +333,54 @@ body.touch #meter, body.touch #jig { bottom: 200px; width: min(300px, 60vw); }
 
 body.driving #toolbar, body.driving #meter, body.driving #jig, body.driving #crosshair, body.driving #touch .t-right .stand-only:not(#t-jump) { display: none !important; }
 body.driving #t-jump::after { content: ''; }
+
+/* ---------- Gem show ---------- */
+.item.chosen .name { color: var(--gold); }
+.gs-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.gs-results { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0 10px; font-variant-numeric: tabular-nums; }
+.gs-results td { padding: 5px 6px 5px 0; border-top: 1px solid var(--edge); color: var(--muted); vertical-align: top; }
+.gs-results td:first-child { width: 1.5em; }
+.gs-results td:last-child { text-align: right; color: var(--gold); white-space: nowrap; }
+.gs-results tr.you td { color: var(--ink); }
+.rib { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 5px 0 4px; vertical-align: -1px; box-shadow: 0 0 0 2px rgba(255, 240, 210, 0.25); }
+.gs-bids { max-height: 190px; overflow: hidden; margin: 8px 0; font-variant-numeric: tabular-nums; }
+.gs-bids div { padding: 3px 0; color: var(--muted); font-size: 14px; }
+.gs-bids div span { font-size: 13px; margin-left: 6px; }
+.gs-bids div.top { color: var(--gold); font-size: 20px; font-weight: 700; }
+.gs-call { font-style: italic; color: var(--ink); }
+
+/* ---------- Photo mode ---------- */
+#photo { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+#photo-vignette { position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 1) 100%); }
+#photo-grid { position: absolute; inset: 0; display: none; }
+#photo.grid #photo-grid { display: block; }
+#photo-grid i { position: absolute; background: rgba(255, 255, 255, 0.35); }
+#photo-grid i:nth-child(1) { left: 33.33%; top: 0; bottom: 0; width: 1px; }
+#photo-grid i:nth-child(2) { left: 66.67%; top: 0; bottom: 0; width: 1px; }
+#photo-grid i:nth-child(3) { top: 33.33%; left: 0; right: 0; height: 1px; }
+#photo-grid i:nth-child(4) { top: 66.67%; left: 0; right: 0; height: 1px; }
+#photo-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+#photo-flash.go { animation: photo-flash 0.45s ease-out; }
+@keyframes photo-flash { 0% { opacity: 0.85; } 100% { opacity: 0; } }
+#photo-help {
+  position: absolute; left: 16px; top: 16px; padding: 10px 14px; font-size: 13px; line-height: 1.7;
+  background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; color: var(--muted);
+}
+#photo-help b { color: var(--gold); }
+#photo-help kbd { font-size: 11px; }
+#photo.nohelp #photo-help { display: none; }
+#photo .still-only { display: none; }
+#photo.still .still-only { display: block; }
+#photo.still .move { display: none; }
+#photo-status {
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); white-space: nowrap;
+  padding: 6px 12px; font-size: 13px; border-radius: 8px; background: rgba(10, 6, 4, 0.5); color: var(--ink);
+}
+body.touch #photo-help { display: none; }
+#touch .t-photo { display: none; }
+#touch.photo .t-top, #touch.photo .t-right { display: none; }
+#touch.photo .t-photo {
+  display: grid; position: absolute; right: calc(14px + env(safe-area-inset-right)); bottom: 70px;
+  grid-template-columns: repeat(2, auto); gap: 8px; justify-items: end; pointer-events: auto;
+}
+#touch.photo.still #stick { display: none; }

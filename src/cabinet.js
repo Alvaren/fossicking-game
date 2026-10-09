@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { PRIZES, rosette } from './gemshow.js';
 
 // The collection cabinet at camp: a glass-fronted case with a soft light at
 // the back, where your collection pieces sit on little stands and turn slowly
@@ -46,7 +47,7 @@ export class Cabinet {
 
   // Rebuild the display when the collection's changed (and you're near enough to see).
   refresh(items) {
-    const sig = items.map((i) => i.label + i.value).join('|');
+    const sig = items.map((i) => i.label + i.value + (i.ribbons?.length || 0)).join('|');
     if (sig === this.sig) return;
     this.sig = sig;
     this.contents.clear();
@@ -60,6 +61,14 @@ export class Cabinet {
       const stand = new THREE.Mesh(standGeo, standMat);
       stand.position.set(x, y + 0.0125, 0.02);
       this.contents.add(stand);
+      // The best ribbon it's won, pinned to the front of its stand.
+      const best = PRIZES.find((p) => it.ribbons?.some((r) => r.title === p.title));
+      if (best) {
+        const ros = rosette(best.colour);
+        ros.scale.setScalar(0.32);
+        ros.position.set(x + 0.045, y + 0.012, 0.062);
+        this.contents.add(ros);
+      }
       const piece = this.makeMesh(it);
       // Size every piece to suit its slot, whatever its real size.
       const box = new THREE.Box3().setFromObject(piece);

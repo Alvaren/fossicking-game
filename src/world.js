@@ -432,6 +432,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const tentPos = toWorld(3.5, 4);
   // Where the collection cabinet stands, beside the buyer's table.
   const cabinetSpot = toWorld(-2.6, -2.9);
+  // Where the gem show's marquee goes up on show days, between the buyer and the dolly pot.
+  const showSpot = toWorld(-4, 4.8);
   collide(-2.6, -2.9, 0.8);
   // The ore works: the campfire for roasting, a dolly pot and (if you buy one) a hammer mill.
   const baseYaw = flip < 0 ? Math.PI : 0;
@@ -443,7 +445,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   collide(-0.8, 4.0, 0.5);
   collide(-0.8, 5.4, 0.15);
   collide(0.6, -2.6, 0.6);
-  return { colliders, shop, spawn, tentPos, cabinetSpot, oreSpots, ute, uteColliders, update, applyModels };
+  return { colliders, shop, spawn, tentPos, cabinetSpot, showSpot, oreSpots, ute, uteColliders, update, applyModels };
 }
 
 // ---------- geometry helpers ----------

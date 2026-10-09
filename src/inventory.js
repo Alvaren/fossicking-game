@@ -217,6 +217,7 @@ void main() {
     if (it.rough) facts.push(['Rough', `${cap(it.rough.label)}, $${Math.round(it.rough.value)}`]);
     if (it.age) facts.push(['Age', it.age]);
     if (it.from) facts.push(['Found', it.from]);
+    if (it.ribbons?.length) facts.push(['Ribbons', it.ribbons.map((r) => `${r.title} (day ${r.day + 1})`).join(', ')]);
     if (it.foundAt) facts.push(['When', new Date(it.foundAt).toLocaleString()]);
     facts.push(['Value', `$${Math.round(it.value).toLocaleString()}`]);
     lines.push(`<table>${facts.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`);

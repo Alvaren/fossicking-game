@@ -74,8 +74,18 @@
       <button data-act="map">Map</button>
       <button data-act="notes">Notes</button>
       <button data-act="lamp">Lamp</button>
+      <button data-act="photo">Photo</button>
       <button data-act="save">Save</button>
       <button data-act="pause">&#10074;&#10074;</button>
+    </div>
+    <div class="t-photo">
+      <button data-act="photoSnap" class="t-big">Snap</button>
+      <button data-act="photoUp">Up</button>
+      <button data-act="photoDown">Down</button>
+      <button data-act="photoZoomIn">Zoom +</button>
+      <button data-act="photoZoomOut">Zoom &minus;</button>
+      <button data-act="photoFilter">Filter</button>
+      <button data-act="photoExit">Done</button>
     </div>
     <div class="t-right">
       <button id="t-use" class="t-big">Use</button>
@@ -85,6 +95,20 @@
       <button data-act="kneel" class="kneel-only">Stand</button>
       <button data-act="flip" class="stand-only">Flip</button>
     </div>
+  </div>
+  <div id="photo" class="hidden">
+    <div id="photo-vignette"></div>
+    <div id="photo-grid"><i></i><i></i><i></i><i></i></div>
+    <div id="photo-flash"></div>
+    <div id="photo-help">
+      <b>Photo mode</b> <span>time stands still</span>
+      <div class="move"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> float about &middot; <kbd>Space</kbd> / <kbd>C</kbd> up, down &middot; <kbd>Shift</kbd> faster</div>
+      <div class="still-only">Down the hole the camera stays put: look, zoom and tilt.</div>
+      <div><kbd>Wheel</kbd> or <kbd>+</kbd> <kbd>&minus;</kbd> zoom &middot; <kbd>[</kbd> <kbd>]</kbd> tilt &middot; <kbd>R</kbd> reset</div>
+      <div><kbd>F</kbd> filter &middot; <kbd>G</kbd> grid &middot; <kbd>T</kbd> date stamp &middot; <kbd>H</kbd> hide this</div>
+      <div><kbd>Click</kbd> take the photo &middot; <kbd>K</kbd> back to it</div>
+    </div>
+    <div id="photo-status"></div>
   </div>
   <div id="rotate-hint">Turn your phone sideways for the best view</div>
 
@@ -112,6 +136,7 @@
         <span><kbd>M</kbd> map</span>
         <span><kbd>L</kbd> headlamp</span>
         <span><kbd>N</kbd> field notes</span>
+        <span><kbd>K</kbd> photo mode</span>
         <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
       </div>
       <div id="phone-warn" class="warn hidden">
@@ -198,6 +223,7 @@
       <h5>Game</h5>
       <div><kbd>I</kbd> inventory · <kbd>M</kbd> claim map</div>
       <div><kbd>N</kbd> field notes · <kbd>H</kbd> this card</div>
+      <div><kbd>K</kbd> photo mode</div>
       <div><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</div>
       <div><kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>S</kbd> save (it also autosaves)</div>
     </div>
@@ -219,6 +245,14 @@
         <button id="shop-reset" class="ghost">Peg a new claim</button>
         <button id="shop-close">Back to it</button>
       </div>
+    </div>
+  </div>
+
+  <div id="gemshow" class="hidden">
+    <div class="panel">
+      <h2>Gem &amp; Mineral Show</h2>
+      <div id="gs-body"></div>
+      <div class="shop-footer"><span></span><button id="gs-close">Back to it</button></div>
     </div>
   </div>
 

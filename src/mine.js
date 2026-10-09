@@ -16,6 +16,7 @@ const DEPTH = 8;                           // shaft depth
 const HEADER = 2.45;                       // where the shaft's front wall starts, above the drive's mouth
 const LEN = 22;                            // length of the drive
 const STEP = 0.4;
+const TRUCK_X = 0.45;                      // the derailed truck sits against the +x wall
 const ORE_KG = 8;                          // one lump of ore, broken off the reef
 
 function noise3(x, y, z, seed) {
@@ -259,7 +260,10 @@ export class Mine {
       wh.position.set(x, 0.14, z);
       truck.add(wh);
     }
-    truck.position.set(0, 0, LEN - 6.5);
+    // Derailed long ago and shoved against the wall, leaning on it, so there's
+    // just room to squeeze past on the other side.
+    truck.position.set(TRUCK_X, 0, LEN - 6.5);
+    truck.rotation.set(0, 0.07, -0.1);
     this.group.add(truck);
     this.truckS = LEN - 6.5;
     // A candle stub on a spike in a timber, and initials carved by someone long gone.
@@ -441,8 +445,8 @@ export class Mine {
     const l = this.toLocal(pos);
     l.x = Math.max(-W / 2 + 0.38, Math.min(W / 2 - 0.38, l.x));
     l.z = Math.max(-W / 2 + 0.35, Math.min(LEN - 0.35, l.z));
-    // Don't walk through the ore truck.
-    if (Math.abs(l.z - this.truckS) < 0.75) l.z = l.z < this.truckS ? Math.min(l.z, this.truckS - 0.75) : Math.max(l.z, this.truckS + 0.75);
+    // Don't walk through the ore truck: it pushes you over to the open side.
+    if (Math.abs(l.z - this.truckS) < 0.45 + 0.25) l.x = Math.min(l.x, TRUCK_X - 0.35 - 0.25);
     l.y = 0;
     return this.toWorld(l);
   }

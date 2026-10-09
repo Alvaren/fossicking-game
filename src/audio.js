@@ -403,5 +403,21 @@ export class Sound {
 
   click() { this.tone(660, 0.06, 0.06, 'square'); }
 
+  // A film camera: the shutter's snick and the wind-on.
+  shutter() {
+    this.burst({ freq: 4200, type: 'highpass', dur: 0.03, gain: 0.25 });
+    this.burst({ freq: 1800, type: 'bandpass', dur: 0.05, gain: 0.18, q: 2, delay: 0.045 });
+    this.burst({ freq: 2600, type: 'bandpass', dur: 0.16, gain: 0.05, q: 3, delay: 0.16 });
+  }
+
+  // The auctioneer's gavel on the table.
+  gavel() {
+    this.burst({ freq: 900, dur: 0.08, gain: 0.45 });
+    this.tone(320, 0.12, 0.1, 'triangle');
+  }
+
+  // A paddle going up: a soft tick.
+  bid() { this.tone(980, 0.05, 0.04, 'sine'); }
+
   denied() { this.tone(220, 0.15, 0.1, 'sawtooth', 0, 0.8); }
 }

@@ -8,7 +8,7 @@ const $ = (id) => document.getElementById(id);
 const EXTENT = PLAY + 6;
 const PX = 560;
 
-const SOURCES = {
+export const SOURCES = {
   reef: { label: 'Quartz reef', colour: '#f4f0e6' },
   basalt: { label: 'Basalt cap', colour: '#3a3a40' },
   rhyolite: { label: 'Rhyolite', colour: '#d98f80' },
