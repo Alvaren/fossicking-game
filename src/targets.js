@@ -62,6 +62,21 @@ export class Targets {
         range: 0.55 + 0.6 * j.strength,
       });
     }
+    // Gold-in-quartz: pieces of reef quartz with gold through them, lying in the
+    // shallow rubble around the outcrop. The gold is spread through the stone,
+    // so they answer the detector more softly than a solid nugget of the same weight.
+    const reef = terrain.sources.reef;
+    for (let i = 0; i < 9; i++) {
+      const a = rand() * Math.PI * 2, d = 2 + Math.sqrt(rand()) * 13;
+      const x = reef.x + Math.cos(a) * d, z = reef.z + Math.sin(a) * d;
+      const goldG = Math.round((2 + Math.pow(rand(), 2.2) * 40) * 100) / 100;
+      this.list.push({
+        id: NUGGETS + JUNK_COUNT + i, kind: 'gold', quartz: true, name: 'gold in quartz',
+        grams: goldG, stone: Math.round(goldG * (3 + rand() * 6)), x, z,
+        y: terrain.getOrigHeight(x, z) - (0.08 + rand() * 0.35),
+        range: (0.65 + 0.33 * Math.cbrt(goldG)) * 0.75,
+      });
+    }
     for (const t of this.list) t.collected = collected.has(t.id);
 
     this.goldMat = new THREE.MeshStandardMaterial({ color: 0xffc23a, metalness: 1, roughness: 0.28 });
@@ -149,7 +164,20 @@ export class Targets {
     const group = new THREE.Group();
     let mesh;
     const r = mulberry32(t.id + 1);
-    if (t.kind === 'gold') {
+    if (t.kind === 'gold' && t.quartz) {
+      // A lump of white reef quartz with gold showing through.
+      const s = 0.03 + 0.012 * Math.cbrt(t.stone);
+      mesh = new THREE.Group();
+      const q = new THREE.Mesh(lumpy(new THREE.DodecahedronGeometry(1, 1), 0.3, r), new THREE.MeshStandardMaterial({ color: 0xf0ece2, roughness: 0.45 }));
+      q.scale.set(s * 1.3, s * 0.8, s);
+      mesh.add(q);
+      for (let k = 0; k < 6; k++) {
+        const g = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 0), 0.4, r), this.goldMat);
+        g.scale.setScalar(s * (0.18 + r() * 0.22));
+        g.position.set((r() - 0.5) * s * 1.8, (r() - 0.2) * s * 0.9, (r() - 0.5) * s * 1.4);
+        mesh.add(g);
+      }
+    } else if (t.kind === 'gold') {
       const s = 0.035 + 0.022 * Math.cbrt(t.grams);
       mesh = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 1), 0.35, r), this.goldMat);
       mesh.scale.set(s * 1.3, s * 0.7, s);

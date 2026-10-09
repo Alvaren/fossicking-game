@@ -114,6 +114,96 @@ export class Sound {
     this.burst({ freq: 320, type: 'lowpass', dur: 1.6, gain: 0.4 * vol, delay: delay + 0.3 + Math.random() * 0.4 });
   }
 
+  // ---------- wildlife ----------
+
+  panner(pan) {
+    const p = this.ctx.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, pan));
+    p.connect(this.master);
+    return p;
+  }
+
+  // One voiced syllable: a buzzy source through a formant filter, with a pitch glide.
+  syllable(out, t, f0, f1, dur, gain, formant = 1600, type = 'sawtooth') {
+    const o = this.ctx.createOscillator();
+    o.type = type;
+    o.frequency.setValueAtTime(f0, t);
+    o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const bp = this.ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = formant;
+    bp.Q.value = 4;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + dur * 0.2);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(bp).connect(g).connect(out);
+    o.start(t);
+    o.stop(t + dur + 0.02);
+  }
+
+  // Laughing kookaburra: chuckles that build into the full "koo-koo-kaa-kaa" and die away.
+  kookaburra(pan = 0) {
+    if (!this.ctx) return;
+    const out = this.panner(pan);
+    let t = this.ctx.currentTime + 0.05;
+    const n = 22;
+    for (let i = 0; i < n; i++) {
+      const k = Math.sin((i / n) * Math.PI); // crescendo then fade
+      const hi = i > 6 && i < 17 && i % 2 === 0;
+      const f = hi ? 900 + k * 500 : 520 + k * 300;
+      this.syllable(out, t, f, f * (hi ? 1.25 : 0.85), hi ? 0.11 : 0.08, 0.05 + k * 0.12, hi ? 1900 : 1300);
+      t += hi ? 0.13 : 0.09 + Math.random() * 0.03;
+    }
+  }
+
+  // Galah: a harsh, scratchy two-note screech.
+  galah(vol, pan = 0) {
+    if (!this.ctx) return;
+    const out = this.panner(pan);
+    const t = this.ctx.currentTime;
+    this.syllable(out, t, 2300, 1500, 0.18, 0.06 * vol, 2600);
+    this.syllable(out, t + 0.16, 2000, 1400, 0.14, 0.05 * vol, 2400);
+    this.burst({ freq: 3000, type: 'bandpass', dur: 0.12, gain: 0.04 * vol, q: 2 });
+  }
+
+  // Field cricket: a quick trill of three pulses up high.
+  cricket(vol, pan = 0) {
+    if (!this.ctx) return;
+    const out = this.panner(pan);
+    const t = this.ctx.currentTime;
+    const f = 4300 + Math.random() * 500;
+    for (let i = 0; i < 3; i++) this.syllable(out, t + i * 0.045, f, f, 0.03, 0.025 * vol, f, 'sine');
+  }
+
+  // Bush flies: a wavering drone that comes and goes round your ears.
+  setFlies(k) {
+    if (!this.ctx) return;
+    if (!this.flyOsc) {
+      this.flyOsc = this.ctx.createOscillator();
+      this.flyOsc.type = 'sawtooth';
+      this.flyOsc.frequency.value = 210;
+      const lfo = this.ctx.createOscillator();
+      lfo.frequency.value = 7;
+      const lg = this.ctx.createGain();
+      lg.gain.value = 18;
+      lfo.connect(lg).connect(this.flyOsc.frequency);
+      const bp = this.ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 600;
+      bp.Q.value = 1.5;
+      this.flyGain = this.ctx.createGain();
+      this.flyGain.gain.value = 0;
+      this.flyPan = this.ctx.createStereoPanner();
+      this.flyOsc.connect(bp).connect(this.flyGain).connect(this.flyPan).connect(this.master);
+      this.flyOsc.start();
+      lfo.start();
+    }
+    const t = this.ctx.currentTime;
+    this.flyGain.gain.setTargetAtTime(k * 0.035, t, 0.15);
+    this.flyPan.pan.setTargetAtTime(Math.sin(t * 1.3) * 0.8, t, 0.2);
+  }
+
   // Hammer on rock: solid rock rings bright, a cavity behind it goes dull and hollow.
   tap(hollow) {
     if (hollow > 0.45) {

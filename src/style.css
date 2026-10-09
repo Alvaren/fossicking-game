@@ -307,3 +307,5 @@ body.touch #meter, body.touch #jig { bottom: 200px; width: min(300px, 60vw); }
 .pause-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .pause-row button { padding: 8px 12px; font-size: 14px; }
 #save-status { color: var(--muted); font-size: 13px; }
+
+#map-legend b.pt { background: #f2e6c8; color: #2a1a0c; padding: 0 4px; margin-right: 5px; border: 1px solid #2a1a0c; font-size: 10px; }

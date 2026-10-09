@@ -8,6 +8,7 @@ function isSpecimen(item, r) {
   const A = item.grade === 'A';
   switch (item.type) {
     case 'nugget':
+      if (item.style === 'quartz') return item.grams >= 8 || r() < 0.4; // reef specimens are the prize
       if (item.grams >= 15) return r() < 0.5;
       if (item.grams >= 5) return r() < 0.12;
       return r() < 0.03;
@@ -47,7 +48,7 @@ export function grade(item, from, r = Math.random) {
     item.specimen = true;
     item.keep = true;
     item.value = Math.round(item.value * SPECIMEN_PREMIUM * 100) / 100;
-    if (item.type === 'nugget') item.style = r() < 0.5 ? 'quartz' : 'crystalline';
+    if (item.type === 'nugget' && !item.style) item.style = r() < 0.5 ? 'quartz' : 'crystalline';
     item.label = `${specimenName(item)}`;
   }
   return item;

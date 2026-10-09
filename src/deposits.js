@@ -48,7 +48,7 @@ export class Deposits {
     const below = geo.orig - e;
     const layer = habove < 0.06 ? 'bedrock' : below < geo.topsoil ? 'topsoil' : 'wash';
 
-    const supGold = this.supply(z, S.reef, 260, 0.12);
+    const supGold = this.supply(z, S.reef, 260, 0.03); // next to nothing above the reef gully
     const supGem = this.supply(z, S.basalt, 650, 0.03);
     const supAgate = this.supply(z, S.rhyolite, 2500, 0.05);
     const eGold = this.eluvial(x, z, S.reef, 26);

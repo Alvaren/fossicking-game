@@ -18,7 +18,7 @@ export function loadAssets() {
     ...['rock_pick', 'trowel', 'brush', 'glove'].map((n) => load(`${base}models/${n}.glb`).then((g) => {
       assets.tools[n] = g.scene;
     })),
-    ...['detector', 'gold_pan', 'gem_sieve', 'sluice', 'ute', 'tent'].map((n) => load(`${base}models/${n}.glb`).then((g) => {
+    ...['detector', 'gold_pan', 'gem_sieve', 'sluice', 'ute', 'tent', 'kangaroo'].map((n) => load(`${base}models/${n}.glb`).then((g) => {
       g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
       assets.models[n] = g.scene;
     })),

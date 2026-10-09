@@ -106,6 +106,20 @@ export class ClaimMap {
       ctx.fill();
       ctx.stroke();
     }
+    // Pan tests: how many colours (specks of gold) each pan showed, where the wash was dug.
+    ctx.font = 'bold 10px Segoe UI, sans-serif';
+    for (const t of this.state.panTests || []) {
+      const [px, py] = this.toPx(t.x, t.z);
+      const txt = String(t.c);
+      const w = ctx.measureText(txt).width + 6;
+      ctx.fillStyle = t.c >= 6 ? '#ffcf4a' : t.c >= 2 ? '#f2e6c8' : '#cfc6b4';
+      ctx.strokeStyle = '#2a1a0c';
+      ctx.lineWidth = 1;
+      ctx.fillRect(px - w / 2, py - 7, w, 13);
+      ctx.strokeRect(px - w / 2, py - 7, w, 13);
+      ctx.fillStyle = '#2a1a0c';
+      ctx.fillText(txt, px - w / 2 + 3, py + 3);
+    }
     // Hand digs.
     ctx.strokeStyle = '#5a3a1a';
     for (const p of patches) {
@@ -160,7 +174,8 @@ export class ClaimMap {
     $('map-legend').innerHTML = Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .map(([t, n]) => `<span><i style="background:${DOT[t] || '#fff'}"></i>${t} ${n}</span>`).join('')
-      + '<span><i class="star"></i>specimen</span>';
+      + '<span><i class="star"></i>specimen</span>'
+      + ((this.state.panTests || []).length ? '<span><b class="pt">4</b>pan test (colours)</span>' : '');
   }
 }
 

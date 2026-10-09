@@ -45,6 +45,10 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['Trace the lead',
+    'Count the colours (specks of gold) in each pan as you work up the creek. They get fewer the further you go from the source, '
+    + 'and stop dead above where the gold comes in. Where they stop, look for a gully coming down from the hills: the reef is up there. '
+    + 'Your pan tests go on the map (M) as numbers.'],
   ['UV at night',
     'Scheelite is a heavy, dull cream stone by day, but under shortwave UV it glows bright blue-white. It comes out of the same quartz reefs as gold, '
     + 'so a scatter of glowing scheelite on a slope at night says gold country. Plenty of chalcedony agate glows green too.'],

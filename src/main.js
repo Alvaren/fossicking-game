@@ -12,6 +12,7 @@ import { Inventory } from './inventory.js';
 import { DayNight } from './daynight.js';
 import { ClaimMap } from './map.js';
 import { IS_TOUCH, TouchControls } from './touch.js';
+import { Wildlife } from './wildlife.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
@@ -55,6 +56,8 @@ function writeSave() {
     hour: daynight.hour,
     headlamp,
     findPoints: state.findPoints,
+    panTests: state.panTests,
+    leadTraced: state.leadTraced,
     discovered: state.discovered,
     nextStorm: weather.phase === 'calm' ? weather.next : 90,
   };
@@ -95,6 +98,8 @@ const state = {
   gems: saved.gems || [],
   nuggets: saved.nuggets || [],
   findPoints: saved.findPoints || [],
+  panTests: saved.panTests || [],
+  leadTraced: !!saved.leadTraced,
   discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
@@ -195,12 +200,14 @@ targets.restoreFlood(saved.floodTargets || []);
 state.remaining = targets.remainingGold();
 
 const sound = new Sound();
+const wildlife = new Wildlife(scene, terrain, sound);
 // Blender-made models stream in; crystals and hand tools use them once they arrive.
 loadAssets().then(() => {
   view.applyModels(assets.tools);
   view.applyGear(assets.models);
   sluice.applyModel(assets.models.sluice);
   world.applyModels(assets.models);
+  wildlife.applyModel(assets.models.kangaroo);
 });
 const hud = new Hud();
 const view = new Viewmodel(env);
@@ -610,7 +617,12 @@ function interact() {
     const t = p.target;
     targets.collect(t);
     if (t.kind === 'gold') {
-      const n = addFind(makeNugget(t.grams, t.id + 1, GOLD_PRICE), 'Found with the detector and dug up', t);
+      const nug = makeNugget(t.grams, t.id + 1, GOLD_PRICE);
+      if (t.quartz) {
+        nug.style = 'quartz';
+        nug.label = `gold-in-quartz, ${t.stone} g of stone with about ${t.grams.toFixed(1)} g of gold`;
+      }
+      const n = addFind(nug, t.quartz ? 'Detected in the rubble around the quartz reef' : 'Found with the detector and dug up', t);
       logGold(t.grams, true);
       state.remaining = targets.remainingGold();
       if (!n.specimen) hud.toast(t.grams >= 5 ? `Strewth! A ${t.grams.toFixed(2)} g nugget!` : `You beauty! ${t.grams.toFixed(2)} g nugget.`, 'gold');
@@ -753,6 +765,8 @@ function dig(hit) {
     }
   }
   const sample = deposits.sample(hit.x, hit.z, e);
+  sample.x = Math.round(hit.x * 10) / 10;
+  sample.z = Math.round(hit.z * 10) / 10;
   const pocket = field.pocketAt(hit.x, hit.z, e);
   if (pocket) {
     if (!pocket.warned) {
@@ -819,7 +833,18 @@ function finishLoad(method, opts = {}) {
   for (const f of res.finds) addFind(f, from);
 
   const parts = [];
+  // Prospectors count "colours": the specks of gold left in the pan.
+  let colours = 0;
+  if (method === 'pan' && !sample.cons) {
+    colours = Math.max(0, Math.round((res.gold * 1000) / 2.5 + (Math.random() - 0.5)));
+    if (sample.x !== undefined) {
+      state.panTests.push({ x: sample.x, z: sample.z, c: colours });
+      if (state.panTests.length > 300) state.panTests.shift();
+      checkLead();
+    }
+  }
   if (res.picker) parts.push(`bonza, a ${res.picker.toFixed(2)} g picker`);
+  else if (colours) parts.push(`${colours} colour${colours === 1 ? '' : 's'} (${gold.toFixed(3)} g)`);
   else if (gold >= 0.001) parts.push(`${gold.toFixed(3)} g fine gold`);
   const stones = summarise(res.finds);
   if (stones) parts.push(stones);
@@ -828,7 +853,8 @@ function finishLoad(method, opts = {}) {
   if (method === 'pan') view.showPanResult(gold > 0.002);
   else view.showSieveResult(res.finds, opts.strat ?? 1);
 
-  if (!parts.length) hud.toast(method === 'pan' ? 'Nothing but black sand. Bugger.' : 'Just gravel in the sieve.', 'junk');
+  if (!parts.length) hud.toast(method === 'pan' ? 'Not a colour. Nothing but black sand. Bugger.' : 'Just gravel in the sieve.', 'junk');
+  if (method === 'pan' && colours) hint('colours', 'Count the colours as you pan your way up the creek. Where they stop, the gold\'s source is close. Your tests go on the map (M).', 600);
   else hud.toast(cap(parts.join(', ')) + '.', 'gold');
   for (const f of notable) hud.toast(cap(f.label) + '!', 'gold');
   if (res.picker || notable.length) sound.gold(); else if (parts.length) sound.coin();
@@ -1313,6 +1339,28 @@ for (const el of document.querySelectorAll('.slot[data-tool]')) {
   });
 }
 
+// Tracing the lead: good colours downstream of where the reef gully comes in,
+// next to nothing above it, and you've found the reef up the gully.
+function checkLead() {
+  if (state.leadTraced) return;
+  const reef = terrain.sources.reef;
+  const inCreek = (t) => { const L = creek.local(t.x, t.z, {}); return L.d < L.w + 2.5; };
+  const below = state.panTests.filter((t) => inCreek(t) && t.z < reef.entryZ && t.z > reef.entryZ - 90 && t.c >= 3);
+  const above = state.panTests.filter((t) => inCreek(t) && t.z > reef.entryZ + 10 && t.c <= 1);
+  if (below.length >= 3 && above.length >= 1 && state.discovered.reef) {
+    state.leadTraced = true;
+    state.cash += 300;
+    hud.toast('Fair dinkum, you\'ve traced the lead! Colours all the way up the creek, none above the gully, and the reef up top is the source.', 'gold');
+    hud.toast('The buyer pays $300 for your prospecting report.', 'gold');
+    sound.gold();
+    writeSave();
+  } else if (below.length >= 3 && !above.length) {
+    hint('leadup', 'Good colours down here. Keep pan-testing upstream until they stop.', 240);
+  } else if (below.length >= 3 && above.length && !state.discovered.reef) {
+    hint('leadgully', 'The colours stop up the creek. Look for a gully coming in just below there and follow it up to the reef.', 240);
+  }
+}
+
 // The first time you get near each source rock, it goes on the map.
 const DISCOVERY = {
   reef: 'A white quartz reef. That is gold country: the creek downstream of here should carry gold.',
@@ -1329,6 +1377,7 @@ function checkDiscoveries(dt) {
     if (state.discovered[key]) continue;
     if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'granite' ? 24 : 26)) {
       state.discovered[key] = true;
+      if (key === 'reef') setTimeout(checkLead, 100);
       hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
       sound.click();
       writeSave();
@@ -1384,6 +1433,13 @@ function frame() {
   water.uniforms.sunDir.value.copy(daynight.lightDir);
   water.uniforms.sunColor.value.copy(daynight.base.sunColor).multiplyScalar(daynight.daylight > 0.05 ? 1 : 0.35);
   checkDiscoveries(dt);
+  wildlife.update(dt, {
+    player: { x: player.pos.x, z: player.pos.z, speed: Math.hypot(player.vel.x, player.vel.z) },
+    cam: camera.position, daylight: daynight.daylight, hour: daynight.hour, playing,
+  });
+  if (playing && daynight.daylight > 0.8 && daynight.hour > 9.5 && daynight.hour < 16.5) {
+    hint('flies', "Bush flies. Give 'em the Aussie salute.", 900);
+  }
   duskHints();
   water.update(dt, elapsed, player.pos, weather.flood);
   sluice.update(dt);
@@ -1418,7 +1474,7 @@ frame();
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; },
 };
