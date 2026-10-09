@@ -27,7 +27,7 @@ export class Hud {
 
   stats(state, cap) {
     this.set('cash', `$${Math.floor(state.cash).toLocaleString()}`);
-    this.set('gold', `${state.gold.toFixed(2)} g`);
+    this.set('gold', `${(state.gold + state.nuggets.reduce((t, n) => t + n.grams, 0)).toFixed(2)} g`);
     this.set('gems', `${state.gems.length}`);
     this.set('bucket', `${state.bucket.length} / ${cap}`);
   }

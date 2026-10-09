@@ -129,6 +129,10 @@ export function crystalToGem(c) {
     grade,
     value: Math.round(value * 100) / 100,
     color: def.color,
+    broken: !!c.broken,
+    chipped: !c.broken && c.damage >= 0.35,
+    // Enough to rebuild the crystal in the inventory viewer.
+    crystal: { variety: c.variety, len: c.len, broken: !!c.broken, damage: c.damage, id: c.id, grade: c.grade },
     label: `${c.variety} ${cm.toFixed(1)} cm (${grade}-grade${state})`,
   };
 }

@@ -102,11 +102,15 @@ export class Shop {
 
   render() {
     const s = this.state;
-    const value = Math.floor(s.gold * GOLD_PRICE);
+    const nuggets = s.nuggets.filter((n) => !n.keep);
+    const nugValue = nuggets.reduce((t, n) => t + n.value, 0);
+    const nugGrams = nuggets.reduce((t, n) => t + n.grams, 0);
+    const value = Math.floor(s.gold * GOLD_PRICE + nugValue);
+    const kept = [...s.nuggets, ...s.gems].filter((i) => i.keep).length;
     $('shop-blurb').textContent =
-      `"Gold's $${GOLD_PRICE} a gram. Gems I'll grade and pay on the stone. `
-      + `${s.remaining} decent nuggets still in the ground on this claim, I reckon. `
-      + `${s.forecast ? `Radio says a storm's due in about ${s.forecast} minutes. Creek'll come up, so don't leave your sluice in.` : 'Weather looks foul upstream.'}"`;
+      `"G'day. Gold's $${GOLD_PRICE} a gram, nuggets a bit better. Stones I'll grade and pay on the piece. `
+      + `Reckon there's ${s.remaining} decent nuggets still in the ground on this claim. `
+      + `${s.forecast ? `Radio says a storm's due this arvo, about ${s.forecast} minutes off. Creek'll come up, so don't leave your sluice in.` : 'Weather looks crook upstream.'}"`;
 
     const sell = $('shop-sell');
     sell.innerHTML = '';
@@ -122,19 +126,33 @@ export class Shop {
       r.append(info, btn);
       sell.append(r);
     };
-    row(`${s.gold.toFixed(2)} g of gold`, `Worth $${value.toLocaleString()}`, 'Sell gold', s.gold < 0.01, () => {
-      s.cash += value;
-      s.gold = 0;
-    });
-    const gemValue = Math.floor(s.gems.reduce((t, g) => t + g.value, 0));
-    const best = s.gems.reduce((b, g) => (!b || g.value > b.value ? g : b), null);
     row(
-      `${s.gems.length} gems and agates`,
-      s.gems.length ? `Worth $${gemValue.toLocaleString()}. Best: ${best.label} ($${Math.round(best.value)})` : 'Nothing to grade yet.',
-      'Sell stones',
-      !s.gems.length,
-      () => { s.cash += gemValue; s.gems.length = 0; },
+      `${(s.gold + nugGrams).toFixed(2)} g of gold`,
+      `${s.gold.toFixed(2)} g fine gold${nuggets.length ? ` and ${nuggets.length} nugget${nuggets.length === 1 ? '' : 's'}` : ''}. Worth $${value.toLocaleString()}`,
+      'Sell gold',
+      value < 1,
+      () => {
+        s.cash += value;
+        s.gold = 0;
+        for (let i = s.nuggets.length - 1; i >= 0; i--) if (!s.nuggets[i].keep) s.nuggets.splice(i, 1);
+      },
     );
+    const stones = s.gems.filter((g) => !g.keep);
+    const gemValue = Math.floor(stones.reduce((t, g) => t + g.value, 0));
+    const best = stones.reduce((b, g) => (!b || g.value > b.value ? g : b), null);
+    row(
+      `${stones.length} stones`,
+      stones.length ? `Worth $${gemValue.toLocaleString()}. Best: ${best.label} ($${Math.round(best.value)})` : 'Nothing to grade yet.',
+      'Sell stones',
+      !stones.length,
+      () => { s.cash += gemValue; for (let i = s.gems.length - 1; i >= 0; i--) if (!s.gems[i].keep) s.gems.splice(i, 1); },
+    );
+    if (kept) {
+      const note = document.createElement('p');
+      note.className = 'desc';
+      note.textContent = `${kept} piece${kept === 1 ? '' : 's'} in your collection aren't for sale. If you really want to part with one, sell it from your inventory (I).`;
+      sell.append(note);
+    }
 
     const items = $('shop-items');
     items.innerHTML = '';

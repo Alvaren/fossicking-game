@@ -76,6 +76,7 @@
         <span><kbd>Right-click</kbd> flip sieve / lift sluice</span>
         <span><kbd>Mouse</kbd> use tool</span>
         <span><kbd>E</kbd> pick up / talk</span>
+        <span><kbd>I</kbd> inventory</span>
         <span><kbd>N</kbd> field notes</span>
         <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
       </div>
@@ -85,6 +86,30 @@
         <button id="controls-btn" class="ghost">Controls <kbd>H</kbd></button>
         <span id="save-status"></span>
       </div>
+    </div>
+  </div>
+
+  <div id="inventory" class="hidden">
+    <div class="panel inv">
+      <div class="inv-head">
+        <h2>Your finds</h2>
+        <div class="inv-tabs">
+          <button class="inv-tab" data-tab="gold">Gold</button>
+          <button class="inv-tab" data-tab="stones">Stones</button>
+          <button class="inv-tab" data-tab="collection">Collection</button>
+        </div>
+      </div>
+      <p id="inv-summary" class="inv-meta"></p>
+      <div class="inv-body">
+        <div id="inv-list"></div>
+        <div id="inv-detail">
+          <canvas id="inv-canvas"></canvas>
+          <p class="inv-meta drag">Drag to turn it over, scroll to zoom</p>
+          <div id="inv-info"></div>
+          <div id="inv-actions"></div>
+        </div>
+      </div>
+      <div class="shop-footer"><span></span><button id="inv-close">Back to it <kbd>I</kbd></button></div>
     </div>
   </div>
 
@@ -120,6 +145,7 @@
     </div>
     <div class="ctl-group">
       <h5>Game</h5>
+      <div><kbd>I</kbd> inventory and collection</div>
       <div><kbd>N</kbd> field notes · <kbd>H</kbd> this card</div>
       <div><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</div>
       <div><kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>S</kbd> save (it also autosaves)</div>

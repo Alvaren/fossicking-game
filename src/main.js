@@ -6,11 +6,15 @@ import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
 import { Water } from './water.js';
 import { SurfaceFinds } from './finds.js';
-import { processLoad, summarise, GEMS } from './minerals.js';
+import { processLoad, summarise, GEMS, makeGemMesh } from './minerals.js';
+import { grade as gradeFind, makeNugget } from './specimens.js';
+import { Inventory } from './inventory.js';
+import { lumpy } from './world.js';
+import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
 import { Viewmodel } from './tools.js';
 import { Hud } from './hud.js';
-import { Shop, gear } from './shop.js';
+import { Shop, gear, GOLD_PRICE } from './shop.js';
 import { Notes } from './notes.js';
 import { Weather } from './weather.js';
 import { Sluice } from './sluice.js';
@@ -32,7 +36,7 @@ function writeSave() {
   const data = {
     version: 3,
     savedAt: Date.now(),
-    seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, log: state.log,
+    seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
     collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
     surface: finds.collectedIds(),
     crystals: field.collectedIds(),
@@ -82,6 +86,7 @@ const state = {
   gold: saved.gold || 0,
   up: saved.up || {},
   gems: saved.gems || [],
+  nuggets: saved.nuggets || [],
   log: saved.log || {},
   bucket: [],
   tool: 'detector',
@@ -221,7 +226,7 @@ const scraped = new Map();
 let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
-const modalOpen = () => shop.isOpen || notes.isOpen;
+const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen;
 
 const shop = new Shop(state, {
   sound,
@@ -239,19 +244,35 @@ const shop = new Shop(state, {
   },
 });
 const notes = new Notes(state, { onClose: () => lock() });
+const inventory = new Inventory(state, {
+  sound,
+  onClose: () => lock(),
+  makeMesh: inventoryMesh,
+  canSell: () => nearShop(),
+  onChange: () => writeSave(),
+  onSell: (it) => {
+    const list = it.type === 'nugget' ? state.nuggets : state.gems;
+    const i = list.indexOf(it);
+    if (i >= 0) list.splice(i, 1);
+    state.cash += it.value;
+    sound.coin();
+    hud.toast(`Sold: ${it.label} for $${Math.round(it.value).toLocaleString()}.`);
+    writeSave();
+  },
+});
 
 let sluiceWashed = false;
 const weather = new Weather({
   renderer, scene, sky, sun, hemi, creek, water, sound,
   onEvent: (phase, w) => {
     if (phase === 'building') {
-      hud.toast('Storm clouds building upstream. The creek will come up soon.');
+      hud.toast("Storm's brewing upstream. The creek'll come up soon.");
       if (sluice.placed) hud.toast('Get your sluice out of the water!', 'junk');
     }
-    if (phase === 'rising') hud.toast("The creek's rising! Get out of the water.", 'junk');
+    if (phase === 'rising') hud.toast("Crikey, the creek's coming up! Get out of the water.", 'junk');
     if (phase === 'peak') floodReworks(w.peak);
     if (phase === 'calm') {
-      hud.toast("The flood's gone down. Fresh gravel on the bars: the best time to look for agates.", 'gold');
+      hud.toast("Flood's gone down. Fresh gravel on the bars: best time to go looking for agates.", 'gold');
       if (sluiceWashed) hud.toast('Your sluice washed up on a bar downstream. Go and get it (E).');
     }
   },
@@ -403,6 +424,7 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.code === 'KeyH' && !e.repeat) { toggleControls(); return; }
   if (e.code === 'KeyN' && notes.isOpen) { notes.close(); return; }
+  if (e.code === 'KeyI' && inventory.isOpen) { inventory.close(); return; }
   if (e.code === 'KeyP' && playing && !e.repeat) { pause(); return; }
   if (!playing) return;
   if (kneel) {
@@ -411,6 +433,7 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'KeyC' && !e.repeat) standUp();
     if (e.code === 'KeyE' && !e.repeat) { const c = excav.pickCrystal(camera.position, camDir); if (c) extract(c); }
     if (e.code === 'KeyN' && !e.repeat) openModal(notes);
+    if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
     return;
   }
   if (e.code === 'KeyC' && !e.repeat) { kneelDown(); return; }
@@ -420,6 +443,7 @@ document.addEventListener('keydown', (e) => {
   if (n >= 0) selectTool(TOOLS[n]);
   if (e.code === 'KeyE' && !e.repeat) interact();
   if (e.code === 'KeyN' && !e.repeat) openModal(notes);
+  if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
 });
 document.addEventListener('keyup', (e) => keys.delete(e.code));
 
@@ -455,9 +479,68 @@ function logGold(grams, nugget) {
   if (nugget) state.log.nuggets = (state.log.nuggets || 0) + 1;
 }
 
-function addStone(gem) {
-  state.gems.push(gem);
-  logFind(gem);
+// Every find comes through here: it gets graded (specimen or not), filed in
+// your gear, logged, and specimens get their moment.
+function addFind(item, from) {
+  gradeFind(item, from);
+  (item.type === 'nugget' ? state.nuggets : state.gems).push(item);
+  if (item.type !== 'nugget') logFind(item);
+  if (item.specimen) {
+    hud.toast(`Ripper! ${cap(item.label)}. That's going in the collection.`, 'gold');
+    sound.gold();
+  }
+  return item;
+}
+
+// Inventory viewer meshes.
+const nuggetMat = new THREE.MeshStandardMaterial({ color: 0xffc23a, metalness: 1, roughness: 0.28 });
+const quartzMat = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.35, metalness: 0 });
+function inventoryMesh(item) {
+  if (item.type === 'fine') {
+    // A little glass bottle with the fine gold settled in the bottom.
+    const g = new THREE.Group();
+    const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.05, 24, 1, true),
+      new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.9, roughness: 0.05, thickness: 0.002, transparent: true, opacity: 0.35, side: THREE.DoubleSide }));
+    g.add(glass);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.0085, 0.0085, 0.008, 16), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6 }));
+    cap.position.y = 0.028;
+    g.add(cap);
+    const fill = Math.min(0.045, 0.002 + Math.cbrt(item.grams) * 0.006);
+    if (item.grams > 0.0005) {
+      const gold = new THREE.Mesh(new THREE.CylinderGeometry(0.0112, 0.0112, fill, 24), nuggetMat);
+      gold.position.y = -0.025 + fill / 2;
+      g.add(gold);
+    }
+    return g;
+  }
+  if (item.type === 'nugget') {
+    const r = mulberry32(item.seed || 1);
+    const g = new THREE.Group();
+    const s = 0.004 * Math.cbrt(item.grams) + 0.003;
+    const n = new THREE.Mesh(lumpy(new THREE.IcosahedronGeometry(1, 2), 0.35, r), nuggetMat);
+    n.scale.set(s * 1.3, s * 0.75, s);
+    g.add(n);
+    if (item.style === 'quartz') {
+      // Gold threaded through white reef quartz.
+      const q = new THREE.Mesh(lumpy(new THREE.DodecahedronGeometry(1, 1), 0.3, r), quartzMat);
+      q.scale.set(s * 1.8, s * 1.1, s * 1.5);
+      q.position.set(s * 0.9, -s * 0.2, 0);
+      g.add(q);
+    } else if (item.style === 'crystalline') {
+      for (let k = 0; k < 7; k++) {
+        const c = new THREE.Mesh(new THREE.OctahedronGeometry(s * 0.35), nuggetMat);
+        c.position.set((r() - 0.5) * s * 2, s * 0.5 + r() * s * 0.3, (r() - 0.5) * s * 1.6);
+        c.rotation.set(r() * 3, r() * 3, r() * 3);
+        g.add(c);
+      }
+    }
+    return g;
+  }
+  if (item.crystal || ['quartz', 'feldspar', 'calcite', 'fluorite'].includes(item.type) || (item.type === 'topaz' && item.lengthCm)) {
+    const c = item.crystal || { variety: item.variety, len: (item.lengthCm || 3) / 100, broken: false, damage: 0, id: 1, grade: item.grade };
+    return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 });
+  }
+  return makeGemMesh(item);
 }
 
 function nearestPickup() {
@@ -476,17 +559,17 @@ function interact() {
     const t = p.target;
     targets.collect(t);
     if (t.kind === 'gold') {
-      state.gold += t.grams;
+      const n = addFind(makeNugget(t.grams, t.id + 1, GOLD_PRICE), 'Found with the detector and dug up');
       logGold(t.grams, true);
       state.remaining = targets.remainingGold();
-      hud.toast(`+${t.grams.toFixed(2)} g gold nugget!`, 'gold');
+      if (!n.specimen) hud.toast(t.grams >= 5 ? `Strewth! A ${t.grams.toFixed(2)} g nugget!` : `You beauty! ${t.grams.toFixed(2)} g nugget.`, 'gold');
       sound.gold();
     } else if (t.value) {
       state.cash += t.value;
       hud.toast(`${cap(t.name)}. A collector will give you $${t.value} for that.`, 'gold');
       sound.coin();
     } else {
-      hud.toast(`Just ${t.name}.`, 'junk');
+      hud.toast(`Just ${t.name}. Bugger.`, 'junk');
       sound.junk();
     }
     writeSave();
@@ -494,7 +577,7 @@ function interact() {
   }
   if (p?.find) {
     finds.collect(p.find);
-    addStone(p.find.gem);
+    addFind(p.find.gem, p.find.gem.type === 'agate' ? 'Spotted lying on the ground' : 'Spotted glinting on a gravel bar');
     hud.toast(`Picked up: ${p.find.gem.label}`, 'gold');
     if (p.find.id >= 5000 && p.find.id < 6000) hint('float', 'Quartz float: shards shed from a crystal pocket. Follow them uphill and dig where they stop.', 300);
     if (p.find.gem.type === 'agate') hint('agate', 'Agates weather out of the pink rhyolite and wash onto the gravel bars downstream.', 300);
@@ -512,7 +595,7 @@ function interact() {
   if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) {
     sluice.recover();
     sluiceWashed = false;
-    hud.toast('Got your sluice back. Set it again with tool 5.');
+    hud.toast("Got your sluice back. She'll be right. Set it again with tool 5.");
     return;
   }
   if (nearShop()) openModal(shop);
@@ -568,10 +651,10 @@ function feedSluice() {
   view.playDig();
   view.dirtOnBlade = true;
   for (const a of r.agates) {
-    addStone(a);
+    addFind(a, 'Picked out of the sluice oversize');
     hud.toast(`Picked out of the oversize: ${a.label}`, 'gold');
   }
-  if (sluice.fill >= 1) hint('packed', 'The riffles are packed. Clean up the sluice (E) before you lose gold.', 20);
+  if (sluice.fill >= 1) hint('packed', "The riffles are chockers. Clean up the sluice (E) before you lose gold.", 20);
   if (r.eff < 0.4) hint('sluiceflow', `This spot isn't working well: ${sluice.status().why}. Try another run.`, 60);
 }
 
@@ -633,7 +716,7 @@ function dig(hit) {
   } else {
     view.dirtOnBlade = false;
     if (elapsed - lastFullWarn > 6) {
-      hud.toast('Bucket full. Take it to the creek to pan or sieve.');
+      hud.toast("Bucket's chockers. Take it down to the creek to pan or sieve.");
       lastFullWarn = elapsed;
     }
   }
@@ -655,15 +738,22 @@ function gearInfo() {
 function finishLoad(method, opts = {}) {
   const sample = state.bucket.shift();
   const res = processLoad(sample, method, gearInfo(), Math.random, opts);
-  const gold = Math.round((res.gold + res.picker) * 1000) / 1000;
+  const gold = Math.round(res.gold * 1000) / 1000;
   if (gold > 0.0005) {
     state.gold += gold;
     logGold(gold, false);
   }
-  for (const f of res.finds) addStone(f);
+  if (res.picker) {
+    const pk = makeNugget(Math.round(res.picker * 100) / 100, Math.floor(Math.random() * 1e6), GOLD_PRICE);
+    pk.label = `picker, ${pk.grams.toFixed(2)} g`;
+    addFind(pk, method === 'pan' ? 'Picked out of the pan' : 'Picked off the sieve');
+    logGold(pk.grams, false);
+  }
+  const from = method === 'pan' ? (sample.cons ? 'Panned from sluice concentrates' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
+  for (const f of res.finds) addFind(f, from);
 
   const parts = [];
-  if (res.picker) parts.push(`a ${res.picker.toFixed(2)} g picker`);
+  if (res.picker) parts.push(`bonza, a ${res.picker.toFixed(2)} g picker`);
   else if (gold >= 0.001) parts.push(`${gold.toFixed(3)} g fine gold`);
   const stones = summarise(res.finds);
   if (stones) parts.push(stones);
@@ -672,7 +762,7 @@ function finishLoad(method, opts = {}) {
   if (method === 'pan') view.showPanResult(gold > 0.002);
   else view.showSieveResult(res.finds, opts.strat ?? 1);
 
-  if (!parts.length) hud.toast(method === 'pan' ? 'Nothing but black sand.' : 'Just gravel in the sieve.', 'junk');
+  if (!parts.length) hud.toast(method === 'pan' ? 'Nothing but black sand. Bugger.' : 'Just gravel in the sieve.', 'junk');
   else hud.toast(cap(parts.join(', ')) + '.', 'gold');
   for (const f of notable) hud.toast(cap(f.label) + '!', 'gold');
   if (res.picker || notable.length) sound.gold(); else if (parts.length) sound.coin();
@@ -736,17 +826,18 @@ function extract(e) {
   if (e.exposure >= 0.6) {
     excav.collect(e);
     const gem = crystalToGem(e.c);
-    addStone(gem);
+    const site = field.sites[e.c.site];
+    addFind(gem, site && site.kind === 'vug' ? 'Lifted out of a vug in a quartz vein' : 'Dug out of a crystal pocket');
     hud.toast(`Lifted out: ${gem.label}`, 'gold');
     if (gem.grade === 'A' && !e.c.broken) sound.gold(); else sound.coin();
     writeSave();
   } else if (Math.random() < 0.45) {
     e.c.damage = 1;
     excav.active.breakCrystal(e);
-    hud.toast(`Snap! The ${e.c.variety} was still locked in (${pct}% clear).`, 'junk');
+    hud.toast(`Bugger! The ${e.c.variety} snapped. It was still locked in (${pct}% clear).`, 'junk');
     sound.crack();
   } else {
-    hud.toast(`Won't budge. Only ${pct}% clear: dig more around it.`);
+    hud.toast(`Won't budge. Only ${pct}% clear: dig a bit more around it.`);
   }
 }
 
@@ -794,10 +885,10 @@ function updateKneelTools(dt) {
     }
     if (r?.hurt) {
       if (r.hurt.c.broken) {
-        hud.toast(`Snap! You broke a ${r.hurt.c.variety}.`, 'junk');
+        hud.toast(`Bugger! You broke a ${r.hurt.c.variety}.`, 'junk');
         sound.crack();
       } else {
-        hint('careful', `Careful! The ${tool === 'pick' ? 'pick' : 'trowel'} is scraping a crystal. Switch to the brush (1).`, 6);
+        hint('careful', `Steady on! The ${tool === 'pick' ? 'pick' : 'trowel'}'s scraping a crystal. Grab the brush (1).`, 6);
       }
     }
     if (r?.opened) {
@@ -864,11 +955,14 @@ function updatePlayer(dt) {
   player.pos.z += player.vel.z * dt;
 
   // The current leans on your legs.
-  if (depth > 0.1) {
+  if (depth > 0.5) {
     creek.velocity(player.pos.x, player.pos.z, flow);
-    const push = 0.35 * Math.min(1, depth / 0.6);
-    player.pos.x += flow.x * push * dt;
-    player.pos.z += flow.z * push * dt;
+    const push = smoothstep(1.3, 2.2, flow.speed) * smoothstep(0.5, 0.9, depth) * 0.7;
+    if (push > 0) {
+      player.pos.x += flow.x * push * dt;
+      player.pos.z += flow.z * push * dt;
+      hint('current', 'The current is dragging you. Get to the bank!', 20);
+    }
   }
 
   for (const c of world.colliders) {
@@ -958,7 +1052,7 @@ function updateTools(dt, motion) {
       const g = terrain.geologyAt(hit.x, hit.z);
       if (g.orig - g.bedrock > 0.08 || terrain.overlayAt(hit.x, hit.z)) {
         sound.thud();
-        hint('tapdirt', 'Thud. That is dirt. Tap bare rock to listen for hollows.', 30);
+        hint('tapdirt', "Thud. That's just dirt, mate. Tap bare rock to listen for hollows.", 30);
       } else {
         const hollow = field.hollowness(hit.x, hit.z);
         sound.tap(hollow);
@@ -1168,7 +1262,7 @@ frame();
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; },
 };
