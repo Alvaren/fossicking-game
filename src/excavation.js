@@ -423,6 +423,7 @@ export class Excavation {
       cx = heap.x + ((cx - heap.x) / d) * want;
       cz = heap.z + ((cz - heap.z) / d) * want;
     }
+    if (this.terrain.overlays.some((o) => o.mine && cx > o.x0 - 2 && cx < o.x1 + 2 && cz > o.z0 - 2 && cz < o.z1 + 2)) return null;
     let patch = this.patches.find((p) => Math.hypot(p.cx - cx, p.cz - cz) < 0.7);
     if (!patch) {
       // Don't overlap an existing patch.

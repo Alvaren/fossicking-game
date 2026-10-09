@@ -25,6 +25,8 @@ export const MILESTONES = [
   { key: 'explorer', title: 'Know your country', desc: 'Find every rock type on the claim.', check: (s, sources) => Object.keys(sources).every((k) => s.discovered[k]) },
   { key: 'drove', title: 'Took the ute out', desc: 'Go for a drive.' },
   { key: 'cut', title: 'On the wheel', desc: 'Get a stone cut in town.' },
+  { key: 'underground', title: 'Down the hole', desc: 'Climb down into the Lucky Strike.' },
+  { key: 'reefgold', title: 'Hard-rock miner', desc: 'Pan gold from ore you broke, roasted and crushed yourself.' },
   { key: 'boulder', title: 'Cracked it', desc: 'Split open a boulder with a vug inside.' },
   { key: 'thunderegg', title: 'Thunderstruck', desc: 'Get a thunderegg sawn open.' },
   { key: 'order', title: 'Filled an order', desc: "Hand over a piece for one of the buyer's orders." },

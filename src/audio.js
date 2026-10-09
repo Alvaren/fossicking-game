@@ -102,6 +102,50 @@ export class Sound {
   }
 
   // Water rushing through the sluice when you're standing next to it.
+  // A drip somewhere down the drive, with a little echo.
+  drip() {
+    if (!this.ctx) return;
+    const ctx = this.ctx, t = ctx.currentTime;
+    for (const [delay, g] of [[0, 0.06], [0.16, 0.02], [0.33, 0.008]]) {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      const f = 1400 + Math.random() * 500;
+      o.frequency.setValueAtTime(f, t + delay);
+      o.frequency.exponentialRampToValueAtTime(f * 0.45, t + delay + 0.07);
+      const gn = ctx.createGain();
+      gn.gain.setValueAtTime(0, t + delay);
+      gn.gain.linearRampToValueAtTime(g, t + delay + 0.004);
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + delay + 0.09);
+      o.connect(gn).connect(this.master);
+      o.start(t + delay);
+      o.stop(t + delay + 0.1);
+    }
+  }
+
+  // The petrol hammer mill: a two-stroke buzz and rock rattling through.
+  setMill(on) {
+    if (!this.ctx) return;
+    if (!this.mill) {
+      if (!on) return;
+      const ctx = this.ctx;
+      const o = ctx.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.value = 52;
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 700;
+      const g = ctx.createGain();
+      g.gain.value = 0;
+      o.connect(lp).connect(g).connect(this.master);
+      o.start();
+      this.mill = { o, g, rattle: this.loop(2200, 'bandpass', 0, 0.9) };
+    }
+    const t = this.ctx.currentTime;
+    this.mill.g.gain.setTargetAtTime(on ? 0.05 : 0, t, 0.3);
+    this.mill.rattle.gain.gain.setTargetAtTime(on ? 0.05 + Math.random() * 0.03 : 0, t, 0.05);
+    this.mill.o.frequency.setTargetAtTime(on ? 50 + Math.random() * 6 : 30, t, 0.1);
+  }
+
   setSluice(k) {
     if (!this.ctx) return;
     this.sluiceLoop.gain.gain.setTargetAtTime(k * 0.12, this.ctx.currentTime, 0.2);

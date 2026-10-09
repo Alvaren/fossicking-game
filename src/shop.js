@@ -72,6 +72,16 @@ export const UPGRADES = {
       },
     ],
   },
+  crusher: {
+    title: 'Ore crusher',
+    levels: [
+      { label: 'Dolly pot at camp' },
+      {
+        label: 'Petrol hammer mill', cost: 900,
+        desc: 'Feed it reef ore and it crushes the lot by itself, a lump every few seconds, while you get on with something else.',
+      },
+    ],
+  },
   feathers: {
     title: 'Boulder splitting',
     levels: [

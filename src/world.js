@@ -433,7 +433,17 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // Where the collection cabinet stands, beside the buyer's table.
   const cabinetSpot = toWorld(-2.6, -2.9);
   collide(-2.6, -2.9, 0.8);
-  return { colliders, shop, spawn, tentPos, cabinetSpot, ute, uteColliders, update, applyModels };
+  // The ore works: the campfire for roasting, a dolly pot and (if you buy one) a hammer mill.
+  const baseYaw = flip < 0 ? Math.PI : 0;
+  const oreSpots = {
+    fire: toWorld(0.5, 1.5),
+    dolly: { ...toWorld(-0.8, 4.0), yaw: baseYaw + Math.PI },
+    mill: { ...toWorld(0.6, -2.6), yaw: baseYaw },
+  };
+  collide(-0.8, 4.0, 0.5);
+  collide(-0.8, 5.4, 0.15);
+  collide(0.6, -2.6, 0.6);
+  return { colliders, shop, spawn, tentPos, cabinetSpot, oreSpots, ute, uteColliders, update, applyModels };
 }
 
 // ---------- geometry helpers ----------
@@ -535,7 +545,7 @@ function spinifex(rand) {
   return g;
 }
 
-function signTexture(text, ink = '#7a2a12', paper = '#e9dcc0', size = 58, sub = '') {
+export function signTexture(text, ink = '#7a2a12', paper = '#e9dcc0', size = 58, sub = '') {
   const c = document.createElement('canvas');
   c.width = 512; c.height = sub ? 226 : 146;
   const ctx = c.getContext('2d');

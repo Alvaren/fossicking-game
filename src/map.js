@@ -15,6 +15,7 @@ const SOURCES = {
   granite: { label: 'Granite tors', colour: '#c9a89a' },
   opal: { label: 'Old opal workings', colour: '#f6f2ea' },
   fossil: { label: 'Fossil shale', colour: '#6c7076' },
+  mine: { label: 'Lucky Strike mine', colour: '#3a2a20' },
 };
 const DOT = {
   nugget: '#ffcf4a', fine: '#ffcf4a', sapphire: '#4f86ff', zircon: '#d9772e', topaz: '#bfe3ff', garnet: '#b0222e',

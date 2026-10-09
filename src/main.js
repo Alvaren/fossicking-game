@@ -6,7 +6,7 @@ import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
 import { Water } from './water.js';
 import { SurfaceFinds } from './finds.js';
-import { processLoad, summarise, GEMS, makeGemMesh } from './minerals.js';
+import { processLoad, summarise, GEMS, makeGemMesh, makeGem } from './minerals.js';
 import { grade as gradeFind, makeNugget } from './specimens.js';
 import { Inventory } from './inventory.js';
 import { DayNight } from './daynight.js';
@@ -19,6 +19,8 @@ import { cutStone, makeCutMesh } from './cutting.js';
 import { MILESTONES, findMilestones } from './milestones.js';
 import { DustDevils } from './dustdevil.js';
 import { Boulders } from './boulders.js';
+import { Mine } from './mine.js';
+import { OreWorks, ORE_BAG, crushedLoad } from './orework.js';
 import { Cabinet } from './cabinet.js';
 import { FossilBed, makeFossil, makeFossilMesh, FOSSILS } from './fossils.js';
 import { lumpy } from './world.js';
@@ -63,7 +65,10 @@ function writeSave() {
     crystalState: field.stateSnapshot(),
     sluice: sluice.snapshot(),
     bucket: state.bucket,
-    player: { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool },
+    player: (() => {
+      const pp = mine.inside || mine.climb ? mine.exitSpot() : player.pos;
+      return { x: pp.x, z: pp.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool };
+    })(),
     ute: ute.snapshot(),
     hour: daynight.hour,
     headlamp,
@@ -74,6 +79,9 @@ function writeSave() {
     milestones: state.milestones,
     cutting: state.cutting,
     boulders: boulders.snapshot(),
+    mine: mine.snapshot(),
+    works: works.snapshot(),
+    ore: state.ore,
     panTests: state.panTests,
     leadTraced: state.leadTraced,
     discovered: state.discovered,
@@ -121,6 +129,7 @@ const state = {
   orders: saved.orders || null,
   milestones: saved.milestones || {},
   cutting: saved.cutting || [],
+  ore: saved.ore || [],
   panTests: saved.panTests || [],
   leadTraced: !!saved.leadTraced,
   discovered: saved.discovered || {},
@@ -204,6 +213,9 @@ const creek = terrain.creek;
 const deposits = new Deposits(terrain);
 const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystals || []));
 const world = buildWorld(scene, terrain, state.seed, field.sites);
+const mine = new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
+if (mine.ok) terrain.sources.mine = { x: mine.x, z: mine.z };
+const works = new OreWorks(scene, terrain, world.oreSpots, saved.works);
 const boulders = new Boulders(scene, terrain, state.seed, saved.boulders, world.colliders);
 const excav = new Excavation(scene, terrain, field);
 const water = new Water(scene, terrain, sunDir);
@@ -783,6 +795,20 @@ function exitUte() {
 
 function interact() {
   if (driving) { exitUte(); return; }
+  if (mine.climb) return;
+  if (works.dolly.active) { works.stopDolly(); hud.toast('Leaving the dolly pot for now.'); return; }
+  if (mine.inside) {
+    if (mine.nearLadder(player.pos)) startClimb(false);
+    return;
+  }
+  if (mine.nearCollar(player.pos)) { startClimb(true); return; }
+  if (works.nearMill(player.pos)) { useMill(); return; }
+  if (works.nearDolly(player.pos) && (state.ore.length || works.dolly.crush > 0)) {
+    works.startDolly();
+    hint('dolly', 'Drive the dolly down when the sapling has sprung it right up. Pound a lump to grit, then pan it at the creek.', 600);
+    return;
+  }
+  if (works.nearFire(player.pos) && useFire()) return;
   const p = nearestPickup();
   if (p?.target) {
     const t = p.target;
@@ -1004,7 +1030,11 @@ function finishLoad(method, opts = {}) {
     addFind(pk, method === 'pan' ? 'Picked out of the pan' : 'Picked off the sieve');
     logGold(pk.grams, false);
   }
-  const from = method === 'pan' ? (sample.cons ? 'Panned from sluice concentrates' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
+  const from = method === 'pan' ? (sample.crushed ? 'Panned from crushed reef ore' : sample.cons ? 'Panned from sluice concentrates' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
+  if (sample.crushed && gold > 0.001) {
+    award('reefgold');
+    if (!sample.roasted) hint('roastmore', 'Raw ore holds onto its gold. Roast it on the campfire before you crush it and the pan gets a lot more.', 300);
+  }
   for (const f of res.finds) addFind(f, from);
 
   const parts = [];
@@ -1047,6 +1077,230 @@ function finishLoad(method, opts = {}) {
   writeSave();
 }
 
+// ---------- hard-rock gold: the mine and the ore works ----------
+
+function startClimb(down) {
+  mine.climb = { down, t: 0, clank: 0 };
+  mouseHeld = false;
+  if (down) {
+    award('underground');
+    if (!headlamp) hint('minedark', "It's black as down there. Press L for your headlamp.", 120);
+  }
+  sound.click();
+}
+
+function updateClimb(dt) {
+  const c = mine.climb;
+  c.t = Math.min(1, c.t + dt / 3.2);
+  c.clank -= dt;
+  if (c.clank <= 0) { c.clank = 0.42; sound.tap(0.4); }
+  camera.position.copy(mine.ladderPose(c.t, c.down));
+  // Facing the ladder on the way, then turning round at the bottom (or top).
+  player.yaw = mine.driveYaw(true);
+  player.pitch = c.down ? -0.25 + c.t * 0.25 : 0.25 - c.t * 0.25;
+  camera.rotation.set(player.pitch, player.yaw, 0);
+  hud.prompt(c.down ? 'Climbing down...' : 'Climbing up...');
+  hud.progress(0);
+  sound.setDetector(false, 0, null);
+  marker.visible = false;
+  if (c.t >= 1) {
+    if (c.down) {
+      mine.inside = true;
+      const start = mine.clamp(mine.ladderPose(1, true));
+      player.pos.copy(start);
+      player.yaw = mine.driveYaw();
+    } else {
+      mine.inside = false;
+      const out = mine.exitSpot();
+      player.pos.set(out.x, terrain.getHeight(out.x, out.z), out.z);
+      player.yaw = mine.driveYaw();
+    }
+    player.vel.set(0, 0, 0);
+    player.pitch = 0;
+    mine.climb = null;
+    writeSave();
+  }
+  return { moving: false, running: false, depth: 0 };
+}
+
+// Walking about in the drive.
+let mineWork = 0;
+function updateUnderground(dt) {
+  fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+  right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
+  wish.set(0, 0, 0);
+  if (keys.has('KeyW') || keys.has('ArrowUp')) wish.add(fwd);
+  if (keys.has('KeyS') || keys.has('ArrowDown')) wish.sub(fwd);
+  if (keys.has('KeyD') || keys.has('ArrowRight')) wish.add(right);
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) wish.sub(right);
+  if (touch) { wish.addScaledVector(fwd, touch.move.y); wish.addScaledVector(right, touch.move.x); }
+  const moving = wish.lengthSq() > 0;
+  const running = moving && (keys.has('ShiftLeft') || keys.has('ShiftRight') || touch?.run);
+  if (moving) wish.multiplyScalar((running ? 3.6 : 2.4) / Math.max(1, wish.length()));
+  const k = Math.min(1, dt * 12);
+  player.vel.x += (wish.x - player.vel.x) * k;
+  player.vel.z += (wish.z - player.vel.z) * k;
+  const next = mine.clamp(new THREE.Vector3(player.pos.x + player.vel.x * dt, player.pos.y, player.pos.z + player.vel.z * dt));
+  player.pos.copy(next);
+  const hspeed = Math.hypot(player.vel.x, player.vel.z);
+  if (hspeed > 0.5) {
+    player.stridePhase += dt * hspeed * 1.9;
+    const step = Math.floor(player.stridePhase / Math.PI);
+    if (step !== player.lastStep) { player.lastStep = step; sound.step(false); }
+  }
+  const bob = Math.abs(Math.sin(player.stridePhase)) * 0.04 * Math.min(1, hspeed / 3);
+  camera.position.set(player.pos.x, player.pos.y + EYE - bob, player.pos.z);
+  camera.rotation.set(player.pitch, player.yaw, 0);
+  return { moving: hspeed > 0.5, running, depth: 0 };
+}
+
+// Tools in the mine: the hammer breaks ore and picks out shows; the detector
+// finds them; the UV torch lights up scheelite. Nothing else is much use.
+function updateMineTools(dt) {
+  digCooldown -= dt;
+  camera.getWorldDirection(camDir);
+  marker.visible = false;
+  let prompt = '';
+  let progress = 0;
+  if (state.tool === 'hammer') {
+    const t = mine.pick(camera.position, camDir);
+    if (!t || !mouseHeld) mineWork = Math.max(0, mineWork - dt * 2);
+    if (t?.show) {
+      prompt = t.show.scheelite ? 'Hold click to chip out the scheelite' : 'Visible gold! Hold click to break out the specimen';
+      if (mouseHeld) {
+        mineWork += dt / 1.5;
+        if (Math.floor(mineWork * 5) !== Math.floor((mineWork - dt / 1.5) * 5)) { view.playTap(); sound.tap(0); }
+        if (mineWork >= 1) {
+          mineWork = 0;
+          mine.takeShow(t.show);
+          if (t.show.scheelite) {
+            const g = makeGem('scheelite', Math.random);
+            addFind(g, 'Chipped out of the reef in the Lucky Strike');
+            hud.toast(`${cap(g.label)}, out of the reef.`, 'gold');
+          } else {
+            const n = makeNugget(t.show.grams, t.show.seed, GOLD_PRICE);
+            n.style = 'quartz';
+            n.value = Math.round(n.value * 1.4 * 100) / 100; // gold in quartz: collectors pay well for it
+            n.label = `gold in quartz, ${t.show.grams.toFixed(2)} g`;
+            addFind(n, 'Broken out of the reef in the Lucky Strike');
+            if (!n.specimen) hud.toast(`Gold in quartz! ${t.show.grams.toFixed(2)} g of it.`, 'gold');
+            sound.gold();
+          }
+          sound.crack();
+          writeSave();
+        }
+      }
+      progress = mineWork;
+    } else if (t?.reef) {
+      const full = state.ore.length >= ORE_BAG;
+      prompt = full ? `Ore bag's full (${ORE_BAG}). Take it up to camp: roast it on the fire, then crush it.` : `Quartz reef · hold click to break out ore (${state.ore.length}/${ORE_BAG})`;
+      if (mouseHeld && !full) {
+        mineWork += dt / 1.6;
+        if (Math.floor(mineWork * 4) !== Math.floor((mineWork - dt / 1.6) * 4)) { view.playTap(); sound.tap(0.15); }
+        if (mineWork >= 1) {
+          mineWork = 0;
+          state.ore.push(mine.breakOre(t.local));
+          sound.crack();
+          hint('ore', 'A lump of reef ore. The gold in it is too fine to see: roast it on the campfire, crush it in the dolly pot, then pan it.', 600);
+          if (state.ore.length === ORE_BAG) hud.toast('Ore bag full. Time to head up and treat it.');
+        }
+      }
+      progress = mineWork;
+    } else if (t) {
+      prompt = 'Country rock. The gold is in the white quartz reef';
+      if (clicked && digCooldown <= 0) { digCooldown = 0.35; view.playTap(); sound.thud(); }
+    } else prompt = '';
+  } else if (state.tool === 'detector') {
+    const coil = camera.position.clone().addScaledVector(camDir, 0.9);
+    const sig = mine.signalAt(coil);
+    hud.meter(sig, sig > 0 ? 'gold' : null, (state.up.disc || 0) > 0);
+    sound.setDetector(playing, sig, sig > 0 ? 'gold' : null);
+    prompt = sig > 0.2 ? 'Something in the walls here' : '';
+  } else if (state.tool === 'uv') {
+    prompt = ownsUv() ? '' : 'No UV torch yet';
+  } else {
+    prompt = 'Not much use for that down here. The hammer (6) is what you want';
+  }
+  if (state.tool !== 'detector') sound.setDetector(false, 0, null);
+  if (mine.nearLadder(player.pos)) prompt = prompt ? `${prompt} · E: climb out` : 'E: climb the ladder out';
+  view.setTool(viewTool());
+  clicked = false;
+  hud.progress(progress);
+  hud.prompt(prompt);
+}
+
+// The campfire: roast raw ore, or take the roasted ore off.
+function useFire() {
+  const done = works.takeRoast();
+  if (done) {
+    state.ore.push(...done);
+    hud.toast(`Roasted ore off the fire: ${done.length} lump${done.length === 1 ? '' : 's'}, cracked and brittle. Crush it in the dolly pot.`, 'gold');
+    sound.coin();
+    writeSave();
+    return true;
+  }
+  if (works.roast) {
+    hud.toast(`Still roasting. About ${Math.ceil(works.roast.left)} seconds to go.`);
+    return true;
+  }
+  const n = works.startRoast(state.ore);
+  if (n) {
+    hud.toast(`${n} lump${n === 1 ? '' : 's'} of ore on the fire to roast. Give it a bit.`);
+    hint('roast', 'Roasting makes quartz brittle and burns off the sulphides that lock up fine gold. Crush it once it is done.', 600);
+    sound.click();
+    writeSave();
+    return true;
+  }
+  return false;
+}
+
+// The hammer mill: shovel crushed ore out, or feed it more.
+function useMill() {
+  const cap = gear(state, 'bucket').cap;
+  const m = works.mill;
+  if (m.out.length) {
+    let n = 0;
+    while (m.out.length && state.bucket.length < cap) { state.bucket.push(m.out.shift()); n++; }
+    hud.toast(n ? `Shovelled ${n} load${n === 1 ? '' : 's'} of crushed ore into your bucket. Pan it at the creek.` : "Bucket's full. Go and pan what you've got.");
+    sound.click();
+    writeSave();
+    return;
+  }
+  if (state.ore.length) {
+    const n = works.feedMill(state.ore);
+    hud.toast(`Fed ${n} lump${n === 1 ? '' : 's'} into the hammer mill.`);
+    writeSave();
+    return;
+  }
+  hud.toast(works.milling ? 'Still crushing...' : 'Nothing to crush. Break some ore in the Lucky Strike first.');
+}
+
+// The dolly pot: pound a lump at a time into grit.
+function updateDollyPot() {
+  const d = works.dolly;
+  if (!works.nearDolly(player.pos)) { works.stopDolly(); return null; }
+  const lump = state.ore[0];
+  if (!lump && d.crush <= 0) { works.stopDolly(); hud.toast('No more ore to crush.'); return null; }
+  if (clicked && lump) {
+    const r = works.strike(state.ore, lump.roasted);
+    if (r && !r.good) hint('dollytime', 'Too soon. Wait till the sapling has lifted the dolly right up, then drive it down.', 40);
+  }
+  if (d.crush >= 1 && lump) {
+    const cap = gear(state, 'bucket').cap;
+    if (state.bucket.length >= cap) {
+      works.stopDolly();
+      hud.toast("Bucket's full of crushed ore. Go and pan it.");
+      return null;
+    }
+    state.bucket.push(crushedLoad(state.ore.shift()));
+    d.crush = 0;
+    sound.coin();
+    hud.toast(state.ore.length ? `Crushed to grit. ${state.ore.length} lump${state.ore.length === 1 ? '' : 's'} to go.` : 'Crushed to grit. That is the lot: pan it at the creek.');
+    writeSave();
+  }
+  return `Dolly pot · drive it down when it springs right up${lump && !lump.roasted ? ' (raw ore: roast it first and it crushes faster)' : ''} · E to stop`;
+}
+
 // ---------- driving ----------
 
 function updateDriving(dt) {
@@ -1079,7 +1333,7 @@ let kneel = null;
 let workTick = 0;
 
 function kneelDown() {
-  if (driving) return;
+  if (driving || mine.inside || mine.climb) return;
   if (!player.grounded || motion.depth > 0.1) { hud.toast("You can't kneel here."); return; }
   const r = excav.kneel(player.pos.x, player.pos.z, player.yaw);
   if (!r) { hud.toast('Too close to another dig. Kneel right in front of it, or move further away.'); return; }
@@ -1329,11 +1583,23 @@ function washTool(dt, motion, progress, time, onDone) {
     return { progress, active: true, prompt: '' };
   }
   const n = state.bucket.length;
-  const what = state.bucket[0]?.cons ? 'the sluice concentrates' : `${n} load${n === 1 ? '' : 's'}`;
+  const what = state.bucket[0]?.crushed ? 'the crushed ore' : state.bucket[0]?.cons ? 'the sluice concentrates' : `${n} load${n === 1 ? '' : 's'}`;
   return { progress, active: false, prompt: `Hold click to ${verb === 'pan' ? 'pan' : 'jig the sieve'} (${what})` };
 }
 
 function updateTools(dt, motion) {
+  if (works.dolly.active) {
+    const msg = updateDollyPot();
+    if (msg) {
+      marker.visible = false;
+      sound.setDetector(false, 0, null);
+      view.setTool(viewTool());
+      clicked = false;
+      hud.progress(works.dolly.crush);
+      hud.prompt(msg);
+      return;
+    }
+  }
   digCooldown -= dt;
   workProgress = 0;
   let prompt = '';
@@ -1555,6 +1821,10 @@ function updateTools(dt, motion) {
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
   else if (ute.near(player.pos)) prompt = 'E: hop in the ute';
   else if (cabinet.near(player.pos)) prompt = 'Your collection cabinet · E to look through it';
+  else if (mine.nearCollar(player.pos)) prompt = 'The Lucky Strike shaft · E: climb down the ladder';
+  else if (works.nearMill(player.pos)) prompt = works.mill.out.length ? `Hammer mill · E: shovel out the crushed ore (${works.mill.out.length})` : works.milling ? `Hammer mill crushing... (${works.mill.queue.length} to go)` : state.ore.length ? `Hammer mill · E: feed it your ore (${state.ore.length})` : 'Hammer mill';
+  else if (works.nearDolly(player.pos)) prompt = state.ore.length ? `Dolly pot · E: crush your ore (${state.ore.length} lump${state.ore.length === 1 ? '' : 's'})` : 'Dolly pot: for crushing reef ore';
+  else if (works.nearFire(player.pos) && (works.roast || state.ore.some((l) => !l.roasted))) prompt = works.roast ? (works.roast.left > 0 ? `Ore roasting on the fire... ${Math.ceil(works.roast.left)} s` : 'E: take the roasted ore off the fire') : `E: put your raw ore on the fire to roast (${state.ore.filter((l) => !l.roasted).length})`;
   else if (nearTent() && daynight.isNight) prompt = 'E: kip in the tent till morning';
   else if (nearShop()) prompt = 'E: talk to the gold & gem buyer';
   hud.prompt(prompt);
@@ -1657,6 +1927,7 @@ const DISCOVERY = {
   basalt: 'A cap of black basalt. Sapphires, zircons and black spinel weather out of it.',
   rhyolite: 'Pink rhyolite. Agates weather out of it and wash onto the bars downstream.',
   granite: 'Granite country, with quartz veins. Look for crystal pockets and vugs here.',
+  mine: 'The old Lucky Strike gold mine. There is a ladder down the shaft: take your headlamp (L) and rock hammer (6).',
   opal: 'The old opal workings. Kneel at a mullock heap and noodle for chips the old-timers missed. Stay clear of the shafts!',
   fossil: 'A ledge of grey shale. Split the slabs with the rock hammer (6): some hold fossil leaves, insects, even fish.',
 };
@@ -1665,12 +1936,12 @@ function checkDiscoveries(dt) {
   discoverTick -= dt;
   if (discoverTick > 0) return;
   discoverTick = 1;
-  if (boulders.list.some((b) => !b.split && Math.hypot(b.x - player.pos.x, b.z - player.pos.z) < 5)) {
+  if (!mine.inside && boulders.list.some((b) => !b.split && Math.hypot(b.x - player.pos.x, b.z - player.pos.z) < 5)) {
     hint('boulders', 'Loose boulders here. Some hide a vug: tap round them with the rock hammer (6) and listen for a dull, hollow spot.', 3600);
   }
   for (const [key, src] of Object.entries(terrain.sources)) {
     if (state.discovered[key]) continue;
-    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
+    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'mine' ? 12 : key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
       state.discovered[key] = true;
       if (key === 'reef') setTimeout(checkLead, 100);
       hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
@@ -1707,7 +1978,13 @@ function frame() {
     touchUseWas = touch.use;
   }
   elapsed += dt;
-  if (driving) {
+  if (mine.climb) {
+    motion = updateClimb(dt);
+  } else if (mine.inside) {
+    if (playing) motion = updateUnderground(dt);
+    else camera.rotation.set(player.pitch, player.yaw, 0);
+    updateMineTools(dt);
+  } else if (driving) {
     motion = updateDriving(dt);
   } else if (kneel) {
     ute.update(dt, 0, 0, false);
@@ -1728,12 +2005,23 @@ function frame() {
   const uvOn = !kneel && state.tool === 'uv' && ownsUv() && playing;
   camera.getWorldDirection(uvDir);
   finds.update(dt, camera.position, { on: uvOn, origin: camera.position, dir: uvDir, dark: night });
-  headlampLight.intensity = headlamp ? 40 : 0;
+  // In the close walls of the drive the lamp needs far less punch than out in the bush.
+  headlampLight.intensity = headlamp ? 40 * (1 - mine.under(camera.position) * 0.8) : 0;
   // Opal only shows its colour in good light: daylight, your headlamp, or the inventory lamp.
   opalLight.value = inventory.isOpen ? 1 : Math.max(daynight.daylight, headlamp ? 0.7 : 0.05);
   uvLight.intensity = uvOn ? 7 : 0;
-  view.setLight(daynight.daylight, headlamp, uvOn);
+  const under = mine.under(camera.position);
+  view.setLight(daynight.daylight * (1 - under), headlamp, uvOn);
   weather.update(dt, camera.position);
+  if (under > 0) {
+    // Underground: the daylight doesn't reach. Just your lamp (and a glimmer down the shaft).
+    sun.intensity *= 1 - under;
+    hemi.intensity *= 1 - under * 0.985;
+    scene.environmentIntensity *= 1 - under * 0.98;
+  }
+  mine.update(dt, { uvOn, uvOrigin: camera.position, uvDir, sound });
+  works.update(dt, { sound, time: elapsed });
+  works.showMill((state.up.crusher || 0) > 0);
   water.uniforms.sunDir.value.copy(daynight.lightDir);
   water.uniforms.sunColor.value.copy(daynight.base.sunColor).multiplyScalar(daynight.daylight > 0.05 ? 1 : 0.35);
   checkDiscoveries(dt);
@@ -1792,7 +2080,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, fossils, devils, boulders, cabinet, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

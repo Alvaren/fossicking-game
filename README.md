@@ -18,6 +18,8 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Split shale slabs with the rock hammer for Permian fossils: Glossopteris leaves, insects and fish
 - Night prospecting with a UV torch: scheelite and some agates glow
 - Drive the ute around the claim
+- Climb down the old Lucky Strike mine with your headlamp: break ore from the quartz reef and pick out visible gold
+- Treat reef ore the old way: roast it on the campfire, crush it in the dolly pot (or a petrol hammer mill), pan the grit
 - Tap loose boulders for hollow vugs, split them with plug and feathers and prise out the crystals
 - Pick up thundereggs below the rhyolite and have them sawn open to see the agate star inside
 - Show off your collection in the cabinet at camp

@@ -30,6 +30,12 @@ export class Hud {
     this.set('gold', `${(state.gold + state.nuggets.reduce((t, n) => t + n.grams, 0)).toFixed(2)} g`);
     this.set('gems', `${state.gems.length}`);
     this.set('bucket', `${state.bucket.length} / ${cap}`);
+    const ore = state.ore?.length || 0;
+    const oreEl = document.getElementById('ore');
+    if (oreEl) {
+      oreEl.textContent = `${ore} / 8`;
+      document.getElementById('ore-stat').classList.toggle('hidden', !ore);
+    }
   }
 
   // Swap between the standing toolbar and the kneeling hand-tool bar.

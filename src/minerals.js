@@ -162,9 +162,11 @@ function recovery(method, gear, gem, opts, cons) {
 export function processLoad(sample, method, gear, rand = Math.random, opts = {}) {
   const out = { gold: 0, picker: 0, finds: [], blackSand: sample.blackSand };
   const cons = !!sample.cons;
-  const goldRec = method === 'pan'
-    ? (cons ? 0.95 : (gear.classifier ? 0.9 : 0.74) * gear.panMult)
-    : 0.12; // fine gold washes through sieve screens
+  // Crushed reef ore: roasting frees the gold the sulphides were holding on to.
+  const goldRec = sample.crushed ? (method === 'pan' ? (sample.roasted ? 0.9 : 0.55) : 0.08)
+    : method === 'pan'
+      ? (cons ? 0.95 : (gear.classifier ? 0.9 : 0.74) * gear.panMult)
+      : 0.12; // fine gold washes through sieve screens
   out.gold = sample.gold * Math.min(0.98, goldRec) * (cons ? 0.8 + rand() * 0.4 : 0.4 + rand() * 1.2);
   // Occasionally a picker: a bit of gold big enough to pick out with fingers.
   if (rand() < Math.min(0.5, sample.gold * (cons ? 0.3 : 0.6))) {

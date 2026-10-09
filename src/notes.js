@@ -46,6 +46,11 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['Hard-rock gold',
+    'Most of the gold in a reef is too fine to see. Break ore out of the quartz in the old Lucky Strike, then treat it the way the '
+    + 'old-timers did. Roast it on the fire first: the heat makes quartz brittle and burns off the sulphides that hold fine gold, so the pan '
+    + 'gets far more of it. Crush it in the dolly pot (drive the dolly down when the sapling has lifted it right up) or in a hammer mill, '
+    + 'then pan the crushed ore at the creek. Ore beside a show of visible gold runs richer.'],
   ['Vugs in boulders',
     'Loose boulders in the granite country, and white reef-quartz boulders up by the reef, sometimes carry a vug: a gas-bubble or '
     + 'late-stage cavity lined with crystals. Tap round a boulder with the rock hammer: solid rock rings bright, a hollow one sounds dull. '
