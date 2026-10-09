@@ -79,7 +79,7 @@ void main() {
   body = mix(body, turbidColor, flood * 0.9); // floodwater runs thick and brown
   // Muddy floodwater barely mirrors the sky.
   vec3 col = mix(body, refl, fres * (1.0 - 0.7 * flood)) + sunColor * spec * 2.5 * (1.0 - flood);
-  float alpha = mix(mix(0.22, 0.88, deep), 0.97, flood);
+  float alpha = mix(mix(0.22, 0.88, deep), mix(0.62, 0.97, deep), flood);
   alpha = max(alpha, fres * 0.9);
 
   // Foam and white water on fast, shallow runs and around boulders.

@@ -43,6 +43,7 @@ import { SettingsPanel } from './settingsui.js';
 import { PhotoMode } from './photo.js';
 import { WorldDetector } from './worlddetector.js';
 import { Oversize } from './oversize.js';
+import { Bedload } from './bedload.js';
 import { FUEL_PER_LOAD } from './sluice.js';
 import { difficulty, setDifficulty, LEVELS, ORDER } from './difficulty.js';
 import { GemShow, ShowStall, isShowDay, daysUntilShow, OPENS, CLOSES } from './gemshow.js';
@@ -72,6 +73,7 @@ function writeSave() {
     crystalState: field.stateSnapshot(),
     sluice: sluice.snapshot(),
     oversize: oversize.snapshot(),
+    bedload: bedload.snapshot(),
     bucket: state.bucket,
     player: (() => {
       const pp = mine.inside || mine.climb ? mine.exitSpot() : player.pos;
@@ -241,6 +243,11 @@ const oversize = new Oversize(scene, terrain);
 oversize.restore(saved.oversize);
 const targets = new Targets(scene, terrain, deposits, state.seed, new Set(saved.collected || []));
 const finds = new SurfaceFinds(scene, terrain, deposits, state.seed, new Set(saved.surface || []), world.colliders);
+// Cobbles and small boulders a flood can roll. They join the creek's boulders
+// (and their slack water) only now, after the claim's been laid out.
+const bedload = new Bedload(scene, terrain, state.seed);
+bedload.restore(saved.bedload);
+bedload.joinCreek();
 // Quartz float lying downslope of the crystal pockets.
 finds.addItems(field.floatItems().map((f) => {
   const c = { ...f.crystal, x: 0, y: 0, z: 0, ax: 1, ay: 0.2, az: 0.3 };
@@ -440,7 +447,8 @@ const weather = new Weather({
       hud.toast("Storm's brewing upstream. The creek'll come up soon.");
       if (sluice.placed) hud.toast('Get your sluice out of the water!', 'junk');
     }
-    if (phase === 'rising') hud.toast("Crikey, the creek's coming up! Get out of the water.", 'junk');
+    if (phase === 'rising') hud.toast(w.peak > 1.3 ? "Crikey, that's a big one coming down! Get well away from the water." : "Crikey, the creek's coming up! Get out of the water.", 'junk');
+    if (phase === 'peak') hint('bedload', 'Listen: that knocking is the bed moving. Stones roll where the flood drags hardest and stop where it slackens.', 1200);
     if (phase === 'peak') floodReworks(w.peak);
     if (phase === 'calm') {
       hud.toast("Flood's gone down. Fresh gravel on the bars: best time to go looking for agates.", 'gold');
@@ -448,6 +456,12 @@ const weather = new Weather({
     }
   },
 });
+
+bedload.onSettled = (list) => {
+  if (!list.length) return;
+  const biggest = Math.round(Math.max(...list.map((m) => m.r * 2)) * 100);
+  setTimeout(() => hud.toast(`The flood rolled ${list.length} stone${list.length === 1 ? '' : 's'} along the bed, the biggest about ${biggest} cm across. They fetched up where it slackened: on riffles and bars, and against the big boulders. New slack water, new traps. The map (M) shows where they went.`, 'gold'), 5000);
+};
 
 const daynight = new DayNight({ scene, sky, sunDir, hour: typeof saved.hour === 'number' ? saved.hour : 9 });
 weather.base = daynight.base;
@@ -555,7 +569,7 @@ function pause() {
 
 function openModal(m) {
   state.forecast = weather.forecast();
-  if (m === map) m.open(player, { sluice, patches: excav.patches, sources: terrain.sources, camp: terrain.camp });
+  if (m === map) m.open(player, { sluice, patches: excav.patches, sources: terrain.sources, camp: terrain.camp, flood: bedload.lastFlood });
   else m.open();
   touch?.show(false);
   if (TEST || IS_TOUCH) playing = false;
@@ -2242,6 +2256,7 @@ function frame() {
   const under = mine.under(camera.position);
   view.setLight(daynight.daylight * (1 - under), headlamp, uvOn);
   weather.update(dt, camera.position);
+  bedload.update(dt, player.pos, sound);
   if (under > 0) {
     // Underground: the daylight doesn't reach. Just your lamp (and a glimmer down the shaft).
     sun.intensity *= 1 - under;
@@ -2312,7 +2327,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, worldDet, oversize, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };
