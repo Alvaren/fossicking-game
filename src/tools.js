@@ -517,6 +517,8 @@ export class Viewmodel {
     }
     const root = this.tools[this.current];
     if (!root) return;
+    // Out in the world instead (see WorldDetector): don't draw it twice.
+    if (this.current === 'detector' && !this.pending) root.visible = !this.externalDetector;
 
     const bobAmt = s.moving ? (s.running ? 1.6 : 1) : 0;
     this.bob = (this.bob || 0) + (bobAmt - (this.bob || 0)) * Math.min(1, dt * 8);

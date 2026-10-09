@@ -1,3 +1,4 @@
+import { difficulty } from './difficulty.js';
 import * as THREE from 'three';
 
 // Storms and floods. Every so often a storm builds upstream, the creek rises
@@ -21,7 +22,7 @@ export class Weather {
     this.exposure = renderer.toneMappingExposure;
     this.phase = 'calm';
     this.t = 0;
-    this.next = 6 * 60 + Math.random() * 180; // first storm a few minutes in
+    this.next = (6 * 60 + Math.random() * 180) * difficulty.storms; // first storm a few minutes in
     this.storm = 0;   // 0 clear .. 1 black sky and heavy rain
     this.flood = 0;   // 0 normal .. 1 thick brown floodwater
     this.peak = 0.9;
@@ -129,7 +130,7 @@ export class Weather {
         if (k >= 1) {
           this.phase = 'calm';
           this.speed = 1;
-          this.next = 9 * 60 + Math.random() * 6 * 60;
+          this.next = (9 * 60 + Math.random() * 6 * 60) * difficulty.storms;
           this.onEvent('calm', this);
         }
         break;

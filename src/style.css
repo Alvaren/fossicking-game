@@ -384,3 +384,8 @@ body.touch #photo-help { display: none; }
   grid-template-columns: repeat(2, auto); gap: 8px; justify-items: end; pointer-events: auto;
 }
 #touch.photo.still #stick { display: none; }
+
+/* ---------- Difficulty picker ---------- */
+.diff-row { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; margin: 0 0 14px; }
+.diff-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.diff-row .desc { grid-column: 1 / -1; margin: 0; font-size: 13px; color: var(--muted); }

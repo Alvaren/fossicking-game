@@ -141,6 +141,15 @@ def join(objs, name):
     return ob
 
 
+def set_origin(ob, p):
+    """Move an object's origin to p without moving its geometry."""
+    bpy.context.scene.cursor.location = p
+    bpy.ops.object.select_all(action="DESELECT")
+    ob.select_set(True)
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+
+
 def export(objs, filename):
     bpy.ops.object.select_all(action="DESELECT")
     for o in objs:
@@ -233,16 +242,19 @@ def detector():
     parts.append(tube("bolt", (coil.x - 0.026, coil.y - 0.03, coil.z + 0.045), (coil.x + 0.026, coil.y - 0.03, coil.z + 0.045), 0.006, 0.006, alloy))
     # Elliptical DD coil with an open centre and a skid plate.
     housing = torus("coil_housing", 1.0, 0.16, (coil.x, coil.y, coil.z), black, scale=(0.15, 0.115, 0.1), major=48, minor=10)
-    parts.append(housing)
     spine = box("spine", (0.02, 0.22, 0.02), (coil.x, coil.y, coil.z), black)
-    parts.append(spine)
     skid = cyl("skid", 1.0, 0.006, (coil.x, coil.y, coil.z - 0.014), black, scale=(0.16, 0.125, 1), verts=40)
-    parts.append(skid)
     body = join(parts, "detector")
+    # The coil is its own part, pivoting on the yoke bolt like the real thing,
+    # so the game can keep it flat to the ground whichever way you look.
+    head = join([housing, spine, skid], "coil")
     # Live parts stay separate so the game can drive them.
     ring = torus("coil_ring", 1.0, 0.06, (coil.x, coil.y, coil.z + 0.016), glow, scale=(0.15, 0.115, 0.1), major=48, minor=6)
+    pivot = Vector((coil.x, coil.y - 0.03, coil.z + 0.045))
+    set_origin(head, pivot)
+    set_origin(ring, pivot)
     screen = box("screen", (0.052, 0.034, 0.002), (0, -0.02, 0.04), lcd, rot=(0.35, 0, 0))
-    return [body, ring, screen]
+    return [body, head, ring, screen]
 
 
 # ---------------------------------------------------------------- gold pan

@@ -41,6 +41,8 @@ import { settings, gemsRealistic } from './settings.js';
 import { makeEnvironment, goldMaterial, nuggetGeometry } from './materials.js';
 import { SettingsPanel } from './settingsui.js';
 import { PhotoMode } from './photo.js';
+import { WorldDetector } from './worlddetector.js';
+import { difficulty, setDifficulty, LEVELS, ORDER } from './difficulty.js';
 import { GemShow, ShowStall, isShowDay, daysUntilShow, OPENS, CLOSES } from './gemshow.js';
 import { SOURCES as PLACE_NAMES } from './map.js';
 
@@ -81,6 +83,7 @@ function writeSave() {
     orders: state.orders,
     milestones: state.milestones,
     cutting: state.cutting,
+    difficulty: state.difficulty,
     show: state.show,
     photos: state.photos,
     boulders: boulders.snapshot(),
@@ -121,6 +124,7 @@ function restoreWorld() {
 }
 
 const saved = readSave() || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
+setDifficulty(saved.difficulty || 'easy'); // before the claim is built: it sets the grades and the detector
 const state = {
   seed: saved.seed,
   cash: saved.cash || 0,
@@ -134,6 +138,7 @@ const state = {
   orders: saved.orders || null,
   milestones: saved.milestones || {},
   cutting: saved.cutting || [],
+  difficulty: difficulty.key,
   show: saved.show || null,
   photos: saved.photos || 0,
   ore: saved.ore || [],
@@ -263,10 +268,15 @@ if (fossils.colliders) world.colliders.push(...fossils.colliders);
 const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
 if (saved.ute) ute.placeAt(saved.ute.x, saved.ute.z, saved.ute.h);
 let driving = false;
+// The detector is held out in the world, its coil riding just above the ground.
+const worldDet = new WorldDetector(scene);
+let detShown = false;
+let rightHeld = false, touchPin = false;
 // Blender-made models stream in; crystals and hand tools use them once they arrive.
 loadAssets().then(() => {
   view.applyModels(assets.tools);
   view.applyGear(assets.models);
+  if (assets.models.detector) worldDet.setModel(assets.models.detector, view.coilRingMat, view.detScreen.material);
   sluice.applyModel(assets.models.sluice);
   world.applyModels(assets.models);
   wildlife.applyModel(assets.models.kangaroo);
@@ -381,7 +391,7 @@ const shop = new Shop(state, {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
-        milestones: state.milestones, day: state.day, cutting: state.cutting,
+        milestones: state.milestones, day: state.day, cutting: state.cutting, difficulty: state.difficulty,
       }));
     } catch { /* ignore */ }
     location.reload();
@@ -483,6 +493,29 @@ document.addEventListener('pointerlockchange', () => {
   }
 });
 
+// Difficulty, on the title and pause screen. Changing it restarts on the same claim.
+function renderDifficulty() {
+  const segs = document.getElementById('diff-segs');
+  if (!segs) return;
+  segs.innerHTML = '';
+  for (const key of ORDER) {
+    const b = document.createElement('button');
+    b.className = 'seg' + (difficulty.key === key ? ' on' : '');
+    b.textContent = LEVELS[key].label;
+    b.onclick = (e) => {
+      e.stopPropagation();
+      if (key === difficulty.key) return;
+      if (!confirm(`Switch to ${LEVELS[key].label}? ${LEVELS[key].blurb}\n\nThe game restarts on the same claim and keeps your progress.`)) return;
+      state.difficulty = key;
+      writeSave();
+      location.reload();
+    };
+    segs.append(b);
+  }
+  document.getElementById('diff-blurb').textContent = LEVELS[difficulty.key].blurb;
+}
+renderDifficulty();
+
 // H: the controls card. It stays up while you play so you can glance at it.
 function toggleControls(force) {
   const el = document.getElementById('controls');
@@ -537,10 +570,10 @@ document.addEventListener('mousedown', (e) => {
   if (!playing) return;
   if (photo.active) { if (e.button === 0) photo.snap(); return; }
   if (e.button === 0) { mouseHeld = true; clicked = true; }
-  if (e.button === 2) rightClick();
+  if (e.button === 2) { rightHeld = true; rightClick(); }
 });
 document.addEventListener('contextmenu', (e) => e.preventDefault());
-document.addEventListener('mouseup', (e) => { if (e.button === 0) mouseHeld = false; });
+document.addEventListener('mouseup', (e) => { if (e.button === 0) mouseHeld = false; if (e.button === 2) rightHeld = false; });
 
 const TOOLS = ['detector', 'shovel', 'pan', 'sieve', 'sluice', 'hammer', 'uv'];
 const ownsUv = () => (state.up.uv || 0) > 0;
@@ -857,6 +890,10 @@ function interact() {
       state.remaining = targets.remainingGold();
       if (!n.specimen) hud.toast(t.grams >= 5 ? `Strewth! A ${t.grams.toFixed(2)} g nugget!` : `You beauty! ${t.grams.toFixed(2)} g nugget.`, 'gold');
       sound.gold();
+    } else if (t.kind === 'hot') {
+      hud.toast("A hot rock: a lump of magnetic ironstone. It sang like gold. Bugger.", 'junk');
+      hint('hotrock', 'Hot rocks are the curse of mineralised ground. Real detectorists ground-balance and learn the sound: a hot rock often answers on one swing direction and not the other, and reads the same at any coil height.', 600);
+      sound.junk();
     } else if (t.value) {
       state.cash += t.value;
       hud.toast(`${cap(t.name)}. A collector will give you $${t.value} for that.`, 'gold');
@@ -931,6 +968,10 @@ function viewTool() {
 }
 
 function rightClick() {
+  if (state.tool === 'detector' && !kneel && !driving) {
+    hint('pinpoint', 'Pinpointing: the sweep stops and the coil goes where you look. Move it slowly over the spot; the target is right under the loudest point.', 600);
+    return;
+  }
   if (state.tool === 'sieve') flipSieve();
   else if (state.tool === 'sluice' && nearSluice()) {
     const c = sluice.pickUp();
@@ -1749,15 +1790,20 @@ function updateTools(dt, motion) {
   }
 
   if (state.tool === 'detector') {
-    // The coil rides about a metre ahead, swinging with the viewmodel.
-    const swing = Math.sin(view.sweep) * 0.35;
-    coil.set(
-      player.pos.x + fwd.x * 1.0 - right.x * swing,
-      0,
-      player.pos.z + fwd.z * 1.0 - right.z * swing,
-    );
-    coil.y = terrain.getHeight(coil.x, coil.z) + 0.04;
-    signal = targets.detect(coil, gear(state, 'detector').range);
+    const pin = rightHeld || keys.has('KeyF') || touchPin;
+    const sense = worldDet.ready ? worldDet.update(dt, {
+      pos: player.pos, yaw: player.yaw, ground: (x, z) => terrain.getHeight(x, z), moving: motion.moving,
+      pinpoint: pin, aimAt: pin ? terrain.raycast(camera.position, camDir, 3) : null, visible: true,
+    }) : null;
+    detShown = !!sense;
+    if (sense) coil.copy(sense);
+    else {
+      // No model yet: the coil rides about a metre ahead, swinging with the viewmodel.
+      const swing = Math.sin(view.sweep) * 0.35;
+      coil.set(player.pos.x + fwd.x * 1.0 - right.x * swing, 0, player.pos.z + fwd.z * 1.0 - right.z * swing);
+      coil.y = terrain.getHeight(coil.x, coil.z) + 0.04;
+    }
+    signal = targets.detect(coil, state.up.detector || 0, pin);
     hud.meter(signal.signal, signal.kind, (state.up.disc || 0) > 0);
   } else {
     signal = { signal: 0, kind: null };
@@ -1922,7 +1968,11 @@ const touch = IS_TOUCH ? new TouchControls({
   actions: {
     interact: () => { if (!playing) return; if (kneel) { const c = excav.pickCrystal(camera.position, camDir); if (c) extract(c); } else interact(); },
     kneel: () => { if (!playing || driving) return; if (kneel) standUp(); else kneelDown(); },
-    flip: () => { if (playing) rightClick(); },
+    flip: () => {
+      if (!playing) return;
+      if (state.tool === 'detector') { touchPin = !touchPin; hud.toast(touchPin ? 'Pinpointing: the coil goes where you look. Tap Flip again to sweep.' : 'Back to sweeping.'); return; }
+      rightClick();
+    },
     lamp: () => toggleHeadlamp(),
     photo: () => enterPhoto(),
     photoSnap: () => photo.snap(),
@@ -2073,6 +2123,8 @@ function frame() {
     touchUseWas = touch.use;
   }
   elapsed += dt;
+  const detWas = detShown;
+  detShown = false;
   if (photo.active) {
     photo.update(dt, keys, touch);
     motion.moving = false;
@@ -2094,6 +2146,9 @@ function frame() {
     else { motion.moving = false; camera.rotation.set(player.pitch, player.yaw, 0); }
     updateTools(dt, motion);
   }
+  if (photo.active) detShown = detWas;
+  else if (!detShown) worldDet.update(dt, { visible: false });
+  view.externalDetector = detShown;
   updateHud();
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
   weather.daylight = daynight.daylight;
@@ -2180,7 +2235,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, worldDet, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

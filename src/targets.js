@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { mulberry32, smoothstep } from './noise.js';
 import { PLAY } from './terrain.js';
 import { lumpy } from './world.js';
+import { difficulty, goldRange } from './difficulty.js';
 
 // Buried things the detector can hear: gold nuggets and a lot of junk.
 // "kind" drives the detector tone: iron grunts low, everything else sings high.
@@ -41,10 +42,13 @@ export class Targets {
       if (nearCamp(x, z)) continue;
       if (rand() > deposits.nuggetWeight(x, z) / ref) continue;
       const g = terrain.geologyAt(x, z);
-      const grams = Math.round((0.3 + Math.pow(rand(), 4.5) * 48) * 100) / 100;
+      // Most nuggets are small; the harder the level, the more true that is.
+      const grams = Math.round((0.3 + Math.pow(rand(), difficulty.nuggetSkew) * 48) * 100) / 100;
       this.list.push({
         id: i, kind: 'gold', name: 'gold', grams, x, z,
-        y: Math.max(g.bedrock + rand() * 0.15, g.orig - 1.4),
+        // Creek gold sits down on bedrock; eluvial gold on the slopes below the
+        // reef is still in the soil, within reach of a detector.
+        y: (() => { const u = rand(); return deposits.zones(x, z).hill > 0.4 ? g.orig - (0.03 + u * 0.35) : Math.max(g.bedrock + u * 0.15, g.orig - 1.4); })(),
         range: 0.65 + 0.33 * Math.cbrt(grams),
       });
       i++;
@@ -58,7 +62,7 @@ export class Targets {
       for (const c of JUNK) { pick -= c.weight; if (pick <= 0) { j = c; break; } }
       const depth = 0.08 + rand() * 0.45;
       this.list.push({
-        id: NUGGETS + i, kind: j.kind, name: j.name, value: j.value || 0, x, z,
+        id: NUGGETS + i, kind: j.kind, name: j.name, value: j.value || 0, x, z, strength: j.strength,
         y: terrain.getOrigHeight(x, z) - depth,
         range: 0.55 + 0.6 * j.strength,
       });
@@ -78,11 +82,28 @@ export class Targets {
         range: (0.65 + 0.33 * Math.cbrt(goldG)) * 0.75,
       });
     }
+    // Hot rocks: lumps of magnetic ironstone in mineralised ground. They sing
+    // like a target until you dig one. (Not on Easy.) Their own random stream,
+    // so everything else on the claim stays put whatever the level.
+    const hr = mulberry32(seed * 31 + 7);
+    for (let i = 0, tries = 0; i < difficulty.hotRocks && tries < 5000; tries++) {
+      let x, z;
+      const src = hr() < 0.55 ? terrain.sources.basalt : terrain.sources.reef;
+      if (hr() < 0.6 && src) { const a = hr() * Math.PI * 2, d = 4 + hr() * 32; x = src.x + Math.cos(a) * d; z = src.z + Math.sin(a) * d; }
+      else [x, z] = [(hr() * 2 - 1) * half, (hr() * 2 - 1) * half];
+      if (Math.abs(x) > half || Math.abs(z) > half || nearCamp(x, z)) continue;
+      this.list.push({
+        id: 50000 + i, kind: 'hot', name: 'a hot rock (magnetic ironstone)', strength: 0.6 + hr() * 1.1, x, z,
+        y: terrain.getOrigHeight(x, z) - (0.02 + hr() * 0.25),
+      });
+      i++;
+    }
     for (const t of this.list) t.collected = collected.has(t.id);
 
     this.goldMat = goldMaterial('waterworn');
     this.reefGoldMat = goldMaterial('crystalline');
     this.rustMat = new THREE.MeshStandardMaterial({ color: 0x6b3a1f, roughness: 0.9, metalness: 0.2 });
+    this.ironstoneMat = new THREE.MeshStandardMaterial({ color: 0x4a2418, roughness: 0.75, metalness: 0.35, flatShading: true });
     this.brassMat = new THREE.MeshStandardMaterial({ color: 0xc8a050, metalness: 0.9, roughness: 0.35 });
     this.copperMat = new THREE.MeshStandardMaterial({ color: 0x9a5a32, metalness: 0.85, roughness: 0.4 });
     this.glowTex = glowTexture();
@@ -110,7 +131,7 @@ export class Targets {
       let x, z;
       do { x = (rand() * 2 - 1) * (PLAY - 4); z = (rand() * 2 - 1) * (PLAY - 4); C.local(x, z, L); } while (L.d > L.w + 3);
       const j = JUNK[Math.floor(rand() * 4)];
-      this.list.push({ id: id++, kind: j.kind, name: j.name, value: 0, x, z, y: this.terrain.getHeight(x, z) - 0.1 - rand() * 0.2, range: 0.55 + 0.6 * j.strength });
+      this.list.push({ id: id++, kind: j.kind, name: j.name, value: 0, x, z, strength: j.strength, y: this.terrain.getHeight(x, z) - 0.1 - rand() * 0.2, range: 0.55 + 0.6 * j.strength });
     }
     return added;
   }
@@ -125,7 +146,7 @@ export class Targets {
   // Flood targets aren't part of the seeded world, so they're saved and restored.
   floodSaved() {
     return this.list.filter((t) => t.id >= 100000 && !t.collected)
-      .map(({ id, kind, name, grams, value, x, y, z, range }) => ({ id, kind, name, grams, value, x, y, z, range }));
+      .map(({ id, kind, name, grams, value, x, y, z, range, strength }) => ({ id, kind, name, grams, value, x, y, z, range, strength }));
   }
 
   restoreFlood(list) {
@@ -133,18 +154,32 @@ export class Targets {
   }
 
   // Strongest response at the coil position. Returns { signal 0..1, kind }.
-  detect(coil, rangeMult) {
+  // How far away (m) the coil can hear this target, on the current level.
+  rangeOf(t) {
+    if (t.kind === 'gold') return goldRange(t.grams) * (t.quartz ? 0.75 : 1); // gold spread through quartz answers softly
+    const d = difficulty.detector;
+    return d.base + d.perCbrt * 1.6 * (t.strength ?? 1);
+  }
+
+  // coilLevel: which coil you own. Pinpointing narrows the field to right under the coil's centre.
+  detect(coil, coilLevel = 0, pinpoint = false) {
+    const D = difficulty.detector;
+    const foot = D.footprint * (pinpoint ? 0.6 : 1);
+    const fall = D.falloff + (pinpoint ? 0.8 : 0);
+    const mult = difficulty.coilMult[coilLevel] ?? 1;
     let best = 0, kind = null;
     for (const t of this.list) {
       if (t.collected || t.mesh) continue;
       const dx = t.x - coil.x, dz = t.z - coil.z;
       if (Math.abs(dx) > 3 || Math.abs(dz) > 3) continue;
       const dy = t.y - coil.y;
+      // The coil's field is a cone under it, widening with depth.
+      if (Math.hypot(dx, dz) > foot + Math.abs(dy) * 0.5 + 0.15) continue;
       const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      const s = 1 - r / (t.range * rangeMult);
+      const s = 1 - r / (this.rangeOf(t) * mult);
       if (s > best) { best = s; kind = t.kind; }
     }
-    return { signal: best > 0 ? Math.pow(best, 1.3) : 0, kind };
+    return { signal: best > 0 ? Math.pow(best, fall) : 0, kind };
   }
 
   // After a dig, anything the hole has reached pops into view.
@@ -189,6 +224,9 @@ export class Targets {
       glow.scale.setScalar(0.5);
       group.add(glow);
       group.userData.glow = glow;
+    } else if (t.kind === 'hot') {
+      mesh = new THREE.Mesh(lumpy(new THREE.DodecahedronGeometry(1, 1), 0.35, r), this.ironstoneMat);
+      mesh.scale.set(0.05, 0.035, 0.045).multiplyScalar(0.8 + t.strength * 0.4);
     } else if (t.name.includes('horseshoe')) {
       mesh = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.015, 6, 14, Math.PI * 1.4), this.rustMat);
       mesh.rotation.x = Math.PI / 2;

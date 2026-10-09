@@ -1,4 +1,5 @@
 import { smoothstep } from './noise.js';
+import { difficulty } from './difficulty.js';
 
 // Where the gold, gems and agates are, following placer rules:
 //  - Supply: minerals weather out of a source rock and are carried downstream.
@@ -40,7 +41,8 @@ export class Deposits {
   }
 
   // Expected contents of one shovelful taken at elevation e.
-  sample(x, z, e) {
+  // base: ignore the difficulty level (used to place nuggets, so they stay put whatever the level).
+  sample(x, z, e, base = false) {
     const C = this.creek, S = this.S;
     const geo = this.terrain.geologyAt(x, z);
     const { L, q, inCh, bench, hill, flat } = this.zones(x, z);
@@ -61,7 +63,10 @@ export class Deposits {
     const decel = C.decel(z);
     const scour = q < -0.3 ? 1 - 0.65 * L.a : 1;
     const crevice = layer === 'bedrock' ? 0.7 + 1.2 * C.riffle(z) : 0;
-    const trapHeavy = (0.3 + 1.1 * bar + 1.4 * wake + 0.9 * decel + crevice) * scour;
+    let trapHeavy = (0.3 + 1.1 * bar + 1.4 * wake + 0.9 * decel + crevice) * scour;
+    // On harder levels the traps matter more: real gold is very patchy.
+    const c = base ? 1 : difficulty.contrast;
+    if (c !== 1) trapHeavy = 1.2 * Math.pow(trapHeavy / 1.2, c);
     const trapLight = 0.5 + 1.0 * C.bend(z) * smoothstep(0, 0.8, q) * smoothstep(2.4, 1.2, q) + 0.3 * wake;
 
     const onRock = layer === 'bedrock' ? 1.6 : 1;
@@ -80,14 +85,15 @@ export class Deposits {
     const agate = (inCh * trapLight * supAgate + flat * 0.5 * supAgate + bench * 0.7 * supAgate + hill * eAgate * 1.8)
       * (1 + agateLag) * (layer === 'topsoil' ? (hill > 0.5 ? 0.8 : 0.3) : 1);
 
+    const gk = base ? 1 : difficulty.gold, mk = base ? 1 : difficulty.gems;
     return {
       layer,
-      gold: 0.03 * gold, // grams of fine gold per load
-      sapphire: 0.16 * gem,
-      zircon: 0.28 * gem,
-      spinel: 0.55 * gem,
-      garnet: 0.35 * garnet,
-      topaz: 0.03 * topaz,
+      gold: 0.03 * gold * gk, // grams of fine gold per load
+      sapphire: 0.16 * gem * mk,
+      zircon: 0.28 * gem * mk,
+      spinel: 0.55 * gem * mk,
+      garnet: 0.35 * garnet * mk,
+      topaz: 0.03 * topaz * mk,
       agate: 0.35 * agate,
       blackSand: heavyZone * vGem * lean + hill * 0.3,
       sizeBias: 1 + 0.8 * eGem,
@@ -97,7 +103,7 @@ export class Deposits {
   // Likelihood of a detectable nugget sitting near bedrock here.
   nuggetWeight(x, z) {
     const g = this.terrain.geologyAt(x, z);
-    const s = this.sample(x, z, g.bedrock + 0.04);
+    const s = this.sample(x, z, g.bedrock + 0.04, true);
     const cover = g.orig - g.bedrock;
     return s.gold * (cover < 1.3 ? 1 : 0.1);
   }
