@@ -246,7 +246,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // Tent.
   const tent = add(new THREE.ConeGeometry(2.3, 2.5, 4, 1), std(0x5d6b3a, { flatShading: true }), 3.5, 1.25, 4);
   tent.rotation.y = Math.PI / 4;
-  add(new THREE.PlaneGeometry(0.9, 1.3), std(0x1d1a12), 1.84, 0.62, 4).rotation.y = -Math.PI / 2;
+  const tentDoor = add(new THREE.PlaneGeometry(0.9, 1.3), std(0x1d1a12), 1.84, 0.62, 4);
+  tentDoor.rotation.y = -Math.PI / 2;
   collide(3.5, 4, 2.0);
 
   // Ute.
@@ -303,7 +304,22 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     embers.scale.set(1, 0.85 + flick * 0.3, 1);
   }
 
-  return { colliders, shop, spawn, update };
+  // Blender models for the ute and tent, once they've loaded.
+  function applyModels(m) {
+    if (m.ute) {
+      for (const c of ute.children) c.visible = false;
+      ute.add(m.ute.clone(true));
+    }
+    if (m.tent) {
+      tent.visible = false;
+      tentDoor.visible = false;
+      const t = m.tent.clone(true);
+      t.position.set(3.5, 0, 4);
+      campGroup.add(t);
+    }
+  }
+
+  return { colliders, shop, spawn, update, applyModels };
 }
 
 // ---------- geometry helpers ----------

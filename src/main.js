@@ -169,7 +169,12 @@ state.remaining = targets.remainingGold();
 
 const sound = new Sound();
 // Blender-made models stream in; crystals and hand tools use them once they arrive.
-loadAssets().then(() => view.applyModels(assets.tools));
+loadAssets().then(() => {
+  view.applyModels(assets.tools);
+  view.applyGear(assets.models);
+  sluice.applyModel(assets.models.sluice);
+  world.applyModels(assets.models);
+});
 const hud = new Hud();
 const view = new Viewmodel(env);
 view.setAspect(camera.aspect);

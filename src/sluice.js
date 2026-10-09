@@ -34,6 +34,7 @@ export function makeSluiceModel(scale = 1) {
     o.position.set(x, y, z);
     o.castShadow = true;
     o.receiveShadow = true;
+    o.userData.static = true; // the trough itself; a Blender model can replace these
     g.add(o);
     return o;
   };
@@ -55,6 +56,7 @@ export function makeSluiceModel(scale = 1) {
     riffles.push(r);
     // Black sand and gravel building up in the lee of each riffle.
     const c = add(new THREE.BoxGeometry(0.28, 0.03, 0.09), consMat, 0, 0.022, z + 0.055);
+    c.userData.static = false;
     c.scale.y = 0.01;
     cons.push(c);
   }
@@ -107,6 +109,17 @@ export class Sluice {
     this.loads = 0;
     this.cons = null;
     this.flow = { x: 0, z: 0, speed: 0 };
+  }
+
+  // Swap the boxy trough for the Blender model (placed sluice and placement ghost).
+  applyModel(model) {
+    if (!model) return;
+    for (const [group, ghost] of [[this.model, false], [this.ghost, true]]) {
+      group.traverse((c) => { if (c.isMesh && c.userData.static) c.visible = false; });
+      const o = model.clone(true);
+      if (ghost) o.traverse((c) => { if (c.isMesh) { c.material = this.ghostMat; c.castShadow = false; } });
+      group.add(o);
+    }
   }
 
   // How good a spot is for a sluice. Returns null if it isn't in the creek.

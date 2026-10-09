@@ -369,6 +369,36 @@ export class Viewmodel {
 
   // Swap the built-in hand tools for the Blender models once they've loaded.
   // Models have the grip at the origin and point down -Z; tip them toward the ground.
+  // Gear models from Blender. The live bits (coil glow, detector screen, what's
+  // in the pan and sieve) stay as they are; the models replace the shapes around them.
+  applyGear(m) {
+    if (m.detector) {
+      this.detG.clear();
+      const o = m.detector.clone(true);
+      o.traverse((c) => {
+        if (!c.isMesh) return;
+        c.castShadow = false;
+        if (c.name.startsWith('coil_ring')) c.material = this.coilRingMat;
+        if (c.name.startsWith('screen')) { c.material = this.detScreen.material; this.detScreen = c; }
+      });
+      this.detG.add(o);
+    }
+    if (m.gold_pan) {
+      this.panG.children[0].visible = false; // the old lathe pan
+      this.panG.add(m.gold_pan.clone(true));
+    }
+    if (m.gem_sieve) {
+      this.sieveG.children[0].visible = false; // old hoop
+      this.sieveG.children[1].visible = false; // old rim
+      this.sieveG.add(m.gem_sieve.clone(true));
+    }
+    if (m.sluice) {
+      const g = this.tools.sluiceCarry.children[0];
+      g.traverse((c) => { if (c.isMesh && c.userData.static) c.visible = false; });
+      g.add(m.sluice.clone(true));
+    }
+  }
+
   applyModels(models) {
     // tool, model, where the grip sits in view, tilt, turn in toward the centre, scale
     const set = (tool, key, pos, tilt, turn, scale = 1) => {
