@@ -15,7 +15,7 @@ import { IS_TOUCH, TouchControls } from './touch.js';
 import { Wildlife } from './wildlife.js';
 import { Ute } from './vehicle.js';
 import { rollOrders } from './orders.js';
-import { cutStone, makeCutMesh } from './cutting.js';
+import { cutStone, makeCutMesh, cuttable } from './cutting.js';
 import { MILESTONES, findMilestones } from './milestones.js';
 import { DustDevils } from './dustdevil.js';
 import { Boulders } from './boulders.js';
@@ -47,6 +47,13 @@ import { Bedload } from './bedload.js';
 import { restoreCamp, collectPractice, collectFieldPan } from './camp.js';
 import { CampUI } from './campui.js';
 import { CampStation } from './campstation.js';
+import { CampShelter } from './campshelter.js';
+import { CampBuildings } from './campbuildings.js';
+import { Kelpie } from './kelpie.js';
+import { stepFacilities } from './campfacilities.js';
+import { startLapidary } from './lapidary.js';
+import { LapidaryUI } from './lapidaryui.js';
+import { shelterInfo, canSleep } from './shelter.js';
 import { PanningUI } from './panningui.js';
 import { rollPanContents } from './minerals.js';
 import { FUEL_PER_LOAD } from './sluice.js';
@@ -136,7 +143,8 @@ function restoreWorld() {
   }
 }
 
-const saved = readSave() || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
+const existingSave = readSave();
+const saved = existingSave || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
 setDifficulty(saved.difficulty || 'easy'); // before the claim is built: it sets the grades and the detector
 const state = {
   seed: saved.seed,
@@ -161,7 +169,7 @@ const state = {
   discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
-  camp: restoreCamp(saved.camp),
+  camp: restoreCamp(saved.camp, { legacyShelter: !!existingSave }),
   panSession: saved.panSession?.version === 1 ? saved.panSession : null,
   tool: 'detector',
   remaining: 0,
@@ -242,6 +250,7 @@ const deposits = new Deposits(terrain);
 const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystals || []));
 const world = buildWorld(scene, terrain, state.seed, field.sites);
 const campStation = new CampStation(scene, terrain, state.camp, world.colliders);
+const campShelter = new CampShelter(scene, terrain, state.camp, world.colliders);
 const mine = new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
 if (mine.ok) terrain.sources.mine = { x: mine.x, z: mine.z };
 const works = new OreWorks(scene, terrain, world.oreSpots, saved.works);
@@ -287,6 +296,8 @@ stall.setUp(isShowDay(state.day));
 const cabSpot = world.cabinetSpot;
 const cabinet = new Cabinet(scene, { x: cabSpot.x, y: terrain.getHeight(cabSpot.x, cabSpot.z), z: cabSpot.z }, terrain.camp,
   (it) => inventoryMesh(it, gemsRealistic('world')));
+const campBuildings = new CampBuildings(scene, terrain, state.camp, world.colliders, it => inventoryMesh(it, gemsRealistic('world')));
+const kelpie = new Kelpie(scene, terrain, world.colliders, (x,z) => campBuildings.groundHeight(x,z,state.camp));
 const fossils = new FossilBed(scene, terrain, state.seed, new Set(state.slabsSplit));
 if (fossils.colliders) world.colliders.push(...fossils.colliders);
 const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
@@ -303,6 +314,7 @@ loadAssets().then(() => {
   if (assets.models.detector) worldDet.setModel(assets.models.detector, view.coilRingMat, view.detScreen.material);
   sluice.applyModel(assets.models.sluice);
   world.applyModels(assets.models);
+  campShelter.applyModel(assets.models.tent);
   wildlife.applyModel(assets.models.kangaroo);
 });
 const hud = new Hud();
@@ -353,7 +365,7 @@ let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
 const map = new ClaimMap(state, terrain, { onClose: () => lock() });
-const modalOpen = () => panUI.isOpen || campUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
+const modalOpen = () => panUI.isOpen || campUI.isOpen || lapidaryUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
 
 function toggleHeadlamp() {
   headlamp = !headlamp;
@@ -439,10 +451,19 @@ const panUI = new PanningUI(state, {
 });
 const campUI = new CampUI(state, {
   onClose: () => lock(),
-  onChange: () => { campStation.sync(state.camp); writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
+  onChange: () => { campStation.sync(state.camp); campShelter.sync(state.camp); campBuildings.sync(state.camp); writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
   capacity: () => gear(state, 'bucket').cap,
+  canSleep: () => canSleep(daynight.hour),
+  onSleep: () => sleepAtCamp(),
+  cuttable,
+  onPat: () => kelpie.pat(state.camp),
+  onCollection: () => { campUI.hide(); openModal(inventory); inventory.setTab('collection'); },
+  onLapidary: index => {
+    if (state.camp.lapidarySession || startLapidary(state, index, cuttable, cutStone)) { campUI.hide(); lapidaryUI.open(); writeSave(); }
+  },
   onPan: context => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; panUI.open(context); },
 });
+const lapidaryUI = new LapidaryUI(state, { onSave: () => writeSave(), onClose: () => campUI.open() });
 const gemshow = new GemShow(state, {
   sound,
   onChange: () => { writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
@@ -919,7 +940,8 @@ function interact() {
     if (mine.nearLadder(player.pos)) startClimb(false);
     return;
   }
-  if (campStation.near(player.pos)) { openModal(campUI); return; }
+  if (campStation.near(player.pos) || campBuildings.near(player.pos, state.camp)) { openModal(campUI); return; }
+  if (kelpie.near(player.pos)) { kelpie.pat(state.camp); hud.toast('Your kelpie wags its tail.'); writeSave(); return; }
   if (mine.nearCollar(player.pos)) { startClimb(true); return; }
   if (works.nearMill(player.pos)) { useMill(); return; }
   if (works.nearDolly(player.pos) && (state.ore.length || works.dolly.crush > 0)) {
@@ -999,21 +1021,20 @@ function interact() {
     hud.toast(daynight.hour < OPENS ? `The show opens at ${OPENS}. The dealers are still unpacking.` : "They've packed up for the day. Next show's in a few days.");
     return;
   }
-  if (nearTent()) {
-    if (daynight.isNight) {
-      if (daynight.hour > 12) newDay(); // past midnight, sunrise ticks the day over by itself
-      daynight.hour = 6;
-      hud.toast('You crawl into the swag and kip till sunrise. Morning!');
-      sound.click();
-      writeSave();
-    } else hud.toast("Bit early for a kip. The tent's for nights.");
-    return;
-  }
+  if (nearTent()) { openModal(campUI); campUI.focusShelter(); return; }
   if (nearShop()) openModal(shop);
 }
 
-function nearTent() {
-  return Math.hypot(player.pos.x - world.tentPos.x, player.pos.z - world.tentPos.z) < 3.4;
+function nearTent() { return campShelter.near(player.pos); }
+
+function sleepAtCamp() {
+  if (!canSleep(daynight.hour) || (!nearTent() && !campStation.near(player.pos) && !campBuildings.near(player.pos, state.camp))) return false;
+  // Days turn over at dawn, including when sleeping after midnight. Set the
+  // dawn tracker as well so the next world frame cannot advance the day again.
+  newDay(); daynight.hour = 6; lastHour = 6;
+  hud.toast(`You settle into your ${shelterInfo(state.camp).short.toLowerCase()} and wake at sunrise. Morning!`);
+  sound.click(); writeSave(); campUI.close();
+  return true;
 }
 
 function nearSluice() {
@@ -1724,7 +1745,7 @@ function updatePlayer(dt) {
   }
   player.vel.y -= 20 * dt;
   player.pos.y += player.vel.y * dt;
-  const g = terrain.getHeight(player.pos.x, player.pos.z);
+  const g = campBuildings.groundHeight(player.pos.x, player.pos.z, state.camp);
   if (player.pos.y <= g) {
     if (!player.grounded && player.vel.y < -5) player.landDip = -0.05;
     player.pos.y = g;
@@ -2012,7 +2033,9 @@ function updateTools(dt, motion) {
   hud.progress(state.tool === 'pan' ? panProgress : workProgress);
 
   const near = nearestPickup();
-  if (campStation.near(player.pos)) prompt = 'E: wash bench · practise, recover tailings & build camp';
+  if (campBuildings.near(player.pos, state.camp)) prompt = 'E: camp facilities · supplies, stonework & collection';
+  else if (kelpie.near(player.pos)) prompt = 'E: pat your kelpie';
+  else if (campStation.near(player.pos)) prompt = 'E: wash bench · practise, recover tailings & build camp';
   else if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : near.find.gem.type === 'thunderegg' ? 'thunderegg' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
@@ -2027,7 +2050,7 @@ function updateTools(dt, motion) {
   else if (works.nearMill(player.pos)) prompt = works.mill.out.length ? `Hammer mill · E: shovel out the crushed ore (${works.mill.out.length})` : works.milling ? `Hammer mill crushing... (${works.mill.queue.length} to go)` : state.ore.length ? `Hammer mill · E: feed it your ore (${state.ore.length})` : 'Hammer mill';
   else if (works.nearDolly(player.pos)) prompt = state.ore.length ? `Dolly pot · E: crush your ore (${state.ore.length} lump${state.ore.length === 1 ? '' : 's'})` : 'Dolly pot: for crushing reef ore';
   else if (works.nearFire(player.pos) && (works.roast || state.ore.some((l) => !l.roasted))) prompt = works.roast ? (works.roast.left > 0 ? `Ore roasting on the fire... ${Math.ceil(works.roast.left)} s` : 'E: take the roasted ore off the fire') : `E: put your raw ore on the fire to roast (${state.ore.filter((l) => !l.roasted).length})`;
-  else if (nearTent() && daynight.isNight) prompt = 'E: kip in the tent till morning';
+  else if (nearTent()) prompt = `E: your ${shelterInfo(state.camp).short.toLowerCase()} · ${daynight.isNight ? 'sleep or improve camp' : 'improve camp'}`;
   else if (nearShop()) prompt = 'E: talk to the gold & gem buyer';
   hud.prompt(prompt);
 
@@ -2234,7 +2257,9 @@ function frame() {
   countFps(raw);
   // The pan is a close-up workstation. Keep the last world frame behind it
   // rather than rendering the whole claim on every mobile finger stroke.
-  if (panUI.isOpen || campUI.isOpen) {
+  if (playing || panUI.isOpen || lapidaryUI.isOpen) stepFacilities(state.camp, dt);
+  if (panUI.isOpen || campUI.isOpen || lapidaryUI.isOpen) {
+    if (lapidaryUI.isOpen) lapidaryUI.update(dt);
     if (panUI.isOpen) panUI.update(dt);
     sound.setDetector(false, 0, null);
     sound.setSluice(0);
@@ -2280,6 +2305,9 @@ function frame() {
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
   world.update(dt, night);
+  campShelter.update(night);
+  campBuildings.update(dt, state, player.pos, night);
+  kelpie.update(dt, state, player.pos, driving || mine.inside || !!mine.climb);
   targets.update(dt);
   const uvOn = !kneel && state.tool === 'uv' && ownsUv() && playing;
   camera.getWorldDirection(uvDir);
@@ -2345,7 +2373,7 @@ view.setTool(viewTool());
 hud.tool(state.tool);
 
 // Save on a timer while you play, when you pause, and when the tab is hidden or closed.
-setInterval(() => { if (playing || panUI.isOpen || campUI.isOpen) writeSave(); }, 60000);
+setInterval(() => { if (playing || panUI.isOpen || campUI.isOpen || lapidaryUI.isOpen) writeSave(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (document.hidden) writeSave(); });
 window.addEventListener('beforeunload', () => writeSave());
 
@@ -2363,7 +2391,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  campUI, campStation, panUI,
+  campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },

@@ -4,6 +4,19 @@ import { GEMS, GEM_ORDER, CRYSTAL_ORDER } from './minerals.js';
 // The field notebook: how placers work, and what you've found so far.
 
 const RULES = [
+  ['From swag to shed',
+    'A new claim starts with a swag. Save $250 for a canvas tent, $700 for a caravan, then $1,200 for a corrugated-iron shed. '
+    + 'Use the shelter or wash bench to build. The structure changes on the ground, and tent and shed lanterns light up at night. '
+    + 'With a sample rack, storage grows from 8 to 12 to 16 to 20 parcels. All shelters let you sleep from night until 6 am; none changes your gold recovery. '
+    + 'Older saves keep their existing tent. Your purchased shelter travels with you when you move claims.'],
+  ['Fit out your home base',
+    'The water tank supplies wet lapidary work. Start the generator for the workshop and electric camp lights, and stop it when not needed. '
+    + 'Buy water and fuel deliveries from the camp panel; partial top-ups are charged proportionally. '
+    + 'A lapidary shed lets you shape, refine and polish your own stones. Follow the guide with light pressure and cooling water; heat and poor alignment damage the finish. '
+    + 'This is a simplified skill exercise, not a real-machine operating guide. Easy demonstrates the movements. Your stone stays reserved until collected.'],
+  ['Collection and company',
+    'Build a display room to show up to 45 kept specimens in three cases. Keep a find in your collection from the inventory to exhibit it. '
+    + 'Your kelpie can follow you on dry ground or stay around camp. Pat it with E nearby or from the camp panel. It waits at camp during mine or ute work.'],
   ['Learn at the camp wash bench',
     'Find the signed bench beside camp. Borrow any pan and compare clean gravel, clay-bound wash and black-sand concentrate with a known assay. '
     + 'Choose the same parcel size and difficulty for a fair comparison: a larger pan will be less full. Easy demonstrates the method; Realistic uses your strokes. '
@@ -11,7 +24,7 @@ const RULES = [
   ['Catch what leaves the pan',
     'Build a recovery tub with proceeds from your finds, then work your bucket wash at camp and re-pan its caught tailings. '
     + 'A portable kit catches the outflow from newly loaded creek pans too. It does not change the pan itself or retrieve gold already washed into the creek. '
-    + 'The sample rack stores eight intact parcels. Fine gold, clay-bound gold and larger finds are conserved through repeated passes.'],
+    + 'The sample rack stores intact parcels, with capacity set by your shelter. Fine gold, clay-bound gold and larger finds are conserved through repeated passes.'],
   ['Work the pan, one layer at a time',
     'Start around half full, or less with clay and concentrates. Submerge and rub clay clumps apart: bound gold can leave inside a lump. '
     + 'Short level shakes let dense grains settle. Lift to the waterline, tip the coarse riffles forward and wash off a thin top layer. '

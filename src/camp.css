@@ -32,3 +32,16 @@
 #pan-report p { margin:8px 0; }
 @media(max-width:740px) { .camp-shell { padding:18px 12px; }.camp-grid { grid-template-columns:1fr; }.camp-card { padding:18px; }.camp-heading { gap:10px; }.camp-heading button span { display:none; }.camp-heading button { max-width:115px; }.camp-entry { gap:10px; } }
 @media(max-width:380px) { .camp-fields { grid-template-columns:1fr; } }
+.camp-shelter { margin-bottom:20px; background:linear-gradient(125deg,#344532,#182d24); }
+.camp-shelter-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:22px; }
+.camp-shelter-stage { display:flex; flex-direction:column; border:1px solid #60735b; border-radius:10px; padding:18px; background:#10251c88; }
+.camp-shelter-stage.current { border-color:#d2bd76; background:#c7b16a12; }
+.camp-shelter-stage svg { width:100px; height:72px; margin-bottom:14px; fill:none; stroke:#d1bd80; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.camp-shelter-stage h3 { font:normal 23px/1.2 Georgia,serif; margin:7px 0; color:#e4d4a1; }
+.camp-shelter-stage>p { font-size:13px; flex:1; }
+.camp-shelter-stage>p.camp-note { flex:0; }
+.camp-shelter-stage>button { margin-top:12px; }
+.camp-sleep-row { display:flex; align-items:center; gap:16px; margin-top:20px; }
+.camp-sleep-row p { font-size:13px; }
+@media(max-width:600px) { .camp-shelter-options { grid-template-columns:1fr; }.camp-shelter-stage { display:grid; grid-template-columns:76px 1fr; column-gap:16px; padding:16px; }.camp-shelter-stage svg { grid-row:span 3; width:76px; }.camp-shelter-stage>button,.camp-shelter-stage>p.camp-note { grid-column:1/-1; }.camp-shelter-stage>p { margin:6px 0 !important; }.camp-sleep-row { align-items:stretch; flex-direction:column; gap:0; } }
+.camp-fitout {margin-bottom:20px;}.camp-fitout>.camp-grid {margin-top:18px;gap:12px 24px;}.camp-operations {border-top:1px solid #60735b;padding-top:14px;}.camp-button-row {display:flex;flex-wrap:wrap;gap:8px;}.camp-operations select {margin-bottom:12px!important;}.camp-shelter-options {grid-template-columns:repeat(4,minmax(0,1fr));}@media(min-width:601px) and (max-width:1000px){.camp-shelter-options{grid-template-columns:repeat(2,minmax(0,1fr));}}@media(max-width:600px){.camp-shelter-options{grid-template-columns:1fr;}}

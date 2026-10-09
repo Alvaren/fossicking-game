@@ -17,6 +17,9 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const L = {};
   const chan = (x, z) => { creek.local(x, z, L); return L.d - L.w; }; // metres outside the wetted channel
 
+  // Reserve clear pads for the two camp rooms without changing terrain or RNG.
+  const campFlip = creek.cx(camp.z) > camp.x ? -1 : 1;
+  const campRoom = (x,z,r=0) => [[9,7],[0,10]].some(([cx,cz]) => Math.abs((x-camp.x)*campFlip-cx)<2.5+r && Math.abs((z-camp.z)*campFlip-cz)<3.2+r);
   const nearCamp = (x, z, r) => Math.hypot(x - camp.x, z - camp.z) < r;
   const fossil = terrain.sources.fossil;
   const blocked = (x, z, r) => avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
@@ -38,8 +41,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     const p = c < 12 ? 0.55 : 0.07; // river red gums crowd the banks
     if (rand() > p) continue;
     const sc = 0.75 + rand() * 0.6;
-    placements[Math.floor(rand() * variants.length)].push({ x, z, s: sc, r: rand() * Math.PI * 2 });
-    colliders.push({ x, z, r: 0.35 * sc });
+    placements[Math.floor(rand() * variants.length)].push({ x, z, s: campRoom(x,z,1) ? 0 : sc, r: rand() * Math.PI * 2 });
+    if (!campRoom(x,z,1)) colliders.push({ x, z, r: 0.35 * sc });
     n++;
   }
   variants.forEach((geo, vi) => {
@@ -79,10 +82,11 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     q.setFromEuler(new THREE.Euler(rand() * 3, rand() * 3, rand() * 3));
     const y = terrain.getHeight(x, z) - s * sink;
     m4.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(s, s * (0.55 + rand() * 0.4), s * (0.8 + rand() * 0.4)));
+    if (campRoom(x,z,s)) m4.scale(new THREE.Vector3(0,0,0));
     rocks.setMatrixAt(ri, m4);
     rocks.setColorAt(ri, col);
     ri++;
-    if (collide) colliders.push({ x, z, r: s * 0.85 });
+    if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * 0.85 });
   };
   for (let i = 0; i < scatter; i++) {
     let x, z;
@@ -164,6 +168,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     const sc = 0.3 + rand() * 0.45;
     q.setFromAxisAngle(up, rand() * 6.28);
     m4.compose(new THREE.Vector3(x, terrain.getHeight(x, z) - 0.05, z), q, new THREE.Vector3(sc, sc * (0.7 + rand() * 0.6), sc));
+    if (campRoom(x,z)) m4.scale(new THREE.Vector3(0,0,0));
     tufts.setMatrixAt(placed, m4);
     const v = rand();
     col.setRGB(0.5 + v * 0.16, 0.48 + v * 0.1, 0.22 + v * 0.06, THREE.SRGBColorSpace);
@@ -336,12 +341,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   add(new THREE.BoxGeometry(0.04, 0.64, 2.14), wood, 0.5, 2.05, 0, tableG);
   collide(-3, 0, 1.0);
 
-  // Tent.
-  const tent = add(new THREE.ConeGeometry(2.3, 2.5, 4, 1), std(0x5d6b3a, { flatShading: true }), 3.5, 1.25, 4);
-  tent.rotation.y = Math.PI / 4;
-  const tentDoor = add(new THREE.PlaneGeometry(0.9, 1.3), std(0x1d1a12), 1.84, 0.62, 4);
-  tentDoor.rotation.y = -Math.PI / 2;
-  collide(3.5, 4, 2.0);
+  // CampShelter owns the changing swag/tent/caravan/shed geometry and collisions.
 
   // Ute.
   const ute = new THREE.Group();
@@ -400,7 +400,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     embers.scale.set(1, 0.85 + flick * 0.3, 1);
   }
 
-  // Blender models for the ute and tent, once they've loaded.
+  // Blender model for the ute, once loaded. CampShelter handles the tent.
   function applyModels(m) {
     if (m.ute) {
       for (const c of ute.children) c.visible = false;
@@ -419,13 +419,6 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
         if (o.material.length === 1) o.material = o.material[0];
       });
       ute.add(u);
-    }
-    if (m.tent) {
-      tent.visible = false;
-      tentDoor.visible = false;
-      const t = m.tent.clone(true);
-      t.position.set(3.5, 0, 4);
-      campGroup.add(t);
     }
   }
 

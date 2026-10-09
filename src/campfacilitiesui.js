@@ -1,0 +1,30 @@
+import { FACILITIES, buyFacility, powered, toggleGenerator, resupply } from './campfacilities.js';
+export class CampFacilitiesUI {
+  constructor(state,{change,onLapidary,onCollection,onPat,cuttable}) {
+    this.state=state;this.change=change;this.onLapidary=onLapidary;this.onCollection=onCollection;this.onPat=onPat;this.cuttable=cuttable;
+    this.root=document.createElement('section');this.root.className='camp-card camp-fitout';
+    this.root.innerHTML=`<span class="camp-kicker">FIT-OUT / WORKSHOPS / COMPANY</span><h2>Make the camp your own.</h2><p>Water, power, a place to work your stones and a place to show them. Your kelpie is here for company.</p><div id="camp-facilities" class="camp-grid"></div><div class="camp-grid camp-operations"><section><h3>Water & power</h3><p id="camp-supplies"></p><div class="camp-button-row"><button id="camp-generator">Start generator</button><button id="camp-lights">Lights on</button><button id="camp-water-refill">Water · $8 / 40 L</button><button id="camp-fuel-refill">Fuel · $12 / 2 L</button></div><p class="camp-note">Supplies delivered to camp; partial top-ups charge proportionally. Stop the generator when it is not needed.</p></section><section><h3>Work a stone</h3><label for="camp-cut-stone">Your rough stones</label><select id="camp-cut-stone"></select><button id="camp-cut-start">Work this stone</button><p id="camp-cut-note" class="camp-note"></p></section><section><h3>Your collection room</h3><p id="camp-display-note"></p><button id="camp-view-collection">Browse kept specimens</button></section><section><h3>Your kelpie</h3><p id="camp-dog-note"></p><div class="camp-button-row"><button id="camp-dog-pat">Pat kelpie</button><button id="camp-dog-mode">Follow me</button></div></section></div>`;
+    this.$=id=>this.root.querySelector('#'+id);
+    this.$('camp-generator').onclick=()=>change(toggleGenerator(state.camp),state.camp.generatorOn?'Generator running.':'Generator stopped.');
+    this.$('camp-lights').onclick=()=>{if(!state.camp.built.lights)return;state.camp.lightsOn=!state.camp.lightsOn;change(true,'Light switch changed.');};
+    for(const [id,kind]of [['camp-water-refill','water'],['camp-fuel-refill','fuel']])this.$(id).onclick=()=>change(resupply(state,kind),'Camp supplies topped up.');
+    this.$('camp-cut-start').onclick=()=>onLapidary(Number(this.$('camp-cut-stone').value));
+    this.$('camp-view-collection').onclick=()=>onCollection();
+    this.$('camp-dog-pat').onclick=()=>{if(state.camp.built.kelpie){onPat();change(true,'Your kelpie leans into the pat, tail wagging.');}};
+    this.$('camp-dog-mode').onclick=()=>{if(!state.camp.built.kelpie)return;state.camp.dogMode=state.camp.dogMode==='follow'?'stay':'follow';change(true,state.camp.dogMode==='follow'?'Your kelpie will follow on dry ground.':'Your kelpie is heading back to camp.');};
+  }
+  refresh(){
+    const s=this.state,c=s.camp,list=this.$('camp-facilities');list.replaceChildren();
+    for(const f of FACILITIES){const row=document.createElement('div');row.className='camp-entry';const p=document.createElement('p');p.textContent=`${f.name} · $${f.cost.toLocaleString()}. ${f.detail}${f.requires.some(k=>!c.built[k])?' Requires '+f.requires.map(k=>FACILITIES.find(a=>a.id===k).name.toLowerCase()).join(' and ')+'.':''}`;const b=document.createElement('button');b.id='camp-buy-'+f.id;b.textContent=c.built[f.id]?'Built':`Build · $${f.cost.toLocaleString()}`;b.disabled=!!c.built[f.id]||s.cash<f.cost||f.requires.some(k=>!c.built[k]);b.onclick=()=>this.change(buyFacility(s,f.id),`${f.name} is ready at camp.`);row.append(p,b);list.append(row);}
+    this.$('camp-supplies').textContent=`Water ${c.water.toFixed(1)}/80 L · Generator fuel ${c.generatorFuel.toFixed(2)}/10 L · ${powered(c)?'Power on':'Power off'}`;
+    this.$('camp-generator').textContent=c.generatorOn?'Stop generator':'Start generator';this.$('camp-generator').disabled=!c.built.generator||(!c.generatorOn&&c.generatorFuel<=0);
+    this.$('camp-lights').textContent=c.lightsOn?'Switch lights off':'Switch lights on';this.$('camp-lights').disabled=!c.built.lights;
+    this.$('camp-water-refill').disabled=!c.built.water||c.water>=80||s.cash<Math.min(40,80-c.water)*.2;this.$('camp-fuel-refill').disabled=!c.built.generator||c.generatorFuel>=10||s.cash<Math.min(2,10-c.generatorFuel)*6;
+    const select=this.$('camp-cut-stone'),old=select.value;select.replaceChildren();s.gems.forEach((item,i)=>{if(!this.cuttable(item))return;const option=document.createElement('option');option.value=i;option.textContent=item.label+(item.keep?' · kept specimen':'');select.append(option);});if([...select.options].some(o=>o.value===old))select.value=old;
+    const active=!!c.lapidarySession;select.disabled=active;this.$('camp-cut-start').textContent=active?'Resume stone at the wheel':'Work this stone';this.$('camp-cut-start').disabled=!c.built.lapidary||(!active&&(!select.options.length||!powered(c)||c.water<=0));
+    this.$('camp-cut-note').textContent=active?'Your reserved stone stays on the machine between sessions.':!c.built.lapidary?'Build the lapidary shed, tank and generator to work stones yourself.':!powered(c)?'Start the generator before loading a stone.':c.water<=0?'Refill the tank before loading a stone.':'The selected rough leaves your inventory while you work. Poor technique can reduce its finished value.';
+    const kept=[...s.nuggets,...s.gems].filter(i=>i.keep);this.$('camp-display-note').textContent=`${kept.length} kept specimens. ${c.built.display?'The three display cases show the first 45; browse the full collection here.':'Build a display room to exhibit them in three cases.'}`;this.$('camp-view-collection').disabled=!c.built.display;
+    this.$('camp-dog-note').textContent=c.built.kelpie?`${c.dogMode==='follow'?'Following you':'Settled at camp'} · ${c.dogPats} pats. Waits at camp during driving or mine work.`:'Bring a kelpie to camp for company.';
+    this.$('camp-dog-pat').disabled=!c.built.kelpie;this.$('camp-dog-mode').disabled=!c.built.kelpie;this.$('camp-dog-mode').textContent=c.dogMode==='follow'?'Stay at camp':'Follow me';
+  }
+}

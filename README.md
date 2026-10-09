@@ -61,3 +61,7 @@ Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md)
 Gold panning: select the pan (3) in the creek, then click or tap Use. Drag on the close-up pan; the action buttons select clay breakup, stratification, washing and reveal. Put aside saves the partly worked pan. See [panning controls and model notes](docs/PANNING.md).
 
 At camp, find the signed **Wash Bench**. Practise on known parcels, compare pans, rework caught tailings and build a recovery tub, sample rack and portable tailings kit. See [camp progression and practice](docs/CAMP.md).
+
+Build your home on the claim: **swag → canvas tent ($250) → caravan ($700) → prospector’s shed ($1,200)**. Interact with your shelter or the Wash Bench to upgrade or sleep until morning. Tent and shed lighting and expanded sample storage make camp more useful; older saves keep their existing tent.
+
+Fit out camp with a **water tank, generator and lights**, build a **lapidary shed** to shape and polish your own finds, exhibit kept specimens in a **display room**, and bring a **kelpie** along for company. Water, fuel and partly worked stones persist in your save.

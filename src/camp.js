@@ -1,3 +1,5 @@
+import { restoreFacilities } from './campfacilities.js';
+import { restoreShelter, shelterInfo, sampleCapacity } from './shelter.js';
 import { createPan, panResult, panType } from './panning.js';
 
 export const RECIPES = [
@@ -7,15 +9,15 @@ export const RECIPES = [
 ];
 export const CAMP_UPGRADES = [
   { id: 'tub', name: 'Recovery tub', cost: 75, detail: 'Pan your own wash at camp. Catch the entire outflow for another pass.' },
-  { id: 'rack', name: 'Sample rack', cost: 120, detail: 'Store eight bucket parcels, keeping their source and partly used contents.' },
+  { id: 'rack', name: 'Sample rack', cost: 120, detail: 'Store bucket parcels with their source and remaining contents. Shelter upgrades expand the rack from 8 to 12 to 16 to 20 slots.' },
   { id: 'kit', name: 'Portable tailings kit', cost: 240, requires: 'tub', detail: 'Catch outflow from new creek pans too. Rework it at the camp tub.' },
 ];
 const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
 export const mg = g => `${(g * 1000).toFixed(2)} mg`;
-export const campLevel = c => ['Swag camp', 'Working camp', 'Established camp', 'Equipped prospecting camp'][CAMP_UPGRADES.filter(u => c.built[u.id]).length];
-export function restoreCamp(saved) {
-  return { version: 1, built: {}, mastery: {}, samples: [], tailings: [], history: [], fieldPans: 0, recovered: 0, nextId: 1,
-    ...saved, practice: saved?.practice || null };
+export const campLevel = c => `${shelterInfo(c).short} camp · ${CAMP_UPGRADES.filter(u => c.built[u.id]).length}/3 panning projects`;
+export function restoreCamp(saved, { legacyShelter = false } = {}) {
+  return restoreFacilities({ version: 1, built: {}, mastery: {}, samples: [], tailings: [], history: [], fieldPans: 0, recovered: 0, nextId: 1,
+    ...saved, shelter: restoreShelter(saved?.shelter, legacyShelter), practice: saved?.practice || null });
 }
 export function buyCampUpgrade(state, id) {
   const u = CAMP_UPGRADES.find(u => u.id === id), c = state.camp;
@@ -24,7 +26,7 @@ export function buyCampUpgrade(state, id) {
   return true;
 }
 export function storeSample(state) {
-  if (!state.camp.built.rack || state.camp.samples.length >= 8 || !state.bucket.length) return false;
+  if (!state.camp.built.rack || state.camp.samples.length >= sampleCapacity(state.camp) || !state.bucket.length) return false;
   const sample = state.bucket.shift();
   sample.sourceClaim ??= state.seed;
   state.camp.samples.push(sample);
