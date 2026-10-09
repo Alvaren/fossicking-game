@@ -172,6 +172,97 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   tufts.receiveShadow = true;
   scene.add(tufts);
 
+  // ---------- old opal workings ----------
+  // Shafts with a windlass over them, fenced off with star pickets and wire,
+  // and the signs you see all over the opal fields.
+  const timber = new THREE.MeshStandardMaterial({ color: 0x7a5a3a, roughness: 0.9 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.6, metalness: 0.5 });
+  const holeMat = new THREE.MeshBasicMaterial({ color: 0x050403 });
+  const ropeMat = new THREE.MeshStandardMaterial({ color: 0x9a8a6a, roughness: 1 });
+  const dangerTex = signTexture('DANGER  OPEN SHAFT', '#c01a10', '#fff4ea', 54);
+  const dangerMat = new THREE.MeshStandardMaterial({ map: dangerTex, roughness: 0.8 });
+  for (const sh of terrain.shafts || []) {
+    const y = terrain.getHeight(sh.x, sh.z);
+    const g = new THREE.Group();
+    g.position.set(sh.x, y, sh.z);
+    g.rotation.y = rand() * Math.PI;
+    scene.add(g);
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.55, 20).rotateX(-Math.PI / 2), holeMat);
+    hole.position.y = 0.02;
+    g.add(hole);
+    // Timber collar around the hole.
+    for (let k = 0; k < 4; k++) {
+      const log = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.12, 0.14), timber);
+      log.position.set(Math.cos((k * Math.PI) / 2) * 0.6, 0.06, Math.sin((k * Math.PI) / 2) * 0.6);
+      log.rotation.y = (k * Math.PI) / 2 + Math.PI / 2;
+      log.castShadow = true;
+      g.add(log);
+    }
+    // Windlass: two uprights, a drum with a crank, rope and a kibble (bucket).
+    for (const s of [-0.75, 0.75]) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.0, 0.1), timber);
+      post.position.set(s, 0.5, 0);
+      post.castShadow = true;
+      g.add(post);
+    }
+    const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.5, 12).rotateZ(Math.PI / 2), timber);
+    drum.position.y = 0.95;
+    drum.castShadow = true;
+    g.add(drum);
+    const crank = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.3, 0.04), steel);
+    crank.position.set(0.82, 0.85, 0);
+    g.add(crank);
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.7, 5), ropeMat);
+    rope.position.set(0.1, 0.6, 0);
+    g.add(rope);
+    const kibble = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.11, 0.24, 12, 1, true), steel);
+    kibble.position.set(0.1, 0.18, 0);
+    kibble.material = steel;
+    g.add(kibble);
+    // Star pickets and two strands of wire.
+    const ring = 1.55;
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2;
+      const pk = new THREE.Mesh(new THREE.BoxGeometry(0.035, 1.0, 0.035), steel);
+      pk.position.set(Math.cos(a) * ring, 0.5, Math.sin(a) * ring);
+      g.add(pk);
+    }
+    for (const wy of [0.55, 0.9]) {
+      const wire = new THREE.Mesh(new THREE.TorusGeometry(ring, 0.004, 4, 32).rotateX(Math.PI / 2), steel);
+      wire.position.y = wy;
+      g.add(wire);
+    }
+    const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.3), dangerMat);
+    sign.position.set(0, 0.78, ring + 0.03);
+    g.add(sign);
+    const back = sign.clone();
+    back.rotation.y = Math.PI;
+    back.position.z = ring - 0.03;
+    g.add(back);
+    colliders.push({ x: sh.x, z: sh.z, r: ring + 0.2 });
+  }
+  if (terrain.sources.opal) {
+    // Warning board at the edge of the field.
+    const O = terrain.sources.opal;
+    const toward = Math.atan2(camp.x - O.x, camp.z - O.z);
+    const bx = O.x + Math.sin(toward) * 22, bz = O.z + Math.cos(toward) * 22;
+    const by = terrain.getHeight(bx, bz);
+    const board = new THREE.Group();
+    board.position.set(bx, by, bz);
+    board.rotation.y = toward;
+    scene.add(board);
+    for (const s of [-0.7, 0.7]) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.0, 0.08), timber);
+      post.position.set(s, 1.0, 0);
+      board.add(post);
+    }
+    const tex = signTexture('OLD OPAL WORKINGS', '#7a2a12', '#efe4cc', 46, 'Danger: open shafts. Keep out of fenced areas.');
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 0.75), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85 }));
+    face.position.set(0, 1.55, 0.05);
+    board.add(face);
+    colliders.push({ x: bx, z: bz, r: 0.9 });
+  }
+
   // ---------- claim pegs ----------
   const pegMat = new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 0.9 });
   const capMat = new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.6 });
@@ -424,20 +515,24 @@ function spinifex(rand) {
   return g;
 }
 
-function signTexture(text) {
+function signTexture(text, ink = '#7a2a12', paper = '#e9dcc0', size = 58, sub = '') {
   const c = document.createElement('canvas');
-  c.width = 512; c.height = 146;
+  c.width = 512; c.height = sub ? 226 : 146;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#e9dcc0';
+  ctx.fillStyle = paper;
   ctx.fillRect(0, 0, c.width, c.height);
-  ctx.strokeStyle = '#5a3a20';
+  ctx.strokeStyle = ink === '#c01a10' ? ink : '#5a3a20';
   ctx.lineWidth = 10;
   ctx.strokeRect(8, 8, c.width - 16, c.height - 16);
-  ctx.fillStyle = '#7a2a12';
-  ctx.font = 'bold 58px Georgia, serif';
+  ctx.fillStyle = ink;
+  ctx.font = `bold ${size}px Georgia, serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, c.width / 2, c.height / 2 + 4);
+  ctx.fillText(text, c.width / 2, sub ? 80 : c.height / 2 + 4);
+  if (sub) {
+    ctx.font = '26px Georgia, serif';
+    ctx.fillText(sub, c.width / 2, 160);
+  }
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;

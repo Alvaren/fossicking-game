@@ -23,7 +23,7 @@ import { Notes } from './notes.js';
 import { Weather } from './weather.js';
 import { Sluice } from './sluice.js';
 import { loadAssets, assets } from './assets.js';
-import { CrystalField, makeCrystalMesh, crystalToGem } from './crystals.js';
+import { CrystalField, makeCrystalMesh, crystalToGem, opalLight } from './crystals.js';
 import { Excavation, KNEEL_TOOLS, materialName } from './excavation.js';
 import { smoothstep } from './noise.js';
 import { SAVE_KEY, readSave, storeSave, packArray, unpackArray } from './save.js';
@@ -192,6 +192,13 @@ finds.addItems(field.floatItems().map((f) => {
   const l = Math.hypot(c.ax, c.ay, c.az);
   c.ax /= l; c.ay /= l; c.az /= l;
   return { id: f.id, x: f.x, z: f.z, gem: crystalToGem(c), rot: 0, lift: 0.006, makeMesh: () => makeCrystalMesh(c) };
+}), new Set(saved.surface || []));
+// Opal chips lying on the mullock heaps.
+finds.addItems(field.opalSurfaceItems().map((f) => {
+  const c = { ...f.crystal, x: 0, y: 0, z: 0, ax: 0.3, ay: 0.4, az: 0.9 };
+  const l = Math.hypot(c.ax, c.ay, c.az);
+  c.ax /= l; c.ay /= l; c.az /= l;
+  return { id: f.id, x: f.x, z: f.z, gem: crystalToGem(c), rot: 0, lift: 0.004, makeMesh: () => makeCrystalMesh(c) };
 }), new Set(saved.surface || []));
 // Whatever the last flood left behind.
 finds.addItems(saved.flood || []);
@@ -921,7 +928,7 @@ function extract(e) {
     excav.collect(e);
     const gem = crystalToGem(e.c);
     const site = field.sites[e.c.site];
-    addFind(gem, site && site.kind === 'vug' ? 'Lifted out of a vug in a quartz vein' : 'Dug out of a crystal pocket', e.c);
+    addFind(gem, site && site.kind === 'vug' ? 'Lifted out of a vug in a quartz vein' : site && site.kind === 'heap' ? 'Noodled out of an old mullock heap' : 'Dug out of a crystal pocket', e.c);
     hud.toast(`Lifted out: ${gem.label}`, 'gold');
     if (gem.grade === 'A' && !e.c.broken) sound.gold(); else sound.coin();
     writeSave();
@@ -1367,6 +1374,7 @@ const DISCOVERY = {
   basalt: 'A cap of black basalt. Sapphires, zircons and black spinel weather out of it.',
   rhyolite: 'Pink rhyolite. Agates weather out of it and wash onto the bars downstream.',
   granite: 'Granite country, with quartz veins. Look for crystal pockets and vugs here.',
+  opal: 'The old opal workings. Kneel at a mullock heap and noodle for chips the old-timers missed. Stay clear of the shafts!',
 };
 let discoverTick = 0;
 function checkDiscoveries(dt) {
@@ -1375,7 +1383,7 @@ function checkDiscoveries(dt) {
   discoverTick = 1;
   for (const [key, src] of Object.entries(terrain.sources)) {
     if (state.discovered[key]) continue;
-    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'granite' ? 24 : 26)) {
+    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'granite' || key === 'opal' ? 24 : 26)) {
       state.discovered[key] = true;
       if (key === 'reef') setTimeout(checkLead, 100);
       hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
@@ -1427,6 +1435,8 @@ function frame() {
   camera.getWorldDirection(uvDir);
   finds.update(dt, camera.position, { on: uvOn, origin: camera.position, dir: uvDir, dark: night });
   headlampLight.intensity = headlamp ? 40 : 0;
+  // Opal only shows its colour in good light: daylight, your headlamp, or the inventory lamp.
+  opalLight.value = inventory.isOpen ? 1 : Math.max(daynight.daylight, headlamp ? 0.7 : 0.05);
   uvLight.intensity = uvOn ? 7 : 0;
   view.setLight(daynight.daylight, headlamp, uvOn);
   weather.update(dt, camera.position);

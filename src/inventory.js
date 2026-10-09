@@ -9,7 +9,7 @@ const $ = (id) => document.getElementById(id);
 
 const TYPE_NAMES = {
   nugget: 'Nugget', sapphire: 'Sapphire', zircon: 'Zircon', topaz: 'Topaz', garnet: 'Garnet', spinel: 'Black spinel',
-  agate: 'Agate', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
+  agate: 'Agate', opal: 'Opal', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
 };
 
 export class Inventory {
@@ -178,8 +178,9 @@ export class Inventory {
     if (it.variety && it.type !== 'nugget') facts.push(['Variety', it.variety]);
     if (it.grams && it.type === 'nugget') facts.push(['Weight', `${it.grams.toFixed(2)} g`]);
     if (it.grams && (it.type === 'agate' || it.type === 'scheelite')) facts.push(['Weight', `${it.grams} g`]);
-    if (it.fluor) facts.push(['Under UV', it.type === 'scheelite' ? 'glows bright blue-white' : 'glows green']);
+    if (it.fluor) facts.push(['Under UV', it.type === 'scheelite' ? 'glows bright blue-white' : it.type === 'opal' ? 'glows a soft green-white' : 'glows green']);
     if (it.ct) facts.push(['Size', `${it.ct.toFixed(2)} ct`]);
+    if (it.type === 'opal' && it.variety !== 'potch') facts.push(['Play of colour', `${it.pattern}, brightness ${it.bright}/5`]);
     if (it.lengthCm) facts.push(['Length', `${it.lengthCm.toFixed(1)} cm`]);
     if (it.grade) facts.push(['Grade', it.grade]);
     facts.push(['Condition', it.broken ? 'broken' : it.chipped ? 'chipped' : 'good']);

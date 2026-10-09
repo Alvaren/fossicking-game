@@ -22,7 +22,22 @@ export const CRYSTALS = {
   'topaz crystal': { type: 'topaz', color: 0xd8e8f0, opacity: 0.6, perCm: 25, shape: 'prism4' },
   calcite: { type: 'calcite', color: 0xe8c88a, opacity: 0.72, perCm: 2, shape: 'rhomb' },
   fluorite: { type: 'fluorite', color: 0x8a5ac8, opacity: 0.7, perCm: 6, shape: 'cube' },
+  // Opal from the old workings. Potch is common opal with no colour; the rest
+  // show play-of-colour, valued by body tone, brightness (1-5) and pattern.
+  potch: { type: 'opal', color: 0xd9d4ca, opacity: 1, perCt: 0.2, shape: 'chip', opal: false },
+  'milky opal': { type: 'opal', color: 0xf0eee6, opacity: 1, perCt: 18, shape: 'chip', opal: true },
+  'crystal opal': { type: 'opal', color: 0xe6eef2, opacity: 0.82, perCt: 45, shape: 'chip', opal: true },
+  'black opal': { type: 'opal', color: 0x14161e, opacity: 1, perCt: 60, shape: 'chip', opal: true },
 };
+
+const OPAL_MIX = [['potch', 52], ['milky opal', 32], ['crystal opal', 13], ['black opal', 3]];
+const PATTERNS = [['pinfire', 50, 1], ['flash', 30, 1.5], ['broad flash', 15, 2.2], ['harlequin', 5, 4]];
+const PATTERN_FREQ = { pinfire: 38, flash: 16, 'broad flash': 7, harlequin: 9 };
+
+// How much light is on the opal (daylight, or your headlamp). Play-of-colour
+// needs light to show; main.js keeps this up to date.
+export const opalLight = { value: 1 };
+const pattern = (r) => { let t = r() * 100; for (const p of PATTERNS) { t -= p[1]; if (t <= 0) return p; } return PATTERNS[0]; };
 
 const POCKET_MIX = [
   ['smoky quartz', 40], ['clear quartz', 24], ['milky quartz', 12], ['citrine', 4],
@@ -57,6 +72,12 @@ function crystalGeometry(shape) {
     g = new THREE.BoxGeometry(1.2, 1, 1.2).translate(0, 0.5, 0).toNonIndexed();
     const m = new THREE.Matrix4().makeShear(0.35, 0, 0.35, 0, 0, 0);
     g.applyMatrix4(m);
+  } else if (shape === 'chip') {
+    // A flat, conchoidal chip of opal knocked off a seam.
+    g = new THREE.DodecahedronGeometry(1, 0).toNonIndexed();
+    const p = g.attributes.position;
+    const r = mulberry32(5);
+    for (let i = 0; i < p.count; i++) p.setXYZ(i, p.getX(i) * (0.55 + r() * 0.1), p.getY(i) * 0.5 + 0.5, p.getZ(i) * 0.3);
   } else {
     g = new THREE.BoxGeometry(1.4, 1, 1.4).translate(0, 0.5, 0).toNonIndexed();
   }
@@ -81,6 +102,7 @@ function modelGeometry(c, shape) {
 export function makeCrystalMesh(c) {
   const def = CRYSTALS[c.variety];
   const col = new THREE.Color(def.color);
+  if (def.shape === 'chip') return makeOpalMesh(c, def, col);
   const mat = new THREE.MeshStandardMaterial({
     color: col,
     roughness: c.broken ? 0.6 : 0.08,
@@ -110,9 +132,76 @@ export function makeCrystalMesh(c) {
   return m;
 }
 
+// Opal: thin-film iridescence gives the shifting play-of-colour; brighter
+// stones get a stronger, wider spread of colour.
+function makeOpalMesh(c, def, col) {
+  const bright = c.bright || 1;
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: col,
+    roughness: c.broken ? 0.5 : 0.12,
+    metalness: 0,
+    clearcoat: def.opal ? 1 : 0.3,
+    transparent: def.opacity < 1,
+    opacity: def.opacity,
+    iridescence: def.opal ? 0.35 + bright * 0.13 : 0,
+    iridescenceIOR: 1.6 + bright * 0.12,
+    iridescenceThicknessRange: [120, 300 + bright * 140],
+    emissive: def.opal ? col.clone().multiplyScalar(0.05) : new THREE.Color(0),
+  });
+  if (def.opal) addPlayOfColour(mat, c, def, bright);
+  const m = new THREE.Mesh(crystalGeometry('chip'), mat);
+  const len = c.broken ? c.len * 0.6 : c.len;
+  m.scale.set(len * 0.9, len, len * 0.9);
+  m.position.set(c.x, c.y, c.z);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(c.ax, c.ay, c.az));
+  m.castShadow = true;
+  m.userData.crystal = c;
+  return m;
+}
+
+// Play-of-colour: patches of spectral colour, laid out by the stone's pattern,
+// whose hue slides as the angle between you, the light and the stone changes.
+function addPlayOfColour(mat, c, def, bright) {
+  const freq = PATTERN_FREQ[c.pattern] || 16;
+  const blocky = c.pattern === 'harlequin' ? 1 : 0;
+  const strength = (0.08 + bright * 0.12) * (def.color === 0x14161e ? 1.4 : def.opacity < 1 ? 1.35 : 0.8);
+  const seed = ((c.id || 1) * 0.6180339) % 1;
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uOpalLight = opalLight;
+    sh.vertexShader = sh.vertexShader
+      .replace('void main() {', `varying vec3 vOpalPos;
+void main() {`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+vOpalPos = position;`);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('void main() {', `varying vec3 vOpalPos;
+uniform float uOpalLight;
+float oHash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+float oNoise(vec3 p) {
+  vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(oHash(i), oHash(i + vec3(1,0,0)), f.x), mix(oHash(i + vec3(0,1,0)), oHash(i + vec3(1,1,0)), f.x), f.y),
+             mix(mix(oHash(i + vec3(0,0,1)), oHash(i + vec3(1,0,1)), f.x), mix(oHash(i + vec3(0,1,1)), oHash(i + vec3(1,1,1)), f.x), f.y), f.z);
+}
+vec3 oHue(float h) { return clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0); }
+void main() {`)
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+{
+  vec3 p = vOpalPos * ${freq.toFixed(1)};
+  float cell = ${blocky} > 0 ? oHash(floor(p)) : oNoise(p);
+  float facing = dot(normalize(normal), normalize(vViewPosition));
+  float hue = fract(cell * 1.9 + facing * 1.6 + ${seed.toFixed(4)});
+  float oMask = smoothstep(0.45, 0.6, fract(cell * 3.7 + facing * 0.8)); // ('patch' is reserved in GLSL)
+  vec3 rainbow = oHue(hue);
+  totalEmissiveRadiance += rainbow * oMask * ${strength.toFixed(3)} * uOpalLight;
+}`);
+  };
+  mat.customProgramCacheKey = () => `opal-${freq}-${blocky}-${strength.toFixed(2)}-${seed.toFixed(3)}`;
+}
+
 // The find you put in your bag.
 export function crystalToGem(c) {
   const def = CRYSTALS[c.variety];
+  if (def.shape === 'chip') return opalToGem(c, def);
   const grades = ['A', 'B', 'C'];
   let gi = grades.indexOf(c.grade);
   if (c.damage >= 0.35 && !c.broken) gi = Math.min(2, gi + 1);
@@ -134,6 +223,23 @@ export function crystalToGem(c) {
     // Enough to rebuild the crystal in the inventory viewer.
     crystal: { variety: c.variety, len: c.len, broken: !!c.broken, damage: c.damage, id: c.id, grade: c.grade },
     label: `${c.variety} ${cm.toFixed(1)} cm (${grade}-grade${state})`,
+  };
+}
+
+function opalToGem(c, def) {
+  // Opal is sold by the carat (about 0.2 g); a chip's weight from its size.
+  const ct = Math.round(Math.max(0.5, (c.len * 100) ** 2.4 * 0.5) * 10) / 10;
+  const chipped = !c.broken && c.damage >= 0.35;
+  let value = def.opal ? def.perCt * ct * Math.pow(c.bright / 3, 1.6) * (c.patternMult || 1) : def.perCt * ct;
+  if (c.broken) value *= 0.15;
+  else if (chipped) value *= 0.5;
+  const desc = def.opal ? `, ${c.pattern}, brightness ${c.bright}/5` : '';
+  return {
+    type: 'opal', variety: c.variety, ct, grade: def.opal ? (c.bright >= 4 ? 'A' : c.bright >= 3 ? 'B' : 'C') : 'C',
+    bright: c.bright, pattern: c.pattern, value: Math.round(value * 100) / 100, color: def.color,
+    broken: !!c.broken, chipped, fluor: def.opal ? null : 0xb8ffb0,
+    crystal: { variety: c.variety, len: c.len, broken: !!c.broken, damage: c.damage, id: c.id, bright: c.bright, pattern: c.pattern, patternMult: c.patternMult },
+    label: `${c.variety}, ${ct} ct${desc}${c.broken ? ' (broken)' : chipped ? ' (chipped)' : ''}`,
   };
 }
 
@@ -194,6 +300,10 @@ export class CrystalField {
         cy: top - topDepth - r * 0.55, topDepth,
       });
     }
+    // Mullock heaps at the old opal workings: chips the old-timers missed.
+    for (const h of terrain.heaps || []) {
+      this.sites.push({ id: this.sites.length, kind: 'heap', x: h.x, z: h.z, r: h.r * 0.95, heap: h });
+    }
     for (const s of this.sites) {
       s.crystals = this.growCrystals(s, mulberry32(seed * 7 + s.id * 131));
       for (const c of s.crystals) if (collected.has(c.id)) c.collected = true;
@@ -235,6 +345,27 @@ export class CrystalField {
 
   growCrystals(s, r) {
     const list = [];
+    if (s.kind === 'heap') {
+      const T = this.terrain;
+      for (let i = 0; i < 60; i++) {
+        const a = r() * Math.PI * 2, d = Math.sqrt(r()) * s.r * 0.85;
+        const x = s.x + Math.cos(a) * d, z = s.z + Math.sin(a) * d;
+        const hh = T.heapHeight(x, z);
+        const ground = T.getOrigHeight(x, z) - hh;
+        // Mostly in the top half-metre of the heap, where noodlers scratch.
+        const y = ground + 0.03 + Math.max(0, hh - 0.04 - r() * Math.min(0.55, hh));
+        const variety = pickW(OPAL_MIX, r);
+        const pt = pattern(r);
+        const tilt = r() * 1.2, az = r() * Math.PI * 2;
+        list.push({
+          id: s.id * 100 + i, site: s.id, variety, grade: 'C', x, y, z,
+          ax: Math.cos(az) * Math.sin(tilt + 0.4), ay: Math.cos(tilt + 0.4), az: Math.sin(az) * Math.sin(tilt + 0.4),
+          len: 0.012 + Math.pow(r(), 2) * 0.03, damage: 0, broken: false,
+          bright: 1 + Math.floor(Math.pow(r(), 1.6) * 5), pattern: pt[0], patternMult: pt[2],
+        });
+      }
+      return list;
+    }
     const n = s.kind === 'pocket' ? 7 + Math.floor(r() * 8) : 10 + Math.floor(r() * 12);
     for (let i = 0; i < n; i++) {
       const variety = pickW(s.kind === 'pocket' ? POCKET_MIX : VUG_MIX, r);
@@ -414,6 +545,26 @@ export class CrystalField {
       const s = this.sites[id];
       if (s) { s.opened = !!opened; s.warned = !!warned; }
     }
+  }
+
+  // A few chips lying on the heaps, where the rain has washed them clean.
+  opalSurfaceItems() {
+    const out = [];
+    const r = mulberry32(4242);
+    for (const s of this.sites) {
+      if (s.kind !== 'heap') continue;
+      for (let k = 0; k < 2; k++) {
+        const a = r() * Math.PI * 2, d = Math.sqrt(r()) * s.r * 0.8;
+        const x = s.x + Math.cos(a) * d, z = s.z + Math.sin(a) * d;
+        const pt = pattern(r);
+        const c = {
+          variety: r() < 0.6 ? 'potch' : r() < 0.85 ? 'milky opal' : 'crystal opal', grade: 'C', len: 0.012 + r() * 0.02,
+          damage: 0, broken: false, bright: 1 + Math.floor(r() * 4), pattern: pt[0], patternMult: pt[2], id: 9000 + s.id * 10 + k,
+        };
+        out.push({ id: 6000 + s.id * 10 + k, x, z, crystal: c });
+      }
+    }
+    return out;
   }
 
   collectedIds() {

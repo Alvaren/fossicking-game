@@ -36,6 +36,29 @@ export class Terrain {
     };
     // Granite country: bare pavements, tors, quartz veins, crystal pockets and vugs.
     this.sources.granite = this.placeSource(-88 + rand() * 22, rand() < 0.5 ? 1 : -1, 30 + rand() * 8);
+    // Old opal workings: weathered claystone country with the old-timers'
+    // mullock heaps and shafts. Somewhere clear of the other source rocks.
+    // Camp sits on the flats opposite the bench at z = 0 (worked out properly below).
+    const campX = this.creek.cx(0) - this.benchSide * 13.5 * Math.sqrt(1 + this.creek.dcx(0) ** 2);
+    for (let k = 0; k < 40; k++) {
+      const cand = this.placeSource(-95 + rand() * 190, rand() < 0.5 ? 1 : -1, 34 + rand() * 12);
+      const clear = Object.values(this.sources).every((s) => Math.hypot(s.x - cand.x, s.z - cand.z) > 40)
+        && Math.hypot(cand.x - campX, cand.z) > 45;
+      if ((clear && Math.abs(cand.z) < 95 && Math.abs(cand.x) < 95) || k === 39) { this.sources.opal = cand; break; }
+    }
+    this.heaps = [];
+    this.shafts = [];
+    const O = this.sources.opal;
+    for (let k = 0; k < 400 && this.heaps.length < 14; k++) {
+      const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 18;
+      const h = { x: O.x + Math.cos(a) * d, z: O.z + Math.sin(a) * d, r: 2.2 + rand() * 1.6, h: 0.9 + rand() * 0.9 };
+      if (this.heaps.every((o) => Math.hypot(o.x - h.x, o.z - h.z) > o.r + h.r + 0.6)) this.heaps.push(h);
+    }
+    // Each heap came out of a shaft beside it.
+    for (const h of this.heaps.slice(0, 6)) {
+      const a = rand() * Math.PI * 2;
+      this.shafts.push({ x: h.x + Math.cos(a) * (h.r + 1.8), z: h.z + Math.sin(a) * (h.r + 1.8) });
+    }
     this.overlays = [];   // hand-excavation patches that replace the ground where they sit
     this.locked = null;   // terrain vertices tucked under a patch
 
@@ -124,7 +147,26 @@ export class Terrain {
     const h = this.rawHeight(x, z);
     const dc = Math.hypot(x - this.camp.x, z - this.camp.z);
     const f = smoothstep(11, 6, dc);
-    return h + (this.camp.y - h) * f;
+    return h + (this.camp.y - h) * f + this.heapHeight(x, z);
+  }
+
+  // Height of mullock heaped up at (x, z): rounded cones of spoil.
+  heapHeight(x, z) {
+    if (!this.heaps) return 0;
+    let best = 0;
+    for (const hp of this.heaps) {
+      const dx = x - hp.x, dz = z - hp.z;
+      if (Math.abs(dx) > hp.r || Math.abs(dz) > hp.r) continue;
+      const k = 1 - (dx * dx + dz * dz) / (hp.r * hp.r);
+      if (k > 0) best = Math.max(best, hp.h * Math.pow(k, 0.75));
+    }
+    return best;
+  }
+
+  // 0..1 how far into the old opal workings.
+  opalFactor(x, z) {
+    const O = this.sources.opal;
+    return O ? Math.exp(-((x - O.x) ** 2 + (z - O.z) ** 2) / (2 * 16 * 16)) : 0;
   }
 
   // How deep the loose material goes, and how much of it is topsoil.
@@ -140,7 +182,8 @@ export class Terrain {
     const hill = (1 - b) * smoothstep(11, 20, L.d);
     const flat = Math.max(0, 1 - b - hill);
     const offT = b * (1.6 + nz * 0.8) + hill * (0.35 + nz * 0.55) + flat * (1.3 + nz * 0.9);
-    let thick = inCh * chT + (1 - inCh) * offT;
+    // Mullock heaps are loose spoil sitting on the old ground.
+    let thick = inCh * chT + (1 - inCh) * offT + this.heapHeight(x, z);
     let topsoil = (1 - inCh) * (b * 0.5 + hill * 0.15 + flat * 0.4);
     const gf = (1 - inCh) * this.graniteFactor(x, z);
     if (gf > 0.01) {
@@ -418,6 +461,9 @@ export class Terrain {
     mix(0.6 * Math.exp(-dist2(S.rhyolite) / (2 * 36 * 36)), 0.74, 0.55, 0.47);
     const gf = this.graniteFactor(x, z);
     mix(gf * 0.9, 0.72, 0.62, 0.5); // pale gritty grus
+    // Opal country: bleached claystone ground, and blinding white mullock heaps.
+    mix(this.opalFactor(x, z) * 0.85, 0.82, 0.74, 0.64);
+    mix(smoothstep(0.02, 0.2, this.heapHeight(x, z)), 0.9, 0.87, 0.8);
 
     const grass = smoothstep(0.05, 0.55, n2(x * 0.05 + 100, z * 0.05)) * smoothstep(L.w + 2, L.w + 8, L.d) * 0.6;
     mix(grass, 0.62, 0.56, 0.32);

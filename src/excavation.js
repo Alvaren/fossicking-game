@@ -17,21 +17,22 @@ const BORDER = 3; // cells at the edge you can't dig, so the skirt stays tidy
 export const KNEEL_TOOLS = ['brush', 'trowel', 'pick', 'hands'];
 
 const TOOL = {
-  brush: { radius: 0.035, dmg: 0, rate: { soil: 0.07, grus: 0.04, clay: 0.06, mud: 0.16 } },
-  trowel: { radius: 0.055, dmg: 0.9, rate: { soil: 0.38, grus: 0.2, clay: 0.3, mud: 0.45 } },
-  pick: { radius: 0.04, dmg: 1.8, rate: { soil: 0.45, grus: 0.35, clay: 0.32, mud: 0.32, rock: 0.12, vein: 0.08 } },
+  brush: { radius: 0.035, dmg: 0, rate: { soil: 0.07, grus: 0.04, clay: 0.06, mud: 0.16, mullock: 0.09 } },
+  trowel: { radius: 0.055, dmg: 0.9, rate: { soil: 0.38, grus: 0.2, clay: 0.3, mud: 0.45, mullock: 0.42 } },
+  pick: { radius: 0.04, dmg: 1.8, rate: { soil: 0.45, grus: 0.35, clay: 0.32, mud: 0.32, rock: 0.12, vein: 0.08, mullock: 0.45 } },
   hands: { radius: 0, dmg: 0, rate: {} },
 };
 
 const COLORS = {
   soil: [0.62, 0.48, 0.36],
+  mullock: [0.9, 0.87, 0.8],
   grus: [0.76, 0.64, 0.5],
   clay: [0.62, 0.3, 0.16],
   mud: [0.3, 0.22, 0.16],
   rock: [0.62, 0.52, 0.47],
   vein: [0.9, 0.88, 0.84],
 };
-const NAMES = { soil: 'soil', grus: 'rotten granite', clay: 'pocket clay', mud: 'vug mud', rock: 'granite', vein: 'quartz vein' };
+const NAMES = { mullock: 'opal mullock', soil: 'soil', grus: 'rotten granite', clay: 'pocket clay', mud: 'vug mud', rock: 'granite', vein: 'quartz vein' };
 
 const srgb = (v) => Math.pow(v, 2.2);
 
@@ -50,6 +51,7 @@ export class Patch {
     this.bed = new Float32Array(NV * NV);
     this.top = new Float32Array(NV * NV);
     this.topCol = new Float32Array(NV * NV * 3);
+    this.heapH = new Float32Array(NV * NV); // mullock piled on the old ground
     let minTop = Infinity;
     for (let j = 0; j < NV; j++) {
       for (let i = 0; i < NV; i++) {
@@ -58,6 +60,7 @@ export class Patch {
         const h = terrain.gridHeight(x, z);
         this.h[k] = h;
         this.top[k] = h;
+        this.heapH[k] = terrain.heapHeight(x, z);
         this.bed[k] = terrain.bedrockAt(x, z);
         const tc = terrain.colorAt(x, z); // undug ground keeps the terrain's own colour
         this.topCol[k * 3] = tc[0]; this.topCol[k * 3 + 1] = tc[1]; this.topCol[k * 3 + 2] = tc[2];
@@ -116,7 +119,10 @@ export class Patch {
 
   // What's at (x, y, z)?
   material(x, y, z) {
+    const k = this.index(x, z);
+    if (this.heapH[k] > 0.005 && y > this.top[k] - this.heapH[k]) return 'mullock';
     for (const s of this.sites) {
+      if (s.kind === 'heap') continue;
       const e = this.field.ellip(s, x, y, z);
       if (e < 1) {
         if (s.kind === 'pocket') return 'clay';
@@ -406,8 +412,16 @@ export class Excavation {
   kneel(x, z, yaw) {
     const fx = -Math.sin(yaw), fz = -Math.cos(yaw);
     let cx = x + fx * 0.75, cz = z + fz * 0.75;
-    const site = this.field.sites.find((s) => Math.hypot(s.x - cx, s.z - cz) < 1.0);
+    const site = this.field.sites.find((s) => s.kind !== 'heap' && Math.hypot(s.x - cx, s.z - cz) < 1.0);
     if (site) { cx = site.x; cz = site.z; }
+    // At a mullock heap, work its upper flank, where the chips are.
+    const heap = this.field.sites.find((s) => s.kind === 'heap' && Math.hypot(s.x - cx, s.z - cz) < s.r + 0.8);
+    if (heap && !site) {
+      const d = Math.hypot(cx - heap.x, cz - heap.z) || 1;
+      const want = Math.min(d, Math.max(0.4, heap.r - 1.1));
+      cx = heap.x + ((cx - heap.x) / d) * want;
+      cz = heap.z + ((cz - heap.z) / d) * want;
+    }
     let patch = this.patches.find((p) => Math.hypot(p.cx - cx, p.cz - cz) < 0.7);
     if (!patch) {
       // Don't overlap an existing patch.

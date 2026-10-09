@@ -45,6 +45,10 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['Noodling for opal',
+    'Opal forms where silica-rich water seeped into cracks and holes in weathered claystone. The old-timers sank shafts down to the opal level and '
+    + 'hauled the clay up by windlass; their white mullock heaps still hold chips they missed. Kneel and scratch through a heap: most of it is potch '
+    + '(common opal, no colour), but now and then a chip flashes colour. Black opal and harlequin patterns are the big prizes. Keep well clear of the old shafts.'],
   ['Trace the lead',
     'Count the colours (specks of gold) in each pan as you work up the creek. They get fewer the further you go from the source, '
     + 'and stop dead above where the gold comes in. Where they stop, look for a gully coming down from the hills: the reef is up there. '
