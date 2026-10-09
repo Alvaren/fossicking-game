@@ -176,32 +176,49 @@ export class Sound {
     for (let i = 0; i < 3; i++) this.syllable(out, t + i * 0.045, f, f, 0.03, 0.025 * vol, f, 'sine');
   }
 
-  // Bush flies: a wavering drone that comes and goes round your ears.
+  // Bush flies: no constant drone, just the odd fly zipping past one ear and
+  // out the other. k (0..1) is how pestered you are; called every frame.
   setFlies(k) {
     if (!this.ctx) return;
-    if (!this.flyOsc) {
-      this.flyOsc = this.ctx.createOscillator();
-      this.flyOsc.type = 'sawtooth';
-      this.flyOsc.frequency.value = 210;
-      const lfo = this.ctx.createOscillator();
-      lfo.frequency.value = 7;
-      const lg = this.ctx.createGain();
-      lg.gain.value = 18;
-      lfo.connect(lg).connect(this.flyOsc.frequency);
-      const bp = this.ctx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = 600;
-      bp.Q.value = 1.5;
-      this.flyGain = this.ctx.createGain();
-      this.flyGain.gain.value = 0;
-      this.flyPan = this.ctx.createStereoPanner();
-      this.flyOsc.connect(bp).connect(this.flyGain).connect(this.flyPan).connect(this.master);
-      this.flyOsc.start();
-      lfo.start();
-    }
-    const t = this.ctx.currentTime;
-    this.flyGain.gain.setTargetAtTime(k * 0.035, t, 0.15);
-    this.flyPan.pan.setTargetAtTime(Math.sin(t * 1.3) * 0.8, t, 0.2);
+    const now = this.ctx.currentTime;
+    if (this.nextFly === undefined) this.nextFly = now + 4;
+    if (k < 0.1 || now < this.nextFly) return;
+    this.nextFly = now + 10 + Math.random() * 20;
+    this.flyBy(Math.min(1, k));
+  }
+
+  flyBy(k) {
+    const ctx = this.ctx;
+    const t = ctx.currentTime;
+    const dur = 0.7 + Math.random() * 0.8;
+    // Wingbeat around 190-230 Hz, softened so it's a hum, not a rasp.
+    const o = ctx.createOscillator();
+    o.type = 'triangle';
+    const f = 190 + Math.random() * 40;
+    o.frequency.setValueAtTime(f * 0.94, t);
+    o.frequency.linearRampToValueAtTime(f * 1.08, t + dur * 0.45); // a touch of doppler as it passes
+    o.frequency.linearRampToValueAtTime(f * 0.9, t + dur);
+    const wob = ctx.createOscillator();
+    wob.frequency.value = 9 + Math.random() * 5;
+    const wg = ctx.createGain();
+    wg.gain.value = 6;
+    wob.connect(wg).connect(o.frequency);
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 700;
+    const g = ctx.createGain();
+    const peak = 0.006 + 0.008 * k;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + dur * 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    // Sweep from one ear to the other.
+    const pan = ctx.createStereoPanner();
+    const side = Math.random() < 0.5 ? -1 : 1;
+    pan.pan.setValueAtTime(-0.9 * side, t);
+    pan.pan.linearRampToValueAtTime(0.9 * side, t + dur);
+    o.connect(lp).connect(g).connect(pan).connect(this.master);
+    o.start(t); wob.start(t);
+    o.stop(t + dur + 0.05); wob.stop(t + dur + 0.05);
   }
 
   // Hammer on rock: solid rock rings bright, a cavity behind it goes dull and hollow.
