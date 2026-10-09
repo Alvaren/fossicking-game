@@ -218,6 +218,31 @@ export class Sluice {
     this.model.visible = false;
   }
 
+  snapshot() {
+    return {
+      placed: this.placed,
+      spot: this.placed ? { x: this.spot.x, z: this.spot.z, dir: this.spot.dir } : null,
+      loads: this.loads,
+      cons: this.cons,
+      stranded: this.stranded || null,
+    };
+  }
+
+  restore(s) {
+    if (!s) return;
+    if (s.placed && s.spot) {
+      const spot = this.evaluate(s.spot.x, s.spot.z) || { ...s.spot, depth: 0, speed: 0, ok: 'bad', eff: 0.1, why: '' };
+      this.place({ ...spot, dir: s.spot.dir });
+      this.loads = s.loads || 0;
+      this.cons = s.cons || null;
+    } else if (s.stranded) {
+      this.stranded = s.stranded;
+      this.model.visible = true;
+      this.model.rotation.set(0.3, 1.2, 0.5);
+      this.model.position.set(s.stranded.x, this.terrain.getHeight(s.stranded.x, s.stranded.z) + 0.05, s.stranded.z);
+    }
+  }
+
   update(dt) {
     const cons = this.model.userData.cons;
     for (let i = 0; i < cons.length; i++) {

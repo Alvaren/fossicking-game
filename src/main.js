@@ -18,34 +18,64 @@ import { loadAssets, assets } from './assets.js';
 import { CrystalField, makeCrystalMesh, crystalToGem } from './crystals.js';
 import { Excavation, KNEEL_TOOLS, materialName } from './excavation.js';
 import { smoothstep } from './noise.js';
+import { SAVE_KEY, readSave, storeSave, packArray, unpackArray } from './save.js';
 
 // ---------- save ----------
 
-const SAVE_KEY = 'fossicking-save-v2';
-function loadSave() {
-  try {
-    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if (s && typeof s.seed === 'number') return s;
-    // Carry cash, gold and gear over from the first version; the ground itself is new.
-    const old = JSON.parse(localStorage.getItem('fossicking-save-v1'));
-    if (old && typeof old.seed === 'number') return { seed: old.seed, cash: old.cash, gold: old.gold, up: old.up };
-  } catch { /* no save, or storage blocked */ }
-  return { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
-}
+let lastSaved = 0; // performance.now() of the last successful save
+let resetting = false; // pegging a new claim: don't write the old ground over it
+
+// The whole game: money and finds, plus the state of the ground, your gear and where you are.
 function writeSave() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
-      seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, log: state.log,
-      collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
-      surface: finds.collectedIds(),
-      crystals: field.collectedIds(),
-      flood: finds.floodItems(),
-      floodTargets: targets.floodSaved(),
-    }));
-  } catch { /* storage blocked; progress just won't persist */ }
+  if (resetting) return true;
+  const digs = terrain.digSnapshot();
+  const data = {
+    version: 3,
+    savedAt: Date.now(),
+    seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, log: state.log,
+    collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
+    surface: finds.collectedIds(),
+    crystals: field.collectedIds(),
+    flood: finds.floodItems(),
+    floodTargets: targets.floodSaved(),
+    revealed: targets.revealedIds(),
+    digs: { idx: packArray(digs.idx), mm: packArray(digs.mm) },
+    patches: excav.patches.map((pt) => { const sn = pt.snapshot(); return { cx: sn.cx, cz: sn.cz, mm: packArray(sn.mm) }; }),
+    crystalState: field.stateSnapshot(),
+    sluice: sluice.snapshot(),
+    bucket: state.bucket,
+    player: { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool },
+    nextStorm: weather.phase === 'calm' ? weather.next : 90,
+  };
+  const ok = storeSave(data);
+  if (ok) lastSaved = performance.now();
+  return ok;
 }
 
-const saved = loadSave();
+// Put the world back the way it was saved.
+function restoreWorld() {
+  try {
+    if (saved.digs) terrain.applyDigs(unpackArray(saved.digs.idx, Uint32Array), unpackArray(saved.digs.mm, Int16Array));
+    field.restoreState(saved.crystalState);
+    if (saved.patches) excav.restorePatches(saved.patches.map((pt) => ({ cx: pt.cx, cz: pt.cz, mm: unpackArray(pt.mm, Int16Array) })));
+    targets.restoreRevealed(saved.revealed);
+    sluice.restore(saved.sluice);
+    if (Array.isArray(saved.bucket)) state.bucket = saved.bucket;
+    if (saved.player) {
+      player.pos.x = saved.player.x;
+      player.pos.z = saved.player.z;
+      player.pos.y = terrain.getHeight(player.pos.x, player.pos.z);
+      player.yaw = saved.player.yaw;
+      player.pitch = saved.player.pitch;
+      if (saved.player.tool && saved.player.tool !== 'sluice') state.tool = saved.player.tool;
+    }
+    if (typeof saved.nextStorm === 'number') weather.next = Math.max(60, saved.nextStorm);
+  } catch (e) {
+    console.warn('Could not restore everything from the save:', e);
+  }
+}
+
+const saved = readSave() || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
 const state = {
   seed: saved.seed,
   cash: saved.cash || 0,
@@ -193,6 +223,7 @@ const shop = new Shop(state, {
   onChange: () => { writeSave(); hud.stats(state, gear(state, 'bucket').cap); },
   onClose: () => lock(),
   onReset: () => {
+    resetting = true;
     state.seed = Math.floor(Math.random() * 1e9);
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
@@ -259,14 +290,28 @@ document.addEventListener('pointerlockchange', () => {
   overlay.classList.toggle('hidden', playing || modalOpen());
   hud.show(playing || modalOpen());
   if (!playing) {
+    if (!modalOpen()) { writeSave(); updateSaveStatus(); }
     mouseHeld = false;
     keys.clear();
     playBtn.textContent = 'Paused. Click to resume';
   }
 });
 
+// H: the controls card. It stays up while you play so you can glance at it.
+function toggleControls(force) {
+  const el = document.getElementById('controls');
+  const show = force ?? el.classList.contains('hidden');
+  el.classList.toggle('hidden', !show);
+  el.classList.toggle('kneeling', !!kneel);
+}
+document.getElementById('save-btn').addEventListener('click', (e) => { e.stopPropagation(); saveNow(); });
+document.getElementById('controls-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleControls(true); });
+updateSaveStatus();
+
 // P: free the mouse and show the pause screen. Click to carry on.
 function pause() {
+  writeSave();
+  updateSaveStatus();
   mouseHeld = false;
   keys.clear();
   playBtn.textContent = 'Paused. Click to resume';
@@ -331,7 +376,27 @@ document.addEventListener('wheel', (e) => {
   selectTool(list[(i + (e.deltaY > 0 ? 1 : list.length - 1)) % list.length]);
 });
 
+function saveNow() {
+  if (writeSave()) { hud.toast('Game saved.'); sound.click(); }
+  else hud.toast("Couldn't save: browser storage is full or blocked.", 'junk');
+  updateSaveStatus();
+}
+
+function updateSaveStatus() {
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  if (!lastSaved) { el.textContent = saved.savedAt ? `Last saved ${new Date(saved.savedAt).toLocaleString()}` : 'Not saved yet'; return; }
+  const mins = Math.floor((performance.now() - lastSaved) / 60000);
+  el.textContent = mins < 1 ? 'Saved just now' : `Saved ${mins} min ago`;
+}
+
 document.addEventListener('keydown', (e) => {
+  if (e.code === 'F5' || (e.code === 'KeyS' && (e.ctrlKey || e.metaKey))) {
+    e.preventDefault(); // keep the browser from reloading or saving the page
+    saveNow();
+    return;
+  }
+  if (e.code === 'KeyH' && !e.repeat) { toggleControls(); return; }
   if (e.code === 'KeyN' && notes.isOpen) { notes.close(); return; }
   if (e.code === 'KeyP' && playing && !e.repeat) { pause(); return; }
   if (!playing) return;
@@ -639,6 +704,7 @@ function kneelDown() {
   mouseHeld = false;
   view.setTool('trowel');
   hud.kneeling(true);
+  document.getElementById('controls').classList.add('kneeling');
   hud.tool('trowel');
   hint('kneel', 'Kneeling. Trowel the soil off, brush around crystals, rock pick for rock, hands to lift crystals out. C to stand.', 600);
 }
@@ -647,6 +713,7 @@ function standUp() {
   kneel = null;
   excav.stand();
   hud.kneeling(false);
+  document.getElementById('controls').classList.remove('kneeling');
   hud.tool(state.tool);
   view.setTool(viewTool());
 }
@@ -1077,6 +1144,15 @@ function frame() {
   renderer.render(view.scene, view.camera);
   requestAnimationFrame(frame);
 }
+
+restoreWorld();
+view.setTool(viewTool());
+hud.tool(state.tool);
+
+// Save on a timer while you play, when you pause, and when the tab is hidden or closed.
+setInterval(() => { if (playing) writeSave(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (document.hidden) writeSave(); });
+window.addEventListener('beforeunload', () => writeSave());
 
 // Place the camera before the first frame so the title screen shows the claim.
 camera.position.set(player.pos.x, player.pos.y + EYE, player.pos.z);

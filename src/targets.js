@@ -98,9 +98,16 @@ export class Targets {
     return added;
   }
 
+  revealedIds() { return this.revealed.map((t) => t.id); }
+
+  restoreRevealed(ids) {
+    const set = new Set(ids || []);
+    for (const t of this.list) if (set.has(t.id) && !t.collected && !t.mesh) this.reveal(t);
+  }
+
   // Flood targets aren't part of the seeded world, so they're saved and restored.
   floodSaved() {
-    return this.list.filter((t) => t.id >= 100000 && !t.collected && !t.mesh)
+    return this.list.filter((t) => t.id >= 100000 && !t.collected)
       .map(({ id, kind, name, grams, value, x, y, z, range }) => ({ id, kind, name, grams, value, x, y, z, range }));
   }
 

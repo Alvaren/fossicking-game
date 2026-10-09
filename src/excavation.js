@@ -262,6 +262,18 @@ export class Patch {
 
   materialAt(p) { return this.material(p.x, this.heightAt(p.x, p.z) - 0.002, p.z); }
 
+  // How far each cell has been dug, in millimetres.
+  snapshot() {
+    const mm = new Int16Array(NV * NV);
+    for (let k = 0; k < mm.length; k++) mm[k] = Math.round((this.top[k] - this.h[k]) * 1000);
+    return { cx: this.cx, cz: this.cz, mm };
+  }
+
+  restore(mm) {
+    for (let k = 0; k < mm.length; k++) this.h[k] = this.top[k] - mm[k] / 1000;
+    this.refresh(0, CELLS, 0, CELLS);
+  }
+
   // ---------- mesh ----------
 
   buildMesh(minTop) {
@@ -405,6 +417,14 @@ export class Excavation {
     }
     this.active = patch;
     return { patch, x: patch.cx - fx * 1.0, z: patch.cz - fz * 1.0, site };
+  }
+
+  restorePatches(list) {
+    for (const { cx, cz, mm } of list) {
+      const p = new Patch(this.scene, this.terrain, this.field, cx, cz);
+      p.restore(mm);
+      this.patches.push(p);
+    }
   }
 
   stand() {

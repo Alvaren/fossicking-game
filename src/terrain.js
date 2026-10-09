@@ -315,6 +315,24 @@ export class Terrain {
     return changed;
   }
 
+  // ---------- saving ----------
+
+  // Every vertex the shovel has moved, as (index, millimetres below original).
+  digSnapshot() {
+    const idx = [], mm = [];
+    for (let i = 0; i < this.heights.length; i++) {
+      if (this.locked && this.locked[i]) continue;
+      const d = this.orig[i] - this.heights[i];
+      if (d > 0.001) { idx.push(i); mm.push(Math.min(32767, Math.round(d * 1000))); }
+    }
+    return { idx: Uint32Array.from(idx), mm: Int16Array.from(mm) };
+  }
+
+  applyDigs(idx, mm) {
+    for (let k = 0; k < idx.length; k++) this.heights[idx[k]] = this.orig[idx[k]] - mm[k] / 1000;
+    if (idx.length) this.refresh(0, SEG, 0, SEG);
+  }
+
   // ---------- mesh ----------
 
   buildMesh() {

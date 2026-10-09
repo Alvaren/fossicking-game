@@ -388,6 +388,30 @@ export class CrystalField {
     for (const m of this.stains) if (inside(m.position.x, m.position.z)) m.visible = false;
   }
 
+  // Damage on crystals still in the ground, and what you've found out about each site.
+  stateSnapshot() {
+    const crystals = [];
+    for (const s of this.sites) for (const c of s.crystals) {
+      if (!c.collected && (c.damage > 0 || c.broken)) crystals.push([c.id, Math.round(c.damage * 100) / 100, c.broken ? 1 : 0]);
+    }
+    const sites = this.sites.filter((s) => s.opened || s.warned).map((s) => [s.id, s.opened ? 1 : 0, s.warned ? 1 : 0]);
+    return { crystals, sites };
+  }
+
+  restoreState(st) {
+    if (!st) return;
+    const byId = new Map();
+    for (const s of this.sites) for (const c of s.crystals) byId.set(c.id, c);
+    for (const [id, damage, broken] of st.crystals || []) {
+      const c = byId.get(id);
+      if (c) { c.damage = damage; c.broken = !!broken; }
+    }
+    for (const [id, opened, warned] of st.sites || []) {
+      const s = this.sites[id];
+      if (s) { s.opened = !!opened; s.warned = !!warned; }
+    }
+  }
+
   collectedIds() {
     return this.sites.flatMap((s) => s.crystals.filter((c) => c.collected).map((c) => c.id));
   }

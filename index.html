@@ -36,6 +36,7 @@
     <div id="progress" class="hidden"><div id="progress-fill"></div></div>
     <div id="prompt"></div>
     <div id="toasts"></div>
+    <div id="keyhint"><kbd>H</kbd> controls</div>
 
     <div id="toolbar">
       <div class="slot" data-tool="detector"><kbd>1</kbd>Detector</div>
@@ -79,6 +80,49 @@
         <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
       </div>
       <button id="play">Click to play</button>
+      <div class="pause-row">
+        <button id="save-btn" class="ghost">Save game <kbd>F5</kbd></button>
+        <button id="controls-btn" class="ghost">Controls <kbd>H</kbd></button>
+        <span id="save-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="controls" class="hidden">
+    <div class="ctl-head">Controls <span><kbd>H</kbd> to hide</span></div>
+    <div class="ctl-group standing">
+      <h5>Getting about</h5>
+      <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</div>
+      <div><kbd>Shift</kbd> run · <kbd>Space</kbd> jump</div>
+      <div><kbd>Mouse</kbd> look</div>
+    </div>
+    <div class="ctl-group standing">
+      <h5>Tools</h5>
+      <div><kbd>1</kbd> detector · <kbd>2</kbd> shovel</div>
+      <div><kbd>3</kbd> gold pan · <kbd>4</kbd> gem sieve</div>
+      <div><kbd>5</kbd> sluice · <kbd>6</kbd> rock hammer</div>
+      <div><kbd>Wheel</kbd> cycle tools</div>
+    </div>
+    <div class="ctl-group standing">
+      <h5>Using them</h5>
+      <div><kbd>Left click</kbd> use / hold to dig, pan, jig, feed</div>
+      <div><kbd>Right click</kbd> or <kbd>F</kbd> flip sieve · lift sluice</div>
+      <div><kbd>E</kbd> pick up · talk · clean up sluice</div>
+      <div><kbd>C</kbd> kneel and dig by hand</div>
+    </div>
+    <div class="ctl-group kneel">
+      <h5>Kneeling</h5>
+      <div><kbd>1</kbd> brush · <kbd>2</kbd> trowel</div>
+      <div><kbd>3</kbd> rock pick · <kbd>4</kbd> hands</div>
+      <div><kbd>Left click</kbd> hold to dig · lift with hands</div>
+      <div><kbd>E</kbd> lift the crystal you're looking at</div>
+      <div><kbd>C</kbd> stand up</div>
+    </div>
+    <div class="ctl-group">
+      <h5>Game</h5>
+      <div><kbd>N</kbd> field notes · <kbd>H</kbd> this card</div>
+      <div><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</div>
+      <div><kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>S</kbd> save (it also autosaves)</div>
     </div>
   </div>
 
