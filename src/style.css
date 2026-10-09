@@ -153,7 +153,17 @@ button:disabled { opacity: 0.4; cursor: default; filter: none; }
 button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--edge); }
 #play { width: 100%; font-size: 17px; padding: 12px; }
 
-#overlay, #shop, #notes, #inventory { z-index: 2; }
+#overlay, #shop, #notes, #inventory, #map { z-index: 2; }
+#map {
+  position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
+  background: radial-gradient(ellipse at center, rgba(20, 12, 8, 0.55), rgba(10, 6, 4, 0.85));
+}
+.panel.map-panel { width: min(620px, 100%); }
+#map-canvas { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 8px; margin-top: 8px; box-shadow: 0 0 0 1px var(--edge); }
+#map-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+#map-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+#map-legend i.star { background: var(--gold); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); border-radius: 0; box-shadow: none; }
+#clock { color: var(--gold); }
 #inventory {
   position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
   background: radial-gradient(ellipse at center, rgba(20, 12, 8, 0.55), rgba(10, 6, 4, 0.85));

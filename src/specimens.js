@@ -20,6 +20,8 @@ function isSpecimen(item, r) {
       return A && item.ct >= 1 && r() < 0.3;
     case 'spinel':
       return false;
+    case 'scheelite':
+      return A && item.grams >= 20;
     case 'agate':
       return A && (item.variety === 'fortification' || item.grams >= 200);
     case 'quartz':

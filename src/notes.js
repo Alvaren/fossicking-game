@@ -45,6 +45,9 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['UV at night',
+    'Scheelite is a heavy, dull cream stone by day, but under shortwave UV it glows bright blue-white. It comes out of the same quartz reefs as gold, '
+    + 'so a scatter of glowing scheelite on a slope at night says gold country. Plenty of chalcedony agate glows green too.'],
   ['Old benches',
     'The flat terrace above the creek on one side is an old channel. Its wash is buried under topsoil, but it was sorted by the same water and can be rich.'],
   ['Metal detectors',

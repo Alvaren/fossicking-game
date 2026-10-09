@@ -14,10 +14,13 @@ export class Viewmodel {
     this.scene.environment = env;
     this.scene.environmentIntensity = 0.35;
     this.camera = new THREE.PerspectiveCamera(62, 1, 0.01, 10);
-    this.scene.add(new THREE.HemisphereLight(0xfff1dc, 0x7a5236, 0.7));
-    const sun = new THREE.DirectionalLight(0xfff0d8, 1.6);
-    sun.position.set(-1, 2, 1);
-    this.scene.add(sun);
+    this.vmHemi = new THREE.HemisphereLight(0xfff1dc, 0x7a5236, 0.7);
+    this.vmSun = new THREE.DirectionalLight(0xfff0d8, 1.6);
+    this.vmSun.position.set(-1, 2, 1);
+    // Headlamp spill on your hands and tools at night.
+    this.vmLamp = new THREE.PointLight(0xfff2dc, 0, 3, 1.5);
+    this.vmLamp.position.set(0, 0.15, 0.05);
+    this.scene.add(this.vmHemi, this.vmSun, this.vmLamp);
 
     this.tools = {
       detector: this.buildDetector(),
@@ -25,6 +28,7 @@ export class Viewmodel {
       pan: this.buildPan(),
       sieve: this.buildSieve(),
       sluiceCarry: this.buildSluiceCarry(),
+      uvtorch: this.buildUvTorch(),
       brush: this.buildBrush(),
       trowel: this.buildTrowel(),
       pick: this.buildPick(),
@@ -366,6 +370,40 @@ export class Viewmodel {
   }
 
   playTap() { this.tapT = 0; }
+
+  // Light the tools for the time of day; the headlamp lights them at night.
+  setLight(daylight, lamp, uv) {
+    this.vmHemi.intensity = 0.12 + 0.58 * daylight;
+    this.vmSun.intensity = 0.1 + 1.5 * daylight;
+    this.vmLamp.intensity = lamp ? 1.4 : 0;
+    this.scene.environmentIntensity = 0.04 + 0.31 * daylight;
+    if (this.uvLens) this.uvLens.emissiveIntensity = uv ? 3 : 0.2;
+  }
+
+  buildUvTorch() {
+    const root = new THREE.Group();
+    const g = new THREE.Group();
+    root.add(g);
+    const body = new THREE.MeshStandardMaterial({ color: 0x1c1c22, metalness: 0.6, roughness: 0.4 });
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.017, 0.017, 0.15, 20), body);
+    tube.rotation.x = Math.PI / 2;
+    g.add(tube);
+    const head = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.018, 0.04, 20), body);
+    head.rotation.x = Math.PI / 2;
+    head.position.z = -0.09;
+    g.add(head);
+    this.uvLens = new THREE.MeshStandardMaterial({ color: 0x3a1a6a, emissive: 0x8a4cff, emissiveIntensity: 0.2, roughness: 0.1 });
+    const lens = new THREE.Mesh(new THREE.CircleGeometry(0.021, 24), this.uvLens);
+    lens.position.z = -0.111;
+    g.add(lens);
+    const button = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.006, 0.02), new THREE.MeshStandardMaterial({ color: 0x8a2a2a }));
+    button.position.set(0, 0.018, 0.0);
+    g.add(button);
+    g.rotation.set(0.12, 0.2, 0);
+    root.position.set(0.17, -0.17, -0.36);
+    root.userData.base = root.position.clone();
+    return root;
+  }
 
   // Swap the built-in hand tools for the Blender models once they've loaded.
   // Models have the grip at the origin and point down -Z; tip them toward the ground.

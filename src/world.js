@@ -297,10 +297,12 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const spawn = { x: sw.x, z: sw.z, yaw: flip > 0 ? Math.PI / 2 : -Math.PI / 2 };
 
   let t = 0;
-  function update(dt) {
+  function update(dt, night = 0) {
     t += dt;
     const flick = 0.75 + Math.sin(t * 13) * 0.12 + Math.sin(t * 29 + 1) * 0.1 + Math.random() * 0.06;
-    fireLight.intensity = 3 * flick;
+    // Someone keeps the fire stoked after dark.
+    fireLight.intensity = 3 * flick * (1 + night * 2.5);
+    fireLight.distance = 9 + night * 10;
     embers.scale.set(1, 0.85 + flick * 0.3, 1);
   }
 
@@ -319,7 +321,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     }
   }
 
-  return { colliders, shop, spawn, update, applyModels };
+  const tentPos = toWorld(3.5, 4);
+  return { colliders, shop, spawn, tentPos, update, applyModels };
 }
 
 // ---------- geometry helpers ----------

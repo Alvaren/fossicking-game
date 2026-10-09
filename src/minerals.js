@@ -72,22 +72,43 @@ export const GEMS = {
 
 export const GEM_ORDER = ['sapphire', 'zircon', 'topaz', 'garnet', 'spinel', 'agate'];
 
+// Scheelite (calcium tungstate, SG 6): a dull, heavy, cream-coloured stone by
+// day, but under shortwave UV it glows bright blue-white. It often keeps
+// company with gold in quartz reefs, so prospectors hunt it at night.
+GEMS.scheelite = {
+  name: 'Scheelite', plural: 'scheelite', sg: 6.0,
+  varieties: [{ v: 'honey', c: 0xd9c08a, w: 6, m: 1 }, { v: 'white', c: 0xe6e1d4, w: 4, m: 0.9 }],
+};
+export const FLUOR = { scheelite: 0x9fd8ff, agate: 0x8dff6a, calcite: 0xff6a8a, fluorite: 0x7a8dff };
+
 // Crystals dug from pockets and vugs (topaz is shared with the alluvial list).
 GEMS.quartz = { name: 'Quartz', plural: 'quartz crystals' };
 GEMS.feldspar = { name: 'Feldspar', plural: 'feldspar crystals' };
 GEMS.calcite = { name: 'Calcite', plural: 'calcite crystals' };
 GEMS.fluorite = { name: 'Fluorite', plural: 'fluorite crystals' };
-export const CRYSTAL_ORDER = ['quartz', 'feldspar', 'calcite', 'fluorite'];
+export const CRYSTAL_ORDER = ['quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
 
 export function makeGem(type, rand, sizeBias = 1) {
   const def = GEMS[type];
   const variety = pick(def.varieties, rand);
   const grade = pick(GRADES, rand);
+  if (type === 'scheelite') {
+    const grams = Math.round(3 + Math.pow(rand(), 2) * 45);
+    const value = Math.round(variety.m * grams * 1.6 * (grade.g === 'A' ? 3 : grade.g === 'B' ? 1 : 0.4));
+    return {
+      type, grams, grade: grade.g, variety: variety.v, color: variety.c, value, fluor: FLUOR.scheelite,
+      label: `${variety.v} scheelite, ${grams} g (${grade.g}-grade)`,
+    };
+  }
   if (type === 'agate') {
     const grams = Math.round(15 + Math.pow(rand(), 2) * 350);
     const value = Math.round(variety.m * (2 + grams / 25) * (grade.g === 'A' ? 3 : grade.g === 'B' ? 1 : 0.4));
+    // Plenty of chalcedony glows green under UV (traces of uranium). Decided
+    // from the stone itself so seeded finds stay the same.
+    const glows = (variety.v === 'chalcedony' || variety.v === 'moss') && grams % 3 !== 0;
     return {
       type, grams, grade: grade.g, variety: variety.v, bands: variety.bands, value,
+      ...(glows ? { fluor: FLUOR.agate } : {}),
       label: `${variety.v} agate, ${grams} g`,
     };
   }
@@ -204,6 +225,7 @@ function gemGeometry(type) {
   else if (type === 'spinel') g = new THREE.OctahedronGeometry(0.6);
   else if (type === 'garnet') g = new THREE.DodecahedronGeometry(0.6, 0);
   else if (type === 'topaz') g = new THREE.CylinderGeometry(0.4, 0.45, 1.2, 4);
+  else if (type === 'scheelite') g = lumpy(new THREE.OctahedronGeometry(0.8, 1).scale(1, 1.25, 1), 0.2, mulberry32(11));
   else {
     // Agate nodule. Project the bands from above so it looks like a sliced, waterworn nodule.
     g = lumpy(new THREE.SphereGeometry(1, 12, 9), 0.16, mulberry32(7));
@@ -222,12 +244,15 @@ function gemGeometry(type) {
 // World-space size in metres, exaggerated a little so finds are visible.
 export function gemSize(gem) {
   if (gem.type === 'agate') return Math.cbrt(gem.grams / 2.6) * 0.012;
+  if (gem.type === 'scheelite') return Math.cbrt(gem.grams / 6) * 0.014;
   return 0.006 * Math.cbrt(gem.ct) * 2.2;
 }
 
 export function makeGemMesh(gem) {
   let mat;
-  if (gem.type === 'agate') {
+  if (gem.type === 'scheelite') {
+    mat = new THREE.MeshStandardMaterial({ color: gem.color, roughness: 0.55 }); // dull and greasy by day
+  } else if (gem.type === 'agate') {
     mat = new THREE.MeshStandardMaterial({ map: agateTexture(gem.bands), roughness: 0.35 });
   } else {
     const c = new THREE.Color(gem.color);

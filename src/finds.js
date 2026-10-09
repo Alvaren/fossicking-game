@@ -21,6 +21,9 @@ export class SurfaceFinds {
     this.place(rand, AGATES, (x, z) => deposits.surfaceAgateWeight(x, z), () => makeGem('agate', rand), 0);
     this.place(rand, SPECKS, (x, z) => deposits.surfaceGemWeight(x, z),
       () => makeGem(rand() < 0.55 ? 'zircon' : rand() < 0.7 ? 'sapphire' : 'spinel', rand, 1.2), 1000);
+    // Scheelite weathered out of the reef, lying about on the slopes below it.
+    // Added after the others so the seeded finds above don't change.
+    this.place(rand, 24, (x, z) => deposits.eluvial(x, z, terrain.sources.reef, 22), () => makeGem('scheelite', rand), 2000);
     for (const it of this.items) {
       if (collected.has(it.id)) it.collected = true;
       else this.spawn(it, rand);
@@ -63,6 +66,12 @@ export class SurfaceFinds {
     }
     it.lift = it.lift ?? gemSize(it.gem) * 0.5;
     g.add(m);
+    m.traverse((c) => { if (c.isMesh && !it.mat) it.mat = c.material; });
+    if (it.mat && it.gem.fluor) {
+      it.mat = it.mat.clone(); // its own material, so it can glow on its own
+      m.traverse((c) => { if (c.isMesh) c.material = it.mat; });
+      it.baseEmissive = it.mat.emissive.clone();
+    }
     const glint = new THREE.Sprite(new THREE.SpriteMaterial({
       map: this.glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       color: it.gem.type === 'agate' ? 0xffe0c0 : 0xffffff,
@@ -119,8 +128,12 @@ export class SurfaceFinds {
 
   collectedIds() { return this.items.filter((i) => i.collected && i.id < 100000).map((i) => i.id); }
 
-  update(dt, camPos) {
+  // uv: { on, origin, dir, dark } from the UV torch. Things that fluoresce
+  // light up inside its beam; you only really see it in the dark.
+  update(dt, camPos, uv) {
     this.time += dt;
+    const cosBeam = Math.cos(0.42);
+    const tmp = this._v || (this._v = new THREE.Vector3());
     for (const it of this.items) {
       if (!it.mesh) continue;
       // Settle into holes dug underneath.
@@ -129,8 +142,27 @@ export class SurfaceFinds {
       const g = it.mesh.userData.glint;
       const d = Math.hypot(camPos.x - it.x, camPos.z - it.z);
       const flash = Math.max(0, Math.sin(this.time * 1.7 + it.id * 2.3)) ** 12;
-      g.material.opacity = (0.15 + flash * 0.85) * Math.min(1, 14 / (d + 1));
-      g.scale.setScalar(0.1 + flash * 0.25);
+      let glow = 0;
+      if (uv?.on && it.gem.fluor) {
+        tmp.set(it.x, it.mesh.position.y, it.z).sub(uv.origin);
+        const dist = tmp.length();
+        if (dist < 9 && tmp.normalize().dot(uv.dir) > cosBeam) glow = (1 - dist / 9) ** 0.5;
+      }
+      if (it.gem.fluor) {
+        const k = glow * (0.15 + 0.85 * (uv?.dark ?? 0));
+        it.mat.emissive.copy(it.baseEmissive).lerp(new THREE.Color(it.gem.fluor), Math.min(1, k * 1.5));
+        it.mat.emissiveIntensity = 1 + k * 3;
+        it.glowing = k > 0.3;
+      }
+      if (it.glowing) {
+        g.material.color.set(it.gem.fluor);
+        g.material.opacity = 0.9;
+        g.scale.setScalar(0.35 + Math.sin(this.time * 6 + it.id) * 0.05);
+      } else {
+        g.material.color.set(it.gem.type === 'agate' ? 0xffe0c0 : 0xffffff);
+        g.material.opacity = it.gem.type === 'scheelite' ? 0 : (0.15 + flash * 0.85) * Math.min(1, 14 / (d + 1));
+        g.scale.setScalar(0.1 + flash * 0.25);
+      }
     }
   }
 }

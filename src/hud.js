@@ -9,7 +9,7 @@ export class Hud {
       meter: $('meter'), meterFill: $('meter-fill'), disc: $('disc'),
       prompt: $('prompt'), toasts: $('toasts'),
       progress: $('progress'), progressFill: $('progress-fill'),
-      arrow: $('camp-arrow'), campDist: $('camp-dist'),
+      arrow: $('camp-arrow'), campDist: $('camp-dist'), clock: $('clock'),
       jig: $('jig'), jigZone: $('jig-zone'), jigNeedle: $('jig-needle'), jigState: $('jig-state'),
       stratFill: $('strat-fill'), stratPct: $('strat-pct'),
     };

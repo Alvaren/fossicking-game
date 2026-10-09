@@ -19,7 +19,7 @@
       <div class="stat"><span class="label">Bucket</span><span id="bucket">0 / 6</span></div>
     </div>
 
-    <div id="compass"><span id="camp-arrow">&#9650;</span> Camp <span id="camp-dist">0 m</span></div>
+    <div id="compass"><span id="clock">9:00 am</span> · <span id="camp-arrow">&#9650;</span> Camp <span id="camp-dist">0 m</span></div>
 
     <div id="meter" class="hidden">
       <div class="meter-label">SIGNAL <span id="disc"></span></div>
@@ -45,6 +45,7 @@
       <div class="slot" data-tool="sieve"><kbd>4</kbd>Gem sieve</div>
       <div class="slot locked" data-tool="sluice"><kbd>5</kbd>Sluice</div>
       <div class="slot" data-tool="hammer"><kbd>6</kbd>Rock hammer</div>
+      <div class="slot locked" data-tool="uv"><kbd>7</kbd>UV torch</div>
     </div>
 
     <div id="kneelbar" class="hidden">
@@ -77,6 +78,8 @@
         <span><kbd>Mouse</kbd> use tool</span>
         <span><kbd>E</kbd> pick up / talk</span>
         <span><kbd>I</kbd> inventory</span>
+        <span><kbd>M</kbd> map</span>
+        <span><kbd>L</kbd> headlamp</span>
         <span><kbd>N</kbd> field notes</span>
         <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
       </div>
@@ -113,6 +116,15 @@
     </div>
   </div>
 
+  <div id="map" class="hidden">
+    <div class="panel map-panel">
+      <div class="inv-head"><h2>Claim map</h2><span class="inv-meta">Dots are where you've made finds</span></div>
+      <canvas id="map-canvas" width="560" height="560"></canvas>
+      <div id="map-legend"></div>
+      <div class="shop-footer"><span></span><button id="map-close">Back to it <kbd>M</kbd></button></div>
+    </div>
+  </div>
+
   <div id="controls" class="hidden">
     <div class="ctl-head">Controls <span><kbd>H</kbd> to hide</span></div>
     <div class="ctl-group standing">
@@ -126,6 +138,7 @@
       <div><kbd>1</kbd> detector · <kbd>2</kbd> shovel</div>
       <div><kbd>3</kbd> gold pan · <kbd>4</kbd> gem sieve</div>
       <div><kbd>5</kbd> sluice · <kbd>6</kbd> rock hammer</div>
+      <div><kbd>7</kbd> UV torch (shines while held)</div>
       <div><kbd>Wheel</kbd> cycle tools</div>
     </div>
     <div class="ctl-group standing">
@@ -134,6 +147,7 @@
       <div><kbd>Right click</kbd> or <kbd>F</kbd> flip sieve · lift sluice</div>
       <div><kbd>E</kbd> pick up · talk · clean up sluice</div>
       <div><kbd>C</kbd> kneel and dig by hand</div>
+      <div><kbd>L</kbd> headlamp on / off</div>
     </div>
     <div class="ctl-group kneel">
       <h5>Kneeling</h5>
@@ -145,7 +159,7 @@
     </div>
     <div class="ctl-group">
       <h5>Game</h5>
-      <div><kbd>I</kbd> inventory and collection</div>
+      <div><kbd>I</kbd> inventory · <kbd>M</kbd> claim map</div>
       <div><kbd>N</kbd> field notes · <kbd>H</kbd> this card</div>
       <div><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</div>
       <div><kbd>F5</kbd> / <kbd>Ctrl</kbd>+<kbd>S</kbd> save (it also autosaves)</div>

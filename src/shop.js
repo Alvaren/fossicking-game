@@ -51,6 +51,16 @@ export const UPGRADES = {
       },
     ],
   },
+  uv: {
+    title: 'UV torch',
+    levels: [
+      { label: 'None' },
+      {
+        label: 'Shortwave UV torch', cost: 260,
+        desc: 'For night work. Scheelite (gold country\'s tell-tale) glows blue-white; some agates glow green.',
+      },
+    ],
+  },
   sluice: {
     title: 'Sluice box',
     levels: [

@@ -9,6 +9,8 @@ import { SurfaceFinds } from './finds.js';
 import { processLoad, summarise, GEMS, makeGemMesh } from './minerals.js';
 import { grade as gradeFind, makeNugget } from './specimens.js';
 import { Inventory } from './inventory.js';
+import { DayNight } from './daynight.js';
+import { ClaimMap } from './map.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
@@ -49,6 +51,10 @@ function writeSave() {
     sluice: sluice.snapshot(),
     bucket: state.bucket,
     player: { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool },
+    hour: daynight.hour,
+    headlamp,
+    findPoints: state.findPoints,
+    discovered: state.discovered,
     nextStorm: weather.phase === 'calm' ? weather.next : 90,
   };
   const ok = storeSave(data);
@@ -71,7 +77,7 @@ function restoreWorld() {
       player.pos.y = terrain.getHeight(player.pos.x, player.pos.z);
       player.yaw = saved.player.yaw;
       player.pitch = saved.player.pitch;
-      if (saved.player.tool && saved.player.tool !== 'sluice') state.tool = saved.player.tool;
+      if (saved.player.tool && !['sluice', 'uv'].includes(saved.player.tool)) state.tool = saved.player.tool;
     }
     if (typeof saved.nextStorm === 'number') weather.next = Math.max(60, saved.nextStorm);
   } catch (e) {
@@ -87,6 +93,8 @@ const state = {
   up: saved.up || {},
   gems: saved.gems || [],
   nuggets: saved.nuggets || [],
+  findPoints: saved.findPoints || [],
+  discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
   tool: 'detector',
@@ -144,6 +152,17 @@ sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far 
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.04;
 scene.add(sun, sun.target);
+
+// Headlamp (L) and UV torch beam, both carried on your head.
+scene.add(camera);
+const headlampLight = new THREE.SpotLight(0xfff4e0, 0, 34, 0.5, 0.55, 1.4);
+const uvLight = new THREE.SpotLight(0x7a3cff, 0, 10, 0.42, 0.4, 1.2);
+for (const l of [headlampLight, uvLight]) {
+  l.position.set(0, 0.05, 0);
+  l.target.position.set(0, -0.05, -1);
+  camera.add(l, l.target);
+}
+let headlamp = !!saved.headlamp;
 
 // ---------- world ----------
 
@@ -226,7 +245,14 @@ const scraped = new Map();
 let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
-const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen;
+const map = new ClaimMap(state, terrain, { onClose: () => lock() });
+const modalOpen = () => shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen;
+
+function toggleHeadlamp() {
+  headlamp = !headlamp;
+  sound.click();
+  hud.toast(headlamp ? 'Headlamp on.' : 'Headlamp off.');
+}
 
 const shop = new Shop(state, {
   sound,
@@ -277,6 +303,9 @@ const weather = new Weather({
     }
   },
 });
+
+const daynight = new DayNight({ scene, sky, sunDir, hour: typeof saved.hour === 'number' ? saved.hour : 9 });
+weather.base = daynight.base;
 
 // While the water is high and brown, the flood quietly reworks the bed.
 function floodReworks(peak) {
@@ -352,7 +381,8 @@ function pause() {
 
 function openModal(m) {
   state.forecast = weather.forecast();
-  m.open();
+  if (m === map) m.open(player, { sluice, patches: excav.patches, sources: terrain.sources, camp: terrain.camp });
+  else m.open();
   if (TEST) playing = false;
   else document.exitPointerLock();
 }
@@ -373,10 +403,16 @@ document.addEventListener('mousedown', (e) => {
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('mouseup', (e) => { if (e.button === 0) mouseHeld = false; });
 
-const TOOLS = ['detector', 'shovel', 'pan', 'sieve', 'sluice', 'hammer'];
+const TOOLS = ['detector', 'shovel', 'pan', 'sieve', 'sluice', 'hammer', 'uv'];
+const ownsUv = () => (state.up.uv || 0) > 0;
 const ownsSluice = () => (state.up.sluice || 0) > 0;
 function selectTool(name) {
   if (state.tool === name) return;
+  if (name === 'uv' && !ownsUv()) {
+    hud.toast('You need a UV torch. The buyer at camp sells them.');
+    sound.denied();
+    return;
+  }
   if (name === 'sluice' && !ownsSluice()) {
     hud.toast('You need a sluice box. The buyer at camp sells them.');
     sound.denied();
@@ -397,7 +433,7 @@ document.addEventListener('wheel', (e) => {
     setKneelTool(KNEEL_TOOLS[(k + (e.deltaY > 0 ? 1 : KNEEL_TOOLS.length - 1)) % KNEEL_TOOLS.length]);
     return;
   }
-  const list = TOOLS.filter((t) => t !== 'sluice' || ownsSluice());
+  const list = TOOLS.filter((t) => (t !== 'sluice' || ownsSluice()) && (t !== 'uv' || ownsUv()));
   const i = list.indexOf(state.tool);
   selectTool(list[(i + (e.deltaY > 0 ? 1 : list.length - 1)) % list.length]);
 });
@@ -425,6 +461,7 @@ document.addEventListener('keydown', (e) => {
   if (e.code === 'KeyH' && !e.repeat) { toggleControls(); return; }
   if (e.code === 'KeyN' && notes.isOpen) { notes.close(); return; }
   if (e.code === 'KeyI' && inventory.isOpen) { inventory.close(); return; }
+  if (e.code === 'KeyM' && map.isOpen) { map.close(); return; }
   if (e.code === 'KeyP' && playing && !e.repeat) { pause(); return; }
   if (!playing) return;
   if (kneel) {
@@ -434,11 +471,14 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'KeyE' && !e.repeat) { const c = excav.pickCrystal(camera.position, camDir); if (c) extract(c); }
     if (e.code === 'KeyN' && !e.repeat) openModal(notes);
     if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
+    if (e.code === 'KeyL' && !e.repeat) toggleHeadlamp();
     return;
   }
   if (e.code === 'KeyC' && !e.repeat) { kneelDown(); return; }
   keys.add(e.code);
-  const n = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6'].indexOf(e.code);
+  const n = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7'].indexOf(e.code);
+  if (e.code === 'KeyL' && !e.repeat) toggleHeadlamp();
+  if (e.code === 'KeyM' && !e.repeat) { openModal(map); return; }
   if (e.code === 'KeyF' && !e.repeat) rightClick();
   if (n >= 0) selectTool(TOOLS[n]);
   if (e.code === 'KeyE' && !e.repeat) interact();
@@ -481,8 +521,10 @@ function logGold(grams, nugget) {
 
 // Every find comes through here: it gets graded (specimen or not), filed in
 // your gear, logged, and specimens get their moment.
-function addFind(item, from) {
+function addFind(item, from, at = player.pos) {
   gradeFind(item, from);
+  state.findPoints.push({ x: Math.round(at.x * 10) / 10, z: Math.round(at.z * 10) / 10, t: item.type, s: item.specimen ? 1 : 0 });
+  if (state.findPoints.length > 600) state.findPoints.shift();
   (item.type === 'nugget' ? state.nuggets : state.gems).push(item);
   if (item.type !== 'nugget') logFind(item);
   if (item.specimen) {
@@ -559,7 +601,7 @@ function interact() {
     const t = p.target;
     targets.collect(t);
     if (t.kind === 'gold') {
-      const n = addFind(makeNugget(t.grams, t.id + 1, GOLD_PRICE), 'Found with the detector and dug up');
+      const n = addFind(makeNugget(t.grams, t.id + 1, GOLD_PRICE), 'Found with the detector and dug up', t);
       logGold(t.grams, true);
       state.remaining = targets.remainingGold();
       if (!n.specimen) hud.toast(t.grams >= 5 ? `Strewth! A ${t.grams.toFixed(2)} g nugget!` : `You beauty! ${t.grams.toFixed(2)} g nugget.`, 'gold');
@@ -577,7 +619,8 @@ function interact() {
   }
   if (p?.find) {
     finds.collect(p.find);
-    addFind(p.find.gem, p.find.gem.type === 'agate' ? 'Spotted lying on the ground' : 'Spotted glinting on a gravel bar');
+    addFind(p.find.gem, p.find.glowing ? 'Spotted glowing under the UV torch' : p.find.gem.type === 'agate' ? 'Spotted lying on the ground' : p.find.gem.type === 'scheelite' ? 'Picked up off the slope below the reef' : 'Spotted glinting on a gravel bar', p.find);
+    if (p.find.gem.type === 'scheelite') hint('scheelite', "Scheelite. Dull by day, but it glows blue-white under UV, and it comes out of gold-bearing reefs.", 600);
     hud.toast(`Picked up: ${p.find.gem.label}`, 'gold');
     if (p.find.id >= 5000 && p.find.id < 6000) hint('float', 'Quartz float: shards shed from a crystal pocket. Follow them uphill and dig where they stop.', 300);
     if (p.find.gem.type === 'agate') hint('agate', 'Agates weather out of the pink rhyolite and wash onto the gravel bars downstream.', 300);
@@ -598,7 +641,20 @@ function interact() {
     hud.toast("Got your sluice back. She'll be right. Set it again with tool 5.");
     return;
   }
+  if (nearTent()) {
+    if (daynight.isNight) {
+      daynight.hour = 6;
+      hud.toast('You crawl into the swag and kip till sunrise. Morning!');
+      sound.click();
+      writeSave();
+    } else hud.toast("Bit early for a kip. The tent's for nights.");
+    return;
+  }
   if (nearShop()) openModal(shop);
+}
+
+function nearTent() {
+  return Math.hypot(player.pos.x - world.tentPos.x, player.pos.z - world.tentPos.z) < 3.4;
 }
 
 function nearSluice() {
@@ -609,6 +665,7 @@ function nearSluice() {
 function viewTool() {
   if (kneel) return kneel.tool;
   if (state.tool === 'hammer') return 'pick';
+  if (state.tool === 'uv') return 'uvtorch';
   if (state.tool === 'sluice') return sluice.placed ? 'shovel' : 'sluiceCarry';
   return state.tool;
 }
@@ -827,7 +884,7 @@ function extract(e) {
     excav.collect(e);
     const gem = crystalToGem(e.c);
     const site = field.sites[e.c.site];
-    addFind(gem, site && site.kind === 'vug' ? 'Lifted out of a vug in a quartz vein' : 'Dug out of a crystal pocket');
+    addFind(gem, site && site.kind === 'vug' ? 'Lifted out of a vug in a quartz vein' : 'Dug out of a crystal pocket', e.c);
     hud.toast(`Lifted out: ${gem.label}`, 'gold');
     if (gem.grade === 'A' && !e.c.broken) sound.gold(); else sound.coin();
     writeSave();
@@ -1170,6 +1227,7 @@ function updateTools(dt, motion) {
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
+  else if (nearTent() && daynight.isNight) prompt = 'E: kip in the tent till morning';
   else if (nearShop()) prompt = 'E: talk to the gold & gem buyer';
   hud.prompt(prompt);
 
@@ -1202,10 +1260,48 @@ function updateTools(dt, motion) {
 function updateHud() {
   hud.stats(state, gear(state, 'bucket').cap);
   hud.lockSlot('sluice', !ownsSluice());
+  hud.lockSlot('uv', !ownsUv());
+  hud.set('clock', daynight.clockText());
   const vx = terrain.camp.x - player.pos.x, vz = terrain.camp.z - player.pos.z;
   const cross = fwd.x * vz - fwd.z * vx;
   const dot = fwd.x * vx + fwd.z * vz;
   hud.compass(Math.atan2(cross, dot), Math.hypot(vx, vz));
+}
+
+const uvDir = new THREE.Vector3();
+
+// The first time you get near each source rock, it goes on the map.
+const DISCOVERY = {
+  reef: 'A white quartz reef. That is gold country: the creek downstream of here should carry gold.',
+  basalt: 'A cap of black basalt. Sapphires, zircons and black spinel weather out of it.',
+  rhyolite: 'Pink rhyolite. Agates weather out of it and wash onto the bars downstream.',
+  granite: 'Granite country, with quartz veins. Look for crystal pockets and vugs here.',
+};
+let discoverTick = 0;
+function checkDiscoveries(dt) {
+  discoverTick -= dt;
+  if (discoverTick > 0) return;
+  discoverTick = 1;
+  for (const [key, src] of Object.entries(terrain.sources)) {
+    if (state.discovered[key]) continue;
+    if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'granite' ? 24 : 26)) {
+      state.discovered[key] = true;
+      hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
+      sound.click();
+      writeSave();
+    }
+  }
+}
+
+let lastHour = 0;
+function duskHints() {
+  const h = daynight.hour;
+  if (lastHour < 18.3 && h >= 18.3) {
+    hud.toast(headlamp ? 'Sun going down.' : 'Getting dark. Press L for your headlamp.');
+    if (ownsUv()) hud.toast('Good night for the UV torch (7) up around the reef.');
+  }
+  if (lastHour < 5.8 && h >= 5.8) hud.toast('Sun\'s coming up.');
+  lastHour = h;
 }
 
 // ---------- loop ----------
@@ -1225,16 +1321,28 @@ function frame() {
     updateTools(dt, motion);
   }
   updateHud();
-  world.update(dt);
+  daynight.update(playing || kneel ? dt : 0, camera.position);
+  weather.daylight = daynight.daylight;
+  const night = 1 - daynight.daylight;
+  world.update(dt, night);
   targets.update(dt);
-  finds.update(dt, camera.position);
+  const uvOn = !kneel && state.tool === 'uv' && ownsUv() && playing;
+  camera.getWorldDirection(uvDir);
+  finds.update(dt, camera.position, { on: uvOn, origin: camera.position, dir: uvDir, dark: night });
+  headlampLight.intensity = headlamp ? 40 : 0;
+  uvLight.intensity = uvOn ? 7 : 0;
+  view.setLight(daynight.daylight, headlamp, uvOn);
   weather.update(dt, camera.position);
+  water.uniforms.sunDir.value.copy(daynight.lightDir);
+  water.uniforms.sunColor.value.copy(daynight.base.sunColor).multiplyScalar(daynight.daylight > 0.05 ? 1 : 0.35);
+  checkDiscoveries(dt);
+  duskHints();
   water.update(dt, elapsed, player.pos, weather.flood);
   sluice.update(dt);
 
   sky.position.copy(camera.position);
   if (sky.material.uniforms.time) sky.material.uniforms.time.value = elapsed;
-  sun.position.copy(player.pos).addScaledVector(sunDir, 80);
+  sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
   sun.target.position.copy(player.pos);
 
   renderer.clear();
@@ -1262,7 +1370,7 @@ frame();
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; },
 };

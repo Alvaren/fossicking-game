@@ -37,6 +37,13 @@ export class Weather {
     this.waterSky = water.uniforms.skyColor.value.clone();
     this.waterHorizon = water.uniforms.horizonColor.value.clone();
     this.stormSkyCol = new THREE.Color(0x6a7078);
+    // Clear-sky lighting for the current time of day; DayNight replaces this.
+    this.daylight = 1;
+    this.base = {
+      sun: 3.4, sunColor: new THREE.Color(0xfff0dc), hemi: 1.1, hemiColor: this.hemiSky.clone(), hemiGround: hemi.groundColor.clone(),
+      env: 0.6, fog: this.clearFog.color.clone(), fogNear: this.clearFog.near, fogFar: this.clearFog.far,
+      waterSky: this.waterSky.clone(), waterHorizon: this.waterHorizon.clone(), exposure: this.exposure,
+    };
     this.buildRain();
   }
 
@@ -151,16 +158,24 @@ export class Weather {
     u.rayleigh.value = lerp(1.1, 3.2, s);
     if (u.cloudCoverage) u.cloudCoverage.value = lerp(0.25, 0.97, s);
     if (u.cloudDensity) u.cloudDensity.value = lerp(0.4, 0.9, s);
-    this.sun.intensity = lerp(3.4, 0.5, s);
-    this.renderer.toneMappingExposure = lerp(this.exposure, this.exposure * 0.55, s) * (1 + this.flash * 0.8);
-    this.hemi.intensity = lerp(1.1, 0.75, s) + this.flash * 2.5;
-    this.hemi.color.copy(this.hemiSky).lerp(this.hemiStorm, s);
-    this.scene.environmentIntensity = lerp(0.6, 0.22, s);
-    this.fog.color.copy(this.clearFog.color).lerp(this.stormFog, s);
-    this.fog.near = lerp(this.clearFog.near, 25, s);
-    this.fog.far = lerp(this.clearFog.far, 230, s);
-    this.water.uniforms.skyColor.value.copy(this.waterSky).lerp(this.stormSkyCol, s);
-    this.water.uniforms.horizonColor.value.copy(this.waterHorizon).lerp(this.stormSkyCol, s);
+    // Storms darken whatever the time of day gives (see daynight.js).
+    const b = this.base;
+    this.sun.intensity = b.sun * lerp(1, 0.15, s);
+    this.sun.color.copy(b.sunColor);
+    this.renderer.toneMappingExposure = b.exposure * lerp(1, 0.55, s) * (1 + this.flash * 0.8);
+    this.hemi.intensity = b.hemi * lerp(1, 0.68, s) + this.flash * 2.5;
+    this.hemi.color.copy(b.hemiColor).lerp(this.hemiStorm, s * 0.8);
+    this.hemi.groundColor.copy(b.hemiGround);
+    this.scene.environmentIntensity = b.env * lerp(1, 0.37, s);
+    const stormFog = this._sf || (this._sf = new THREE.Color());
+    stormFog.copy(this.stormFog).multiplyScalar(0.15 + 0.85 * this.daylight);
+    this.fog.color.copy(b.fog).lerp(stormFog, s);
+    this.fog.near = lerp(b.fogNear, 25, s);
+    this.fog.far = lerp(b.fogFar, 230, s);
+    const stormSky = this._ss || (this._ss = new THREE.Color());
+    stormSky.copy(this.stormSkyCol).multiplyScalar(0.15 + 0.85 * this.daylight);
+    this.water.uniforms.skyColor.value.copy(b.waterSky).lerp(stormSky, s);
+    this.water.uniforms.horizonColor.value.copy(b.waterHorizon).lerp(stormSky, s);
     this.sound.setRain(Math.max(0, (s - 0.55) / 0.45));
 
     // Rain streaks around the camera.
