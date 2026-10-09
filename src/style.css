@@ -309,3 +309,6 @@ body.touch #meter, body.touch #jig { bottom: 200px; width: min(300px, 60vw); }
 #save-status { color: var(--muted); font-size: 13px; }
 
 #map-legend b.pt { background: #f2e6c8; color: #2a1a0c; padding: 0 4px; margin-right: 5px; border: 1px solid #2a1a0c; font-size: 10px; }
+
+body.driving #toolbar, body.driving #meter, body.driving #jig, body.driving #crosshair, body.driving #touch .t-right .stand-only:not(#t-jump) { display: none !important; }
+body.driving #t-jump::after { content: ''; }

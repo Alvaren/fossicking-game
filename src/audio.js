@@ -221,6 +221,29 @@ export class Sound {
     o.stop(t + dur + 0.05); wob.stop(t + dur + 0.05);
   }
 
+  // The ute's engine: a lumpy diesel note that rises with revs, plus gravel under the tyres.
+  setEngine(on, rpm, throttle) {
+    if (!this.ctx) return;
+    if (!this.engine) {
+      const ctx = this.ctx;
+      const o = ctx.createOscillator(); o.type = 'sawtooth';
+      const sub = ctx.createOscillator(); sub.type = 'square';
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 380; lp.Q.value = 3;
+      const g = ctx.createGain(); g.gain.value = 0;
+      const sg = ctx.createGain(); sg.gain.value = 0.5;
+      o.connect(lp); sub.connect(sg).connect(lp); lp.connect(g).connect(this.master);
+      o.start(); sub.start();
+      this.engine = { o, sub, lp, g, gravel: this.loop(900, 'bandpass', 0, 0.7) };
+    }
+    const e = this.engine, t = this.ctx.currentTime;
+    const f = 34 + rpm * 70 + throttle * 12;
+    e.o.frequency.setTargetAtTime(f, t, 0.1);
+    e.sub.frequency.setTargetAtTime(f / 2, t, 0.1);
+    e.lp.frequency.setTargetAtTime(300 + throttle * 500 + rpm * 300, t, 0.1);
+    e.g.gain.setTargetAtTime(on ? 0.05 + throttle * 0.05 : 0, t, 0.15);
+    e.gravel.gain.gain.setTargetAtTime(on ? rpm * 0.08 : 0, t, 0.2);
+  }
+
   // Hammer on rock: solid rock rings bright, a cavity behind it goes dull and hollow.
   tap(hollow) {
     if (hollow > 0.45) {

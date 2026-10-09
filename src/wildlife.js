@@ -181,24 +181,38 @@ export class Wildlife {
       }
     }
 
-    // ---------- bush flies (hot days, when you're standing about) ----------
+    // ---------- bush flies ----------
+    // On hot days a fly or three drops in now and then while you're standing
+    // about, buzzes round your head for a few seconds and buggers off again.
     const hot = daylight > 0.8 && hour > 9.5 && hour < 16.5;
     const still = player.speed < 1.5;
-    let nearest = 9;
-    for (const fl of this.flies) {
-      fl.visible = hot && playing;
-      if (!fl.visible) continue;
+    if (this.flyNext === undefined) { this.flyNext = 15 + Math.random() * 20; this.flyVisit = 0; this.flyCount = 0; }
+    if (hot && playing && still) this.flyNext -= dt;
+    if (this.flyVisit <= 0 && this.flyNext <= 0) {
+      this.flyVisit = this.flyLen = 4 + Math.random() * 5;
+      this.flyNext = 30 + Math.random() * 50;
+      this.flyCount = 1 + Math.floor(Math.random() * 3);
+      this.flyBuzzed = false;
+      this.sound.flyBy?.(0.8);
+    }
+    if (this.flyVisit > 0) {
+      this.flyVisit -= dt * (still ? 1 : 3); // walking off shakes them sooner
+      if (!this.flyBuzzed && this.flyVisit < this.flyLen * 0.5) { this.flyBuzzed = true; this.sound.flyBy?.(0.6); }
+    }
+    // Swoop in at the start and away at the end.
+    const p = this.flyVisit > 0 ? Math.min(1, (this.flyLen - this.flyVisit) / 0.8, this.flyVisit / 0.8) : 0;
+    this.flies.forEach((fl, i) => {
+      fl.visible = playing && this.flyVisit > 0 && i < this.flyCount;
+      if (!fl.visible) return;
       const u = fl.userData;
       const t = performance.now() / 1000;
-      const rad = still ? 0.35 : 0.9;
+      const rad = 0.35 + (1 - p) * 2.5;
       fl.position.set(
         cam.x + Math.sin(t * u.f + u.a) * rad,
         cam.y - 0.1 + Math.sin(t * u.f * 1.3 + u.b) * 0.2,
         cam.z + Math.cos(t * u.f * 0.9 + u.a) * rad,
       );
-      nearest = Math.min(nearest, fl.position.distanceTo(cam));
-    }
-    this.sound.setFlies(hot && playing ? smoothstep(0.9, 0.25, nearest) * (still ? 1 : 0.4) : 0);
+    });
 
     // ---------- dawn chorus and night crickets ----------
     if (this.lastHour !== null && this.lastHour < 5.9 && hour >= 5.9) this.kookaIn = 1;

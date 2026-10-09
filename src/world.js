@@ -357,6 +357,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     add(new THREE.CylinderGeometry(0.42, 0.42, 0.3, 18).rotateX(Math.PI / 2), dark, wx, 0.42, wz, ute);
   }
   for (const o of [-1.4, 0, 1.4]) collide(3.5 + Math.cos(0.35) * o, -4.5 - Math.sin(0.35) * o, 1.15);
+  const uteColliders = colliders.slice(-3); // these follow the ute when you drive it
 
   // Campfire.
   const fire = new THREE.Group();
@@ -401,7 +402,21 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   function applyModels(m) {
     if (m.ute) {
       for (const c of ute.children) c.visible = false;
-      ute.add(m.ute.clone(true));
+      const u = m.ute.clone(true);
+      // One-sided panels (so from the driver's seat you see out, not the inside
+      // of the roof) and see-through tinted glass.
+      u.traverse((o) => {
+        if (!o.isMesh) return;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        o.material = mats.map((mt) => {
+          const c = mt.clone();
+          c.side = THREE.FrontSide;
+          if (c.name === 'ute_glass') { c.transparent = true; c.opacity = 0.22; c.depthWrite = false; }
+          return c;
+        });
+        if (o.material.length === 1) o.material = o.material[0];
+      });
+      ute.add(u);
     }
     if (m.tent) {
       tent.visible = false;
@@ -413,7 +428,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   }
 
   const tentPos = toWorld(3.5, 4);
-  return { colliders, shop, spawn, tentPos, update, applyModels };
+  return { colliders, shop, spawn, tentPos, ute, uteColliders, update, applyModels };
 }
 
 // ---------- geometry helpers ----------

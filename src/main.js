@@ -13,6 +13,7 @@ import { DayNight } from './daynight.js';
 import { ClaimMap } from './map.js';
 import { IS_TOUCH, TouchControls } from './touch.js';
 import { Wildlife } from './wildlife.js';
+import { Ute } from './vehicle.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { Sound } from './audio.js';
@@ -53,6 +54,7 @@ function writeSave() {
     sluice: sluice.snapshot(),
     bucket: state.bucket,
     player: { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch, tool: state.tool },
+    ute: ute.snapshot(),
     hour: daynight.hour,
     headlamp,
     findPoints: state.findPoints,
@@ -208,6 +210,9 @@ state.remaining = targets.remainingGold();
 
 const sound = new Sound();
 const wildlife = new Wildlife(scene, terrain, sound);
+const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
+if (saved.ute) ute.placeAt(saved.ute.x, saved.ute.z, saved.ute.h);
+let driving = false;
 // Blender-made models stream in; crystals and hand tools use them once they arrive.
 loadAssets().then(() => {
   view.applyModels(assets.tools);
@@ -412,6 +417,7 @@ function openModal(m) {
 
 document.addEventListener('mousemove', (e) => {
   if (!playing) return;
+  if (driving) { ute.look(e.movementX, e.movementY); return; }
   player.yaw -= e.movementX * 0.0022;
   player.pitch = THREE.MathUtils.clamp(player.pitch - e.movementY * 0.0022, -1.5, 1.45);
   player.lookDX += e.movementX;
@@ -451,6 +457,15 @@ function selectTool(name) {
 }
 document.addEventListener('wheel', (e) => {
   if (!playing) return;
+  if (driving) {
+    keys.add(e.code);
+    if (e.code === 'KeyE' && !e.repeat) exitUte();
+    if (e.code === 'KeyL' && !e.repeat) toggleHeadlamp();
+    if (e.code === 'KeyN' && !e.repeat) openModal(notes);
+    if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
+    if (e.code === 'KeyM' && !e.repeat) openModal(map);
+    return;
+  }
   if (kneel) {
     const k = KNEEL_TOOLS.indexOf(kneel.tool);
     setKneelTool(KNEEL_TOOLS[(k + (e.deltaY > 0 ? 1 : KNEEL_TOOLS.length - 1)) % KNEEL_TOOLS.length]);
@@ -618,7 +633,31 @@ function nearestPickup() {
   return dt <= df ? { target: t } : { find: f };
 }
 
+function enterUte() {
+  driving = true;
+  document.body.classList.add('driving');
+  ute.enter();
+  mouseHeld = false;
+  hud.prompt('');
+  hint('drive', "W/S throttle and reverse, A/D steer, Space brake, mouse to look about, E to hop out. Mind the creek.", 600);
+  sound.click();
+}
+
+function exitUte() {
+  const p = ute.exitSpot();
+  ute.exit();
+  driving = false;
+  document.body.classList.remove('driving');
+  player.pos.set(p.x, terrain.getHeight(p.x, p.z), p.z);
+  player.vel.set(0, 0, 0);
+  player.yaw = ute.facingYaw();
+  player.pitch = ute.lookPitch;
+  sound.click();
+  writeSave();
+}
+
 function interact() {
+  if (driving) { exitUte(); return; }
   const p = nearestPickup();
   if (p?.target) {
     const t = p.target;
@@ -669,6 +708,7 @@ function interact() {
     hud.toast("Got your sluice back. She'll be right. Set it again with tool 5.");
     return;
   }
+  if (ute.near(player.pos)) { enterUte(); return; }
   if (nearTent()) {
     if (daynight.isNight) {
       daynight.hour = 6;
@@ -879,12 +919,39 @@ function finishLoad(method, opts = {}) {
   writeSave();
 }
 
+// ---------- driving ----------
+
+function updateDriving(dt) {
+  let throttle = 0, steer = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) throttle += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) throttle -= 1;
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) steer += 1;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) steer -= 1;
+  if (touch) { throttle += touch.move.y; steer -= touch.move.x; }
+  const brake = keys.has('Space') || !!touch?.jump;
+  const msg = ute.update(dt, THREE.MathUtils.clamp(throttle, -1, 1), THREE.MathUtils.clamp(steer, -1, 1), brake);
+  if (msg) hint(`ute-${msg}`, msg, 6);
+  ute.cameraPose(camera);
+  player.pos.set(ute.x, terrain.getHeight(ute.x, ute.z), ute.z);
+  player.yaw = ute.facingYaw();
+  fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+  right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
+  hud.prompt(`${ute.kmh} km/h · E to hop out · Space to brake`);
+  marker.visible = false;
+  sound.setDetector(false, 0, null);
+  sound.setAmbience(dt, 0, false);
+  hud.jig(false);
+  hud.progress(0);
+  return { moving: false, running: false, depth: 0 };
+}
+
 // ---------- kneeling and hand excavation ----------
 
 let kneel = null;
 let workTick = 0;
 
 function kneelDown() {
+  if (driving) return;
   if (!player.grounded || motion.depth > 0.1) { hud.toast("You can't kneel here."); return; }
   const r = excav.kneel(player.pos.x, player.pos.z, player.yaw);
   if (!r) { hud.toast('Too close to another dig. Kneel right in front of it, or move further away.'); return; }
@@ -1273,6 +1340,7 @@ function updateTools(dt, motion) {
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
+  else if (ute.near(player.pos)) prompt = 'E: hop in the ute';
   else if (nearTent() && daynight.isNight) prompt = 'E: kip in the tent till morning';
   else if (nearShop()) prompt = 'E: talk to the gold & gem buyer';
   hud.prompt(prompt);
@@ -1319,6 +1387,7 @@ const uvDir = new THREE.Vector3();
 const touch = IS_TOUCH ? new TouchControls({
   onLook: (dx, dy) => {
     if (!playing) return;
+    if (driving) { ute.look(dx, dy); return; }
     player.yaw -= dx * 0.0022;
     player.pitch = THREE.MathUtils.clamp(player.pitch - dy * 0.0022, -1.5, 1.45);
     player.lookDX += dx;
@@ -1326,7 +1395,7 @@ const touch = IS_TOUCH ? new TouchControls({
   },
   actions: {
     interact: () => { if (!playing) return; if (kneel) { const c = excav.pickCrystal(camera.position, camDir); if (c) extract(c); } else interact(); },
-    kneel: () => { if (!playing) return; if (kneel) standUp(); else kneelDown(); },
+    kneel: () => { if (!playing || driving) return; if (kneel) standUp(); else kneelDown(); },
     flip: () => { if (playing) rightClick(); },
     lamp: () => toggleHeadlamp(),
     inventory: () => openModal(inventory),
@@ -1417,10 +1486,14 @@ function frame() {
     touchUseWas = touch.use;
   }
   elapsed += dt;
-  if (kneel) {
+  if (driving) {
+    motion = updateDriving(dt);
+  } else if (kneel) {
+    ute.update(dt, 0, 0, false);
     motion = updateKneel(dt);
     updateKneelTools(dt);
   } else {
+    ute.update(dt, 0, 0, false);
     if (playing) motion = updatePlayer(dt);
     else { motion.moving = false; camera.rotation.set(player.pitch, player.yaw, 0); }
     updateTools(dt, motion);
@@ -1447,8 +1520,8 @@ function frame() {
     player: { x: player.pos.x, z: player.pos.z, speed: Math.hypot(player.vel.x, player.vel.z) },
     cam: camera.position, daylight: daynight.daylight, hour: daynight.hour, playing,
   });
-  if (playing && daynight.daylight > 0.8 && daynight.hour > 9.5 && daynight.hour < 16.5) {
-    hint('flies', "Bush flies. Give 'em the Aussie salute.", 900);
+  if (playing && !driving && daynight.daylight > 0.8 && daynight.hour > 9.5 && daynight.hour < 16.5) {
+    if (wildlife.flyVisit > 0) hint('flies', "Bush flies. Give 'em the Aussie salute.", 900);
   }
   duskHints();
   water.update(dt, elapsed, player.pos, weather.flood);
@@ -1462,7 +1535,7 @@ function frame() {
   renderer.clear();
   renderer.render(scene, camera);
   renderer.clearDepth();
-  renderer.render(view.scene, view.camera);
+  if (!driving) renderer.render(view.scene, view.camera);
   requestAnimationFrame(frame);
 }
 
@@ -1489,7 +1562,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; },
 };
