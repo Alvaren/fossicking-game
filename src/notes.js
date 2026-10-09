@@ -46,6 +46,13 @@ const RULES = [
   ['Digging crystals out',
     'Kneel and work slowly. Trowel off the soil and clay, but use the brush near crystals: steel chips them. The rock pick is the only thing '
     + 'that breaks rock. Lift a crystal out only when it is mostly free. Pull it early and it snaps.'],
+  ['Vugs in boulders',
+    'Loose boulders in the granite country, and white reef-quartz boulders up by the reef, sometimes carry a vug: a gas-bubble or '
+    + 'late-stage cavity lined with crystals. Tap round a boulder with the rock hammer: solid rock rings bright, a hollow one sounds dull. '
+    + 'Split the hollow ones with plug and feathers: drill a line of holes, set the wedges and shims, and tap them in turn until it cracks.'],
+  ['Thundereggs',
+    'Knobbly brown nodules that weather out of rhyolite. They grew in gas pockets in the lava and filled up later, usually with agate in '
+    + 'a star shape, sometimes leaving a hollow full of crystals, and once in a blue moon with opal. The only way to know is to saw one open.'],
   ['Splitting shale for fossils',
     'Shale is mud that settled in still water, layer on layer, and it splits along those layers. Tap along the edge of a slab with the rock hammer '
     + 'to open it. Most are barren, but some hold Glossopteris leaves (the seed fern that covered Gondwana in the Permian), insect wings, or fish. '

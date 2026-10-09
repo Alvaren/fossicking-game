@@ -1,3 +1,4 @@
+import { makeThundereggMesh, thundereggRadius } from './geodes.js';
 import { stoneMaterial, roundedHabit } from './materials.js';
 import { makeCutMesh } from './cutting.js';
 import * as THREE from 'three';
@@ -90,7 +91,8 @@ GEMS.calcite = { name: 'Calcite', plural: 'calcite crystals' };
 GEMS.fluorite = { name: 'Fluorite', plural: 'fluorite crystals' };
 GEMS.opal = { name: 'Opal', plural: 'opals' };
 GEMS.fossil = { name: 'Fossil', plural: 'fossils' };
-export const CRYSTAL_ORDER = ['opal', 'fossil', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
+GEMS.thunderegg = { name: 'Thunderegg', plural: 'thundereggs' };
+export const CRYSTAL_ORDER = ['opal', 'fossil', 'thunderegg', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
 
 export function makeGem(type, rand, sizeBias = 1) {
   const def = GEMS[type];
@@ -254,6 +256,7 @@ function pebbleGeometry(type) {
 
 // World-space size in metres, exaggerated a little so finds are visible.
 export function gemSize(gem) {
+  if (gem.type === 'thunderegg') return thundereggRadius(gem) * 2;
   if (gem.type === 'agate') return Math.cbrt(gem.grams / 2.6) * 0.012;
   if (gem.type === 'scheelite') return Math.cbrt(gem.grams / 6) * 0.014;
   return 0.006 * Math.cbrt(gem.ct) * 2.2;
@@ -261,6 +264,7 @@ export function gemSize(gem) {
 
 export function makeGemMesh(gem, { hq = false, world = false } = {}) {
   if (gem.cut) return makeCutMesh(gem, { hq });
+  if (gem.type === 'thunderegg') return makeThundereggMesh(gem);
   let mat;
   if (gem.type === 'scheelite') {
     mat = new THREE.MeshStandardMaterial({ color: gem.color, roughness: 0.55 }); // dull and greasy by day

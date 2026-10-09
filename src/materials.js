@@ -355,6 +355,7 @@ export const CUTS = {
   cushion: { name: 'cushion', shape: superellipse(3.2, 1.08, 1) },
   emerald: { name: 'emerald cut', shape: superellipse(9, 1.35, 1), step: true },
   cabochon: { name: 'cabochon', shape: superellipse(2, 1.25, 1), cab: true },
+  halves: { name: 'sawn in half and polished' },
 };
 
 const cutCache = {};

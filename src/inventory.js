@@ -11,7 +11,7 @@ const $ = (id) => document.getElementById(id);
 
 const TYPE_NAMES = {
   nugget: 'Nugget', sapphire: 'Sapphire', zircon: 'Zircon', topaz: 'Topaz', garnet: 'Garnet', spinel: 'Black spinel',
-  agate: 'Agate', opal: 'Opal', fossil: 'Fossil', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
+  agate: 'Agate', opal: 'Opal', fossil: 'Fossil', thunderegg: 'Thunderegg', scheelite: 'Scheelite', quartz: 'Quartz', feldspar: 'Feldspar', calcite: 'Calcite', fluorite: 'Fluorite',
 };
 
 export class Inventory {
@@ -26,6 +26,12 @@ export class Inventory {
       b.addEventListener('click', () => { this.tab = b.dataset.tab; this.selected = null; this.render(); });
     }
     this.initViewer();
+  }
+
+  setTab(tab) {
+    this.tab = tab;
+    this.selected = null;
+    if (this.isOpen) this.render();
   }
 
   // ---------- viewer ----------
@@ -199,7 +205,8 @@ void main() {
     facts.push(['Type', TYPE_NAMES[it.type] || it.type]);
     if (it.variety && it.type !== 'nugget') facts.push(['Variety', it.type === 'fossil' ? cap(FOSSILS[it.variety]?.name || it.variety) : it.variety]);
     if (it.grams && it.type === 'nugget') facts.push(['Weight', `${it.grams.toFixed(2)} g`]);
-    if (it.grams && (it.type === 'agate' || it.type === 'scheelite')) facts.push(['Weight', `${it.grams} g`]);
+    if (it.grams && (it.type === 'agate' || it.type === 'scheelite' || it.type === 'thunderegg')) facts.push(['Weight', `${it.grams} g`]);
+    if (it.type === 'thunderegg') facts.push(['Inside', it.cut ? it.core : 'No telling till it is sawn open. Kev in town has a saw.']);
     if (it.fluor) facts.push(['Under UV', it.type === 'scheelite' ? 'glows bright blue-white' : it.type === 'opal' ? 'glows a soft green-white' : 'glows green']);
     if (it.ct) facts.push(['Size', `${it.ct.toFixed(2)} ct`]);
     if (it.type === 'opal' && it.variety !== 'potch') facts.push(['Play of colour', `${it.pattern}, brightness ${it.bright}/5`]);

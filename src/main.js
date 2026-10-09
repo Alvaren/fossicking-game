@@ -18,6 +18,8 @@ import { rollOrders } from './orders.js';
 import { cutStone, makeCutMesh } from './cutting.js';
 import { MILESTONES, findMilestones } from './milestones.js';
 import { DustDevils } from './dustdevil.js';
+import { Boulders } from './boulders.js';
+import { Cabinet } from './cabinet.js';
 import { FossilBed, makeFossil, makeFossilMesh, FOSSILS } from './fossils.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
@@ -71,6 +73,7 @@ function writeSave() {
     orders: state.orders,
     milestones: state.milestones,
     cutting: state.cutting,
+    boulders: boulders.snapshot(),
     panTests: state.panTests,
     leadTraced: state.leadTraced,
     discovered: state.discovered,
@@ -201,6 +204,7 @@ const creek = terrain.creek;
 const deposits = new Deposits(terrain);
 const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystals || []));
 const world = buildWorld(scene, terrain, state.seed, field.sites);
+const boulders = new Boulders(scene, terrain, state.seed, saved.boulders, world.colliders);
 const excav = new Excavation(scene, terrain, field);
 const water = new Water(scene, terrain, sunDir);
 const sluice = new Sluice(scene, terrain);
@@ -229,6 +233,9 @@ state.remaining = targets.remainingGold();
 const sound = new Sound();
 const wildlife = new Wildlife(scene, terrain, sound);
 const devils = new DustDevils(scene, terrain, sound);
+const cabSpot = world.cabinetSpot;
+const cabinet = new Cabinet(scene, { x: cabSpot.x, y: terrain.getHeight(cabSpot.x, cabSpot.z), z: cabSpot.z }, terrain.camp,
+  (it) => inventoryMesh(it, gemsRealistic('world')));
 const fossils = new FossilBed(scene, terrain, state.seed, new Set(state.slabsSplit));
 if (fossils.colliders) world.colliders.push(...fossils.colliders);
 const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
@@ -331,6 +338,7 @@ function newDay() {
     for (const c of back) {
       const { item, note } = cutStone(c.item, c.seed);
       state.gems.push(item);
+      if (item.type === 'thunderegg') award('thunderegg');
       setTimeout(() => hud.toast(`Back from the cutter: ${item.label}, worth $${Math.round(item.value).toLocaleString()}.${note ? ` ${note}` : ''}`, 'gold'), 4500);
     }
     award('cut');
@@ -487,6 +495,7 @@ document.addEventListener('mousemove', (e) => {
   player.lookDY += e.movementY;
 });
 let clicked = false;
+let splitHold = 0, prise = 0, drillTick = 0, workProgress = 0;
 document.addEventListener('mousedown', (e) => {
   if (!playing) return;
   if (e.button === 0) { mouseHeld = true; clicked = true; }
@@ -680,8 +689,8 @@ function addFind(item, from, at = player.pos) {
 
 // Inventory viewer meshes.
 const quartzMat = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.35, metalness: 0 });
-function inventoryMesh(item) {
-  if (item.cut) return makeCutMesh(item, { hq: gemsRealistic('inventory') });
+function inventoryMesh(item, hq = gemsRealistic('inventory')) {
+  if (item.cut) return makeCutMesh(item, { hq });
   if (item.type === 'fine') {
     // A little glass bottle with the fine gold settled in the bottom.
     const g = new THREE.Group();
@@ -733,9 +742,9 @@ function inventoryMesh(item) {
   }
   if (item.crystal || ['quartz', 'feldspar', 'calcite', 'fluorite'].includes(item.type) || (item.type === 'topaz' && item.lengthCm)) {
     const c = item.crystal || { variety: item.variety, len: (item.lengthCm || 3) / 100, broken: false, damage: 0, id: 1, grade: item.grade };
-    return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 }, { hq: gemsRealistic('inventory') });
+    return makeCrystalMesh({ ...c, x: 0, y: 0, z: 0, ax: 0, ay: 1, az: 0 }, { hq });
   }
-  return makeGemMesh(item, { hq: gemsRealistic('inventory') });
+  return makeGemMesh(item, { hq });
 }
 
 function nearestPickup() {
@@ -826,6 +835,7 @@ function interact() {
     return;
   }
   if (ute.near(player.pos)) { enterUte(); return; }
+  if (cabinet.near(player.pos)) { openModal(inventory); inventory.setTab?.('collection'); return; }
   if (nearTent()) {
     if (daynight.isNight) {
       if (daynight.hour > 12) newDay(); // past midnight, sunrise ticks the day over by itself
@@ -1325,14 +1335,77 @@ function washTool(dt, motion, progress, time, onDone) {
 
 function updateTools(dt, motion) {
   digCooldown -= dt;
+  workProgress = 0;
   let prompt = '';
   marker.visible = false;
   let panning = false, sieving = false;
 
   camera.getWorldDirection(camDir);
 
-  const fossilTarget = state.tool === 'hammer' ? fossils.pick(camera.position, camDir) : null;
-  if (fossilTarget) {
+  const bTarget = state.tool === 'hammer' ? boulders.pick(camera.position, camDir) : null;
+  const fossilTarget = state.tool === 'hammer' && !bTarget ? fossils.pick(camera.position, camDir) : null;
+  if (!bTarget || !mouseHeld) { splitHold = 0; }
+  if (!bTarget?.crystal || !mouseHeld) prise = Math.max(0, prise - dt * 2);
+  if (bTarget?.crystal) {
+    // Work a crystal loose from the cavity wall.
+    prompt = 'Hold click to work the crystal free';
+    if (mouseHeld) {
+      prise += dt / 1.2;
+      if (Math.floor(prise * 6) !== Math.floor((prise - dt / 1.2) * 6)) sound.scrapeTick?.();
+      if (prise >= 1) {
+        prise = 0;
+        const c = boulders.take(bTarget.crystal);
+        if (Math.random() < 0.1) { c.broken = true; c.damage = 1; }
+        const gem = crystalToGem(c);
+        addFind(gem, 'Prised out of a vug in a split boulder', player.pos);
+        if (!gem.specimen) hud.toast(c.broken ? `Snapped it. ${cap(gem.label)}.` : `Got it out clean: ${gem.label}.`, c.broken ? 'junk' : 'gold');
+        sound.crack();
+        writeSave();
+      }
+    }
+    workProgress = prise;
+  } else if (bTarget?.boulder) {
+    const b = bTarget.boulder;
+    const kit = (state.up.feathers || 0) > 0;
+    if (b.split) {
+      const left = b.halves.reduce((n, h) => n + h.crystals.length, 0);
+      prompt = !b.vug ? 'Solid granite all the way through.' : left ? 'Aim at a crystal to prise it out' : 'Cleaned out. Nothing left in this one.';
+    } else {
+      prompt = kit ? 'Click to tap and listen · hold to drill and split it' : 'Click to tap and listen';
+      if (clicked && digCooldown <= 0) {
+        digCooldown = 0.35;
+        view.playTap();
+        const hollow = boulders.hollowness(b, bTarget.point);
+        sound.tap(hollow);
+        if (hollow > 0.45) hint(`bhollow${b.id}`, kit ? 'That one rang hollow. Hold click to drill and split it.' : "That one rang hollow. Something's inside. Get a plug-and-feathers kit at camp to split it.", 30);
+        else hint('bsolid', 'Rings solid there. Tap round the boulder: a hollow spot sounds dull.', 60);
+      }
+      if (mouseHeld && kit) {
+        splitHold += dt;
+        if (splitHold > 0.35) {
+          const r = boulders.work(b, dt);
+          workProgress = b.progress;
+          if (r === 'drill') {
+            prompt = 'Drilling a line of holes...';
+            drillTick -= dt;
+            if (drillTick <= 0) { drillTick = 0.11; sound.scrapeTick?.(); }
+          } else if (r === 'wedge' || r === 'wedging') {
+            prompt = 'Driving in the wedges...';
+            if (r === 'wedge') { view.playTap(); sound.tap(0); }
+          } else if (r === 'split') {
+            sound.crack();
+            sound.thud();
+            workProgress = 0;
+            if (b.vug) {
+              hud.toast(b.kind === 'quartz' ? 'Crack! It splits open on a vug lined with quartz crystals!' : 'Crack! It falls open: a vug full of crystals!', 'gold');
+              award('boulder');
+            } else hud.toast('Crack! Solid all the way through. Bugger.', 'junk');
+            writeSave();
+          }
+        }
+      }
+    }
+  } else if (fossilTarget) {
     prompt = fossilTarget.slab ? 'Click to split the slab along its bedding' : 'Click to prise a slab off the ledge';
     if (clicked && digCooldown <= 0) {
       digCooldown = 0.3;
@@ -1473,14 +1546,15 @@ function updateTools(dt, motion) {
   view.setTool(viewTool());
   clicked = false;
 
-  hud.progress(state.tool === 'pan' ? panProgress : 0);
+  hud.progress(state.tool === 'pan' ? panProgress : workProgress);
 
   const near = nearestPickup();
   if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
-  else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : 'glinting stone'}`;
+  else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : near.find.gem.type === 'thunderegg' ? 'thunderegg' : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
   else if (ute.near(player.pos)) prompt = 'E: hop in the ute';
+  else if (cabinet.near(player.pos)) prompt = 'Your collection cabinet · E to look through it';
   else if (nearTent() && daynight.isNight) prompt = 'E: kip in the tent till morning';
   else if (nearShop()) prompt = 'E: talk to the gold & gem buyer';
   hud.prompt(prompt);
@@ -1591,6 +1665,9 @@ function checkDiscoveries(dt) {
   discoverTick -= dt;
   if (discoverTick > 0) return;
   discoverTick = 1;
+  if (boulders.list.some((b) => !b.split && Math.hypot(b.x - player.pos.x, b.z - player.pos.z) < 5)) {
+    hint('boulders', 'Loose boulders here. Some hide a vug: tap round them with the rock hammer (6) and listen for a dull, hollow spot.', 3600);
+  }
   for (const [key, src] of Object.entries(terrain.sources)) {
     if (state.discovered[key]) continue;
     if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
@@ -1677,6 +1754,8 @@ function frame() {
 
   updateReflections(dt);
   excav.updateLOD?.(camera.position);
+  boulders.update(dt, camera.position);
+  cabinet.update(dt, player.pos, [...state.nuggets, ...state.gems].filter((i) => i.keep));
   sky.position.copy(camera.position);
   if (sky.material.uniforms.time) sky.material.uniforms.time.value = elapsed;
   sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
@@ -1713,7 +1792,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  inventory, daynight, map, wildlife, fossils, devils, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
+  inventory, daynight, map, wildlife, fossils, devils, boulders, cabinet, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },
 };

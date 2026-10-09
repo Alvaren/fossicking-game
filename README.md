@@ -18,6 +18,9 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Split shale slabs with the rock hammer for Permian fossils: Glossopteris leaves, insects and fish
 - Night prospecting with a UV torch: scheelite and some agates glow
 - Drive the ute around the claim
+- Tap loose boulders for hollow vugs, split them with plug and feathers and prise out the crystals
+- Pick up thundereggs below the rhyolite and have them sawn open to see the agate star inside
+- Show off your collection in the cabinet at camp
 - Send rough stones to the gem cutter in town: faceted sapphires, zircons and amethyst, polished opal and agate
 - Physically based gold and see-through, light-bending gems; graphics settings (Low to Ultra) for slower devices and phones
 - Fill the buyer's special orders for a bonus, and tick off milestones in your field notes

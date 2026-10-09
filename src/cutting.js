@@ -1,3 +1,4 @@
+import { CORES, makeThundereggMesh } from './geodes.js';
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
 import { stoneMaterial, cutGeometry, CUTS } from './materials.js';
@@ -16,6 +17,7 @@ const QUARTZ_CUTS = ['emerald', 40, 'cushion', 30, 'oval', 30];
 
 function kind(item) {
   if (item.cut) return null;
+  if (item.type === 'thunderegg') return 'saw';
   if (item.type === 'agate') return 'polish';
   if (item.type === 'opal') return CRYSTALS[item.variety]?.opal && item.variety !== 'opalised shell' ? 'cab' : null;
   if (CRYSTAL_CUT[item.variety] !== undefined) return 'crystal';
@@ -28,6 +30,7 @@ export const cuttable = (item) => kind(item) !== null;
 export function cutFee(item) {
   const k = kind(item);
   if (k === 'polish') return 10;
+  if (k === 'saw') return 15;
   if (k === 'cab') return Math.round(20 + item.value * 0.05);
   if (k === 'crystal') return 25;
   return Math.max(15, Math.round(item.value * 0.12));
@@ -45,6 +48,7 @@ function crystalCarats(item) {
 export function cutEstimate(item) {
   const k = kind(item);
   if (k === 'polish') return [item.value * 2.2, item.value * 3];
+  if (k === 'saw') return [item.value * 2, item.value * 7]; // no telling what's inside
   if (k === 'cab') return [item.value * (item.broken ? 1.8 : 1.25), item.value * (item.broken ? 2.4 : 1.6)];
   if (k === 'crystal') {
     const ct = crystalCarats(item) * 0.15 * (item.broken ? 0.7 : 1);
@@ -69,7 +73,13 @@ export function cutStone(rough, seed) {
   const k = kind(rough);
   const out = { ...rough, rough: { label: rough.label, ct: rough.ct, value: rough.value }, keep: !!rough.keep, specimen: false };
   let note = null;
-  if (k === 'polish') {
+  if (k === 'saw') {
+    out.cut = 'halves';
+    out.value = Math.round(rough.value * CORES[rough.core].mult * ({ A: 1.3, B: 1, C: 0.75 })[rough.grade || 'B'] * (0.85 + r() * 0.3) * 100) / 100;
+    out.label = `thunderegg halves, ${rough.core} (${rough.grade}-grade)`;
+    if (rough.core === 'opal-filled') note = "Kev reckons he's only seen a handful with opal inside.";
+    else if (rough.core === 'crystal-lined') note = 'Hollow in the middle, lined with little quartz crystals.';
+  } else if (k === 'polish') {
     out.cut = 'cabochon';
     out.value = Math.round(rough.value * (2.2 + r() * 0.8) * 100) / 100;
     out.label = `polished ${rough.variety} agate cabochon`;
@@ -105,6 +115,7 @@ export function cutStone(rough, seed) {
 // ---------- the finished stone ----------
 
 export function makeCutMesh(item, { hq = false } = {}) {
+  if (item.type === 'thunderegg') return makeThundereggMesh(item);
   const geo = cutGeometry(item.cut);
   // About 6.5 mm across a 1 ct round brilliant, scaling with the cube root of weight.
   const radius = item.type === 'agate' ? 0.012 : (6.5 * Math.cbrt(Math.max(0.05, item.ct || 1))) / 2000;

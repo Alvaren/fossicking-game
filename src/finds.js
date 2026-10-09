@@ -1,3 +1,4 @@
+import { makeThunderegg } from './geodes.js';
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
 import { PLAY } from './terrain.js';
@@ -24,6 +25,9 @@ export class SurfaceFinds {
     // Scheelite weathered out of the reef, lying about on the slopes below it.
     // Added after the others so the seeded finds above don't change.
     this.place(rand, 24, (x, z) => deposits.eluvial(x, z, terrain.sources.reef, 22), () => makeGem('scheelite', rand), 2000);
+    // Thundereggs weathered out of the rhyolite (from their own seed, so nothing above moves).
+    const tr = mulberry32(seed * 29 + 41);
+    this.place(tr, 16, (x, z) => deposits.eluvial(x, z, terrain.sources.rhyolite, 30), () => makeThunderegg(tr), 3000);
     for (const it of this.items) {
       if (collected.has(it.id)) it.collected = true;
       else this.spawn(it, rand);
@@ -61,7 +65,7 @@ export class SurfaceFinds {
     } else {
       m = makeGemMesh(it.gem);
       // Surface finds are a bit bigger than life so you can actually spot them.
-      m.scale.multiplyScalar(it.gem.type === 'agate' ? 2 : 2.4);
+      m.scale.multiplyScalar(it.gem.type === 'agate' ? 2 : it.gem.type === 'thunderegg' ? 1.3 : 2.4);
       m.rotation.set(rand() * 3, it.rot, rand() * 3);
     }
     it.lift = it.lift ?? gemSize(it.gem) * 0.5;

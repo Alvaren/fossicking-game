@@ -72,6 +72,16 @@ export const UPGRADES = {
       },
     ],
   },
+  feathers: {
+    title: 'Boulder splitting',
+    levels: [
+      { label: 'None' },
+      {
+        label: 'Plug-and-feathers kit', cost: 140,
+        desc: 'Hand drill, steel wedges and shims. Splits a boulder along a line of holes. Tap boulders first and only split the ones that ring hollow.',
+      },
+    ],
+  },
   sieve: {
     title: 'Gem sieve',
     levels: [
@@ -242,7 +252,7 @@ export class Shop {
     if (!rough.length && !away.length) {
       const none = document.createElement('p');
       none.className = 'desc';
-      none.textContent = 'Nothing worth cutting yet: sapphires, zircons, garnets, topaz, spinel, clear crystal points, agates and precious opal.';
+      none.textContent = 'Nothing worth cutting yet: sapphires, zircons, garnets, topaz, spinel, clear crystal points, agates, precious opal and thundereggs.';
       cutter.append(none);
     }
 

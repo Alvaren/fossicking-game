@@ -430,7 +430,10 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   }
 
   const tentPos = toWorld(3.5, 4);
-  return { colliders, shop, spawn, tentPos, ute, uteColliders, update, applyModels };
+  // Where the collection cabinet stands, beside the buyer's table.
+  const cabinetSpot = toWorld(-2.6, -2.9);
+  collide(-2.6, -2.9, 0.8);
+  return { colliders, shop, spawn, tentPos, cabinetSpot, ute, uteColliders, update, applyModels };
 }
 
 // ---------- geometry helpers ----------
