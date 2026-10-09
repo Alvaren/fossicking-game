@@ -71,6 +71,10 @@ export const UPGRADES = {
         label: '1.6 m aluminium sluice', cost: 450,
         desc: 'Set it in a fast run and shovel wash straight in. Runs a load a second; clean up and pan the concentrates.',
       },
+      {
+        label: 'Highbanker with petrol pump', cost: 1400,
+        desc: 'Sets up on the bank instead of in the current: a pump sprays creek water through a hopper with a grizzly screen, over a longer riffle tray. Comes with 5 L of petrol.',
+      },
     ],
   },
   crusher: {
@@ -292,6 +296,7 @@ export class Shop {
           if (s.cash < next.cost) return;
           s.cash -= next.cost;
           s.up[key] = lvl + 1;
+          if (key === 'sluice' && lvl + 1 === 2) s.fuel = (s.fuel || 0) + 5;
           this.sound.coin();
           this.onChange();
           this.render();
@@ -300,6 +305,19 @@ export class Shop {
         b.textContent = 'Owned';
         b.disabled = true;
       }
+      row.append(left, b);
+      items.append(row);
+    }
+    // Petrol for the highbanker's pump.
+    if ((s.up.sluice || 0) >= 2) {
+      const row = document.createElement('div');
+      row.className = 'item';
+      const left = document.createElement('div');
+      left.innerHTML = `<div class="name">Jerry can of petrol, 5 L</div><div class="desc">For the highbanker's pump: about 50 loads. You've got ${(s.fuel || 0).toFixed(1)} L.</div>`;
+      const b = document.createElement('button');
+      b.textContent = '$12';
+      b.disabled = s.cash < 12;
+      b.onclick = () => { s.cash -= 12; s.fuel = (s.fuel || 0) + 5; this.sound.coin(); this.onChange(); this.render(); };
       row.append(left, b);
       items.append(row);
     }

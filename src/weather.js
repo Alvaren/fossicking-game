@@ -65,7 +65,10 @@ export class Weather {
   begin(phase) {
     this.phase = phase;
     this.t = 0;
-    if (phase === 'building') this.peak = 0.75 + Math.random() * 0.35;
+    if (phase === 'building') {
+      const r = Math.random();
+      this.peak = r < 0.7 ? 0.75 + Math.random() * 0.35 : r < 0.95 ? 1.1 + Math.random() * 0.35 : 1.5 + Math.random() * 0.4;
+    }
     this.onEvent(phase, this);
   }
 

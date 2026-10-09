@@ -27,6 +27,10 @@ Works in any modern browser on PC, Mac, phones and tablets. On a phone, open the
 - Send rough stones to the gem cutter in town: faceted sapphires, zircons and amethyst, polished opal and agate
 - Physically based gold and see-through, light-bending gems; graphics settings (Low to Ultra) for slower devices and phones
 - Fill the buyer's special orders for a bonus, and tick off milestones in your field notes
+- Difficulty levels: Easy, Prospector, and Realistic, with real gold grades, real detector depths and hot rocks
+- A metal detector you swing over the ground, with pinpointing (hold right-click)
+- Classify your wash: oversize piles to pick through, shovel straight into a sluice, or set up a highbanker on the bank
+- Floods that really move the bed: cobbles roll when the flow beats the Shields threshold and settle on riffles, point bars and behind boulders
 - Floods, willy-willies, day and night, kangaroos, galahs and a kookaburra at dawn
 
 ## Controls

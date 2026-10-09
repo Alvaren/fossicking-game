@@ -86,7 +86,7 @@ export class ClaimMap {
     this.onClose();
   }
 
-  draw(player, { sluice, patches, sources, camp }) {
+  draw(player, { sluice, patches, sources, camp, flood }) {
     const cv = $('map-canvas');
     const ctx = cv.getContext('2d');
     cv.width = cv.height = PX;
@@ -98,6 +98,17 @@ export class ClaimMap {
     ctx.lineWidth = 1.5;
     ctx.strokeRect(bx0, by0, bx1 - bx0, by1 - by0);
     ctx.setLineDash([]);
+    // Stones the last flood rolled: from where they were to where they fetched up.
+    for (const m of flood || []) {
+      const [ax, ay] = this.toPx(m.x0, m.z0), [bx, by] = this.toPx(m.x1, m.z1);
+      ctx.strokeStyle = '#ff7a1a';
+      ctx.fillStyle = '#ff7a1a';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      // Where it fetched up, sized by the stone.
+      ctx.beginPath(); ctx.arc(bx, by, 2.5 + m.r * 8, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#2a1a0c'; ctx.lineWidth = 1; ctx.stroke();
+    }
     // Finds, older first so recent ones sit on top.
     for (const f of this.state.findPoints) {
       const [px, py] = this.toPx(f.x, f.z);
@@ -178,7 +189,8 @@ export class ClaimMap {
       .sort((a, b) => b[1] - a[1])
       .map(([t, n]) => `<span><i style="background:${DOT[t] || '#fff'}"></i>${t} ${n}</span>`).join('')
       + '<span><i class="star"></i>specimen</span>'
-      + ((this.state.panTests || []).length ? '<span><b class="pt">4</b>pan test (colours)</span>' : '');
+      + ((this.state.panTests || []).length ? '<span><b class="pt">4</b>pan test (colours)</span>' : '')
+      + (flood?.length ? '<span><i style="background:#ff7a1a"></i>stones the last flood moved (line from where they were)</span>' : '');
   }
 }
 

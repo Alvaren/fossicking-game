@@ -75,6 +75,21 @@ const RULES = [
     + 'so a scatter of glowing scheelite on a slope at night says gold country. Plenty of chalcedony agate glows green too.'],
   ['Old benches',
     'The flat terrace above the creek on one side is an old channel. Its wash is buried under topsoil, but it was sorted by the same water and can be rich.'],
+  ['What a flood can move',
+    'A stone moves when the water drags on the bed harder than its weight holds it down (the Shields criterion). The drag is roughly '
+    + 'water density x gravity x depth x slope, so deeper, steeper water moves bigger stones: a metre of flood on this creek shifts cobbles '
+    + 'up to 20-30 cm across, and the big boulders never move. In flood the deep pools and the outsides of bends scour; stones and heavies '
+    + 'drop where the drag falls off: riffle tops, point bars, and the slack water behind big boulders. In a bend the water near the bed spirals '
+    + 'toward the inside, sweeping stones and heavies onto the point bar: that is how point bars are built. Check those spots after every flood.'],
+  ['Settling and sorting',
+    'Water sorts what it carries. Fast water keeps sand and light stones moving but drops heavy and big things first (the Hjulstrom curve). '
+    + 'Gold is seven times heavier than quartz, so it drops out the moment the current eases and works its way down through the gravel to bedrock.'],
+  ['Classifying',
+    'Screen your wash before it goes in the pan or the sluice. The fines (gold and small stones) go through; the oversize gets picked '
+    + 'over for agates and big gems, then tossed. Unscreened wash rolls over the riffles, stirs the bed up and packs them, and you lose gold.'],
+  ['Highbankers',
+    'A sluice with its own water: a pump lifts creek water to a spray bar over a hopper with a grizzly (bar screen) on top. You can set one '
+    + 'up on the bank right beside the wash you are digging, instead of carrying it to a good run of current.'],
   ['Gem shows',
     'Every third day a gem and mineral show sets up at camp. Enter up to three collection pieces: the judges favour specimen-grade, '
     + 'perfect pieces, and a ribbon brings prize money and makes the collectors keener. Then each piece goes under the hammer. '

@@ -123,6 +123,30 @@ export class Sound {
   }
 
   // The petrol hammer mill: a two-stroke buzz and rock rattling through.
+  // The highbanker's little four-stroke pump: a putter, with the spray hissing.
+  setPump(level) {
+    if (!this.ctx) return;
+    if (!this.pump) {
+      if (!level) return;
+      const ctx = this.ctx;
+      const o = ctx.createOscillator();
+      o.type = 'square';
+      o.frequency.value = 38;
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 420;
+      const g = ctx.createGain();
+      g.gain.value = 0;
+      o.connect(lp).connect(g).connect(this.master);
+      o.start();
+      this.pump = { o, g, spray: this.loop(3000, 'highpass', 0, 0.5) };
+    }
+    const t = this.ctx.currentTime;
+    this.pump.g.gain.setTargetAtTime(level * 0.035, t, 0.4);
+    this.pump.spray.gain.gain.setTargetAtTime(level * 0.03, t, 0.4);
+    this.pump.o.frequency.setTargetAtTime(level ? 36 + Math.random() * 4 : 20, t, 0.1);
+  }
+
   setMill(on) {
     if (!this.ctx) return;
     if (!this.mill) {
