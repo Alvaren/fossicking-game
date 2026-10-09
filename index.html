@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fossicking</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="crosshair"></div>
+
+    <div id="stats">
+      <div class="stat"><span class="label">Cash</span><span id="cash">$0</span></div>
+      <div class="stat"><span class="label">Gold</span><span id="gold">0.00 g</span></div>
+      <div class="stat"><span class="label">Stones</span><span id="gems">0</span></div>
+      <div class="stat"><span class="label">Bucket</span><span id="bucket">0 / 6</span></div>
+    </div>
+
+    <div id="compass"><span id="camp-arrow">&#9650;</span> Camp <span id="camp-dist">0 m</span></div>
+
+    <div id="meter" class="hidden">
+      <div class="meter-label">SIGNAL <span id="disc"></span></div>
+      <div class="meter-track"><div id="meter-fill"></div></div>
+    </div>
+
+    <div id="jig" class="hidden">
+      <div class="meter-label">JIG <span id="jig-state"></span></div>
+      <div class="jig-track"><div id="jig-zone"></div><div id="jig-needle"></div></div>
+      <div class="meter-label second">SETTLED <span id="strat-pct"></span></div>
+      <div class="meter-track"><div id="strat-fill"></div></div>
+    </div>
+
+    <div id="progress" class="hidden"><div id="progress-fill"></div></div>
+    <div id="prompt"></div>
+    <div id="toasts"></div>
+
+    <div id="toolbar">
+      <div class="slot" data-tool="detector"><kbd>1</kbd>Detector</div>
+      <div class="slot" data-tool="shovel"><kbd>2</kbd>Shovel</div>
+      <div class="slot" data-tool="pan"><kbd>3</kbd>Gold pan</div>
+      <div class="slot" data-tool="sieve"><kbd>4</kbd>Gem sieve</div>
+      <div class="slot locked" data-tool="sluice"><kbd>5</kbd>Sluice</div>
+      <div class="slot" data-tool="hammer"><kbd>6</kbd>Rock hammer</div>
+    </div>
+
+    <div id="kneelbar" class="hidden">
+      <div class="slot" data-tool="brush"><kbd>1</kbd>Brush</div>
+      <div class="slot" data-tool="trowel"><kbd>2</kbd>Trowel</div>
+      <div class="slot" data-tool="pick"><kbd>3</kbd>Rock pick</div>
+      <div class="slot" data-tool="hands"><kbd>4</kbd>Hands</div>
+      <div class="slot"><kbd>C</kbd>Stand up</div>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="panel">
+      <h1>Fossicking</h1>
+      <p class="tag">A creek in the gem and gold country. Your claim, your shovel, your luck.</p>
+      <ol class="how">
+        <li>Sweep the <b>detector</b> for nuggets. High tone: gold (or brass). Low growl: iron junk. Gems don't beep.</li>
+        <li>Dig with the <b>shovel</b>. Every shovelful goes in your bucket as wash. The good stuff sits deep, right on bedrock.</li>
+        <li>In the creek, <b>pan</b> wash for gold, or <b>wet-sieve</b> it for sapphires, zircons and agates.</li>
+        <li>Keep an eye out for agates and glints lying on gravel bars and slopes. Press <b>E</b> to pick them up.</li>
+        <li>Read the water and the hills: press <b>N</b> for your field notes. Sell at the <b>Gold &amp; Gems</b> table at camp.</li>
+      </ol>
+      <div class="keys">
+        <span><kbd>WASD</kbd> move</span>
+        <span><kbd>Shift</kbd> run</span>
+        <span><kbd>Space</kbd> jump</span>
+        <span><kbd>1</kbd>–<kbd>6</kbd> / wheel: tools</span>
+        <span><kbd>C</kbd> kneel and dig by hand</span>
+        <span><kbd>Right-click</kbd> flip sieve / lift sluice</span>
+        <span><kbd>Mouse</kbd> use tool</span>
+        <span><kbd>E</kbd> pick up / talk</span>
+        <span><kbd>N</kbd> field notes</span>
+        <span><kbd>P</kbd> / <kbd>Esc</kbd> pause, free the mouse</span>
+      </div>
+      <button id="play">Click to play</button>
+    </div>
+  </div>
+
+  <div id="shop" class="hidden">
+    <div class="panel">
+      <h2>Gold &amp; Gem Buyer</h2>
+      <p id="shop-blurb"></p>
+      <h3>Sell</h3>
+      <div id="shop-sell"></div>
+      <h3>Gear</h3>
+      <div id="shop-items"></div>
+      <div class="shop-footer">
+        <button id="shop-reset" class="ghost">Peg a new claim</button>
+        <button id="shop-close">Back to it</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notes" class="hidden">
+    <div class="panel wide">
+      <h2>Field notes</h2>
+      <div id="notes-body"></div>
+      <div class="shop-footer"><span></span><button id="notes-close">Back to it</button></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
