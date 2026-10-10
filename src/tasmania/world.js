@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import { mulberry32 } from '../noise.js';
 import * as western from './model.js';
 import { rockMaterial, rockKinds } from '../rockmaterials.js';
+import { groundMaterial } from '../environmentmaterials.js';
+import { leafSpray, markFoliage, vegetationMaterial } from '../vegetation.js';
+import { dressEnvironment } from '../environmentdetail.js';
+import { riverWaterMaterial, foamRibbonTexture } from '../water.js';
 const material = (color,extra={}) => new THREE.MeshStandardMaterial({color,roughness:.94,...extra});
 const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
 
@@ -30,6 +34,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   const colliders=[],rand=mulberry32(model.seed+813),dummy=new THREE.Object3D();
   const groundGeo=new THREE.PlaneGeometry(300,340,180,204);groundGeo.rotateX(-Math.PI/2);
   const pos=groundGeo.attributes.position,colors=new Float32Array(pos.count*3),color=new THREE.Color();
+  const surfaces=new Float32Array(pos.count*3);
   for(let i=0;i<pos.count;i++) {
     const x=pos.getX(i),z=pos.getZ(i),y=model.height(x,z);pos.setY(i,y);
     const d=Math.abs(x-riverX(z)),trail=nearestTrail(x,z).distance;
@@ -38,17 +43,31 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     else if(trail<1.5)color.setRGB(.28+tint,.26+tint,.19+tint);
     else color.setRGB(.15+tint,.22+tint,.13+tint);
     colors.set([color.r,color.g,color.b],i*3);
+    const bank=d-riverWidth(z);
+    surfaces.set([clamp((trail-1.2)/2,0,1)*clamp(bank/4,0,1),clamp(1-bank/4,0,1),y-waterY(z)],i*3);
   }
   groundGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));groundGeo.computeVertexNormals();
-  const ground=new THREE.Mesh(groundGeo,material(0xffffff,{vertexColors:true}));ground.receiveShadow=true;scene.add(ground);
+  groundGeo.setAttribute('aSurface',new THREE.BufferAttribute(surfaces,3));
+  const ground=new THREE.Mesh(groundGeo,groundMaterial({forest:true,dampness:northeast?.35:.75}));ground.receiveShadow=true;scene.add(ground);
 
   const waterGeo=new THREE.PlaneGeometry(1,1,16,360),wp=waterGeo.attributes.position;
+  const speeds=new Float32Array(wp.count),depths=new Float32Array(wp.count),foams=new Float32Array(wp.count);
   for(let i=0;i<wp.count;i++) {
     const t=wp.getY(i)+.5,z=(t-.5)*340,q=wp.getX(i)*2;
     wp.setXYZ(i,riverX(z)+q*(riverWidth(z)+.08),waterY(z),z);
+    const x=wp.getX(i),depth=waterY(z)-model.height(x,z);
+    const slope=Math.abs(waterY(z+.5)-waterY(z-.5));
+    speeds[i]=.2+Math.min(1.1,slope*2);depths[i]=depth;
+    foams[i]=clamp(slope*2,0,.75)*clamp(1-depth,0,1);
+    waterGeo.attributes.uv.setXY(i,q*riverWidth(z),z);
   }
   waterGeo.computeVertexNormals();
-  const waterMat=new THREE.MeshPhysicalMaterial({color:northeast?0x686444:0x426d67,roughness:.27,metalness:.12,transparent:true,opacity:.52,side:THREE.DoubleSide,depthWrite:false});
+  waterGeo.setAttribute('aSpeed',new THREE.BufferAttribute(speeds,1));
+  waterGeo.setAttribute('aDepth',new THREE.BufferAttribute(depths,1));
+  waterGeo.setAttribute('aFoam',new THREE.BufferAttribute(foams,1));
+  const waterSurface=riverWaterMaterial(),waterMat=waterSurface.material;
+  waterMat.side=THREE.DoubleSide;
+  waterSurface.uniforms.deepColor.value.setHex(northeast?0x47594b:0x315b54);
   const water=new THREE.Mesh(waterGeo,waterMat);scene.add(water);
   // Broken whitewater follows the steeper rock step above the plunge pool.
   const cascadeRand=mulberry32(model.seed+645),cascadeVertices=[];
@@ -64,14 +83,18 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   const cascadeGeo=new THREE.BufferGeometry();cascadeGeo.setAttribute('position',new THREE.Float32BufferAttribute(cascadeVertices,3));
   const cascade=new THREE.Mesh(cascadeGeo,new THREE.MeshBasicMaterial({color:0xe0efdd,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide}));scene.add(cascade);
   const rippleGeo=new THREE.PlaneGeometry(.4,1.2);rippleGeo.rotateX(-Math.PI/2);
-  const foam=new THREE.InstancedMesh(rippleGeo,new THREE.MeshBasicMaterial({color:0xd9eee5,transparent:true,opacity:.34,depthWrite:false,side:THREE.DoubleSide}),low?110:230);
+  const foam=new THREE.InstancedMesh(rippleGeo,new THREE.MeshBasicMaterial({color:0xd9eee5,map:foamRibbonTexture(),transparent:true,opacity:.28,depthWrite:false,side:THREE.DoubleSide}),low?110:230);
   const ripples=[];
   for(let i=0;i<foam.count;i++)ripples.push({z:rand()*300-150,q:(rand()-.5)*1.7,s:.4+rand()});
   scene.add(foam);
 
-  const trunkGeo=new THREE.CylinderGeometry(.13,.3,1,7),bark=material(0x56584a);
-  const leafGeo=new THREE.IcosahedronGeometry(1,1),leaves=material(0xffffff);
+  const barkSurface=vegetationMaterial({color:0xaaa696,forest:true});
+  const canopySurface=vegetationMaterial({forest:true});
+  const trunkGeo=markFoliage(new THREE.CylinderGeometry(.13,.3,1,7),0),bark=barkSurface.material;
+  const leafGeo=leafSpray(671,low?36:72,true).scale(1,2.6,1),leaves=canopySurface.material;
   const treeCount=northeast?(low?430:850):(low?720:1400),trunks=new THREE.InstancedMesh(trunkGeo,bark,treeCount),crowns=new THREE.InstancedMesh(leafGeo,leaves,treeCount*3);
+  trunks.userData.tree=true;trunks.name='Forest trunks';crowns.name='Forest canopy';
+  trunks.customDepthMaterial=barkSurface.depthMaterial;crowns.customDepthMaterial=canopySurface.depthMaterial;
   let placed=0;
   while(placed<treeCount) {
     const x=rand()*250-125,z=rand()*300-150;
@@ -83,7 +106,8 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   }
   scene.add(trunks,crowns);trunks.castShadow=true;crowns.castShadow=!low;
 
-  const fernMat=material(0x4f7644,{side:THREE.DoubleSide}),fernGeo=fernGeometry();
+  const fernSurface=vegetationMaterial({color:0x4f7644,forest:true,grass:true});
+  const fernMat=fernSurface.material,fernGeo=markFoliage(fernGeometry(),1);
   const fernCount=northeast?(low?500:900):(low?1000:1800),ferns=new THREE.InstancedMesh(fernGeo,fernMat,fernCount),fernTrunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.13,.22,1,7),material(0x493d2c),Math.floor(fernCount/4));
   let ft=0;
   for(let i=0;i<fernCount;i++) {
@@ -94,8 +118,17 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     dummy.position.set(x,y+h,z);dummy.rotation.set(0,rand()*6.28,0);dummy.scale.setScalar(scale);dummy.updateMatrix();ferns.setMatrixAt(i,dummy.matrix);
   }
   fernTrunks.count=ft;scene.add(ferns,fernTrunks);
+  ferns.customDepthMaterial=fernSurface.depthMaterial;
   const rockGeo=new THREE.IcosahedronGeometry(1,1),rp=rockGeo.attributes.position;
-  for(let i=0;i<rp.count;i++){const s=.83+rand()*.3;rp.setXYZ(i,rp.getX(i)*s,rp.getY(i)*s,rp.getZ(i)*s);}rockGeo.computeVertexNormals();
+  // Adjacent faces share one displacement. Retain every old RNG draw so the
+  // following boulders, logs and pocket gravel keep their saved-world layout.
+  const rockRadii=new Map();
+  for(let i=0;i<rp.count;i++) {
+    const x=rp.getX(i),y=rp.getY(i),z=rp.getZ(i),key=[x,y,z].map(v=>Math.round(v*1e5)).join(',');
+    const draw=.83+rand()*.3;if(!rockRadii.has(key))rockRadii.set(key,draw);
+    const s=rockRadii.get(key);rp.setXYZ(i,x*s,y*s,z*s);
+  }
+  rockGeo.computeVertexNormals();
   const rocks=new THREE.InstancedMesh(rockGeo,rockMaterial('slate',{mixed:true}),190);
   rocks.name='Catchment geology';
   const setRockKind=rockKinds(rockGeo,190);
@@ -103,13 +136,26 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     let x,z,s;
     do{z=rand()*280-140;x=riverX(z)+(rand()-.5)*65;s=.5+rand()*1.8;}while(nearestTrail(x,z).distance<s+1.6||Math.hypot(x-CAMP.x,z-CAMP.z)<5||model.sites.some(p=>Math.hypot(x-p.x,z-p.z)<s+2));
     dummy.position.set(x,model.height(x,z)+s*.2,z);dummy.rotation.set(rand(),rand()*6.28,rand()*.3);dummy.scale.set(s,s*.55,s*.85);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);rocks.setColorAt(i,new THREE.Color().setHSL(northeast?.09:.22,northeast?.07:.10+rand()*.15,northeast?(i%4?.46:.19):.22+rand()*.12));colliders.push({x,z,r:s*.8});
-    setRockKind(i,northeast?(z<-55?(i%4?'basalt':'granite'):(i%4?'granite':'basalt')):'slate');
+    setRockKind(i,northeast?(z<-55?(i%4?'basalt':'granite'):(i%4?'granite':'basalt')):'slate',waterY(z));
   }
   scene.add(rocks);
+  // Obstacle foam uses these same existing rock placements, never helper rings.
+  const rockPos=new THREE.Vector3(),rockScale=new THREE.Vector3(),rockQuat=new THREE.Quaternion(),rockMatrix=new THREE.Matrix4();
+  for(let k=0;k<rocks.count;k++) {
+    rocks.getMatrixAt(k,rockMatrix);rockMatrix.decompose(rockPos,rockQuat,rockScale);
+    if(Math.abs(rockPos.x-riverX(rockPos.z))>riverWidth(rockPos.z)+rockScale.x)continue;
+    for(let i=0;i<wp.count;i++) {
+      const dx=wp.getX(i)-rockPos.x,dz=wp.getZ(i)-rockPos.z;
+      if(Math.abs(dx)>rockScale.x*2||Math.abs(dz)>rockScale.x*3)continue;
+      const dist=Math.hypot(dx,dz),wake=Math.exp(-((dist-rockScale.x*.8)**2)/.5);
+      foams[i]=Math.max(foams[i],wake*.7);
+    }
+  }
+  waterGeo.attributes.aFoam.needsUpdate=true;
   for(let i=0;i<12;i++) {
     const z=rand()*240-120,x=riverX(z)+(i%2?1:-1)*(riverWidth(z)+4+rand()*10);
     if(nearestTrail(x,z).distance<6)continue;
-    const log=new THREE.Mesh(new THREE.CylinderGeometry(.3,.45,6+rand()*3,9),material(0x464130));log.position.set(x,model.height(x,z)+.3,z);log.rotation.set(Math.PI/2,0,rand()*2);scene.add(log);
+    const log=new THREE.Mesh(markFoliage(new THREE.CylinderGeometry(.3,.45,6+rand()*3,9),0),bark);log.position.set(x,model.height(x,z)+.3,z);log.rotation.set(Math.PI/2,0,rand()*2);scene.add(log);
   }
 
   const siteGroups=[];
@@ -144,12 +190,24 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   const roofGeo=new THREE.BufferGeometry();roofGeo.setAttribute('position',new THREE.Float32BufferAttribute([-1.3,0,-1,0,1.3,-1,0,1.3,1,-1.3,0,-1,0,1.3,1,-1.3,0,1,0,1.3,-1,1.3,0,-1,1.3,0,1,0,1.3,-1,1.3,0,1,0,1.3,1],3));roofGeo.computeVertexNormals();camp.add(new THREE.Mesh(roofGeo,canvas));
   const bed=new THREE.Mesh(new THREE.BoxGeometry(.8,.14,1.75),material(0x314d43));bed.position.y=.1;camp.add(bed);
   const cloud=new THREE.Mesh(new THREE.CircleGeometry(2,28),new THREE.MeshBasicMaterial({color:0x958b69,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));cloud.rotation.x=-Math.PI/2;scene.add(cloud);
+  const detail=dressEnvironment(scene,{seed:model.seed,height:(x,z)=>model.height(x,z),bank:(x,z)=>Math.abs(x-riverX(z))-riverWidth(z),waterY,
+    anchors:[trunks,rocks],forest:true,low,
+    blocked:(x,z)=>nearestTrail(x,z).distance<2 || Math.hypot(x-CAMP.x,z-CAMP.z)<6 || Math.hypot(x-TRAILHEAD.x,z-TRAILHEAD.z)<8 || model.sites.some(s=>Math.hypot(x-s.x,z-s.z)<2),
+  });
   return {ground,water,camp,colliders,siteGroups,cloud,
     disturb(site){cloud.position.set(site.x,waterY(site.z)+.025,site.z);cloud.material.opacity=.55;},
-    update(dt,time,state){
+    update(dt,time,state,player){
+      barkSurface.update(time);canopySurface.update(time,.7);fernSurface.update(time,.55);
+      detail.update(dt,time,player || TRAILHEAD,.7);
       camp.visible=state.campPitched;
       for(const p of siteGroups){const empty=(state.siteUse[p.s.id]||0)>=p.s.capacity;p.pocket.material.color.setHex(empty?0x343e38:p.s.kind==='bar'?0x8d8a70:0x232b28);}
-      waterMat.opacity=.5+Math.sin(time*.3)*.015;cascade.material.opacity=.45+Math.sin(time*3)*.07;
+      const light=Math.max(.12,Math.sin((state.hour-6)/12*Math.PI));
+      waterSurface.uniforms.time.value=time;
+      waterSurface.uniforms.lightLevel.value=light;
+      waterSurface.uniforms.sunColor.value.setHex(0xe0e6c4).multiplyScalar(light);
+      waterSurface.uniforms.skyColor.value.setHex(0x8caaa0).multiplyScalar(light);
+      waterSurface.uniforms.horizonColor.value.setHex(0xa4bcb0).multiplyScalar(light);
+      cascade.material.opacity=.45+Math.sin(time*3)*.07;
       ripples.forEach((r,i)=>{const z=((r.z+time*.55+170)%340)-170;dummy.position.set(riverX(z)+r.q*riverWidth(z),waterY(z)+.025,z);dummy.rotation.set(0,Math.sin(z*.03)*.2,0);dummy.scale.set(r.s,1,r.s);dummy.updateMatrix();foam.setMatrixAt(i,dummy.matrix);});foam.instanceMatrix.needsUpdate=true;
       cloud.material.opacity=Math.max(0,cloud.material.opacity-dt*.023);cloud.position.z+=dt*.16;
     }};

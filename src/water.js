@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { mulberry32, smoothstep } from './noise.js';
+import { rockWaterLevel } from './rockmaterials.js';
 
 // Running water: a ribbon that follows the creek's real long profile, with a
 // flow-mapped surface whose speed, foam and clarity come from the velocity
@@ -39,6 +40,7 @@ uniform vec3 deepColor;
 uniform vec3 turbidColor;
 uniform float level;
 uniform float flood;
+uniform float lightLevel;
 varying vec2 vUv;
 varying float vSpeed;
 varying float vDepth;
@@ -65,7 +67,9 @@ void main() {
   float spd = vSpeed * (1.0 + 1.6 * level) + flood * 0.7;
   vec3 n1 = flowSample(vUv, 0.55, spd, time * 0.33) * 2.0 - 1.0;
   vec3 n2 = flowSample(vUv * vec2(1.0, 0.6) + 3.1, 0.31, spd * 0.8, time * 0.21 + 0.4) * 2.0 - 1.0;
-  float chop = 0.12 + spd * 0.4;
+  float chop = 0.09 + spd * 0.3 + vFoam * .09;
+  vec3 fine = flowSample(vUv, 2.1, spd, time*.4).xyz * 2.0 - 1.0;
+  n1.xy += fine.xy * .12;
   vec3 N = normalize(vec3((n1.x + n2.x * 0.35) * chop, 1.0, (n1.y + n2.y * 0.35) * chop));
 
   vec3 V = normalize(cameraPosition - vWorld);
@@ -77,16 +81,18 @@ void main() {
   float deep = smoothstep(0.05, 1.1, depth);
   vec3 body = mix(shallowColor, deepColor, deep);
   body = mix(body, turbidColor, flood * 0.9); // floodwater runs thick and brown
+  body *= lightLevel;
   // Muddy floodwater barely mirrors the sky.
   vec3 col = mix(body, refl, fres * (1.0 - 0.7 * flood)) + sunColor * spec * 2.5 * (1.0 - flood);
-  float alpha = mix(mix(0.22, 0.88, deep), mix(0.62, 0.97, deep), flood);
+  float alpha = mix(mix(0.14, 0.84, deep), mix(0.62, 0.97, deep), flood);
   alpha = max(alpha, fres * 0.9);
 
   // Foam and white water on fast, shallow runs and around boulders.
   float fn = flowSample(vUv * 1.7, 0.9, spd * 1.3, time * 0.5).x;
   float fv = min(1.0, vFoam + flood * 0.45);
-  float foam = fv * smoothstep(0.45, 0.75, fn + fv * 0.25);
+  float foam = fv * smoothstep(0.48, 0.78, fn + fv * 0.25);
   vec3 foamCol = mix(vec3(0.86, 0.88, 0.86), turbidColor * 1.6, flood * 0.6);
+  foamCol *= lightLevel;
   col = mix(col, foamCol, foam * 0.85);
   alpha = max(alpha, foam * 0.9);
 
@@ -97,6 +103,35 @@ void main() {
   #include <colorspace_fragment>
   #include <fog_fragment>
 }`;
+
+// Both the claim and foot-access rivers use this depth/flow/foam shader. Their
+// existing terrain and river profiles remain responsible for physical data.
+export function riverWaterMaterial(sunDir = new THREE.Vector3(-.45,.8,.25).normalize()) {
+  const uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+    time: {value:0}, nmap: {value:rippleTexture()}, sunDir: {value:sunDir.clone()},
+    sunColor: {value:new THREE.Color(0xfff0d8)}, skyColor: {value:new THREE.Color(0x9cc4ec)},
+    horizonColor: {value:new THREE.Color(0xe6ecee)}, shallowColor: {value:new THREE.Color(0xa8a078)},
+    deepColor: {value:new THREE.Color(0x56664a)}, turbidColor: {value:new THREE.Color(0x7a5434)},
+    level: {value:0}, flood: {value:0}, lightLevel: {value:1},
+  }]);
+  const material = new THREE.ShaderMaterial({ vertexShader:vert, fragmentShader:frag, uniforms, transparent:true, depthWrite:false, fog:true });
+  material.userData.environment = 'water';
+  return { material, uniforms };
+}
+
+let foamTexture;
+export function foamRibbonTexture() {
+  if (foamTexture) return foamTexture;
+  const c=document.createElement('canvas');c.width=32;c.height=128;
+  const g=c.getContext('2d');
+  for(let i=0;i<8;i++) {
+    const x=8+(i%3)*7,y=8+i*14;
+    const gradient=g.createRadialGradient(x,y,0,x,y,9);
+    gradient.addColorStop(0,'rgba(255,255,255,.8)');gradient.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=gradient;g.fillRect(x-9,y-9,18,18);
+  }
+  foamTexture=new THREE.CanvasTexture(c);return foamTexture;
+}
 
 export class Water {
   constructor(scene, terrain, sunDir) {
@@ -157,31 +192,9 @@ export class Water {
     geo.setAttribute('aFoam', new THREE.BufferAttribute(foam, 1));
     geo.computeBoundingSphere();
 
-    this.uniforms = THREE.UniformsUtils.merge([
-      THREE.UniformsLib.fog,
-      {
-        time: { value: 0 },
-        nmap: { value: null },
-        sunDir: { value: sunDir.clone() },
-        sunColor: { value: new THREE.Color(0xfff0d8) },
-        skyColor: { value: new THREE.Color(0x9cc4ec) },
-        horizonColor: { value: new THREE.Color(0xe6ecee) },
-        shallowColor: { value: new THREE.Color(0xa8a078) },
-        deepColor: { value: new THREE.Color(0x56664a) },
-        turbidColor: { value: new THREE.Color(0x7a5434) },
-        level: { value: 0 },
-        flood: { value: 0 },
-      },
-    ]);
-    this.uniforms.nmap.value = rippleTexture();
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: vert,
-      fragmentShader: frag,
-      uniforms: this.uniforms,
-      transparent: true,
-      depthWrite: false,
-      fog: true,
-    });
+    const surface = riverWaterMaterial(sunDir);
+    this.uniforms = surface.uniforms;
+    const mat = surface.material;
     this.mesh = new THREE.Mesh(geo, mat);
     this.mesh.renderOrder = 1;
     scene.add(this.mesh);
@@ -230,6 +243,8 @@ export class Water {
   update(dt, time, player, flood = 0) {
     this.uniforms.time.value = time;
     this.uniforms.level.value = this.creek.level;
+    rockWaterLevel.value = this.creek.level;
+    this.terrain.material.userData.waterLevel.value = this.creek.level;
     this.uniforms.flood.value = flood;
     this.mesh.position.y = this.creek.level;
     const C = this.creek;

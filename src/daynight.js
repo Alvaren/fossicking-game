@@ -109,20 +109,20 @@ export class DayNight {
 
     if (y > -0.04) {
       this.lightDir.copy(this.sunDir);
-      b.sun = 3.4 * smoothstep(-0.04, 0.22, y);
+      b.sun = 3.0 * smoothstep(-0.04, 0.22, y);
       b.sunColor.copy(DAY.sun).lerp(DUSK.sun, dusk);
     } else {
       this.lightDir.copy(moonDir);
       b.sun = 0.4 * smoothstep(-0.04, -0.2, y);
       b.sunColor.copy(NIGHT.moon);
     }
-    b.hemi = 0.1 + 1.0 * day;
+    b.hemi = 0.1 + 1.2 * day;
     b.hemiColor.copy(NIGHT.hemiSky).lerp(DAY.hemiSky, day).lerp(DUSK.hemiSky, dusk * 0.5);
     b.hemiGround.copy(NIGHT.hemiGround).lerp(DAY.hemiGround, day);
     b.env = 0.03 + 0.57 * day;
     b.fog.copy(NIGHT.fog).lerp(DAY.fog, day).lerp(DUSK.fog, dusk * 0.7);
-    b.fogNear = 40 + 50 * day;
-    b.fogFar = 320 + 330 * day;
+    b.fogNear = 30 + 30 * day;
+    b.fogFar = 300 + 240 * day;
     b.waterSky.copy(NIGHT.waterSky).lerp(DAY.waterSky, day);
     b.waterHorizon.copy(NIGHT.waterHorizon).lerp(DAY.waterHorizon, day).lerp(DUSK.waterHorizon, dusk * 0.8);
     // Open the eye up a little at night so moonlit ground is still readable.

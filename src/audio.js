@@ -1,6 +1,11 @@
 // Everything is synthesised with WebAudio; there are no sound files.
 
 export class Sound {
+  constructor(region = 'new-england') {
+    this.forest = region.includes('tasmania');
+    this.dry = region === 'qld-gemfields';
+  }
+
   init() {
     if (this.ctx) {
       if (this.ctx.state === 'suspended') this.ctx.resume();
@@ -43,6 +48,7 @@ export class Sound {
     this.humOsc.start();
 
     this.wind = this.loop(320, 'lowpass', 0.035, 0.6);
+    this.rustle = this.loop(this.forest ? 1900 : 1300, 'bandpass', 0, .5);
     this.creek = this.loop(1400, 'bandpass', 0, 0.9);
     this.swish = this.loop(700, 'bandpass', 0, 1.2);
     this.rain = this.loop(4200, 'highpass', 0, 0.4);
@@ -69,6 +75,14 @@ export class Sound {
 
   get ready() { return !!this.ctx; }
 
+  setEnvironment(dt, { active = true, sheltered = false, storm = 0 } = {}) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime, gain = active && !sheltered ? 1 : 0;
+    const breeze = .75 + .18 * Math.sin(t * .43) + .07 * Math.sin(t * 1.13);
+    this.wind.gain.gain.setTargetAtTime(gain * (this.forest ? .016 : this.dry ? .043 : .029) * breeze * (1 + storm), t, .8);
+    this.rustle.gain.gain.setTargetAtTime(gain * (this.forest ? .022 : .011) * breeze * (1 + storm * .8), t, .6);
+  }
+
   setDetector(on, signal, kind) {
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
@@ -87,7 +101,7 @@ export class Sound {
     this.babble -= dt;
     if (this.babble <= 0) {
       this.babble = 0.08 + Math.random() * 0.1;
-      this.creek.filter.frequency.setTargetAtTime(900 + Math.random() * 1400, t, 0.05);
+      this.creek.filter.frequency.setTargetAtTime((this.forest ? 680 : 900) + Math.random() * (this.forest ? 1000 : 1400), t, 0.05);
     }
     this.creek.gain.gain.setTargetAtTime(creekCloseness * 0.09, t, 0.2);
     this.swish.gain.gain.setTargetAtTime(panning ? 0.16 + Math.sin(t * 8) * 0.06 : 0, t, 0.08);

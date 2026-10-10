@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { makeRockAtlas, ROCK_ID, ATLAS_WIDTH, ATLAS_HEIGHT } from './rocktextures.js';
 export { ROCK_ID, ROCK_TYPES } from './rocktextures.js';
+export const rockWaterLevel = { value: 0 };
 
 let atlas;
 function textures() {
@@ -22,7 +23,12 @@ function textures() {
 export function rockKinds(geometry, count) {
   const attribute = new THREE.InstancedBufferAttribute(new Float32Array(count), 1);
   geometry.setAttribute('aRockKind', attribute);
-  return (i, kind) => { attribute.setX(i, ROCK_ID[kind] ?? ROCK_ID.slate); attribute.needsUpdate = true; };
+  const water = new THREE.InstancedBufferAttribute(new Float32Array(count).fill(-1e6), 1);
+  geometry.setAttribute('aRockWater', water);
+  return (i, kind, waterY = -1e6) => {
+    attribute.setX(i, ROCK_ID[kind] ?? ROCK_ID.slate); attribute.needsUpdate = true;
+    water.setX(i, waterY); water.needsUpdate = true;
+  };
 }
 
 const cache = new Map();
@@ -45,12 +51,15 @@ export function rockMaterial(kind = 'slate', { mixed = false, split = false, wet
   material.name = `Rock: ${mixed ? 'mixed geology' : kind}`;
   material.userData.rock = { kind, mixed, split, wet };
   material.onBeforeCompile = shader => {
-    Object.assign(shader.uniforms, { rockColour: { value: tex.colour }, rockRelief: { value: tex.relief }, rockAverages: { value: tex.averages } });
+    Object.assign(shader.uniforms, { rockColour: { value: tex.colour }, rockRelief: { value: tex.relief }, rockAverages: { value: tex.averages }, rockWaterLevel });
     shader.vertexShader = shader.vertexShader.replace('void main() {', `
 varying vec3 vRockPosition;
 varying vec3 vRockNormal;
 varying float vRockKind;
-${mixed ? 'attribute float aRockKind;' : ''}
+varying float vRockWater;
+varying vec3 vRockWorld;
+varying vec3 vRockUp;
+${mixed ? 'attribute float aRockKind; attribute float aRockWater;' : ''}
 ${split ? 'attribute float aFace; attribute float aCave; varying vec2 vRockFace;' : ''}
 void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
   vec3 rockScale = vec3(length(modelMatrix[0].xyz), length(modelMatrix[1].xyz), length(modelMatrix[2].xyz));
@@ -61,6 +70,15 @@ void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
   vRockPosition = position * rockScale;
   vRockNormal = normalize(normal / rockScale);
   vRockKind = ${mixed ? 'aRockKind' : (ROCK_ID[kind] ?? ROCK_ID.slate).toFixed(1)};
+  vRockWater = ${mixed ? 'aRockWater' : '-1000000.0'};
+  vec4 rockWorld = vec4(position,1.0);
+  vec3 rockUp = normal;
+  #ifdef USE_INSTANCING
+  rockWorld = instanceMatrix*rockWorld;
+  rockUp = mat3(instanceMatrix)*rockUp;
+  #endif
+  vRockWorld = (modelMatrix*rockWorld).xyz;
+  vRockUp = normalize(mat3(modelMatrix)*rockUp);
   ${split ? 'vRockFace = vec2(aFace, aCave);' : ''}`);
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
 uniform sampler2D rockColour;
@@ -69,6 +87,10 @@ uniform vec3 rockAverages[6];
 varying vec3 vRockPosition;
 varying vec3 vRockNormal;
 varying float vRockKind;
+uniform float rockWaterLevel;
+varying float vRockWater;
+varying vec3 vRockWorld;
+varying vec3 vRockUp;
 ${split ? 'varying vec2 vRockFace;' : ''}
 float rockHash(vec3 p) { p = fract(p * .1031); p += dot(p, p.yzx + 33.33); return fract((p.x + p.y) * p.z); }
 float rockNoise(vec3 p) {
@@ -101,19 +123,24 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   float rockCave = ${split ? 'smoothstep(.3, .9, vRockFace.y)' : '0.0'};
   float weather = rockNoise(vRockPosition * 6.0 + vec3(7,19,31));
   float rind = (1.0-rockFace)*(1.0-rockCave);
+  float rockWet = ${wet ? '1.0' : '1.0-smoothstep(vRockWater+rockWaterLevel-.02,vRockWater+rockWaterLevel+.18,vRockWorld.y)'};
   rockAlbedo *= .86 + weather * .25;
   // Sparse surface weathering leaves the diagnostic minerals visible.
   rockAlbedo = mix(rockAlbedo, vec3(.28,.19,.11), smoothstep(.66,.88,weather)*rind*.28);
+  // Thin, patchy lichen favours exposed upper surfaces; fresh faces stay bare.
+  float lichen = smoothstep(.73,.86,rockNoise(vRockPosition*19.0+vec3(51,8,17)))
+    * smoothstep(.25,.8,vRockUp.y) * rind * .3 * (1.0-rockWet*.6);
+  rockAlbedo = mix(rockAlbedo,vec3(.24,.27,.15),lichen);
   rockAlbedo *= mix(1.0, .43, rockCave);
   float druse = step(.94, rockHash(floor(vRockPosition * 530.0))) * rockCave * rockDetail;
   rockAlbedo = mix(rockAlbedo, vec3(.85,.84,.79), druse);
-  diffuseColor.rgb = rockAlbedo * ${wet ? '.77' : '1.0'};
+  diffuseColor.rgb = rockAlbedo * mix(1.0,.77,rockWet);
   float rockHeight = rockSurface.r * rockDetail * .0022;
 `).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
   roughnessFactor = mix(.9, rockSurface.g, rockDetail);
   roughnessFactor = mix(roughnessFactor, max(roughnessFactor, .85), rind * .45);
   roughnessFactor = mix(roughnessFactor, .2, druse);
-  ${wet ? 'roughnessFactor = max(.4, roughnessFactor * .68);' : ''}
+  roughnessFactor = mix(roughnessFactor,max(.4,roughnessFactor*.68),rockWet);
 `).replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
   // Height derivatives perturb the actual view-space surface, so all three
   // projections work on UV-less meshes, instances and moving split halves.

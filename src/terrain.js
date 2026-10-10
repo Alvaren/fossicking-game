@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
+import { groundMaterial } from './environmentmaterials.js';
 
 // Diggable heightfield terrain built around the creek, with a simple geology:
 // topsoil over gravel "wash" over bedrock. Heights live in a flat grid so the
@@ -420,6 +421,7 @@ export class Terrain {
     this.pos = new Float32Array(count * 3);
     this.nor = new Float32Array(count * 3);
     this.col = new Float32Array(count * 3);
+    this.surface = new Float32Array(count * 3);
     const uv = new Float32Array(count * 2);
     for (let iz = 0; iz < N; iz++) {
       for (let ix = 0; ix < N; ix++) {
@@ -434,18 +436,14 @@ export class Terrain {
     geo.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
     geo.setAttribute('normal', new THREE.BufferAttribute(this.nor, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(this.col, 3));
+    geo.setAttribute('aSurface', new THREE.BufferAttribute(this.surface, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     this.geo = geo;
     this.refresh(0, SEG, 0, SEG);
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = new THREE.MeshStandardMaterial({
-      vertexColors: true,
-      map: grainTexture(),
-      roughness: 0.95,
-      metalness: 0,
-    });
+    this.material = groundMaterial();
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -469,12 +467,19 @@ export class Terrain {
         this.nor[i * 3] = nx; this.nor[i * 3 + 1] = ny; this.nor[i * 3 + 2] = nz;
         const c = this.surfaceColor(-HALF + ix * CELL, -HALF + iz * CELL, h[i], ny, this.orig[i], this.bedrock[i], this.topsoil[i]);
         this.col[i * 3] = c[0]; this.col[i * 3 + 1] = c[1]; this.col[i * 3 + 2] = c[2];
+        const x = this.pos[i * 3], z = this.pos[i * 3 + 2];
+        const local = this.creek.local(x, z, this.tmpL), bank = local.d - local.w;
+        const dug = this.orig[i] - h[i];
+        this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug));
+        this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
+        this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
       }
     }
     const g = this.geo;
     g.attributes.position.needsUpdate = true;
     g.attributes.normal.needsUpdate = true;
     g.attributes.color.needsUpdate = true;
+    g.attributes.aSurface.needsUpdate = true;
   }
 
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,
@@ -569,32 +574,4 @@ function gridIndex(seg) {
     }
   }
   return index;
-}
-
-function grainTexture() {
-  const s = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = s;
-  const ctx = c.getContext('2d');
-  const img = ctx.createImageData(s, s);
-  for (let i = 0; i < s * s; i++) {
-    const v = 205 + Math.random() * 50;
-    img.data[i * 4] = v;
-    img.data[i * 4 + 1] = v * 0.98;
-    img.data[i * 4 + 2] = v * 0.96;
-    img.data[i * 4 + 3] = 255;
-  }
-  ctx.putImageData(img, 0, 0);
-  for (let k = 0; k < 900; k++) {
-    const v = 140 + Math.random() * 115;
-    ctx.fillStyle = `rgb(${v},${v * 0.95},${v * 0.9})`;
-    ctx.beginPath();
-    ctx.arc(Math.random() * s, Math.random() * s, 0.6 + Math.random() * 1.8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  return tex;
 }

@@ -6,6 +6,7 @@ import { RegionUI } from './regionui.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { Terrain, PLAY } from './terrain.js';
 import { buildWorld } from './world.js';
+import { dressEnvironment } from './environmentdetail.js';
 import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
 import { Water } from './water.js';
@@ -256,7 +257,7 @@ scene.add(terrain.buildFar());
 const creek = terrain.creek;
 const deposits = new Deposits(terrain);
 const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystals || []));
-const world = buildWorld(scene, terrain, state.seed, field.sites);
+const world = buildWorld(scene, terrain, state.seed, field.sites, settings.shadows === 'off');
 const campStation = new CampStation(scene, terrain, state.camp, world.colliders);
 const campShelter = new CampShelter(scene, terrain, state.camp, world.colliders);
 const mine = new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
@@ -270,6 +271,17 @@ const oversize = new Oversize(scene, terrain);
 oversize.restore(saved.oversize);
 const targets = new Targets(scene, terrain, deposits, state.seed, new Set(saved.collected || []));
 const finds = new SurfaceFinds(scene, terrain, deposits, state.seed, new Set(saved.surface || []), world.colliders);
+const environmentDetail = dressEnvironment(scene, {
+  seed: state.seed, height: (x,z) => terrain.getHeight(x,z),
+  bank: (x,z) => { const l = creek.local(x,z,{}); return l.d-l.w; },
+  waterY: z => creek.surfaceY(z),
+  anchors: scene.children.filter(o => o.isInstancedMesh && (o.userData.tree || ['Granite tors','Geological scenery rocks'].includes(o.name))),
+  blocked: (x,z) => Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<15 || !!terrain.overlayAt(x,z)
+    || field.sites.some(s => Math.hypot(x-s.x,z-s.z)<3)
+    || finds.items.some(s => Math.hypot(x-s.x,z-s.z)<.8)
+    || (terrain.sources.fossil && Math.hypot(x-terrain.sources.fossil.x,z-terrain.sources.fossil.z)<8),
+  dry: region === 'qld-gemfields', low: settings.shadows === 'off',
+});
 // Cobbles and small boulders a flood can roll. They join the creek's boulders
 // (and their slack water) only now, after the claim's been laid out.
 const bedload = new Bedload(scene, terrain, state.seed);
@@ -295,7 +307,7 @@ finds.floodId = Math.max(finds.floodId, ...(saved.flood || []).map((i) => i.id +
 targets.restoreFlood(saved.floodTargets || []);
 state.remaining = targets.remainingGold();
 
-const sound = new Sound();
+const sound = new Sound(region);
 const wildlife = new Wildlife(scene, terrain, sound);
 const devils = new DustDevils(scene, terrain, sound);
 // The gem show's marquee, put up at camp on show days.
@@ -2264,6 +2276,7 @@ function frame() {
   const raw = clock.getDelta();
   const dt = Math.min(raw, 0.05);
   countFps(raw);
+  sound.setEnvironment(dt, { active: playing || panUI.isOpen, sheltered: mine.inside || !!mine.climb, storm: weather.storm });
   // The pan is a close-up workstation. Keep the last world frame behind it
   // rather than rendering the whole claim on every mobile finger stroke.
   if (playing || panUI.isOpen || lapidaryUI.isOpen) stepFacilities(state.camp, dt);
@@ -2312,7 +2325,8 @@ function frame() {
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
-  world.update(dt, night);
+  world.update(dt, night, 1 + weather.storm * 1.5);
+  environmentDetail.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   campShelter.update(night);
   campBuildings.update(dt, state, player.pos, night);
   kelpie.update(dt, state, player.pos, driving || mine.inside || !!mine.climb);
@@ -2339,6 +2353,7 @@ function frame() {
   works.update(dt, { sound, time: elapsed });
   works.showMill((state.up.crusher || 0) > 0);
   water.uniforms.sunDir.value.copy(daynight.lightDir);
+  water.uniforms.lightLevel.value = Math.max(.09,daynight.daylight);
   water.uniforms.sunColor.value.copy(daynight.base.sunColor).multiplyScalar(daynight.daylight > 0.05 ? 1 : 0.35);
   checkDiscoveries(dt);
   checkMilestones(dt);

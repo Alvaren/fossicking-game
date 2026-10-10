@@ -3,12 +3,13 @@ import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometr
 import { SIZE, PLAY } from './terrain.js';
 import { mulberry32, smoothstep } from './noise.js';
 import { rockMaterial, rockKinds, sourceRockKind } from './rockmaterials.js';
+import { leafSpray, markFoliage, vegetationMaterial } from './vegetation.js';
 
 // Scenery: gum trees, rocks (coloured by the local geology), outcrops of the
 // source rocks, creek boulders, spinifex, claim pegs and the camp.
 // Returns colliders (circles on the ground plane), the shop spot and an update.
 
-export function buildWorld(scene, terrain, seed, avoid = []) {
+export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const rand = mulberry32(seed * 31 + 5);
   const colliders = [];
   const camp = terrain.camp;
@@ -32,8 +33,9 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const col = new THREE.Color();
 
   // ---------- trees ----------
-  const treeMat = new THREE.MeshStandardMaterial({ color: profile.treeTint ?? 0xffffff, vertexColors: true, flatShading: true, roughness: 0.9 });
-  const variants = [0, 1, 2, 3].map(() => gumTree(rand));
+  const treeSurface = vegetationMaterial({ color: profile.treeTint ?? 0xffffff, vertexColors: true });
+  const treeMat = treeSurface.material;
+  const variants = [0, 1, 2, 3].map(() => gumTree(rand, low));
   const placements = variants.map(() => []);
   for (let tries = 0, n = 0; tries < 9000 && n < (profile.treeCount ?? 400); tries++) {
     const x = (rand() * 2 - 1) * (half - 4);
@@ -50,6 +52,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   variants.forEach((geo, vi) => {
     const list = placements[vi];
     const inst = new THREE.InstancedMesh(geo, treeMat, list.length);
+    inst.name = `Gum trees ${vi}`; inst.userData.tree = true;
+    inst.customDepthMaterial = treeSurface.depthMaterial;
     list.forEach((t, i) => {
       q.setFromAxisAngle(up, t.r);
       m4.compose(new THREE.Vector3(t.x, terrain.getHeight(t.x, t.z) - 0.1, t.z), q, new THREE.Vector3(t.s, t.s, t.s));
@@ -91,7 +95,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     if (campRoom(x,z,s)) m4.scale(new THREE.Vector3(0,0,0));
     rocks.setMatrixAt(ri, m4);
     rocks.setColorAt(ri, col);
-    setRockKind(ri, rockKind);
+    setRockKind(ri, rockKind, creek.waterY(z));
     ri++;
     if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * 0.85 });
   };
@@ -165,9 +169,12 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
 
   // ---------- spinifex tufts ----------
   const tuftGeo = spinifex(rand);
-  const tuftMat = new THREE.MeshStandardMaterial({ roughness: 1, flatShading: true });
+  markFoliage(tuftGeo, 1);
+  const tuftSurface = vegetationMaterial({ grass: true });
+  const tuftMat = tuftSurface.material;
   const tuftCount = profile.tufts ?? 6000;
   const tufts = new THREE.InstancedMesh(tuftGeo, tuftMat, tuftCount);
+  tufts.customDepthMaterial = tuftSurface.depthMaterial;
   let placed = 0;
   for (let tries = 0; tries < 60000 && placed < tuftCount; tries++) {
     const x = (rand() * 2 - 1) * (half - 3);
@@ -401,8 +408,9 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const spawn = { x: sw.x, z: sw.z, yaw: flip > 0 ? Math.PI / 2 : -Math.PI / 2 };
 
   let t = 0;
-  function update(dt, night = 0) {
+  function update(dt, night = 0, wind = 1) {
     t += dt;
+    treeSurface.update(t, wind); tuftSurface.update(t, wind);
     const flick = 0.75 + Math.sin(t * 13) * 0.12 + Math.sin(t * 29 + 1) * 0.1 + Math.random() * 0.06;
     // Someone keeps the fire stoked after dark.
     fireLight.intensity = 3 * flick * (1 + night * 2.5);
@@ -469,7 +477,7 @@ function prep(geo) {
 }
 
 // Ghost-gum-ish: pale trunk, a couple of branches, clumped olive canopy.
-function gumTree(rand) {
+function gumTree(rand, low) {
   const parts = [];
   const h = 5 + rand() * 4;
   const r = 0.2 + rand() * 0.12;
@@ -478,7 +486,7 @@ function gumTree(rand) {
   const trunk = new THREE.CylinderGeometry(r * 0.55, r, h, 7, 3);
   trunk.translate(0, h / 2, 0);
   trunk.rotateZ(lean);
-  parts.push(colorize(prep(trunk), bark));
+  parts.push(markFoliage(colorize(prep(trunk), bark), 0));
 
   const top = new THREE.Vector3(-Math.sin(lean) * h, Math.cos(lean) * h, 0);
   const branches = 2 + Math.floor(rand() * 2);
@@ -492,7 +500,7 @@ function gumTree(rand) {
     b.rotateY(a);
     const by = h * (0.5 + rand() * 0.3);
     b.translate(-Math.sin(lean) * by, Math.cos(lean) * by, 0);
-    parts.push(colorize(prep(b), bark));
+    parts.push(markFoliage(colorize(prep(b), bark), 0));
     const tip = new THREE.Vector3(0, len, 0)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), 0.6 + rand() * 0.4)
       .applyAxisAngle(new THREE.Vector3(0, 1, 0), a)
@@ -503,8 +511,8 @@ function gumTree(rand) {
     const clumps = 3 + Math.floor(rand() * 3);
     for (let k = 0; k < clumps; k++) {
       const s = 0.9 + rand() * 1.0;
-      const leaf = new THREE.IcosahedronGeometry(s, 0);
-      leaf.scale(1, 0.55, 1);
+      const leaf = leafSpray(Math.round((c.x+c.y+c.z+s)*18493), low ? 14 : 32);
+      leaf.scale(s, s * 1.2, s);
       leaf.translate(c.x + (rand() - 0.5) * 2.2, c.y + (rand() - 0.3) * 1.0, c.z + (rand() - 0.5) * 2.2);
       const v = rand();
       const leafCol = new THREE.Color().setRGB(0.36 + v * 0.12, 0.42 + v * 0.1, 0.27 + v * 0.06, THREE.SRGBColorSpace);
