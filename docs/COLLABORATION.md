@@ -97,3 +97,7 @@ Validation: 34 logic tests and the production build pass. Desktop and emulated-t
 Limits: prices and resource rates are game balancing values. Lapidary is a shaping/polishing skill exercise with abstracted facet geometry; the caravan is stationary until the separately scoped travel work. Display cases show the first 45 kept finds, with the full collection available in inventory. Companion steering is local obstacle avoidance, not a complete navigation mesh. See CAMP.md for detailed behavior.
 
 The user authorized local integration. Check current worktree status and active preview ports immediately before advancing main. Do not push or publish as part of this handoff. Codex preview remains on 5191; Claude owns its separate checkout on `realism-1`.
+
+## Active build: Tasmania expedition
+
+Read [TASMANIA-PLAN.md](TASMANIA-PLAN.md) before continuing region work. The user has now authorized that specific first catchment and asked for the plan to be executed. Its checklist, execution log and deferred scope supersede earlier proposed ordering. Do not substitute the Golden Triangle or the northeast sapphire fields for the western Tasmania foot-access expedition.
