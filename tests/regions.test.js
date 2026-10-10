@@ -27,3 +27,11 @@ test('kit controls capacity and pack mass; taking smaller kit never discards sto
   const back=returnHome(away);assert.equal(depart(back,[]),null);assert.equal(depart(away,['bucket']),null);
   assert.equal(sampleCapacity(depart(home(),[]).expeditions[TASMANIA]),1);
 });
+
+test('travel fee is explicitly zero now, while the transaction supports a later configured price',async()=>{
+  const {TRAVEL_FEE,payTravelFee}=await import('../src/regions.js');
+  assert.equal(TRAVEL_FEE,0);const h=home();assert.equal(payTravelFee(h).cash,h.cash);
+  assert.equal(payTravelFee(h,50).cash,h.cash-50);assert.equal(h.cash,138);
+  assert.equal(payTravelFee(h,139),null);assert.equal(payTravelFee(h,-1),null);
+  const away=depart(h,[]);assert.equal(away.cash,h.cash);assert.equal(returnHome(away).cash,h.cash);
+});

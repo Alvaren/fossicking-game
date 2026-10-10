@@ -1,3 +1,4 @@
+import { TRAVEL_FEE } from './regions.js';
 import * as THREE from 'three';
 import { RegionUI } from './regionui.js';
 import { Sky } from 'three/addons/objects/Sky.js';
@@ -466,15 +467,19 @@ const campUI = new CampUI(state, {
   onPan: context => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; panUI.open(context); },
 });
 let travelFromCamp = false;
+let travelFromMap = false;
 const regionUI = new RegionUI({
   onSave: () => writeSave(),
   onClose: () => {
-    if (travelFromCamp) campUI.open();
+    if (travelFromMap) openModal(map);
+    else if (travelFromCamp) campUI.open();
     else { overlay.classList.remove('hidden'); hud.show(false); }
   },
 });
 regionUI.onDepart = () => { resetting = true; };
-function openTravel(fromCamp = false) {
+function openTravel(fromCamp = false, fromMap = false) {
+  travelFromMap = fromMap;
+  if (fromMap) { map.isOpen = false; document.getElementById('map').classList.add('hidden'); }
   travelFromCamp = fromCamp; mouseHeld = false; keys.clear(); if (touch) touch.use = false;
   if (fromCamp) campUI.hide();
   overlay.classList.add('hidden'); openModal(regionUI);
@@ -483,6 +488,10 @@ const travelButton = document.createElement('button');
 travelButton.id = 'travel-btn'; travelButton.textContent = 'Expeditions · Tasmania';
 travelButton.onclick = () => openTravel();
 document.querySelector('.pause-row').prepend(travelButton);
+const mapTravel = document.createElement('button');
+mapTravel.id = 'map-travel'; mapTravel.textContent = `Locations & travel · ${TRAVEL_FEE}`;
+mapTravel.onclick = () => openTravel(false,true);
+document.querySelector('#map .shop-footer').prepend(mapTravel);
 const campTravel = document.createElement('button');
 campTravel.id = 'camp-travel'; campTravel.textContent = 'Plan an expedition · Western Tasmania';
 campTravel.onclick = () => openTravel(true);

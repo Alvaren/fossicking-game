@@ -1,6 +1,12 @@
 // Region transitions keep the complete home world intact. All functions are
 // pure with respect to browser storage; callers save a successful transaction.
 export const TASMANIA = 'tasmania-west';
+export const TRAVEL_FEE = 0;
+export function payTravelFee(home, fee = TRAVEL_FEE) {
+  const cash=home?.cash??0;
+  if(!home||!Number.isFinite(fee)||fee<0||!Number.isFinite(cash)||cash<fee)return null;
+  return {...home,cash:cash-fee};
+}
 export const PACK_ITEMS = [
   { id: 'classifier', name: 'Hand classifier', kg: 1.2, detail: 'Removes oversize before the wash goes into the pan.' },
   { id: 'bucket', name: 'Sample bucket', kg: 1, detail: 'Carry four wash parcels instead of one.' },
@@ -27,16 +33,20 @@ export function depart(home, loadout) {
   const expedition = prior ? {...structuredClone(prior),loadout:fresh.loadout,difficulty:fresh.difficulty,up:fresh.up} : fresh;
   // Material already in a pack is never silently discarded by changing kits.
   if (expedition.bucket.length>sampleCapacity(expedition)) return null;
-  return {...home,activeRegion:TASMANIA,expeditions:{...home.expeditions,[TASMANIA]:expedition}};
+  const paid=payTravelFee(home);
+  if(!paid)return null;
+  return {...paid,activeRegion:TASMANIA,expeditions:{...home.expeditions,[TASMANIA]:expedition}};
 }
 export function saveExpedition(home, expedition) {
   return {...home,activeRegion:TASMANIA,expeditions:{...home.expeditions,[TASMANIA]:structuredClone(expedition)}};
 }
 export function returnHome(home) {
   if (home.activeRegion!==TASMANIA) return null;
+  const paid=payTravelFee(home);
+  if(!paid)return null;
   const e = structuredClone(home.expeditions[TASMANIA]);
   const recovered = e.gold+e.nuggets.reduce((s,n)=>s+n.grams,0);
-  const next = {...home,activeRegion:'new-england',gold:(home.gold||0)+e.gold,
+  const next = {...paid,activeRegion:'new-england',gold:(home.gold||0)+e.gold,
     gems:[...(home.gems||[]),...e.gems],nuggets:[...(home.nuggets||[]),...e.nuggets]};
   if (recovered>0) next.log={...home.log,goldTotal:(home.log?.goldTotal||0)+recovered};
   e.totalRecovered += recovered; e.trips++; e.gold=0; e.gems=[]; e.nuggets=[]; e.player=null; e.campPitched=false;

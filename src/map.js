@@ -1,3 +1,4 @@
+import { topographyCanvas } from './topography.js';
 import { PLAY } from './terrain.js';
 
 // The claim map (M): a hillshaded sketch of your ground with the creek, camp
@@ -36,41 +37,12 @@ export class ClaimMap {
 
   // Hillshade, contours and water, drawn once.
   buildBase() {
-    const c = document.createElement('canvas');
-    c.width = c.height = PX;
-    const ctx = c.getContext('2d');
-    const img = ctx.createImageData(PX, PX);
-    const T = this.terrain;
-    const C = T.creek;
-    const step = (2 * EXTENT) / PX;
-    const h = new Float32Array(PX * PX);
-    for (let j = 0; j < PX; j++) {
-      for (let i = 0; i < PX; i++) h[j * PX + i] = T.getOrigHeight(-EXTENT + i * step, -EXTENT + j * step);
-    }
-    for (let j = 0; j < PX; j++) {
-      for (let i = 0; i < PX; i++) {
-        const k = j * PX + i;
-        const x = -EXTENT + i * step, z = -EXTENT + j * step;
-        const hl = h[j * PX + Math.max(0, i - 1)], hr = h[j * PX + Math.min(PX - 1, i + 1)];
-        const hu = h[Math.max(0, j - 1) * PX + i], hd = h[Math.min(PX - 1, j + 1) * PX + i];
-        // Light from the north-west.
-        const shade = Math.max(0.55, Math.min(1.25, 1 + ((hl - hr) + (hu - hd)) * 1.6));
-        const e = Math.min(1, Math.max(0, (h[k] - C.waterY(z)) / 16));
-        let r = 236 - e * 50, g = 218 - e * 60, b = 180 - e * 70;
-        // Contours every 2 m.
-        const band = Math.floor(h[k] / 2), bandR = Math.floor(hr / 2), bandD = Math.floor(hd / 2);
-        if (band !== bandR || band !== bandD) { r -= 40; g -= 40; b -= 40; }
-        const wet = C.waterY(z) - h[k];
-        if (wet > 0.02) { r = 96; g = 140; b = 160; }
-        img.data[k * 4] = r * shade;
-        img.data[k * 4 + 1] = g * shade;
-        img.data[k * 4 + 2] = b * shade;
-        img.data[k * 4 + 3] = 255;
-        void x;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    this.base = c;
+    this.base = topographyCanvas({
+      width: PX, height: PX,
+      bounds: { x0: -EXTENT, x1: EXTENT, z0: -EXTENT, z1: EXTENT },
+      heightAt: (x,z) => this.terrain.getOrigHeight(x,z),
+      waterAt: (x,z) => this.terrain.creek.waterY(z),
+    });
   }
 
   open(player, extras) {

@@ -1,6 +1,8 @@
+import { RegionUI } from '../regionui.js';
+import { topographyCanvas } from '../topography.js';
 import * as THREE from 'three';
 import { readSave, storeSave } from '../save.js';
-import { TASMANIA, saveExpedition, returnHome, carriedWeight, sampleCapacity } from '../regions.js';
+import { TASMANIA, TRAVEL_FEE, saveExpedition, returnHome, carriedWeight, sampleCapacity } from '../regions.js';
 import { Catchment, CAMP, TRAILHEAD, REACHES, ROUTE, riverX, riverWidth, waterY, takeSample, recordRecovery, walkStep } from './model.js';
 import { buildCatchment } from './world.js';
 import { PanningUI } from '../panningui.js';
@@ -20,7 +22,7 @@ export function startTasmania() {
   hud.innerHTML=`<div class="tas-top"><div class="tas-readout"><div class="tas-title">WESTERN TASMANIA / FERN RIVER</div><b id="tas-place">Trailhead</b><div id="tas-time"></div></div><div class="tas-readout tas-info"><b id="tas-haul"></b><div id="tas-pack"></div></div></div><div class="tas-cross"></div><div id="tas-prompt"></div><div id="tas-message" class="hidden" role="status"></div><progress id="tas-work" max="1.5" value="0" class="hidden"></progress><nav class="tas-actions" aria-label="Expedition tools"><button id="tas-scoop" class="active">1 · Scoop</button><button id="tas-pan">3 · Pan</button><button id="tas-interact">E · Interact</button><button id="tas-journal">Journal</button></nav>`;
   document.body.append(hud);
   const modal=document.createElement('section');modal.id='tas-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','tas-heading');
-  modal.innerHTML=`<div class="tas-panel"><header><div><div class="tas-title">FIELD JOURNAL / FOOT ACCESS ONLY</div><h1 id="tas-heading">Fern River catchment</h1></div><button id="tas-resume" class="primary">Enter the catchment</button></header><p>Carry your gear down to Fern Bend, then follow the river upstream through Slate Narrows to Upper Cascade. Cross at the two shallow fords. Sample small traps, compare your pans and carry your recovery back to the trailhead.</p><div class="tas-layout"><div><canvas id="tas-map" class="tas-map" width="520" height="610" role="img" aria-label="Catchment map with route, reaches, campsite and current position"></canvas><p class="tas-muted">Fictional western Tasmanian catchment. North is up. The compact route, pack weights and grades are game balancing choices.</p></div><div><div id="tas-journal-summary" class="tas-summary"></div><div class="tas-row"><button id="tas-camp">Pitch overnight shelter</button><button id="tas-sleep">Sleep until morning</button></div><p id="tas-camp-note" class="tas-muted"></p><h2>Read the river</h2><div id="tas-reaches"></div><h2>Work a small sample</h2><p>Gravel held behind a boulder or in a bedrock crack can differ from the loose bar beside it. Take a modest scoop and compare results. Heavies are dense minerals; black sand does not guarantee gold. Some parcels are barren.</p><p>The classifier removes oversize before loading. Clay-bound material needs breaking apart. Use the existing pan's riffles: stratify, wash a thin layer, settle again, then reveal. Easy demonstrates this; Realistic leaves technique and losses to you.</p><div id="tas-results"></div><h2>What comes later</h2><p>Submerged bedrock pockets are reserved for a later sniping update. This expedition currently supports bank sampling and panning. Northeast Tasmania's sapphire rivers are a separate future region.</p></div></div><div class="tas-summary"><b>Controls</b><p id="tas-controls"></p><p>Deep pools and steep faces block walking. A heavier pack slows your pace. There is no ute here. Your home camp and unfinished home pan are kept separately; expedition finds are banked when you return.</p></div><div class="tas-row"><button id="tas-save">Save expedition</button><button id="tas-return" class="primary">Return home with finds</button><button id="tas-recover">Stuck? Recover to trailhead</button></div><p id="tas-return-note" class="tas-muted"></p><p id="tas-journal-status" role="status"></p></div>`;
+  modal.innerHTML=`<div class="tas-panel"><header><div><div class="tas-title">FIELD JOURNAL / FOOT ACCESS ONLY</div><h1 id="tas-heading">Fern River catchment</h1></div><button id="tas-resume" class="primary">Enter the catchment</button></header><p>Carry your gear down to Fern Bend, then follow the river upstream through Slate Narrows to Upper Cascade. Cross at the two shallow fords. Sample small traps, compare your pans and carry your recovery back to the trailhead.</p><div class="tas-layout"><div><canvas id="tas-map" class="tas-map" width="520" height="610" role="img" aria-label="Catchment map with route, reaches, campsite and current position"></canvas><p class="tas-muted">Fictional western Tasmanian catchment. North is up. The compact route, pack weights and grades are game balancing choices.</p></div><div><div id="tas-journal-summary" class="tas-summary"></div><div class="tas-row"><button id="tas-camp">Pitch overnight shelter</button><button id="tas-sleep">Sleep until morning</button></div><p id="tas-camp-note" class="tas-muted"></p><h2>Read the river</h2><div id="tas-reaches"></div><h2>Work a small sample</h2><p>Gravel held behind a boulder or in a bedrock crack can differ from the loose bar beside it. Take a modest scoop and compare results. Heavies are dense minerals; black sand does not guarantee gold. Some parcels are barren.</p><p>The classifier removes oversize before loading. Clay-bound material needs breaking apart. Use the existing pan's riffles: stratify, wash a thin layer, settle again, then reveal. Easy demonstrates this; Realistic leaves technique and losses to you.</p><div id="tas-results"></div><h2>What comes later</h2><p>Submerged bedrock pockets are reserved for a later sniping update. This expedition currently supports bank sampling and panning. Northeast Tasmania's sapphire rivers are a separate future region.</p></div></div><div class="tas-summary"><b>Controls</b><p id="tas-controls"></p><p>Deep pools and steep faces block walking. A heavier pack slows your pace. There is no ute here. Your home camp and unfinished home pan are kept separately; expedition finds are banked when you return.</p></div><div class="tas-row"><button id="tas-locations">Locations & travel · ${TRAVEL_FEE}</button><button id="tas-save">Save expedition</button><button id="tas-return" class="primary">Return home with finds</button><button id="tas-recover">Stuck? Recover to trailhead</button></div><p id="tas-return-note" class="tas-muted"></p><p id="tas-journal-status" role="status"></p></div>`;
   document.body.append(modal);
   const $=id=>document.getElementById(id), sound=new Sound();
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x8caaa0);scene.fog=new THREE.FogExp2(0x8caaa0,.012);
@@ -61,6 +63,9 @@ export function startTasmania() {
     onCollect:(sample,result,session)=>{recordRecovery(expedition,sample,{...result,sessionId:session.expeditionId});notify(`Bottled ${(result.gold*1000).toFixed(2)} mg. The result is in your field journal.`);},
     onClose:resume,
   });
+  const regionUI=new RegionUI({onSave:save,onClose:()=>openJournal()});
+  regionUI.onDepart=()=>{leaving=true;};
+  $('tas-locations').onclick=()=>{modal.classList.add('hidden');regionUI.open();};
   function openPan(){
     if(!atWater()){notify('Work at the shallow water edge to pan your wash.');return;}
     playing=false;release();panUI.open();touch?.show(false);document.exitPointerLock?.();
@@ -84,7 +89,7 @@ export function startTasmania() {
     playing=false;release();modal.classList.remove('hidden');document.body.classList.add('tas-modal-open');touch?.show(false);document.exitPointerLock?.();save();refreshJournal();$('tas-resume').focus();
   }
   function refreshJournal(){
-    $('tas-journal-summary').innerHTML=`<b>${carriedWeight(expedition).toFixed(1)} kg carried · ${expedition.bucket.length}/${sampleCapacity(expedition)} parcels</b><br>Recovered this trip: ${(expedition.gold*1000).toFixed(2)} mg<br>${expedition.difficulty==='easy'?'Easy · demonstrated panning and route guides':expedition.difficulty==='realistic'?'Realistic · manual technique':'Prospector · forgiving manual technique'}<br>${expedition.nights} overnight stops · ${expedition.trips} completed trips${expedition.panSession?'<br>Unfinished expedition pan saved':''}`;
+    $('tas-journal-summary').innerHTML=`<b>${carriedWeight(expedition).toFixed(1)} kg carried · ${expedition.bucket.length}/${sampleCapacity(expedition)} parcels</b><br>Recovered this trip: ${(expedition.gold*1000).toFixed(2)} mg<br>${expedition.difficulty==='easy'?'Easy · demonstrated panning':expedition.difficulty==='realistic'?'Realistic · manual technique':'Prospector · forgiving manual technique'}<br>${expedition.nights} overnight stops · ${expedition.trips} completed trips${expedition.panSession?'<br>Unfinished expedition pan saved':''}`;
     const kit=expedition.loadout.includes('camp');
     $('tas-camp').disabled=!kit||!atCamp()||expedition.campPitched;$('tas-sleep').disabled=!kit||!atCamp()||!expedition.campPitched;
     $('tas-camp-note').textContent=!kit?'Pack an overnight kit at home to camp here.':!atCamp()?'The sheltered camping terrace is at Fern Bend.':expedition.campPitched?'Shelter pitched. Rest advances the expedition to 07:00.':'Pitch your small shelter on this terrace.';
@@ -94,18 +99,18 @@ export function startTasmania() {
     $('tas-return').disabled=!atGate();$('tas-return-note').textContent=atGate()?'Return banks recovered finds once. Unworked wash and an unfinished expedition pan stay here for your next visit.':'Walk back to the trailhead to return home. Recovery is an accessibility fallback: it moves you to the trailhead with your current pack and gives no bonus.';
     drawMap();
   }
+  let mapBase;
   function drawMap(){
-    const g=$('tas-map').getContext('2d'),mx=x=>330+x*3.5,my=z=>55+(125-z)*2.35;
-    g.fillStyle='#294238';g.fillRect(0,0,520,610);
-    for(let x=-88;x<51;x+=3)for(let z=-115;z<140;z+=3){const h=model.height(x,z),shade=Math.min(70,24+h*.65);g.fillStyle=`hsl(145 17% ${shade}%)`;g.fillRect(mx(x),my(z),11,8);}
-    g.lineWidth=13;g.strokeStyle='#88b3ae';g.beginPath();for(let z=135;z>-112;z-=2)g.lineTo(mx(riverX(z)),my(z));g.stroke();
-    g.setLineDash([5,5]);g.strokeStyle='#e1ce96';g.lineWidth=2;g.beginPath();ROUTE.forEach(p=>g.lineTo(mx(p.x),my(p.z)));g.stroke();g.setLineDash([]);
+    const g=$('tas-map').getContext('2d'),mx=x=>(x+90)/145*520,my=z=>(z+115)/255*610;
+    mapBase ||= topographyCanvas({width:520,height:610,bounds:{x0:-90,x1:55,z0:-115,z1:140},heightAt:(x,z)=>model.height(x,z),waterAt:(x,z)=>Math.abs(x-riverX(z))<=riverWidth(z)?waterY(z):null});
+    g.drawImage(mapBase,0,0);
+    g.setLineDash([5,5]);g.strokeStyle='#6b5034';g.lineWidth=2;g.beginPath();ROUTE.forEach(p=>g.lineTo(mx(p.x),my(p.z)));g.stroke();g.setLineDash([]);
     g.font='bold 16px system-ui';
-    for(const r of REACHES){const x=mx(riverX(r.z)),y=my(r.z);g.fillStyle=expedition.visited.includes(r.id)?'#efdaa1':'#c7d5c4';g.beginPath();g.arc(x,y,5,0,6.29);g.fill();g.fillText(r.name,x+14,y-6);}
-    g.fillStyle='#f1ddb1';g.fillText('Trailhead',mx(TRAILHEAD.x)-20,my(TRAILHEAD.z)-15);g.fillText('Camp',mx(CAMP.x)-59,my(CAMP.z)+7);
-    g.fillStyle='#baddda';g.font='12px system-ui';for(const z of [14,-47])g.fillText('Shallow ford',mx(riverX(z))+17,my(z)+4);
-    g.fillStyle='#fff';g.beginPath();g.arc(mx(player.x),my(player.z),6,0,6.29);g.fill();g.strokeStyle='#1b3127';g.lineWidth=2;g.stroke();g.fillText('You',mx(player.x)+10,my(player.z)+20);
-    g.fillStyle='#d6e0cd';g.fillText('N ↑',22,30);
+    for(const r of REACHES){const x=mx(riverX(r.z)),y=my(r.z);g.fillStyle='#2a1a0c';g.beginPath();g.arc(x,y,5,0,6.29);g.fill();g.fillText(r.name,x+14,y-6);}
+    g.fillStyle='#2a1a0c';g.fillText('Trailhead',mx(TRAILHEAD.x)-20,my(TRAILHEAD.z)-15);g.fillText('Camp',mx(CAMP.x)-59,my(CAMP.z)+7);
+    g.fillStyle='#2a1a0c';g.font='12px system-ui';for(const z of [14,-47])g.fillText('Shallow ford',mx(riverX(z))+17,my(z)+4);
+    g.fillStyle='#c82921';g.beginPath();g.arc(mx(player.x),my(player.z),6,0,6.29);g.fill();g.strokeStyle='#1b3127';g.lineWidth=2;g.stroke();g.fillText('You',mx(player.x)+10,my(player.z)+20);
+    g.fillStyle='#2a1a0c';g.fillText('N ↑',22,30);
   }
   function pitchCamp(){if(atCamp()&&expedition.loadout.includes('camp')){expedition.campPitched=true;save();refreshJournal();}}
   function sleep(){if(atCamp()&&expedition.campPitched&&expedition.loadout.includes('camp')){expedition.hour=7;expedition.nights++;save();refreshJournal();notify('Morning at Fern Bend. The worked ground stays worked.');}}
@@ -126,7 +131,7 @@ export function startTasmania() {
   window.addEventListener('mouseup',()=>{held=false;work=0;});
   document.addEventListener('contextmenu',e=>e.preventDefault());
   document.addEventListener('keydown',e=>{
-    if(panUI.isOpen)return;
+    if(panUI.isOpen||regionUI.isOpen)return;
     if((e.ctrlKey||e.metaKey)&&e.code==='KeyS'){e.preventDefault();save();return;}
     if(['Escape','KeyP','KeyM','KeyN','KeyI'].includes(e.code)&&!e.repeat){e.preventDefault();if(playing)openJournal();else resume();return;}
     if(!playing)return;
@@ -169,5 +174,5 @@ export function startTasmania() {
   }
   setInterval(save,30000);openJournal();requestAnimationFrame(frame);
   // Same objects and movement rule as play, exposed for reproducible disposable-save checks.
-  window.fossickTas={expedition,model,world,player,panUI,save,openJournal,resume,interact,collectSample,move,touch,keys,renderer,camera,scene};
+  window.fossickTas={regionUI,expedition,model,world,player,panUI,save,openJournal,resume,interact,collectSample,move,touch,keys,renderer,camera,scene};
 }

@@ -112,14 +112,12 @@ export function buildCatchment(scene,model,expedition,low=false) {
     const group=new THREE.Group();group.position.set(s.x,model.height(s.x,s.z)+.04,s.z);scene.add(group);
     const pocket=new THREE.Mesh(new THREE.CircleGeometry(s.kind==='bar'?.75:.55,12),material(s.kind==='bar'?0x8d8a70:0x232b28));pocket.rotation.x=-Math.PI/2;group.add(pocket);
     for(let k=0;k<3;k++){const slab=new THREE.Mesh(new THREE.BoxGeometry(.18,.09,1.5),material(0x56615a));slab.position.set((k-1)*.37,.03,0);slab.rotation.y=.4;group.add(slab);}
-    const guide=new THREE.Mesh(new THREE.RingGeometry(.7,.76,28),new THREE.MeshBasicMaterial({color:0xecd293,side:THREE.DoubleSide}));guide.rotation.x=-Math.PI/2;guide.position.y=.08;group.add(guide);
-    siteGroups.push({s,group,pocket,guide});
+    siteGroups.push({s,group,pocket});
   }
   for(const p of model.snipingPockets) {
     const slab=new THREE.Mesh(new THREE.BoxGeometry(1.6,.13,.8),material(0x4f5955));slab.position.set(p.x,model.height(p.x,p.z)+.07,p.z);scene.add(slab);
     const crack=new THREE.Mesh(new THREE.BoxGeometry(1.3,.02,.055),material(0x111c19));crack.position.copy(slab.position);crack.position.y+=.08;scene.add(crack);
   }
-  const path=new THREE.Line(new THREE.BufferGeometry().setFromPoints(ROUTE.map(p=>new THREE.Vector3(p.x,model.height(p.x,p.z)+.09,p.z))),new THREE.LineBasicMaterial({color:0xd7c78d,transparent:true,opacity:.55}));scene.add(path);
   function sign(point,title,subtitle) {
     const g=new THREE.Group();g.position.set(point.x,model.height(point.x,point.z),point.z);
     const post=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,1.8,6),material(0x594c37));post.position.y=.9;g.add(post);
@@ -133,11 +131,11 @@ export function buildCatchment(scene,model,expedition,low=false) {
   const roofGeo=new THREE.BufferGeometry();roofGeo.setAttribute('position',new THREE.Float32BufferAttribute([-1.3,0,-1,0,1.3,-1,0,1.3,1,-1.3,0,-1,0,1.3,1,-1.3,0,1,0,1.3,-1,1.3,0,-1,1.3,0,1,0,1.3,-1,1.3,0,1,0,1.3,1],3));roofGeo.computeVertexNormals();camp.add(new THREE.Mesh(roofGeo,canvas));
   const bed=new THREE.Mesh(new THREE.BoxGeometry(.8,.14,1.75),material(0x314d43));bed.position.y=.1;camp.add(bed);
   const cloud=new THREE.Mesh(new THREE.CircleGeometry(2,28),new THREE.MeshBasicMaterial({color:0x958b69,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));cloud.rotation.x=-Math.PI/2;scene.add(cloud);
-  return {ground,water,path,camp,colliders,siteGroups,cloud,
+  return {ground,water,camp,colliders,siteGroups,cloud,
     disturb(site){cloud.position.set(site.x,waterY(site.z)+.025,site.z);cloud.material.opacity=.55;},
     update(dt,time,state){
-      camp.visible=state.campPitched;path.visible=state.difficulty==='easy';
-      for(const p of siteGroups){const empty=(state.siteUse[p.s.id]||0)>=p.s.capacity;p.guide.visible=state.difficulty==='easy'&&!empty;p.pocket.material.color.setHex(empty?0x343e38:p.s.kind==='bar'?0x8d8a70:0x232b28);}
+      camp.visible=state.campPitched;
+      for(const p of siteGroups){const empty=(state.siteUse[p.s.id]||0)>=p.s.capacity;p.pocket.material.color.setHex(empty?0x343e38:p.s.kind==='bar'?0x8d8a70:0x232b28);}
       waterMat.opacity=.5+Math.sin(time*.3)*.015;cascade.material.opacity=.45+Math.sin(time*3)*.07;
       ripples.forEach((r,i)=>{const z=((r.z+time*.55+170)%340)-170;dummy.position.set(riverX(z)+r.q*riverWidth(z),waterY(z)+.025,z);dummy.rotation.set(0,Math.sin(z*.03)*.2,0);dummy.scale.set(r.s,1,r.s);dummy.updateMatrix();foam.setMatrixAt(i,dummy.matrix);});foam.instanceMatrix.needsUpdate=true;
       cloud.material.opacity=Math.max(0,cloud.material.opacity-dt*.023);cloud.position.z+=dt*.16;
