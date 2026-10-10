@@ -6,6 +6,10 @@ import { groundMaterial } from '../environmentmaterials.js';
 import { leafSpray, markFoliage, vegetationMaterial } from '../vegetation.js';
 import { dressEnvironment } from '../environmentdetail.js';
 import { riverWaterMaterial, foamRibbonTexture } from '../water.js';
+import { vegetationLOD } from '../vegetationlod.js';
+import { buildLandscape } from '../landscape.js';
+import { dressCamp } from '../campdetail.js';
+import { SurfaceEffects, updateEnvironmentWeather, showerAt } from '../environmentmotion.js';
 const material = (color,extra={}) => new THREE.MeshStandardMaterial({color,roughness:.94,...extra});
 const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
 
@@ -118,6 +122,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     dummy.position.set(x,y+h,z);dummy.rotation.set(0,rand()*6.28,0);dummy.scale.setScalar(scale);dummy.updateMatrix();ferns.setMatrixAt(i,dummy.matrix);
   }
   fernTrunks.count=ft;scene.add(ferns,fernTrunks);
+  ferns.name='Forest ferns';
   ferns.customDepthMaterial=fernSurface.depthMaterial;
   const rockGeo=new THREE.IcosahedronGeometry(1,1),rp=rockGeo.attributes.position;
   // Adjacent faces share one displacement. Retain every old RNG draw so the
@@ -194,14 +199,26 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     anchors:[trunks,rocks],forest:true,low,
     blocked:(x,z)=>nearestTrail(x,z).distance<2 || Math.hypot(x-CAMP.x,z-CAMP.z)<6 || Math.hypot(x-TRAILHEAD.x,z-TRAILHEAD.z)<8 || model.sites.some(s=>Math.hypot(x-s.x,z-s.z)<2),
   });
-  return {ground,water,camp,colliders,siteGroups,cloud,
+  const campKit=dressCamp(scene,{camp:CAMP,height:(x,z)=>model.height(x,z),forest:true});
+  const landscape=buildLandscape(scene,{region:northeast?'ne-tasmania':'tasmania-west',seed:model.seed,height:(x,z)=>model.height(x,z),riverX,riverWidth,
+    bank:(x,z)=>Math.abs(x-riverX(z))-riverWidth(z),colliders,low,
+    blocked:(x,z)=>nearestTrail(x,z).distance<3||Math.hypot(x-CAMP.x,z-CAMP.z)<7||Math.hypot(x-TRAILHEAD.x,z-TRAILHEAD.z)<9||model.sites.some(s=>Math.hypot(x-s.x,z-s.z)<3),
+  });
+  const lod=vegetationLOD(scene,[crowns,ferns],low);
+  const effects=new SurfaceEffects(scene,{height:(x,z)=>model.height(x,z),waterY,bank:(x,z)=>Math.abs(x-riverX(z))-riverWidth(z),seed:model.seed,low,rainStreaks:true});
+  const atmosphere={time:0,rain:0,override:null};
+  return {ground,water,camp,colliders,siteGroups,cloud,landscape,lod,effects,atmosphere,campKit,
     disturb(site){cloud.position.set(site.x,waterY(site.z)+.025,site.z);cloud.material.opacity=.55;},
     update(dt,time,state,player){
-      barkSurface.update(time);canopySurface.update(time,.7);fernSurface.update(time,.55);
-      detail.update(dt,time,player || TRAILHEAD,.7);
+      atmosphere.time+=dt;atmosphere.rain=atmosphere.override??showerAt(atmosphere.time);
+      updateEnvironmentWeather(dt,atmosphere.rain);
+      const wind=.7+atmosphere.rain*1.5,position=player||TRAILHEAD;
+      barkSurface.update(time,wind);canopySurface.update(time,wind);fernSurface.update(time,wind);
+      detail.update(dt,time,position,wind);landscape.update(dt,time,position,wind);lod.update(dt,position);
+      effects.update(dt,position,atmosphere.rain,dt>0);campKit.visible=state.campPitched;
       camp.visible=state.campPitched;
       for(const p of siteGroups){const empty=(state.siteUse[p.s.id]||0)>=p.s.capacity;p.pocket.material.color.setHex(empty?0x343e38:p.s.kind==='bar'?0x8d8a70:0x232b28);}
-      const light=Math.max(.12,Math.sin((state.hour-6)/12*Math.PI));
+      const light=Math.max(.12,Math.sin((state.hour-6)/12*Math.PI))*(1-atmosphere.rain*.3);
       waterSurface.uniforms.time.value=time;
       waterSurface.uniforms.lightLevel.value=light;
       waterSurface.uniforms.sunColor.value.setHex(0xe0e6c4).multiplyScalar(light);

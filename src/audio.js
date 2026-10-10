@@ -414,9 +414,17 @@ export class Sound {
     this.tone(90, 0.18, 0.3, 'sine', 0.02, 0.5);
   }
 
-  step(inWater) {
-    if (inWater) this.burst({ freq: 1600, type: 'bandpass', dur: 0.18, gain: 0.25, q: 0.7 });
-    else this.burst({ freq: 1100 + Math.random() * 500, type: 'bandpass', dur: 0.07, gain: 0.12, q: 1.2 });
+  step(surface = 'soil') {
+    if (surface === true) surface = 'water'; // Existing callers remain compatible.
+    const profiles = {
+      water: [1600,.18,.23,.7], gravel: [2300,.1,.13,1.1],
+      litter: [3400,.16,.1,.6], rock: [780,.045,.14,2.2],
+      mud: [420,.15,.14,.7], soil: [1100,.07,.12,1.2],
+    };
+    const [freq,dur,gain,q] = profiles[surface] || profiles.soil;
+    this.burst({freq:freq*(.92+Math.random()*.16),type:'bandpass',dur,gain,q});
+    if(surface==='gravel')this.burst({freq:3700,dur:.04,gain:.045,q:1.5,delay:.035});
+    if(surface==='rock'||surface==='mud')this.tone(surface==='rock'?160:85,.065,.045,'sine');
   }
 
   gold() {

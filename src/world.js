@@ -4,6 +4,8 @@ import { SIZE, PLAY } from './terrain.js';
 import { mulberry32, smoothstep } from './noise.js';
 import { rockMaterial, rockKinds, sourceRockKind } from './rockmaterials.js';
 import { leafSpray, markFoliage, vegetationMaterial } from './vegetation.js';
+import { vegetationLOD } from './vegetationlod.js';
+import { dressCamp, campSmoke } from './campdetail.js';
 
 // Scenery: gum trees, rocks (coloured by the local geology), outcrops of the
 // source rocks, creek boulders, spinifex, claim pegs and the camp.
@@ -35,7 +37,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   // ---------- trees ----------
   const treeSurface = vegetationMaterial({ color: profile.treeTint ?? 0xffffff, vertexColors: true });
   const treeMat = treeSurface.material;
-  const variants = [0, 1, 2, 3].map(() => gumTree(rand, low));
+  const variants = [0, 1, 2, 3].map(i => gumTree(rand, low, profile.id, i));
   const placements = variants.map(() => []);
   for (let tries = 0, n = 0; tries < 9000 && n < (profile.treeCount ?? 400); tries++) {
     const x = (rand() * 2 - 1) * (half - 4);
@@ -407,10 +409,14 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const sw = toWorld(-6.5, 1);
   const spawn = { x: sw.x, z: sw.z, yaw: flip > 0 ? Math.PI / 2 : -Math.PI / 2 };
 
+  dressCamp(scene,{camp,height:(x,z)=>terrain.getHeight(x,z),flip});
+  const smokeSpot=toWorld(.5,1.5),smoke=campSmoke(scene,{...smokeSpot,y:camp.y},low);
+  const lod=vegetationLOD(scene,scene.children.filter(o=>o.isInstancedMesh&&o.material.userData.environment==='vegetation'),low);
   let t = 0;
-  function update(dt, night = 0, wind = 1) {
+  function update(dt, night = 0, wind = 1, player = camp) {
     t += dt;
     treeSurface.update(t, wind); tuftSurface.update(t, wind);
+    lod.update(dt,player);smoke.update(t,wind*(.8+.2*Math.sin(t*.65)),night);
     const flick = 0.75 + Math.sin(t * 13) * 0.12 + Math.sin(t * 29 + 1) * 0.1 + Math.random() * 0.06;
     // Someone keeps the fire stoked after dark.
     fireLight.intensity = 3 * flick * (1 + night * 2.5);
@@ -456,7 +462,8 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   collide(-0.8, 4.0, 0.5);
   collide(-0.8, 5.4, 0.15);
   collide(0.6, -2.6, 0.6);
-  return { colliders, shop, spawn, tentPos, cabinetSpot, showSpot, oreSpots, ute, uteColliders, update, applyModels };
+  const sceneryColliders=colliders.filter(c=>!uteColliders.includes(c)).map(c=>({...c}));
+  return { colliders, sceneryColliders, shop, spawn, tentPos, cabinetSpot, showSpot, oreSpots, ute, uteColliders, lod, smoke, update, applyModels };
 }
 
 // ---------- geometry helpers ----------
@@ -477,12 +484,14 @@ function prep(geo) {
 }
 
 // Ghost-gum-ish: pale trunk, a couple of branches, clumped olive canopy.
-function gumTree(rand, low) {
+function gumTree(rand, low, region, variant) {
   const parts = [];
   const h = 5 + rand() * 4;
   const r = 0.2 + rand() * 0.12;
   const lean = (rand() - 0.5) * 0.25;
   const bark = new THREE.Color().setRGB(0.85 + rand() * 0.1, 0.82, 0.76, THREE.SRGBColorSpace);
+  if(region==='golden-triangle')bark.setHex(variant%2?0x746251:0x51453a);
+  if(region==='qld-gemfields')bark.setHex(variant%2?0xb2aa92:0x877461);
   const trunk = new THREE.CylinderGeometry(r * 0.55, r, h, 7, 3);
   trunk.translate(0, h / 2, 0);
   trunk.rotateZ(lean);
@@ -520,6 +529,14 @@ function gumTree(rand, low) {
     }
   }
   const geo = mergeGeometries(parts);
+  // Shape changes do not consume placement RNG or change trunk footprints.
+  const p=geo.attributes.position;
+  const crownWidth=region==='qld-gemfields'?1.2:variant===0?1.18:variant===2?.88:1;
+  const heightScale=region==='qld-gemfields'?.78:variant===1?1.12:1;
+  for(let i=0;i<p.count;i++) {
+    const k=Math.min(1,Math.max(0,(p.getY(i)-1)/3));
+    p.setXYZ(i,p.getX(i)*(1+(crownWidth-1)*k),p.getY(i)*heightScale,p.getZ(i)*(1+(crownWidth-1)*k));
+  }
   geo.computeVertexNormals();
   return geo;
 }

@@ -13,6 +13,7 @@ import { buildCatchment } from './world.js';
 import { PanningUI } from '../panningui.js';
 import { IS_TOUCH, TouchControls } from '../touch.js';
 import { Sound } from '../audio.js';
+import { surfaceUnderfoot, environmentWeather } from '../environmentmotion.js';
 import { settings } from '../settings.js';
 import './style.css';
 
@@ -170,10 +171,21 @@ export function startTasmania(region = TASMANIA) {
   window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);view.setAspect(innerWidth/innerHeight);});
   const view=new Viewmodel(null);view.setTool('shovel');view.setAspect(innerWidth/innerHeight);
   loadAssets().then(()=>view.applyGear(assets.models));
+  let stride=0,lastStep=0,movingSpeed=0;
   function move(dt){
     const forward=(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)+(touch?.move.y||0),side=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)+(touch?.move.x||0);
     const length=Math.max(1,Math.hypot(forward,side)),speed=(keys.has('ShiftLeft')||touch?.run?3.3:2.4)*Math.max(.58,1-(carriedWeight(expedition)-4.2)*.028),f=forward/length*speed*dt,s=side/length*speed*dt;
-    return walkStep(model,player,-Math.sin(player.yaw)*f+Math.cos(player.yaw)*s,-Math.cos(player.yaw)*f-Math.sin(player.yaw)*s,world.colliders);
+    const x=player.x,z=player.z;
+    const result=walkStep(model,player,-Math.sin(player.yaw)*f+Math.cos(player.yaw)*s,-Math.cos(player.yaw)*f-Math.sin(player.yaw)*s,world.colliders);
+    movingSpeed=dt>0?Math.hypot(player.x-x,player.z-z)/dt:0;stride+=Math.min(.3,movingSpeed*dt)*1.9;
+    const step=Math.floor(stride/Math.PI);
+    if(step!==lastStep&&playing&&movingSpeed>.1) {
+      const bank=Math.abs(player.x-riverX(player.z))-riverWidth(player.z);
+      const site=model.nearSite(player.x,player.z);
+      const surface=surfaceUnderfoot({depth:model.depth(player.x,player.z),rock:site?.kind==='crevice',gravel:bank<1.5?1:0,organic:profile.nearestTrail(player.x,player.z).distance>1.5?1:0,wet:environmentWeather.wet.value});
+      sound.step(surface);world.effects.step(player.x,player.z,surface);
+    }
+    lastStep=step;return result;
   }
   function frame(now){
     requestAnimationFrame(frame);const dt=Math.min(.05,(now-previous)/1000);previous=now;elapsed+=dt;
@@ -186,13 +198,16 @@ export function startTasmania(region = TASMANIA) {
       if(use&&tool==='pan')openPan();if(use&&tool==='sieve')openSieve();
     }
     const daylight=Math.max(.12,Math.sin((expedition.hour-6)/12*Math.PI));hemi.intensity=.35+daylight*1.35;sun.intensity=daylight*1.6;lamp.intensity=lampOn?5:0;
-    camera.position.set(player.x,model.height(player.x,player.z)+1.65,player.z);camera.rotation.set(player.pitch,player.yaw,0);
+    const bob=playing?Math.abs(Math.sin(stride))*.035*Math.min(1,movingSpeed/3):0;
+    camera.position.set(player.x,model.height(player.x,player.z)+1.65-bob,player.z);camera.rotation.set(player.pitch,player.yaw,0);
     view.setLight(daylight,lampOn,false);
-    view.update(dt,{moving:playing&&(keys.has('KeyW')||keys.has('KeyS')||keys.has('KeyA')||keys.has('KeyD')||!!touch?.move.x||!!touch?.move.y),running:keys.has('ShiftLeft')||!!touch?.run,stridePhase:elapsed*7,landDip:0,lookDX:0,lookDY:0,panProgress:0,panning:false,sieving:false,sieveProgress:0,jig:0,dirtOnBlade:work>0});
+    view.update(dt,{moving:playing&&movingSpeed>.1,running:keys.has('ShiftLeft')||!!touch?.run,stridePhase:stride,landDip:0,lookDX:0,lookDY:0,panProgress:0,panning:false,sieving:false,sieveProgress:0,jig:0,dirtOnBlade:work>0});
     if(work>0&&view.digT<0)view.playDig();
     scene.background.setHex(0x8caaa0).multiplyScalar(.09+daylight*.91);scene.fog.color.copy(scene.background);
     world.update(playing?dt:0,elapsed,expedition,player);sound.setAmbience(dt,playing?Math.max(0,1-Math.abs(player.x-riverX(player.z))/45):0,panUI.isOpen);
-    sound.setEnvironment(dt,{active:playing||panUI.isOpen||!!sieveUI?.isOpen});
+    sound.setEnvironment(dt,{active:playing||panUI.isOpen||!!sieveUI?.isOpen,storm:world.atmosphere.rain});
+    sound.setRain(playing?world.atmosphere.rain:0);
+    scene.background.multiplyScalar(1-world.atmosphere.rain*.25);scene.fog.color.copy(scene.background);
     const site=model.nearSite(player.x,player.z);
     $('tas-place').textContent=atGate()?'Trailhead':Math.abs(player.x-riverX(player.z))>24?(northeast?'Forest track':'Rainforest descent'):model.reach(player.z).name;
     $('tas-time').textContent=`${String(Math.floor(expedition.hour)).padStart(2,'0')}:${String(Math.floor(expedition.hour%1*60)).padStart(2,'0')} · ${expedition.difficulty}`;

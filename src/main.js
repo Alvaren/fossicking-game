@@ -7,6 +7,8 @@ import { Sky } from 'three/addons/objects/Sky.js';
 import { Terrain, PLAY } from './terrain.js';
 import { buildWorld } from './world.js';
 import { dressEnvironment } from './environmentdetail.js';
+import { buildLandscape } from './landscape.js';
+import { SurfaceEffects, surfaceUnderfoot, environmentWeather, updateEnvironmentWeather } from './environmentmotion.js';
 import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
 import { Water } from './water.js';
@@ -322,6 +324,15 @@ const fossils = new FossilBed(scene, terrain, state.seed, new Set(state.slabsSpl
 if (fossils.colliders) world.colliders.push(...fossils.colliders);
 const ute = new Ute(scene, terrain, world.ute, world.colliders, world.uteColliders, sound);
 if (saved.ute) ute.placeAt(saved.ute.x, saved.ute.z, saved.ute.h);
+const landscape = buildLandscape(scene, {
+  region, seed:state.seed, height:(x,z)=>terrain.getHeight(x,z), riverX:z=>creek.cx(z), riverWidth:z=>creek.halfWidth(z),
+  placementHeight:(x,z)=>terrain.getOrigHeight(x,z),obstacles:[...world.sceneryColliders,...boulders.list.map(b=>({x:b.x,z:b.z,r:b.r}))],
+  bank:(x,z)=>{const l=creek.local(x,z,{});return l.d-l.w;}, colliders:world.colliders, low:settings.shadows==='off',
+  blocked:(x,z)=>Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
+    ||field.sites.some(s=>Math.hypot(x-s.x,z-s.z)<5)||finds.items.some(s=>s.id<100000&&Math.hypot(x-s.x,z-s.z)<2)
+    ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
+});
+const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
 let driving = false;
 // The detector is held out in the world, its coil riding just above the ground.
 const worldDet = new WorldDetector(scene);
@@ -1374,7 +1385,7 @@ function updateUnderground(dt) {
   if (hspeed > 0.5) {
     player.stridePhase += dt * hspeed * 1.9;
     const step = Math.floor(player.stridePhase / Math.PI);
-    if (step !== player.lastStep) { player.lastStep = step; sound.step(false); }
+    if (step !== player.lastStep) { player.lastStep = step; sound.step('rock'); }
   }
   const bob = Math.abs(Math.sin(player.stridePhase)) * 0.04 * Math.min(1, hspeed / 3);
   camera.position.set(player.pos.x, player.pos.y + EYE - bob, player.pos.z);
@@ -1709,6 +1720,7 @@ const coil = new THREE.Vector3();
 const flow = { x: 0, z: 0, speed: 0 };
 
 function updatePlayer(dt) {
+  const stepStartX=player.pos.x,stepStartZ=player.pos.z;
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
   right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   wish.set(0, 0, 0);
@@ -1781,12 +1793,17 @@ function updatePlayer(dt) {
   player.landDip *= Math.max(0, 1 - dt * 8);
 
   const hspeed = Math.hypot(player.vel.x, player.vel.z);
-  if (player.grounded && hspeed > 0.5) {
-    player.stridePhase += dt * hspeed * 1.9;
+  const walkSpeed=dt>0?Math.min(hspeed,Math.hypot(player.pos.x-stepStartX,player.pos.z-stepStartZ)/dt):0;
+  if (player.grounded && walkSpeed > 0.5) {
+    player.stridePhase += dt * walkSpeed * 1.9;
     const step = Math.floor(player.stridePhase / Math.PI);
     if (step !== player.lastStep) {
       player.lastStep = step;
-      sound.step(depth > 0.1);
+      const {x,z}=player.pos,index=terrain.index(x,z),h=terrain.getHeight(x,z);
+      const onDeck=player.pos.y>h+.12;
+      const surface=surfaceUnderfoot({depth:onDeck?0:terrain.waterDepth(x,z),rock:onDeck||h-terrain.bedrockAt(x,z)<.08,
+        organic:terrain.surface[index*3],gravel:terrain.surface[index*3+1],wet:environmentWeather.wet.value});
+      sound.step(surface);surfaceEffects.step(x,z,surface);
     }
   }
   const bob = player.grounded ? Math.abs(Math.sin(player.stridePhase)) * 0.05 * Math.min(1, hspeed / 4) : 0;
@@ -2325,7 +2342,8 @@ function frame() {
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
-  world.update(dt, night, 1 + weather.storm * 1.5);
+  world.update(dt, night, 1 + weather.storm * 1.5, player.pos);
+  landscape.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   environmentDetail.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   campShelter.update(night);
   campBuildings.update(dt, state, player.pos, night);
@@ -2342,6 +2360,9 @@ function frame() {
   const under = mine.under(camera.position);
   view.setLight(daynight.daylight * (1 - under), headlamp, uvOn);
   weather.update(dt, camera.position);
+  const rainfall=Math.max(0,(weather.storm-.6)/.4);
+  updateEnvironmentWeather(playing?dt:0,rainfall);
+  surfaceEffects.update(playing?dt:0,player.pos,rainfall,playing&&under<.5&&!driving);
   bedload.update(dt, player.pos, sound);
   if (under > 0) {
     // Underground: the daylight doesn't reach. Just your lamp (and a glimmer down the shaft).
@@ -2414,6 +2435,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = { region, profile,
+  landscape, surfaceEffects, environmentWeather, world,
   regionUI, campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,

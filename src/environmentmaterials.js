@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { environmentWeather } from './environmentmotion.js';
 import { mulberry32 } from './noise.js';
 
 let atlas;
@@ -53,17 +54,21 @@ export function groundMaterial({ forest = false, dampness = 0 } = {}) {
   material.onBeforeCompile = shader => {
     shader.uniforms.groundAtlas = { value: groundAtlas() };
     shader.uniforms.groundWaterLevel = waterLevel;
+    shader.uniforms.groundWet = environmentWeather.wet;
     shader.vertexShader = shader.vertexShader.replace('void main() {', `
 attribute vec3 aSurface;
 varying vec3 vGround;
 varying vec3 vSurface;
+varying float vGroundUp;
 void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
-vGround = position; vSurface = aSurface;`);
+vGround = position; vSurface = aSurface; vGroundUp = normal.y;`);
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
 uniform sampler2D groundAtlas;
 uniform float groundWaterLevel;
+uniform float groundWet;
 varying vec3 vGround;
 varying vec3 vSurface;
+varying float vGroundUp;
 vec3 groundTile(vec2 uv, vec2 tile) {
   vec2 dx = dFdx(uv)*.46875, dy = dFdy(uv)*.46875;
   float footprint = max(length(dx),length(dy))*512.0;
@@ -74,12 +79,14 @@ vec3 groundTile(vec2 uv, vec2 tile) {
 }
 void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   vec2 gp = vGround.xz;
-  float wetness = max(${dampness.toFixed(2)},1.0-smoothstep(0.0,.55,vSurface.z-groundWaterLevel));
+  float wetness = max(groundWet,max(${dampness.toFixed(2)},1.0-smoothstep(0.0,.55,vSurface.z-groundWaterLevel)));
   vec3 soil = groundTile(gp/1.6, vec2(0,1));
   vec3 gravel = groundTile(gp/1.6, vec2(1,1));
   vec3 litter = groundTile(gp/1.6, vec2(0,0));
   vec3 moss = groundTile(gp/1.6, vec2(1,0));
   float ecoPatch = .5+.25*sin(gp.x*.61+sin(gp.y*.37))+.25*sin(gp.y*.83+gp.x*.21);
+  float flatGround = smoothstep(.95,.999,vGroundUp);
+  float puddle = smoothstep(.55,.95,groundWet)*flatGround*smoothstep(.68,.83,ecoPatch)*(1.0-smoothstep(.1,.8,vSurface.x));
   float stone = smoothstep(.1,.85,vSurface.y+ecoPatch*.25);
   float organic = vSurface.x*smoothstep(.2,.8,ecoPatch)*(1.0-stone);
   vec3 groundColour = mix(soil,gravel,stone);
@@ -90,16 +97,18 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   groundColour = mix(vec3(.65),groundColour,detail);
   diffuseColor.rgb *= groundColour*1.38;
   diffuseColor.rgb *= 1.0-wetness*.14;
+  diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.13,.17,.16),puddle*.35);
   float groundHeight = dot(groundColour,vec3(.3,.5,.2))*.013*detail;
 `).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
 roughnessFactor = mix(.96,.68,wetness);
+roughnessFactor = mix(roughnessFactor,.24,puddle);
 `).replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
 vec3 gdx=dFdx(-vViewPosition), gdy=dFdy(-vViewPosition);
 vec3 grx=cross(gdy,normal), gry=cross(normal,gdx);
 float gd=dot(gdx,grx);
-normal=normalize(abs(gd)*normal-sign(gd)*(dFdx(groundHeight)*grx+dFdy(groundHeight)*gry));
+normal=normalize(abs(gd)*normal-sign(gd)*(dFdx(groundHeight)*grx+dFdy(groundHeight)*gry)*(1.0-puddle*.97));
 `);
   };
-  material.customProgramCacheKey = () => `ground-layers-v1:${forest}:${dampness}`;
+  material.customProgramCacheKey = () => `ground-layers-v2:${forest}:${dampness}`;
   return material;
 }

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
+import { environmentWeather } from './environmentmotion.js';
 
 // Broad irregular sprays made from tapered leaves, not spherical canopy solids.
 // Local RNG is independent of all placement, prospecting and save seeds.
@@ -38,7 +39,7 @@ export function vegetationMaterial({ color = 0xffffff, vertexColors = false, for
   const material = new THREE.MeshStandardMaterial({ color, vertexColors, roughness: .92, side: THREE.DoubleSide });
   material.userData.environment = 'vegetation';
   const vertex = shader => {
-    Object.assign(shader.uniforms, { ecoTime: time, ecoWind: strength });
+    Object.assign(shader.uniforms, { ecoTime: time, ecoWind: strength, ecoWet: environmentWeather.wet });
     shader.vertexShader = shader.vertexShader.replace('void main() {', `
 uniform float ecoTime; uniform float ecoWind;
 attribute float aFoliage;
@@ -53,7 +54,8 @@ ecoScale = vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),leng
 #endif
 vFoliage = aFoliage; vBark = position*ecoScale;
 float flex = aFoliage*${grass ? 'clamp(position.y,0.0,1.0)' : '1.0'};
-float breeze = sin(ecoTime*1.3+ecoOrigin.x*.13+ecoOrigin.z*.17)+.35*sin(ecoTime*2.7+position.y*2.0);
+float gust = .65+.55*pow(.5+.5*sin(ecoTime*.65-ecoOrigin.x*.045-ecoOrigin.z*.025),3.0);
+float breeze = gust*(sin(ecoTime*1.3+ecoOrigin.x*.13+ecoOrigin.z*.17)+.35*sin(ecoTime*2.7+position.y*2.0));
 transformed.x += flex*breeze*ecoWind*.045;
 transformed.z += flex*sin(ecoTime*.9+ecoOrigin.z*.11)*ecoWind*.025;
 `);
@@ -61,6 +63,7 @@ transformed.z += flex*sin(ecoTime*.9+ecoOrigin.z*.11)*ecoWind*.025;
   material.onBeforeCompile = shader => {
     vertex(shader);
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
+uniform float ecoWet;
 varying float vFoliage; varying vec3 vBark;
 float barkHash(vec2 p) { return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
 float barkNoise(vec2 p) {
@@ -74,13 +77,16 @@ vec3 barkTint = mix(vec3(.43,.38,.31),vec3(1.0,.96,.83),smoothstep(.28,.65,ecoPa
 barkTint *= .88+.22*grain;
 ${forest ? 'barkTint = mix(barkTint,vec3(.35,.43,.24),smoothstep(.68,.84,ecoPatch)*.45);' : ''}
 diffuseColor.rgb *= mix(barkTint,vec3(.88+.22*ecoPatch),vFoliage);
+diffuseColor.rgb *= 1.0-ecoWet*mix(.23,.07,vFoliage);
+`).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+roughnessFactor = mix(roughnessFactor,.55,ecoWet*(1.0-vFoliage*.4));
 `);
   };
   // The shadow pass uses the same displacement, so leaves do not slide away
   // from their shadows. Wind is small enough to retain collision silhouettes.
   const depthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide });
   depthMaterial.onBeforeCompile = vertex;
-  material.customProgramCacheKey = () => `vegetation-v1:${forest}:${grass}`;
+  material.customProgramCacheKey = () => `vegetation-v2:${forest}:${grass}`;
   depthMaterial.customProgramCacheKey = () => `vegetation-depth-v1:${grass}`;
   return { material, depthMaterial, update(t, wind = 1) { time.value = t; strength.value = wind; } };
 }

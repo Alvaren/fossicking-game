@@ -52,7 +52,7 @@ try {
       if (region === 'new-england') {
         assert.deepEqual(materialInfo.find(m => m.name === 'Geological scenery rocks').kinds, [0, 1, 2, 3, 4, 5]);
         // Leaves animate; movable cobbles have a rounded save format (above).
-        const layout = await page.evaluate(() => ({ instances: fossick.scene.children.filter(o => o.isInstancedMesh && o.geometry.type !== 'PlaneGeometry' && o !== fossick.bedload.mesh).map(o => ({ count: o.count, matrices: Array.from(o.instanceMatrix.array) })), boulders: fossick.boulders.list.map(({ id, kind, x, z, r, yaw, seed, vug }) => ({ id, kind, x, z, r, yaw, seed, vug })), finds: fossick.finds.items.map(o => [o.id, o.x, o.z]) }));
+        const layout = await page.evaluate(() => ({ instances: fossick.scene.children.filter(o => o.isInstancedMesh && !o.userData.environmentOnly && o.geometry.type !== 'PlaneGeometry' && o !== fossick.bedload.mesh).map(o => ({ count: o.count, matrices: Array.from(o.instanceMatrix.array) })), boulders: fossick.boulders.list.map(({ id, kind, x, z, r, yaw, seed, vug }) => ({ id, kind, x, z, r, yaw, seed, vug })), finds: fossick.finds.items.map(o => [o.id, o.x, o.z]) }));
         const layoutHash = createHash('sha256').update(JSON.stringify(layout)).digest('hex');
         if (layoutHash !== '66480178c1dd58ac0820151a23f824f6d69a5ce8e48ac8b46f39180971e9236a') await writeFile('node_modules/.cache/rocks-layout-current.json', JSON.stringify(layout));
         assert.equal(layoutHash, '66480178c1dd58ac0820151a23f824f6d69a5ce8e48ac8b46f39180971e9236a', 'World layout and find identities match deployed 1028e21');
