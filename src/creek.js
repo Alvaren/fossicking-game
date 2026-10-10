@@ -9,6 +9,7 @@ const TAU = Math.PI * 2;
 export class Creek {
   constructor(noise, profile = {}) {
     this.profile = profile;
+    this.dry = !!profile.dry;
     const r = noise.rand;
     this.n2 = noise.noise2;
     this.phase = r() * 100;
@@ -65,7 +66,10 @@ export class Creek {
     return G * (z - 0.65 * lam1 / TAU * Math.cos(TAU * z / lam1 + ph1) - 0.3 * lam2 / TAU * Math.cos(TAU * z / lam2 + ph2));
   }
   // The actual water surface right now, including any flood.
-  surfaceY(z) { return this.waterY(z) + this.level; }
+  // Keep the nominal drainage profile for terrain/deposition, while active
+  // water and wet-material shading stay below the entire diggable dry bed.
+  get waterOffset() { return this.dry ? -100 : this.level; }
+  surfaceY(z) { return this.waterY(z) + this.waterOffset; }
   // 0 = pool (deep, flat, slow), 1 = riffle (steep, shallow, fast).
   riffle(z) {
     return smoothstep(1.15, 1.7, this.slope(z) / this.G);
@@ -111,6 +115,7 @@ export class Creek {
     const L = this.local(x, z, {});
     const q = L.nIn / L.w;
     out.x = 0; out.z = 0; out.speed = 0;
+    if (this.dry) return out;
     const lv = this.level;
     if (q > 1.6 + lv * 5 || q < -1.1 - lv) return out;
     const bed = this.bedRel(q, L.a, this.depth(z), L.w);

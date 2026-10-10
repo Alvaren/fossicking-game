@@ -41,7 +41,7 @@ export class ClaimMap {
       width: PX, height: PX,
       bounds: { x0: -EXTENT, x1: EXTENT, z0: -EXTENT, z1: EXTENT },
       heightAt: (x,z) => this.terrain.getOrigHeight(x,z),
-      waterAt: (x,z) => this.terrain.creek.waterY(z),
+      waterAt: (x,z) => this.terrain.creek.dry ? null : this.terrain.creek.waterY(z),
     });
   }
 

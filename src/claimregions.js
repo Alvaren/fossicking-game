@@ -2,6 +2,15 @@
 // its default generator and its legacy top-level world snapshot.
 export const CLAIM_PROFILES = {
   'new-england': {id:'new-england',name:'New England',title:'New England claim',startTool:'detector'},
+  'wa-goldfields': {
+    id:'wa-goldfields',name:'WA Goldfields',title:'Mulga Flat',salt:0xa17d3,startTool:'detector',
+    description:'Mulga Flat: red dirt, dry washes and quartz-strewn ridges. Search the shallow old diggings, follow scattered gold patches and bring your samples back to camp.',
+    sources:['reef'],hillScale:.5,benchHeight:1.1,soil:[.64,.30,.14],treeCount:0,tufts:900,clay:.04,
+    creek:{dry:true,meander:.3,width:1.1,depth:.38,slope:.004},
+    minerals:{gold:1,sapphire:0,zircon:0,spinel:0,garnet:0,topaz:0,agate:0},
+    how:['Keep your coil low and level. Sweep overlapping lines, then investigate repeatable signals from more than one direction.', 'Look for pale quartz float, stony slopes and old shallow diggings. Gold can occur in scattered patches; ground between them may be barren.', 'After a find, tighten your search around it and recheck the hole and spoil. Iron rubbish and hot rocks can sound promising too.', 'The wash is dry. Build a recovery tub at the Wash Bench to pan your bucket samples and crushed ore.', 'Press M for the topographic map and travel. Your ute and camp are beside the dry wash.'],
+    notes:'Search systematically across shallow stony ground. Quartz float can lead towards a reef, but quartz alone does not guarantee gold. Mark your finds on the map, overlap your sweeps and follow a patch until the signals thin out. Old diggings can hold missed gold as well as iron rubbish. Take small samples back to the camp recovery tub; there is no standing water in this wash.',
+  },
   'golden-triangle': {
     id:'golden-triangle',name:'Golden Triangle',title:'Ironbark Gully',salt:0x671a9,startTool:'detector',
     description:'Ironbark Gully: quartz-strewn slopes, old shallow diggings and an alluvial gold lead. Sweep for nuggets, follow the reef float and pan small test loads.',

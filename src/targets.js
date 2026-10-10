@@ -48,7 +48,7 @@ export class Targets {
         id: i, kind: 'gold', name: 'gold', grams, x, z,
         // Creek gold sits down on bedrock; eluvial gold on the slopes below the
         // reef is still in the soil, within reach of a detector.
-        y: (() => { const u = rand(); return deposits.zones(x, z).hill > 0.4 ? g.orig - (0.03 + u * 0.35) : Math.max(g.bedrock + u * 0.15, g.orig - 1.4); })(),
+        y: (() => { const u = rand(); return terrain.creek.dry ? Math.max(g.bedrock + .02, g.orig - (.04 + u * .36)) : deposits.zones(x, z).hill > 0.4 ? g.orig - (0.03 + u * 0.35) : Math.max(g.bedrock + u * 0.15, g.orig - 1.4); })(),
         range: 0.65 + 0.33 * Math.cbrt(grams),
       });
       i++;

@@ -9,6 +9,7 @@ const profiles = {
   'new-england': { leaf:0x718154, bark:0xb7ae96, rock:'granite', names:['Split gum bend','Granite shoulder'], forms:['roots','tor'], z:[28,-56] },
   'golden-triangle': { leaf:0x6c7148, bark:0x534236, rock:'ironstone', names:['Broken ironbark','Old timber stack'], forms:['snag','timber'], z:[32,-42] },
   'qld-gemfields': { leaf:0x8b9367, bark:0x8a7760, rock:'basalt', names:['Dry wash sentinel','Basalt steps'], forms:['snag','steps'], z:[-32,53] },
+  'wa-goldfields': { leaf:0x92916a, bark:0x9c8466, rock:'ironstone', names:['Red rock shoulder','Old timber stack'], forms:['tor','timber'], z:[-42,40], scrub:true },
   'tasmania-west': { leaf:0x4b7254, bark:0x706b50, rock:'slate', names:['Root buttress','Fallen forest giant'], forms:['roots','fallen'], z:[32,-67], forest:true },
   'ne-tasmania': { leaf:0x668365, bark:0x978f72, rock:'granite', names:['Granite crown','Split forest gum'], forms:['tor','roots'], z:[28,-58], forest:true },
 };
@@ -111,11 +112,11 @@ export function buildLandscape(scene,{region,seed,height,placementHeight=height,
   }
   // Saplings and shrubs add age/shape variety without advancing any world RNG.
   const leaf=vegetationMaterial({color:profile.leaf,forest:profile.forest}),bark=vegetationMaterial({color:profile.bark,forest:profile.forest});
-  const entries=[],limit=low?100:200;
+  const entries=[],limit=profile.scrub?(low?150:260):low?100:200;
   for(let i=0;i<limit*20&&entries.length<limit;i++) {
     const x=(rand()-.5)*(profile.forest?180:216),z=(rand()-.5)*(profile.forest?280:216);
     if(!safe(x,z,1)||landmarks.some(l=>Math.hypot(x-l.x,z-l.z)<5))continue;
-    entries.push({x,z,s:.45+rand()*.85,tall:entries.length%3===0,r:rand()*6.28});
+    entries.push({x,z,s:.45+rand()*.85,tall:!profile.scrub&&entries.length%3===0,r:rand()*6.28});
   }
   const stemGeo=markFoliage(new THREE.CylinderGeometry(.012,.045,1,5).translate(0,.5,0),0);
   const leaves=leafSpray(seed+71,low?48:90,profile.forest);

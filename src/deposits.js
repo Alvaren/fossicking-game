@@ -1,5 +1,6 @@
 import { smoothstep } from './noise.js';
 import { difficulty } from './difficulty.js';
+import { goldfieldWeight } from './goldfields.js';
 
 // Where the gold, gems and agates are, following placer rules:
 //  - Supply: minerals weather out of a source rock and are carried downstream.
@@ -94,7 +95,7 @@ export class Deposits {
       // Game-scale clay fraction: weathered topsoil/bench wash binds more than
       // clean channel gravel. The value travels with the sample into the pan.
       clay: Math.min(0.5, (layer === 'topsoil' ? 0.28 : layer === 'bedrock' ? 0.14 : 0.04) + bench * 0.18 + flat * 0.08 + (this.terrain.profile?.clay || 0)),
-      gold: (0.03 * gold * gk) * (minerals.gold ?? 1), // grams of fine gold per load
+      gold: (0.03 * gold * gk) * (minerals.gold ?? 1) * (this.terrain.goldPatches ? goldfieldWeight(this.terrain.goldPatches, x, z) * 3 : 1), // grams of fine gold per load
       sapphire: (0.16 * gem * mk) * (minerals.sapphire ?? 1),
       zircon: (0.28 * gem * mk) * (minerals.zircon ?? 1),
       spinel: (0.55 * gem * mk) * (minerals.spinel ?? 1),
@@ -108,6 +109,7 @@ export class Deposits {
 
   // Likelihood of a detectable nugget sitting near bedrock here.
   nuggetWeight(x, z) {
+    if (this.terrain.goldPatches) return goldfieldWeight(this.terrain.goldPatches, x, z);
     const g = this.terrain.geologyAt(x, z);
     const s = this.sample(x, z, g.bedrock + 0.04, true);
     const cover = g.orig - g.bedrock;

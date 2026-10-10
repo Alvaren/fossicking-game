@@ -138,6 +138,8 @@ export class Weather {
         }
         break;
     }
+    // Dry claims share rain, wind and lighting, without generating a river.
+    if (this.creek.dry) { level = 0; this.flood = 0; }
     this.creek.level = level;
 
     // Thunder: flash first, rumble a beat later, more often at the height of it.

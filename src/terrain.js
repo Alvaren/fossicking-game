@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
 import { groundMaterial } from './environmentmaterials.js';
+import { goldfieldPatches } from './goldfields.js';
 
 // Diggable heightfield terrain built around the creek, with a simple geology:
 // topsoil over gravel "wash" over bedrock. Heights live in a flat grid so the
@@ -79,7 +80,8 @@ export class Terrain {
       if (!this.sources.opal) { this.heaps = []; this.shafts = []; }
     }
     this.workings = [];
-    if (profile.id === 'golden-triangle') {
+    if (profile.id === 'wa-goldfields') this.goldPatches = goldfieldPatches(seed, this.sources.reef, this.creek);
+    if (profile.id === 'golden-triangle' || profile.id === 'wa-goldfields') {
       const reef = this.sources.reef, r = mulberry32(seed * 73 + 17);
       for (let i = 0; i < 7; i++) this.workings.push({
         x: reef.ex + reef.side * (4 + r() * 8), z: reef.z - 12 + i * 4.4,
@@ -222,6 +224,10 @@ export class Terrain {
     // Mullock heaps are loose spoil sitting on the old ground.
     let thick = inCh * chT + (1 - inCh) * offT + this.heapHeight(x, z);
     let topsoil = (1 - inCh) * (b * 0.5 + hill * 0.15 + flat * 0.4);
+    if (this.creek.dry) {
+      thick = Math.min(thick, .18 + nz * .5);
+      topsoil = Math.min(topsoil, .04 + nz * .04);
+    }
     const gf = (1 - inCh) * this.graniteFactor(x, z);
     if (gf > 0.01) {
       // Bare pavements, with pockets of rotten granite soil between them.
@@ -312,6 +318,7 @@ export class Terrain {
 
   // Water depth at a point, or -1 if not in the creek.
   waterDepth(x, z) {
+    if (this.creek.dry) return -1;
     const L = this.creek.local(x, z, this.tmpL);
     if (L.d > L.w + 4 + this.creek.level * 8) return -1;
     return this.creek.surfaceY(z) - this.getHeight(x, z);
@@ -470,7 +477,7 @@ export class Terrain {
         const x = this.pos[i * 3], z = this.pos[i * 3 + 2];
         const local = this.creek.local(x, z, this.tmpL), bank = local.d - local.w;
         const dug = this.orig[i] - h[i];
-        this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug));
+        this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
         this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
       }
@@ -489,7 +496,7 @@ export class Terrain {
     const C = this.creek;
     const L = C.local(x, z, this.tmpL);
     const q = L.nIn / L.w;
-    const wy = C.waterY(z);
+    const wy = C.dry ? C.surfaceY(z) : C.waterY(z);
     const S = this.sources;
 
     const t0 = n2(x * 0.03, z * 0.03) * 0.5 + 0.5;
@@ -508,13 +515,14 @@ export class Terrain {
     mix(smoothstep(0.02, 0.2, this.heapHeight(x, z)), 0.9, 0.87, 0.8);
 
     const grass = smoothstep(0.05, 0.55, n2(x * 0.05 + 100, z * 0.05)) * smoothstep(L.w + 2, L.w + 8, L.d) * 0.6;
-    mix(grass, 0.62, 0.56, 0.32);
+    mix(grass * (C.dry ? .12 : 1), 0.62, 0.56, 0.32);
     // The shale bed: dark grey ground, littered with weathered chips.
     if (S.fossil) mix(0.95 * smoothstep(15, 7, Math.sqrt(dist2(S.fossil))) * (0.85 + 0.15 * n2(x * 0.7, z * 0.7)), 0.34, 0.335, 0.33);
 
     // Creek gravels: pale and dry on the bars, dark where wet.
     const inCh = q >= 0 ? smoothstep(2.4, 1.4, q) : smoothstep(-1.3, -0.95, q);
-    mix(inCh, 0.60, 0.56, 0.49);
+    if (C.dry) mix(inCh, .67, .44, .29);
+    else mix(inCh, 0.60, 0.56, 0.49);
     mix(smoothstep(wy + 0.12, wy - 0.05, h), 0.34, 0.31, 0.26);
 
     // Steep cut banks show raw soil and rock.

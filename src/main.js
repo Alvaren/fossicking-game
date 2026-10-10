@@ -282,7 +282,7 @@ const environmentDetail = dressEnvironment(scene, {
     || field.sites.some(s => Math.hypot(x-s.x,z-s.z)<3)
     || finds.items.some(s => Math.hypot(x-s.x,z-s.z)<.8)
     || (terrain.sources.fossil && Math.hypot(x-terrain.sources.fossil.x,z-terrain.sources.fossil.z)<8),
-  dry: region === 'qld-gemfields', low: settings.shadows === 'off',
+  dry: creek.dry || region === 'qld-gemfields', low: settings.shadows === 'off',
 });
 // Cobbles and small boulders a flood can roll. They join the creek's boulders
 // (and their slack water) only now, after the claim's been laid out.
@@ -557,6 +557,11 @@ let sluiceWashed = false;
 const weather = new Weather({
   renderer, scene, sky, sun, hemi, creek, water, sound,
   onEvent: (phase, w) => {
+    if (creek.dry) {
+      if (phase === 'building') hud.toast('Storm clouds over the ridge. Rain is on the way.');
+      if (phase === 'calm') hud.toast('The weather is clearing.');
+      return;
+    }
     if (phase === 'building') {
       hud.toast("Storm's brewing upstream. The creek'll come up soon.");
       if (sluice.placed) hud.toast('Get your sluice out of the water!', 'junk');
@@ -947,7 +952,7 @@ function enterUte() {
   ute.enter();
   mouseHeld = false;
   hud.prompt('');
-  hint('drive', "W/S throttle and reverse, A/D steer, Space brake, mouse to look about, E to hop out. Mind the creek.", 600);
+  hint('drive', `W/S throttle and reverse, A/D steer, Space brake, mouse to look about, E to hop out. Mind ${creek.dry ? 'the rocks and old diggings' : 'the creek'}.`, 600);
   sound.click();
 }
 
@@ -978,7 +983,7 @@ function interact() {
   if (works.nearMill(player.pos)) { useMill(); return; }
   if (works.nearDolly(player.pos) && (state.ore.length || works.dolly.crush > 0)) {
     works.startDolly();
-    hint('dolly', 'Drive the dolly down when the sapling has sprung it right up. Pound a lump to grit, then pan it at the creek.', 600);
+    hint('dolly', `Drive the dolly down when the sapling has sprung it right up. Pound a lump to grit, then pan it ${creek.dry ? 'in your camp recovery tub' : 'at the creek'}.`, 600);
     return;
   }
   if (works.nearFire(player.pos) && useFire()) return;
@@ -1233,7 +1238,7 @@ function dig(hit) {
   } else {
     view.dirtOnBlade = false;
     if (elapsed - lastFullWarn > 6) {
-      hud.toast("Bucket's chockers. Take it down to the creek to pan or sieve.");
+      hud.toast(creek.dry ? "Bucket's chockers. Take your samples to the camp recovery tub." : "Bucket's chockers. Take it down to the creek to pan or sieve.");
       lastFullWarn = elapsed;
     }
   }
@@ -1269,7 +1274,7 @@ function finishLoad(method, opts = {}) {
     addFind(pk, method === 'pan' ? 'Picked out of the pan' : 'Picked off the sieve');
     logGold(pk.grams, false);
   }
-  const from = method === 'pan' ? (sample.crushed ? 'Panned from crushed reef ore' : sample.cons ? 'Panned from sluice concentrates' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
+  const from = method === 'pan' ? (sample.crushed ? 'Panned from crushed reef ore' : sample.cons ? 'Panned from sluice concentrates' : creek.dry ? 'Panned from Mulga Flat wash' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
   if (sample.crushed && gold > 0.001) {
     award('reefgold');
     if (!sample.roasted) hint('roastmore', 'Raw ore holds onto its gold. Roast it on the campfire before you crush it and the pan gets a lot more.', 300);
@@ -1298,7 +1303,7 @@ function finishLoad(method, opts = {}) {
   else view.showSieveResult(res.finds, opts.strat ?? 1);
 
   if (!parts.length) hud.toast(method === 'pan' ? 'Not a colour. Nothing but black sand. Bugger.' : 'Just gravel in the sieve.', 'junk');
-  if (method === 'pan' && colours) hint('colours', 'Count the colours as you pan your way up the creek. Where they stop, the gold\'s source is close. Your tests go on the map (M).', 600);
+  if (method === 'pan' && colours) hint('colours', creek.dry ? 'Compare colours from small samples across the patch. Your tests go on the map (M).' : 'Count the colours as you pan your way up the creek. Where they stop, the gold\'s source is close. Your tests go on the map (M).', 600);
   else if (parts.length) hud.toast(cap(parts.join(', ')) + '.', 'gold');
   for (const f of notable) hud.toast(cap(f.label) + '!', 'gold');
   if (res.picker || notable.length) sound.gold(); else if (parts.length) sound.coin();
@@ -1500,7 +1505,7 @@ function useMill() {
   if (m.out.length) {
     let n = 0;
     while (m.out.length && state.bucket.length < cap) { state.bucket.push(m.out.shift()); n++; }
-    hud.toast(n ? `Shovelled ${n} load${n === 1 ? '' : 's'} of crushed ore into your bucket. Pan it at the creek.` : "Bucket's full. Go and pan what you've got.");
+    hud.toast(n ? `Shovelled ${n} load${n === 1 ? '' : 's'} of crushed ore into your bucket. Pan it ${creek.dry ? 'in your camp recovery tub' : 'at the creek'}.` : "Bucket's full. Go and pan what you've got.");
     sound.click();
     writeSave();
     return;
@@ -1534,7 +1539,7 @@ function updateDollyPot() {
     state.bucket.push(crushedLoad(state.ore.shift()));
     d.crush = 0;
     sound.coin();
-    hud.toast(state.ore.length ? `Crushed to grit. ${state.ore.length} lump${state.ore.length === 1 ? '' : 's'} to go.` : 'Crushed to grit. That is the lot: pan it at the creek.');
+    hud.toast(state.ore.length ? `Crushed to grit. ${state.ore.length} lump${state.ore.length === 1 ? '' : 's'} to go.` : `Crushed to grit. That is the lot: pan it ${creek.dry ? 'in your camp recovery tub' : 'at the creek'}.`);
     writeSave();
   }
   return `Dolly pot · drive it down when it springs right up${lump && !lump.roasted ? ' (raw ore: roast it first and it crushes faster)' : ''} · E to stop`;
@@ -1973,10 +1978,11 @@ function updateTools(dt, motion) {
   if (state.tool === 'pan') {
     panProgress = 0;
     const available = state.panSession || state.bucket.length;
-    prompt = !available ? 'Dig some wash or clean up the sluice first'
+    prompt = creek.dry ? 'Use the recovery tub at the Wash Bench to work your pan'
+      : !available ? 'Dig some wash or clean up the sluice first'
       : motion.depth <= 0.15 && !state.panSession ? 'Wade into the creek to load your pan'
         : state.panSession ? 'Click / Use: return to your partly worked pan' : 'Click / Use: load and work your gold pan';
-    if (playing && (clicked || mouseHeld) && available && (motion.depth > 0.15 || state.panSession)) {
+    if (playing && !creek.dry && (clicked || mouseHeld) && available && (motion.depth > 0.15 || state.panSession)) {
       mouseHeld = false; clicked = false; keys.clear();
       if (touch) { touch.use = false; touch.move.x = 0; touch.move.y = 0; }
       openModal(panUI);
@@ -1986,7 +1992,7 @@ function updateTools(dt, motion) {
   let showJig = false;
   if (state.tool === 'sieve') {
     if (motion.depth <= 0.15) {
-      prompt = state.bucket.length ? 'Wade into the creek to sieve' : 'Dig some wash with the shovel first';
+      prompt = creek.dry ? 'This wash is dry. Pan your samples in the camp recovery tub' : state.bucket.length ? 'Wade into the creek to sieve' : 'Dig some wash with the shovel first';
       resetJig();
     } else if (!state.bucket.length) {
       prompt = 'Bucket empty. Dig some wash first';
@@ -2043,7 +2049,9 @@ function updateTools(dt, motion) {
       const hit = terrain.raycast(camera.position, camDir, 7);
       const spot = hit && sluice.evaluate(hit.x, hit.z);
       const hb = sluice.kind === 'highbanker';
-      if (spot) {
+      if (creek.dry) {
+        prompt = 'There is no water here to run a sluice or highbanker';
+      } else if (spot) {
         sluice.showGhost(spot);
         prompt = hb
           ? (spot.ok === 'bad' ? `Can't set up here: ${spot.why}.` : `Bank, ${spot.why}. Click to set up the highbanker here.`)
@@ -2114,7 +2122,7 @@ function updateTools(dt, motion) {
 
   // Creek noise: louder near the water, loudest beside a riffle.
   const L = creek.local(player.pos.x, player.pos.z, {});
-  const near2 = smoothstep(L.w + 14, L.w, L.d) * (0.45 + 0.8 * creek.riffle(player.pos.z));
+  const near2 = creek.dry ? 0 : smoothstep(L.w + 14, L.w, L.d) * (0.45 + 0.8 * creek.riffle(player.pos.z));
   sound.setAmbience(dt, playing ? Math.min(1.6, near2 * (1 + weather.flood * 1.5)) : 0, panning || sieving);
 }
 
@@ -2177,7 +2185,7 @@ for (const el of document.querySelectorAll('.slot[data-tool]')) {
 // Tracing the lead: good colours downstream of where the reef gully comes in,
 // next to nothing above it, and you've found the reef up the gully.
 function checkLead() {
-  if (state.leadTraced) return;
+  if (state.leadTraced || creek.dry) return;
   const reef = terrain.sources.reef;
   if (!reef) return;
   const inCreek = (t) => { const L = creek.local(t.x, t.z, {}); return L.d < L.w + 2.5; };
@@ -2220,7 +2228,8 @@ function checkDiscoveries(dt) {
     if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'mine' ? 12 : key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
       state.discovered[key] = true;
       if (key === 'reef') setTimeout(checkLead, 100);
-      hud.toast(`${DISCOVERY[key]} (Marked on your map, M.)`, 'gold');
+      const description = creek.dry && key === 'reef' ? 'A white quartz reef. Follow its loose float downslope and search for repeatable signals.' : DISCOVERY[key];
+      hud.toast(`${description} (Marked on your map, M.)`, 'gold');
       sound.click();
       writeSave();
     }
@@ -2251,7 +2260,7 @@ function placeName() {
     const d = Math.hypot(p.x - src.x, p.z - src.z);
     if (d < bd && state.discovered[key] && PLACE_NAMES[key]) { bd = d; best = PLACE_NAMES[key].label; }
   }
-  return best || (Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? 'The creek' : 'The claim');
+  return best || (Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? (creek.dry ? 'Dry wash' : 'The creek') : creek.dry ? profile.title : 'The claim');
 }
 
 const photo = new PhotoMode({
@@ -2303,7 +2312,7 @@ function frame() {
     sound.setDetector(false, 0, null);
     sound.setSluice(0);
     sound.setPump?.(0);
-    sound.setAmbience(dt, 0.25, panUI.isOpen && !!panUI.session && panUI.session.lastAction !== 'rest' && !panUI.session.finished);
+    sound.setAmbience(dt, creek.dry ? 0 : 0.25, panUI.isOpen && !!panUI.session && panUI.session.lastAction !== 'rest' && !panUI.session.finished);
     requestAnimationFrame(frame);
     return;
   }

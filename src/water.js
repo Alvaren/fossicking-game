@@ -200,6 +200,7 @@ export class Water {
     scene.add(this.mesh);
 
     this.buildLeaves(scene);
+    this.mesh.visible = this.leaves.visible = !this.creek.dry;
   }
 
   buildLeaves(scene) {
@@ -243,8 +244,9 @@ export class Water {
   update(dt, time, player, flood = 0) {
     this.uniforms.time.value = time;
     this.uniforms.level.value = this.creek.level;
-    rockWaterLevel.value = this.creek.level;
-    this.terrain.material.userData.waterLevel.value = this.creek.level;
+    rockWaterLevel.value = this.creek.waterOffset;
+    this.terrain.material.userData.waterLevel.value = this.creek.waterOffset;
+    if (this.creek.dry) return;
     this.uniforms.flood.value = flood;
     this.mesh.position.y = this.creek.level;
     const C = this.creek;
