@@ -14,7 +14,7 @@ Build underwater searching, crevice work, disturbed visibility and direct gold r
 - [x] Record each recovered crevice in the field journal and the existing expedition gold balance exactly once. Leaving the pool restores the bank position; menus and browser focus loss release held inputs.
 - [x] Verify material/gold conservation, migration, barren cracks, depleted pockets, save/reload and one-time travel banking with focused tests.
 - [x] Check real desktop mouse lock, look, wheel, keys and menus; emulated touch search/use/release/layout; visuals at Low/High; existing panning/sieving and all-location controls; production build and offline use.
-- [ ] Inspect final diff, integrate safely, push main and verify GitHub Pages plus the live feature.
+- [x] Inspect final diff, integrate safely, push main and verify GitHub Pages plus the live feature.
 
 ## Model and technique
 
@@ -44,3 +44,9 @@ Checks performed on isolated saves, never the player's storage:
 - High graphics inspection covered entry from route banks into all three pools. Actual firm fanning removed exposed gold. A dense-silt visual fixture obscured the bed; resting cleared it. Low desktop and both phone-layout screenshots, High pool screenshots and dense-silt presentation were inspected. Seed 12345 work views rendered roughly 21–23k triangles in 46–48 calls; these are draw counts, not physical-device frame rates.
 
 There are no new breath, swimming or survival mechanics. Gold is enlarged for legibility. Each view represents a finite authored bedrock patch, with local settling rather than whole-river sediment transport. Phone checks are browser emulation; physical-phone performance and immersion audio have not been measured.
+
+## Published handoff
+
+Implementation commit `f75019a9abb76485fa83ceb41bbdcd48b5818e33` was integrated into clean, inactive main by fast-forward and pushed under the standing publishing instruction. [GitHub Pages run 38059608472](https://github.com/Alvaren/fossicking-game/actions/runs/38059608472) succeeded. The public game then passed the desktop and landscape-touch sniping checks, including recovery, reopening, reload and return banking, in fresh browser contexts. No outstanding implementation work remains in this slice. This final documentation update does not change the tested game assets.
+
+Touched paths: `README.md`, `docs/SNIPING.md`, `docs/TASMANIA-PLAN.md`, `src/sniping.js`, `src/regions.js`, `src/regionui.js`, `src/tasmania/main.js`, `src/tasmania/snipingview.js`, `src/tasmania/sniping.css`, `src/touch.js`, and the three `tests/sniping.*` files. No dependencies, home gameplay files, terrain generation, Blender sources or exported assets changed. Claude's clean `claude/touch-toolbar` checkout was preserved. Codex preview remains on 5191.
