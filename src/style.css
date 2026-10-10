@@ -288,6 +288,9 @@ button.seg.on { color: #2a1a0c; background: var(--gold); border-color: var(--gol
 #touch.kneeling .stand-only { display: none; }
 #rotate-hint { display: none; }
 body.touch #keyhint, body.touch #controls, body.touch #crosshair + .x { display: none !important; }
+/* The look-drag layer covers the screen, so the HUD sits above it for its tappable tool bars
+   (everything else in the HUD lets touches through). */
+body.touch #hud { z-index: 2; }
 body.touch #toolbar, body.touch #kneelbar {
   pointer-events: auto; bottom: 8px; max-width: calc(100vw - 20px); overflow-x: auto; padding-bottom: 2px;
 }
