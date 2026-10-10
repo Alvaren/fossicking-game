@@ -112,4 +112,14 @@ Touched paths: `index.html`, `src/main.js`, `src/boot.js`, `src/regions.js`, `sr
 
 ## Active follow-up: locations and map travel
 
-Read [LOCATION-PLAN.md](LOCATION-PLAN.md). The user requested a few more locations, map-based travel with a $0 fee, and always-on original-style topography, and rejected the added Tasmania world guidance. Codex is working on codex/location-travel from 6ca7a41. Shared map/topography/travel work is implemented and checked; the specific 2–3 new locations are awaiting the user’s selection. Do not silently choose a region from visualization selection state or mark planned blips playable. No other agent was launched, and no integration or publishing has occurred for this still-in-progress slice.
+Read [LOCATION-PLAN.md](LOCATION-PLAN.md). The user requested a few more locations, map-based travel with a $0 fee, and always-on original-style topography, and rejected the added Tasmania world guidance. Codex is working on codex/location-travel from 6ca7a41. Shared map/topography/travel work is implemented and checked. The user confirmed the documented second Tasmanian location: northeast sapphire/zircon country. That slice is now implemented; see the current checklist and verification in LOCATION-PLAN.md. Do not silently choose a region from visualization selection state or mark planned blips playable. No other agent was launched, and no integration or publishing has occurred for this still-in-progress slice.
+
+## Northeast Tasmania handoff (10 October 2026)
+
+Branch codex/location-travel, base 6ca7a41; shared map/travel fixes were committed at 8365d90 before this location build. The user corrected the pending selection: TWO Tasmanian destinations were planned. Northeast Tasmania is the authorized next location; other country-map blips remain Planned. No other agent was launched or messaged.
+
+The northeast terrain/assay profile is in src/tasmania/northeast.js and northeast-content.js. The existing expedition renderer/controller now accepts either regional profile. The wet sieve reuses the original Viewmodel animation and shared src/sieverecovery.js formula; session/input code is in src/tasmania/sieving.js and sieveui.js. Region transitions bank exactly once, charge one fee, and preserve both locations' unfinished pans/sieves and home state. Recovered gems receive collection IDs, provenance and specimen grading; banking updates the mineral log.
+
+Touched paths: README.md; docs/LOCATION-PLAN.md, TASMANIA-PLAN.md and this guide; src/boot.js, regions.js, regionui.js, regionmap.js, minerals.js, sieverecovery.js; src/tasmania/main.js, model.js, world.js, style.css, northeast.js, northeast-content.js, sieving.js and sieveui.js; tests/northeast.test.js, northeast.game.mjs and tasmania.offline.mjs. Earlier commits in the same branch also contain src/topography.js, map.js, australia-outline.js, region.css, main.js and their map tests. No dependency, Blender or home terrain changes.
+
+Validation and integration outcome are recorded in LOCATION-PLAN.md. The local preview stays on 5191. Do not infer authorization for more regions or a new push/deployment.

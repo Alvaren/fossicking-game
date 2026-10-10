@@ -1,3 +1,4 @@
+import { sieveRecovery } from './sieverecovery.js';
 import { assayGold } from './panning.js';
 import { makeThundereggMesh, thundereggRadius } from './geodes.js';
 import { stoneMaterial, roundedHabit } from './materials.js';
@@ -147,15 +148,7 @@ function recovery(method, gear, gem, opts, cons) {
     if (gem.ct < 0.6) return gear.classifier ? 0.6 : 0.5;
     return gear.classifier ? 0.9 : 0.3;
   }
-  // Gem sieve: jig under water, flip, pick the centre. Agates are big and
-  // light, so you spot them in the pile whatever your technique.
-  if (gem.type === 'agate') return 0.92;
-  // How well the heavies settled decides how many end up in the middle of the
-  // pile where you can see them. Over-jigging washes tiny stones through.
-  const settled = 0.3 + 0.7 * (opts.strat ?? 1);
-  let base = gem.ct < 0.15 ? (gear.nested ? 0.9 : 0.6) : (gear.nested ? 0.97 : 0.88);
-  if (gem.ct < 0.3) base *= Math.max(0.25, 1 - (opts.lost ?? 0) * 0.35);
-  return base * settled;
+  return sieveRecovery(gem,gear.nested,opts.strat,opts.lost);
 }
 
 // Assay a panning parcel once, before splitting it between pans. The assay

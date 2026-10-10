@@ -1,3 +1,4 @@
+import { grade } from '../specimens.js';
 import { makeNoise, mulberry32 } from '../noise.js';
 import { assayGold } from '../panning.js';
 import { sampleCapacity } from '../regions.js';
@@ -21,10 +22,10 @@ export const ROUTE = [TRAILHEAD,{x:-73,z:85,y:27},{x:-50,z:69,y:22},{x:-65,z:48,
   {x:riverX(-47),z:-47,y:waterY(-47)-.18},{x:riverX(-47)-8,z:-47,y:waterY(-47)+.75},
   ...[-62,-80,-99].map(z=>({x:riverX(z)-9,z,y:waterY(z)+.9})),
 ];
-export function nearestTrail(x,z) {
+export function nearestTrail(x,z,route = ROUTE) {
   let best={distance:Infinity}, heightSum=0, weightSum=0;
-  for(let i=0;i<ROUTE.length-1;i++) {
-    const a=ROUTE[i],b=ROUTE[i+1],dx=b.x-a.x,dz=b.z-a.z;
+  for(let i=0;i<route.length-1;i++) {
+    const a=route[i],b=route[i+1],dx=b.x-a.x,dz=b.z-a.z;
     const t=clamp(((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz));
     const px=a.x+dx*t,pz=a.z+dz*t,distance=Math.hypot(x-px,z-pz);
     const height=a.y+(b.y-a.y)*t, weight=1/((distance*distance+.25)**2);
@@ -94,8 +95,13 @@ export function recordRecovery(expedition,sample,result) {
   if(!result.sessionId||expedition.collectedPans.includes(result.sessionId))return false;
   expedition.collectedPans.push(result.sessionId);
   expedition.gold+=result.gold+(result.picker||0);
-  expedition.gems.push(...(result.finds||[]));
-  expedition.tests.push({siteId:sample.siteId,reach:sample.reach,x:sample.x,z:sample.z,gold:result.gold+(result.picker||0),id:result.sessionId});
+  const recovered=(result.finds||[]).map((find,i)=>{
+    const gem=structuredClone(find);gem.uid=`${sample.sourceRegion||'tasmania-west'}:${result.sessionId}:${i}`;
+    const seed=[...gem.uid].reduce((hash,c)=>(hash*31+c.charCodeAt(0))>>>0,0);
+    grade(gem,`${result.method==='sieve'?'Wet-sieved':'Panned'} in ${sample.sourceRegion==='ne-tasmania'?'northeast':'western'} Tasmania`,mulberry32(seed));return gem;
+  });
+  expedition.gems.push(...recovered);
+  expedition.tests.push({siteId:sample.siteId,reach:sample.reach,x:sample.x,z:sample.z,gold:result.gold+(result.picker||0),finds:structuredClone(result.finds||[]),method:result.method||'pan',id:result.sessionId});
   return true;
 }
 // One movement rule is shared by keyboard/touch play and route verification.

@@ -17,6 +17,12 @@ try{
   assert.equal(await page.locator('#tas-heading').textContent(),'Fern River catchment');await page.locator('#tas-resume').click();
   await page.keyboard.down('KeyW');await page.waitForFunction(()=>fossickTas.player.z<111.5);await page.keyboard.up('KeyW');
   await page.locator('#tas-journal').click();await page.locator('#tas-return').click();await page.waitForFunction(()=>window.fossick);
+  assert.equal(await page.evaluate(()=>fossick.state.gold),.1);
+  await page.locator('#travel-btn').click();await page.locator('.region-location-list [data-location="ne-tasmania"]').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossickTas?.region==='ne-tasmania');
+  assert.equal(await page.locator('#tas-heading').textContent(),'Tin Fern River catchment');await page.locator('#tas-resume').click();
+  await page.evaluate(()=>{const f=fossickTas,s=f.model.sites[1];Object.assign(f.player,{x:s.x-1,z:s.z});f.collectSample();f.expedition.difficulty='easy';});
+  await page.locator('#tas-sieve').click();await page.locator('#sieve-load').click();await page.waitForFunction(()=>fossickTas.expedition.sieveSession.flipped);
+  await page.locator('#sieve-collect').click();await page.locator('#sieve-close').click();await page.locator('#tas-journal').click();await page.locator('#tas-locations').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossick);
   assert.equal(await page.evaluate(()=>fossick.state.gold),.1);assert.deepEqual(errors,[]);
-  console.log('Production offline departure, rendered expedition movement and return to cached home passed.');
+  console.log('Production offline western movement, northeast rendered Easy sieve/collection, and return to cached home passed.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}
