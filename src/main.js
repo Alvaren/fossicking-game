@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { RegionUI } from './regionui.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { Terrain, PLAY } from './terrain.js';
 import { buildWorld } from './world.js';
@@ -72,6 +73,7 @@ function writeSave() {
   const digs = terrain.digSnapshot();
   const data = {
     version: 3,
+    activeRegion: 'new-england', expeditions: saved.expeditions || {},
     savedAt: Date.now(),
     seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
     collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
@@ -365,7 +367,7 @@ let elapsed = 0;
 let signal = { signal: 0, kind: null };
 
 const map = new ClaimMap(state, terrain, { onClose: () => lock() });
-const modalOpen = () => panUI.isOpen || campUI.isOpen || lapidaryUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
+const modalOpen = () => regionUI.isOpen || panUI.isOpen || campUI.isOpen || lapidaryUI.isOpen || shop.isOpen || notes.isOpen || inventory.isOpen || map.isOpen || gemshow.isOpen;
 
 function toggleHeadlamp() {
   headlamp = !headlamp;
@@ -427,7 +429,7 @@ const shop = new Shop(state, {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
-        camp: state.camp,
+        camp: state.camp, activeRegion: 'new-england', expeditions: saved.expeditions || {},
         milestones: state.milestones, day: state.day, cutting: state.cutting, difficulty: state.difficulty,
       }));
     } catch { /* ignore */ }
@@ -463,6 +465,28 @@ const campUI = new CampUI(state, {
   },
   onPan: context => { mouseHeld = false; keys.clear(); if (touch) touch.use = false; panUI.open(context); },
 });
+let travelFromCamp = false;
+const regionUI = new RegionUI({
+  onSave: () => writeSave(),
+  onClose: () => {
+    if (travelFromCamp) campUI.open();
+    else { overlay.classList.remove('hidden'); hud.show(false); }
+  },
+});
+regionUI.onDepart = () => { resetting = true; };
+function openTravel(fromCamp = false) {
+  travelFromCamp = fromCamp; mouseHeld = false; keys.clear(); if (touch) touch.use = false;
+  if (fromCamp) campUI.hide();
+  overlay.classList.add('hidden'); openModal(regionUI);
+}
+const travelButton = document.createElement('button');
+travelButton.id = 'travel-btn'; travelButton.textContent = 'Expeditions · Tasmania';
+travelButton.onclick = () => openTravel();
+document.querySelector('.pause-row').prepend(travelButton);
+const campTravel = document.createElement('button');
+campTravel.id = 'camp-travel'; campTravel.textContent = 'Plan an expedition · Western Tasmania';
+campTravel.onclick = () => openTravel(true);
+campUI.root.querySelector('.camp-shelter').after(campTravel);
 const lapidaryUI = new LapidaryUI(state, { onSave: () => writeSave(), onClose: () => campUI.open() });
 const gemshow = new GemShow(state, {
   sound,
@@ -708,6 +732,7 @@ function updateSaveStatus() {
 }
 
 document.addEventListener('keydown', (e) => {
+  if (regionUI.isOpen) return;
   if (e.code === 'F5' || (e.code === 'KeyS' && (e.ctrlKey || e.metaKey))) {
     e.preventDefault(); // keep the browser from reloading or saving the page
     saveNow();
@@ -2391,7 +2416,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = {
-  campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
+  regionUI, campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,
   setMouse: (v) => { mouseHeld = v; if (v) clicked = true; },

@@ -65,3 +65,7 @@ At camp, find the signed **Wash Bench**. Practise on known parcels, compare pans
 Build your home on the claim: **swag → canvas tent ($250) → caravan ($700) → prospector’s shed ($1,200)**. Interact with your shelter or the Wash Bench to upgrade or sleep until morning. Tent and shed lighting and expanded sample storage make camp more useful; older saves keep their existing tent.
 
 Fit out camp with a **water tank, generator and lights**, build a **lapidary shed** to shape and polish your own finds, exhibit kept specimens in a **display room**, and bring a **kelpie** along for company. Water, fuel and partly worked stones persist in your save.
+
+Explore **Western Tasmania → Fern River catchment** from **Expeditions · Tasmania** on the title/pause menu, or **Plan an expedition** at camp. Choose your small pack, walk down to Fern Bend, sample the three river reaches and use the same panning technique controls. An overnight kit enables a portable shelter; a classifier changes your wash; carried material slows walking. No ute enters the catchment.
+
+The expedition keeps its own worked pockets, samples, pan and position. Return at the trailhead to bank recovered finds without replacing your home camp or unfinished home pan. The journal contains the route, observations, pan results and a labelled recovery option. This is a fictional western gold catchment; northeast sapphire rivers and underwater sniping remain future work. The durable build checklist, verification and limits are in [the Tasmania execution plan](docs/TASMANIA-PLAN.md).

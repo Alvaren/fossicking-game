@@ -1,6 +1,6 @@
 # Tasmania expedition — execution plan
 
-Status: IN PROGRESS. Owner: Codex. Branch: `codex/tasmania-expedition`. Base: `7ad5b15`.
+Status: IMPLEMENTED AND VERIFIED. Owner: Codex. Branch: `codex/tasmania-expedition`. Base: `7ad5b15`.
 
 ## User decision and scope
 
@@ -10,16 +10,16 @@ Build one fictional western Tasmanian catchment, not a replica of a creator's un
 
 ## Acceptance checklist
 
-- [ ] Save-safe region entry and return: existing saves default to New England; Tasmania keeps its own terrain/sample depletion, visited reaches, player position, pack and unfinished pan; rewards transfer exactly once when returning home.
-- [ ] Accessible departure/loadout panel from the home title/pause menu and camp. Clearly distinguish the active western Tasmania expedition from the future northeast sapphire region.
-- [ ] Pack selection with visible weight and capacity, using small hand equipment. Classifier and camping equipment change available actions; carried wash affects walking pace. No ute, workshop buildings or heavy processing equipment inside the catchment.
-- [ ] A deterministic catchment with steep valley sides, a walkable descent, three named reaches, persistent bedrock pockets, shallow crossings, pools and a cascade. The walkable route must be tested, not inferred from a screenshot.
-- [ ] Distinct rainforest presentation: layered trees, tree ferns, ground ferns, mossy rocks, fallen logs, cool light, mist and river ambience. Local fallback geometry and low graphics support; no dependency or asset download required.
-- [ ] Real sampling and recovery: limited material at persistent sites, varied grades/material, barren parcels possible, stored assays never reroll on reload. Existing mouse/touch panning and Easy demonstrations produce the actual expedition recovery.
-- [ ] Route/field notebook shows trailhead, camp, reaches, observations and recorded pan results. Easy adds clear route/target assistance; Realistic relies on visible country and observations.
-- [ ] A packable remote camp supports an overnight stop. Return requires reaching the trailhead; a clearly labelled recovery action can return a stuck player to the trailhead without a find or currency bonus.
-- [ ] Sniping foundations: stable pocket IDs, bedrock trap geometry, persistent remaining material/gold, and water clarity disturbed by sampling. Underwater interaction, mask/snorkel tools and sniping recovery remain explicitly deferred.
-- [ ] Tests cover save round trips, exact-once rewards, depletion, loadout limits, deterministic terrain and route grades. Browser checks cover desktop and touch departure, navigation, sampling, panning, save/reload, camp and return. Production build passes; inspect actual screenshots and report limitations.
+- [x] Save-safe region entry and return: existing saves default to New England; Tasmania keeps its own terrain/sample depletion, visited reaches, player position, pack and unfinished pan; rewards transfer exactly once when returning home.
+- [x] Accessible departure/loadout panel from the home title/pause menu and camp. Clearly distinguish the active western Tasmania expedition from the future northeast sapphire region.
+- [x] Pack selection with visible weight and capacity, using small hand equipment. Classifier and camping equipment change available actions; carried wash affects walking pace. No ute, workshop buildings or heavy processing equipment inside the catchment.
+- [x] A deterministic catchment with steep valley sides, a walkable descent, three named reaches, persistent bedrock pockets, shallow crossings, pools and a cascade. The walkable route must be tested, not inferred from a screenshot.
+- [x] Distinct rainforest presentation: layered trees, tree ferns, ground ferns, mossy rocks, fallen logs, cool light, mist and river ambience. Local fallback geometry and low graphics support; no dependency or asset download required.
+- [x] Real sampling and recovery: limited material at persistent sites, varied grades/material, barren parcels possible, stored assays never reroll on reload. Existing mouse/touch panning and Easy demonstrations produce the actual expedition recovery.
+- [x] Route/field notebook shows trailhead, camp, reaches, observations and recorded pan results. Easy adds clear route/target assistance; Realistic relies on visible country and observations.
+- [x] A packable remote camp supports an overnight stop. Return requires reaching the trailhead; a clearly labelled recovery action can return a stuck player to the trailhead without a find or currency bonus.
+- [x] Sniping foundations: stable pocket IDs, bedrock trap geometry, persistent remaining material/gold, and water clarity disturbed by sampling. Underwater interaction, mask/snorkel tools and sniping recovery remain explicitly deferred.
+- [x] Tests cover save round trips, exact-once rewards, depletion, loadout limits, deterministic terrain and route grades. Browser checks cover desktop and touch departure, navigation, sampling, panning, save/reload, camp and return. Production build passes; inspect actual screenshots and report limitations.
 
 ## Implementation approach
 
@@ -45,4 +45,24 @@ Keep hand-worked pockets finite across visits. Panning moves assayed gold out of
 ## Execution log / resume here
 
 - Plan created before gameplay edits. Main and Codex start clean at `7ad5b15`; Claude clean at `ea39cfa`. Existing preview belongs to Codex on 5191. No additional agent is authorized or launched.
-- Next: implement region persistence and the deterministic catchment, then connect the playable scene.
+- Implemented the complete acceptance slice. Fixed a terrain entrance cut and a nearest-segment height discontinuity found during visual and actual-scene route checks. Added a regression for small walking steps at bends.
+- Passed 42 logic tests and the production build. Desktop Easy and portrait emulated-touch Realistic round trips passed: departure/loadout, real movement and sampling input, pan input, partial-pan reload, accelerated completion, exactly-once recovery, remote camp/sleep, walk-out, preservation of the home camp/ground/pan and repeated travel.
+- Traversed the generated route in both directions with actual scene colliders. Existing desktop/touch camp regression tests passed. Normal pointer lock, Escape and resume worked outside test mode; portrait/landscape, journal, river, trailhead, camp and cascade screenshots were inspected. No game page errors occurred in the successful checks; existing three.js warnings remain.
+- Production offline departure, rendered movement and return passed after warming the cache online. No physical-phone performance claim is made.
+- Ready for the authorized local integration after a clean-worktree/port check. Publishing remains a separate user action. The next gameplay slice is sniping; do not implement it merely because foundations exist.
+
+## Implemented structure and checks
+
+- `src/boot.js` selects the saved region. `src/regions.js` handles immutable departure, expedition saves and atomic return transactions. The home serializer and new-claim action retain nested expeditions.
+- `src/regionui.js` is the departure and kit panel. `src/tasmania/model.js` owns terrain, the walking rule, finite deterministic samples and recovery IDs; `world.js` builds instanced vegetation, river, pockets and shelter; `main.js` owns expedition input, journal, shared panning and saves.
+- Pocket depletion is saved by stable site ID and sample count. A parcel's assay is fixed from its site seed and extraction index, then stored in `panContents`. Split pans conserve it. Separate submerged sniping pockets retain explicit remaining-gold/material records; bank sampling cannot consume them.
+- Returning transfers bottled gold and any kept finds and clears the expedition haul in the same storage write. Gold also contributes to the existing lifetime recovery log. Camp gear is packed on return. Unworked expedition wash and a partly worked pan stay reserved in Tasmania; home samples/pan are untouched.
+- Tests use fresh browser contexts, never the player's storage. Run `npm test`, `npm run build`, `node tests/tasmania.game.mjs`, `node tests/tasmania.offline.mjs`, and the existing `node tests/camp.game.mjs`. Browser scripts accept `PLAYWRIGHT_MODULE` when Playwright is installed outside the project. The offline check serves `dist/` on a disposable loopback port and closes it after testing.
+
+## Known limits / next slice
+
+This is a first playable catchment using procedural fallback geometry. Vegetation is stylised; there are no new Blender models or claimed reproductions of a real river. Terrain and current/depth functions are game approximations. There is no flood simulation, swimming, hypothermia or hunger system in this region. River crossings block deep water rather than simulating a dangerous swimming attempt. Pack capacity is a gear/loadout choice plus parcel slots; additional wash increases weight and slows travel rather than being rejected at the departure weight limit.
+
+The journal supplies a route map in every difficulty. Easy additionally draws a route line and sample rings in the world; Realistic removes those world aids and requires manual panning. Sniping has saved submerged pockets and bedrock geometry only: mask/snorkel handling, underwater visibility interaction, searching and gold extraction are deferred. Hand sampling temporarily clouds the water but does not yet model suspended sediment transport through the full catchment.
+
+Browser verification covers emulated phones, not a physical-phone performance/play session. Route traversal is accelerated through the exact movement rule with the actual scene's tree/rock colliders, in both directions; the initial descent is also driven with real keyboard and CDP touch-stick input. Panning tests use actual touch strokes and Easy demonstration, then accelerate completion through the existing simulation. The production offline test warms the cache online before disconnecting, matching the existing offline support contract.

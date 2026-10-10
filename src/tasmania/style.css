@@ -1,0 +1,19 @@
+body.tasmania {background:#142821;color:#e8eddf;}
+.tasmania #tas-hud {position:fixed;inset:0;pointer-events:none;z-index:4;font:14px/1.4 system-ui;}
+.tas-top {position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;gap:14px;align-items:start;}
+.tas-readout {padding:10px 14px;border-radius:8px;background:#11271fe8;color:#e3eadc;}.tas-readout b {color:#edda9d;}.tas-title {letter-spacing:.12em;font-size:10px;color:#b8caba;}.tas-info {text-align:right;}.tas-cross {position:absolute;left:50%;top:50%;width:4px;height:4px;border:1px solid #e5efdf;border-radius:50%;}
+#tas-prompt {position:absolute;bottom:106px;left:50%;transform:translateX(-50%);max-width:min(88vw,640px);text-align:center;padding:8px 12px;background:#13291fe5;border-radius:6px;}
+#tas-message {position:absolute;top:95px;left:50%;transform:translateX(-50%);max-width:min(90vw,620px);padding:10px 15px;text-align:center;background:#20372ded;border-radius:6px;color:#f0dba3;}
+.tas-actions {position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto;}
+.tasmania button {font:inherit;min-height:44px;border:1px solid #657b64;color:#e8ecdd;background:#294336;padding:10px 15px;border-radius:7px;cursor:pointer;}
+.tasmania button.active,.tasmania button.primary {color:#1b3027;background:#e2ce92;border-color:#e2ce92;}.tasmania button:disabled {opacity:.45;cursor:default;}.tasmania button:focus-visible {outline:2px solid #f1dc97;outline-offset:3px;}
+#tas-work {position:absolute;bottom:92px;left:50%;transform:translateX(-50%);height:5px;width:170px;accent-color:#e2ce92;}
+#tas-modal {position:fixed;inset:0;z-index:20;background:#0d211cf0;overflow:auto;overscroll-behavior:contain;padding:25px;}
+#tas-modal.hidden {display:none;}.tas-panel {max-width:920px;margin:auto;}.tas-panel header {display:flex;justify-content:space-between;gap:16px;align-items:center;}.tas-panel h1 {font:34px Georgia;color:#e8d29a;margin:8px 0;}.tas-panel h2 {font:23px Georgia;color:#d0ddc6;}.tas-panel p {line-height:1.6;}.tas-layout {display:grid;grid-template-columns:1.1fr 1fr;gap:24px;margin-top:18px;}.tas-map {width:100%;display:block;background:#223b31;border-radius:8px;}.tas-summary {padding:12px 0;border-bottom:1px solid #405e4b;line-height:1.6;}.tas-muted {color:#b1c0ad;font-size:13px;}.tas-row {display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;}.tas-modal-open #touch,.tas-modal-open #tas-hud {display:none!important;}.tasmania.panning-open #tas-hud {display:none;}.tasmania #touch .t-photo,.tasmania #touch [data-act="photo"],.tasmania #touch [data-act="kneel"],.tasmania #touch [data-act="flip"],.tasmania #t-jump {display:none!important;}
+.tasmania.touch .tas-actions {bottom:14px;}.tasmania.touch #tas-prompt {bottom:78px;max-width:60vw;}.tasmania.touch .tas-top {top:8px;left:8px;right:8px;}.tasmania.touch #touch .t-top {top:74px;}.tasmania.touch #tas-message {top:126px;}.tasmania.touch .tas-actions button {padding:9px 11px;}.tasmania.touch #tas-work {bottom:66px;}
+@media(max-width:650px){#tas-modal{padding:14px;}.tas-panel h1{font-size:27px;}.tas-layout{grid-template-columns:1fr;}.tas-readout{padding:7px 9px;font-size:12px;}.tas-actions{gap:4px;}.tas-actions button{padding:8px 9px;}.tas-info{max-width:45%;}}
+.tas-actions {width:max-content;max-width:calc(100vw - 16px);}
+.tas-actions button {white-space:nowrap;}
+.tasmania.touch #tas-prompt {bottom:210px;max-width:88vw;width:max-content;}
+.tasmania.touch #tas-work {bottom:199px;}
+.tasmania #touch [data-act="interact"] {display:none;}

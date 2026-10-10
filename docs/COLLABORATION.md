@@ -101,3 +101,11 @@ The user authorized local integration. Check current worktree status and active 
 ## Active build: Tasmania expedition
 
 Read [TASMANIA-PLAN.md](TASMANIA-PLAN.md) before continuing region work. The user has now authorized that specific first catchment and asked for the plan to be executed. Its checklist, execution log and deferred scope supersede earlier proposed ordering. Do not substitute the Golden Triangle or the northeast sapphire fields for the western Tasmania foot-access expedition.
+
+## Tasmania expedition handoff (10 October 2026)
+
+Codex wrote and committed [TASMANIA-PLAN.md](TASMANIA-PLAN.md) before implementing the user-selected western Tasmania slice on `codex/tasmania-expedition`, based on `7ad5b15`. The plan is the durable scope/completion record; read its checklist and limits before further region work. Northeast sapphire country and underwater sniping remain separate later work.
+
+The catchment is isolated from the home generator. Home camp, excavations, samples and pans survive travel; persistent field parcels and collected pan IDs prevent re-assaying or duplicate rewards. Home departure is available from pause/title and camp. The new boot dispatcher loads the Tasmania scene or the existing home scene from the saved active region. No dependencies, asset generators or Blender outputs changed. Codex preview remains on 5191.
+
+Touched paths: `index.html`, `src/main.js`, `src/boot.js`, `src/regions.js`, `src/regionui.js`, `src/region.css`, `src/tasmania/{model,world,main}.js`, `src/tasmania/style.css`, `tests/regions.test.js`, `tests/tasmania.test.js`, `tests/tasmania.game.mjs`, `tests/tasmania.offline.mjs`, `README.md`, this guide and `docs/TASMANIA-PLAN.md`. Existing home camp regression checks are included in validation. Main and Claude were clean at the pre-integration fetch, remote main remained `7ad5b15`, and only Codex's 5191 preview was listening. No other agent was launched or messaged. No push/deployment is part of this build.
