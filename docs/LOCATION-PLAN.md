@@ -55,3 +55,5 @@ Validation: 51 logic tests pass; production build passes. Northeast desktop and 
 Commands: npm test; npm run build; node tests/northeast.game.mjs; node tests/tasmania.game.mjs; node tests/maptravel.game.mjs; node tests/tasmania.offline.mjs. Browser scripts accept PLAYWRIGHT_MODULE for the external Playwright installation. They use disposable saves and accelerate route/completion work through the actual simulation after checking real inputs.
 
 Delivery: Codex worktree on codex/location-travel, based on 6ca7a41, preview 5191. Local main integration follows the previously authorized workflow after clean-status/fetch/port checks. No push or deployment is part of this slice. Main and Claude were clean before integration; only Codex's 5191 was listening.
+
+Integration outcome: local main was fast-forwarded to implementation commit `2367bfa` after a successful fetch, clean main/Claude checks and confirmation that no player/Claude/LAN preview was listening. Codex and main contain the same completed location build. Claude remains unchanged at `ea39cfa`; remote main remains `7ad5b15`. Nothing was pushed or deployed.
