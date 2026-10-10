@@ -21,11 +21,13 @@ export class Deposits {
   }
 
   supply(z, src, L, bg) {
+    if (!src) return 0;
     const up = src.entryZ - z; // how far downstream of the source gully we are
     return bg + (up > 0 ? Math.exp(-up / L) : Math.exp(up / 6));
   }
 
   eluvial(x, z, src, R) {
+    if (!src) return 0;
     return Math.exp(-((x - src.ex) ** 2 + (z - src.ez) ** 2) / (2 * R * R));
   }
 
@@ -86,18 +88,19 @@ export class Deposits {
       * (1 + agateLag) * (layer === 'topsoil' ? (hill > 0.5 ? 0.8 : 0.3) : 1);
 
     const gk = base ? 1 : difficulty.gold, mk = base ? 1 : difficulty.gems;
+    const minerals = this.terrain.profile?.minerals || {};
     return {
       layer,
       // Game-scale clay fraction: weathered topsoil/bench wash binds more than
       // clean channel gravel. The value travels with the sample into the pan.
-      clay: Math.min(0.5, (layer === 'topsoil' ? 0.28 : layer === 'bedrock' ? 0.14 : 0.04) + bench * 0.18 + flat * 0.08),
-      gold: 0.03 * gold * gk, // grams of fine gold per load
-      sapphire: 0.16 * gem * mk,
-      zircon: 0.28 * gem * mk,
-      spinel: 0.55 * gem * mk,
-      garnet: 0.35 * garnet * mk,
-      topaz: 0.03 * topaz * mk,
-      agate: 0.35 * agate,
+      clay: Math.min(0.5, (layer === 'topsoil' ? 0.28 : layer === 'bedrock' ? 0.14 : 0.04) + bench * 0.18 + flat * 0.08 + (this.terrain.profile?.clay || 0)),
+      gold: (0.03 * gold * gk) * (minerals.gold ?? 1), // grams of fine gold per load
+      sapphire: (0.16 * gem * mk) * (minerals.sapphire ?? 1),
+      zircon: (0.28 * gem * mk) * (minerals.zircon ?? 1),
+      spinel: (0.55 * gem * mk) * (minerals.spinel ?? 1),
+      garnet: (0.35 * garnet * mk) * (minerals.garnet ?? 1),
+      topaz: (0.03 * topaz * mk) * (minerals.topaz ?? 1),
+      agate: (0.35 * agate) * (minerals.agate ?? 1),
       blackSand: heavyZone * vGem * lean + hill * 0.3,
       sizeBias: 1 + 0.8 * eGem,
     };

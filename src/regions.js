@@ -1,5 +1,6 @@
 // Region transitions keep the complete home world intact. All functions are
 // pure with respect to browser storage; callers save a successful transaction.
+import { CLAIM_REGIONS } from './claimregions.js';
 export const TASMANIA = 'tasmania-west';
 export const NORTHEAST = 'ne-tasmania';
 export const EXPEDITIONS = [TASMANIA,NORTHEAST];
@@ -31,7 +32,7 @@ export function makeExpedition(home, loadout, region = TASMANIA) {
 // including direct expedition-to-expedition travel, prevents partial transfers.
 export function travelTo(home, destination, loadout = [], fee = TRAVEL_FEE) {
   const current=home?.activeRegion||'new-england';
-  if(!home||current===destination||(!EXPEDITIONS.includes(destination)&&destination!=='new-england'))return null;
+  if(!home||current===destination||(!EXPEDITIONS.includes(destination)&&!CLAIM_REGIONS.includes(destination)))return null;
   let expedition;
   if(EXPEDITIONS.includes(destination)) {
     const fresh=makeExpedition(home,loadout,destination),prior=home.expeditions?.[destination];

@@ -163,7 +163,7 @@ export class Boulders {
       }
     };
     if (S.granite) place(S.granite, 12, 24, 'granite', 0.45);
-    if (S.reef) place(S.reef, 5, 12, 'quartz', 0.55);
+    if (S.reef) place(S.reef, 5, 12, 'quartz', terrain.profile?.sources ? 0 : 0.55);
     for (const b of this.list) {
       this.build(b);
       colliders.push({ x: b.x, z: b.z, r: b.r * 0.95 });

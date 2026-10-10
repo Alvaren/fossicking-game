@@ -1,4 +1,5 @@
 import { createPointerLock, bindToolWheel, TOOL_ORDER as TOOLS, toolForKey } from './controls.js';
+import { readClaim, saveClaim, claimProfile } from './claimregions.js';
 import { TRAVEL_FEE } from './regions.js';
 import * as THREE from 'three';
 import { RegionUI } from './regionui.js';
@@ -39,7 +40,7 @@ import { loadAssets, assets } from './assets.js';
 import { CrystalField, makeCrystalMesh, crystalToGem, opalLight } from './crystals.js';
 import { Excavation, KNEEL_TOOLS, materialName } from './excavation.js';
 import { smoothstep } from './noise.js';
-import { SAVE_KEY, readSave, storeSave, packArray, unpackArray } from './save.js';
+import { readSave, storeSave, packArray, unpackArray } from './save.js';
 import { settings, gemsRealistic } from './settings.js';
 import { makeEnvironment, goldMaterial, nuggetGeometry } from './materials.js';
 import { SettingsPanel } from './settingsui.js';
@@ -75,7 +76,7 @@ function writeSave() {
   const digs = terrain.digSnapshot();
   const data = {
     version: 3,
-    activeRegion: 'new-england', expeditions: saved.expeditions || {},
+    activeRegion: region,
     savedAt: Date.now(),
     seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
     collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
@@ -119,7 +120,7 @@ function writeSave() {
     discovered: state.discovered,
     nextStorm: weather.phase === 'calm' ? weather.next : 90,
   };
-  const ok = storeSave(data);
+  const ok = storeSave(saveClaim(readSave() || existingSave || data, data, region));
   if (ok) lastSaved = performance.now();
   return ok;
 }
@@ -148,7 +149,9 @@ function restoreWorld() {
 }
 
 const existingSave = readSave();
-const saved = existingSave || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 };
+const saved = readClaim(existingSave || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 });
+const region = saved.activeRegion || 'new-england';
+const profile = claimProfile(region);
 setDifficulty(saved.difficulty || 'easy'); // before the claim is built: it sets the grades and the detector
 const state = {
   seed: saved.seed,
@@ -173,9 +176,10 @@ const state = {
   discovered: saved.discovered || {},
   log: saved.log || {},
   bucket: [],
-  camp: restoreCamp(saved.camp, { legacyShelter: !!existingSave }),
+  camp: restoreCamp(saved.camp, { legacyShelter: !!existingSave && (region === 'new-england' || !!existingSave.claims?.[region]) }),
   panSession: saved.panSession?.version === 1 ? saved.panSession : null,
-  tool: 'detector',
+  tool: profile.startTool,
+  locationNotes: profile.notes,
   remaining: 0,
 };
 
@@ -246,7 +250,7 @@ let headlamp = !!saved.headlamp;
 
 // ---------- world ----------
 
-const terrain = new Terrain(state.seed);
+const terrain = new Terrain(state.seed, profile);
 scene.add(terrain.mesh);
 scene.add(terrain.buildFar());
 const creek = terrain.creek;
@@ -429,11 +433,11 @@ const shop = new Shop(state, {
     resetting = true;
     state.seed = Math.floor(Math.random() * 1e9);
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({
+      storeSave(saveClaim(readSave() || existingSave || {}, {
         seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
-        camp: state.camp, activeRegion: 'new-england', expeditions: saved.expeditions || {},
+        camp: state.camp, activeRegion: region,
         milestones: state.milestones, day: state.day, cutting: state.cutting, difficulty: state.difficulty,
-      }));
+      }, region));
     } catch { /* ignore */ }
     location.reload();
   },
@@ -490,7 +494,7 @@ travelButton.id = 'travel-btn'; travelButton.textContent = 'Expeditions · Tasma
 travelButton.onclick = () => openTravel();
 document.querySelector('.pause-row').prepend(travelButton);
 const mapTravel = document.createElement('button');
-mapTravel.id = 'map-travel'; mapTravel.textContent = `Locations & travel · ${TRAVEL_FEE}`;
+mapTravel.id = 'map-travel'; mapTravel.textContent = `Locations & travel · $${TRAVEL_FEE}`;
 mapTravel.onclick = () => openTravel(false,true);
 document.querySelector('#map .shop-footer').prepend(mapTravel);
 const campTravel = document.createElement('button');
@@ -537,7 +541,7 @@ const weather = new Weather({
     if (phase === 'peak') hint('bedload', 'Listen: that knocking is the bed moving. Stones roll where the flood drags hardest and stop where it slackens.', 1200);
     if (phase === 'peak') floodReworks(w.peak);
     if (phase === 'calm') {
-      hud.toast("Flood's gone down. Fresh gravel on the bars: best time to go looking for agates.", 'gold');
+      hud.toast(profile.sources ? "Flood's gone down. Check the fresh gravel bars and test the newly exposed wash." : "Flood's gone down. Fresh gravel on the bars: best time to go looking for agates.", 'gold');
       if (sluiceWashed) hud.toast('Your sluice washed up on a bar downstream. Go and get it (E).');
     }
   },
@@ -567,6 +571,12 @@ function floodReworks(peak) {
 
 const overlay = document.getElementById('overlay');
 const playBtn = document.getElementById('play');
+if (region !== 'new-england') {
+  document.querySelector('#overlay h1').textContent = profile.title;
+  document.querySelector('#overlay .tag').textContent = profile.description;
+  document.querySelector('#overlay .how').innerHTML = profile.how.map(line => `<li>${line}</li>`).join('');
+  document.querySelector('#map .inv-head h2').textContent = `${profile.title} · ${profile.name}`;
+}
 
 // ?test skips pointer lock so the game can be driven from automation/devtools.
 const TEST = new URLSearchParams(location.search).has('test');
@@ -2139,6 +2149,7 @@ for (const el of document.querySelectorAll('.slot[data-tool]')) {
 function checkLead() {
   if (state.leadTraced) return;
   const reef = terrain.sources.reef;
+  if (!reef) return;
   const inCreek = (t) => { const L = creek.local(t.x, t.z, {}); return L.d < L.w + 2.5; };
   const below = state.panTests.filter((t) => inCreek(t) && t.z < reef.entryZ && t.z > reef.entryZ - 90 && t.c >= 3);
   const above = state.panTests.filter((t) => inCreek(t) && t.z > reef.entryZ + 10 && t.c <= 1);
@@ -2386,7 +2397,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 }
 
 // Handy for poking at the game from the console.
-window.fossick = {
+window.fossick = { region, profile,
   regionUI, campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,

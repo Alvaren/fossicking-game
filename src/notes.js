@@ -163,6 +163,6 @@ export class Notes {
     const done = MILESTONES.filter((m) => ms[m.key]).length;
     const ticks = MILESTONES.map((m) => `<li class="${ms[m.key] ? 'done' : ''}"><b>${m.title}</b> <span>${m.desc}</span></li>`).join('');
     const milestones = `<section><h4>Milestones (${done} of ${MILESTONES.length})</h4><ul class="milestones">${ticks}</ul></section>`;
-    $('notes-body').innerHTML = milestones + finds + RULES.map(([h, p]) => `<section><h4>${h}</h4><p>${p}</p></section>`).join('');
+    $('notes-body').innerHTML = (this.state.locationNotes ? `<section><h4>Working this ground</h4><p>${this.state.locationNotes}</p></section>` : '') + milestones + finds + RULES.map(([h, p]) => `<section><h4>${h}</h4><p>${p}</p></section>`).join('');
   }
 }

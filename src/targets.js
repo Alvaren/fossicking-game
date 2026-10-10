@@ -37,7 +37,7 @@ export class Targets {
     for (let k = 0; k < 2500; k++) { const [x, z] = rnd(); ws.push(deposits.nuggetWeight(x, z)); }
     ws.sort((a, b) => a - b);
     const ref = ws[Math.floor(ws.length * 0.97)] || 1;
-    for (let i = 0, tries = 0; i < NUGGETS && tries < 200000; tries++) {
+    for (let i = 0, tries = 0; i < (terrain.sources.reef ? NUGGETS : 0) && tries < 200000; tries++) {
       const [x, z] = rnd();
       if (nearCamp(x, z)) continue;
       if (rand() > deposits.nuggetWeight(x, z) / ref) continue;
@@ -71,7 +71,7 @@ export class Targets {
     // shallow rubble around the outcrop. The gold is spread through the stone,
     // so they answer the detector more softly than a solid nugget of the same weight.
     const reef = terrain.sources.reef;
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; reef && i < 9; i++) {
       const a = rand() * Math.PI * 2, d = 2 + Math.sqrt(rand()) * 13;
       const x = reef.x + Math.cos(a) * d, z = reef.z + Math.sin(a) * d;
       const goldG = Math.round((2 + Math.pow(rand(), 2.2) * 40) * 100) / 100;

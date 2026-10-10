@@ -300,10 +300,17 @@ body.touch #stats { left: 10px; top: 10px; gap: 6px; }
 body.touch .stat { min-width: 0; padding: 4px 8px; }
 body.touch .stat span:last-child { font-size: 14px; }
 body.touch #meter, body.touch #jig { bottom: 200px; width: min(300px, 60vw); }
+body.touch #prompt, body.touch #toasts { width: max-content; max-width: calc(100vw - 28px); white-space: normal; text-align: center; }
+body.touch:has(#touch.hidden) #rotate-hint { display: none; }
+@media (max-width: 560px) {
+  body.touch #compass { top: 62px; right: 10px; padding: 4px 8px; font-size: 12px; }
+  body.touch .t-top { top: 98px; left: 10px; flex-wrap: wrap; gap: 4px; }
+  body.touch #touch .t-top button { min-width: 0; padding: 10px 8px; font-size: 12px; }
+}
 @media (orientation: portrait) {
   body.touch #rotate-hint {
-    display: block; position: fixed; left: 50%; top: 40%; transform: translateX(-50%); z-index: 3;
-    background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 10px 16px; font-weight: 600;
+    display: block; position: fixed; left: 50%; top: 146px; transform: translateX(-50%); z-index: 3; pointer-events: none;
+    background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 4px 8px; font-size: 11px; width: max-content; max-width: calc(100vw - 28px);
   }
 }
 

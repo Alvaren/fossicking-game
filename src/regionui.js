@@ -1,3 +1,4 @@
+import { CLAIM_PROFILES } from './claimregions.js';
 import { readSave, storeSave } from './save.js';
 import { travelTo, EXPEDITIONS, NORTHEAST, PACK_ITEMS, packWeight, PACK_LIMIT_KG, TASMANIA, TRAVEL_FEE } from './regions.js';
 import { RegionMap, LOCATIONS } from './regionmap.js';
@@ -18,7 +19,7 @@ export class RegionUI {
   refresh(){
     const save=readSave(),current=save?.activeRegion||'new-england',l=LOCATIONS.find(l=>l.id===this.destination),kg=packWeight(this.selection),old=save?.expeditions?.[this.destination];
     this.map.select(l.id,current);this.$('region-name').textContent=l.name;
-    this.$('region-description').textContent=!l.available?'Travel to this destination is not yet available.':l.id===NORTHEAST?'Tin Fern River: sapphire, zircon and spinel wash. Walk in from the roadside track, classify gravel and wet-sieve the heavies.':l.id===TASMANIA?'Fern River catchment: steep forest tracks, gravel bars and bedrock cracks. Carry your pan down to the river and compare small samples.':'Return to your home claim and camp with your finds. Unfinished river samples will be waiting at their location when you visit again.';
+    this.$('region-description').textContent=!l.available?'Travel to this destination is not yet available.':CLAIM_PROFILES[l.id]?.description?CLAIM_PROFILES[l.id].description:l.id===NORTHEAST?'Tin Fern River: sapphire, zircon and spinel wash. Walk in from the roadside track, classify gravel and wet-sieve the heavies.':l.id===TASMANIA?'Fern River catchment: steep forest tracks, gravel bars and bedrock cracks. Carry your pan down to the river and compare small samples.':'Return to your home claim and camp with your finds. Unfinished river samples will be waiting at their location when you visit again.';
     this.$('region-loadout').classList.toggle('hidden',!EXPEDITIONS.includes(l.id)||current===l.id);
     this.$('region-weight').textContent=`Pack ${kg.toFixed(1)} / ${PACK_LIMIT_KG} kg before collecting wash`;
     this.$('region-resume').textContent=old?`Previous visits: ${old.trips}. Your unfinished samples are waiting for you.`:'Worked pockets stay worked between visits.';
@@ -27,7 +28,7 @@ export class RegionUI {
     this.$('region-depart').disabled=!l.available||l.id===current||(EXPEDITIONS.includes(l.id)&&kg>PACK_LIMIT_KG);
     this.$('region-error').textContent='';
   }
-  open(){this.destination=EXPEDITIONS.includes(readSave()?.activeRegion)?'new-england':TASMANIA;this.isOpen=true;this.root.classList.remove('hidden');document.body.classList.add('region-open');this.refresh();this.$('region-close').focus();}
+  open(){this.destination=readSave()?.activeRegion&&readSave().activeRegion!=='new-england'?'new-england':TASMANIA;this.isOpen=true;this.root.classList.remove('hidden');document.body.classList.add('region-open');this.refresh();this.$('region-close').focus();}
   close(){this.isOpen=false;this.root.classList.add('hidden');document.body.classList.remove('region-open');this.onClose();}
   travel(){
     if(this.$('region-depart').disabled)return;

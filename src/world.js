@@ -13,6 +13,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const camp = terrain.camp;
   const creek = terrain.creek;
   const S = terrain.sources;
+  const profile = terrain.profile || {};
   const half = SIZE / 2;
   const L = {};
   const chan = (x, z) => { creek.local(x, z, L); return L.d - L.w; }; // metres outside the wetted channel
@@ -30,15 +31,15 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const col = new THREE.Color();
 
   // ---------- trees ----------
-  const treeMat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.9 });
+  const treeMat = new THREE.MeshStandardMaterial({ color: profile.treeTint ?? 0xffffff, vertexColors: true, flatShading: true, roughness: 0.9 });
   const variants = [0, 1, 2, 3].map(() => gumTree(rand));
   const placements = variants.map(() => []);
-  for (let tries = 0, n = 0; tries < 9000 && n < 400; tries++) {
+  for (let tries = 0, n = 0; tries < 9000 && n < (profile.treeCount ?? 400); tries++) {
     const x = (rand() * 2 - 1) * (half - 4);
     const z = (rand() * 2 - 1) * (half - 4);
     const c = chan(x, z);
     if (c < 2.5 || nearCamp(x, z, 13) || blocked(x, z, 2)) continue;
-    const p = c < 12 ? 0.55 : 0.07; // river red gums crowd the banks
+    const p = c < 12 ? (profile.treeBank ?? 0.55) : (profile.treeHill ?? 0.07); // river red gums crowd the banks
     if (rand() > p) continue;
     const sc = 0.75 + rand() * 0.6;
     placements[Math.floor(rand() * variants.length)].push({ x, z, s: campRoom(x,z,1) ? 0 : sc, r: rand() * Math.PI * 2 });
@@ -62,7 +63,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // Float rock tells you what's upslope: white quartz from the reef, black
   // basalt from the cap, pink rhyolite with agate nodules, red ironstone elsewhere.
   const geoTint = (x, z, v) => {
-    const k = (s, R) => Math.exp(-((x - s.x) ** 2 + (z - s.z) ** 2) / (2 * R * R));
+    const k = (s, R) => s ? Math.exp(-((x - s.x) ** 2 + (z - s.z) ** 2) / (2 * R * R)) : 0;
     const kb = k(S.basalt, 40), kr = k(S.reef, 24), ky = k(S.rhyolite, 36);
     const roll = rand();
     if (roll < kb) return col.setRGB(0.13 + v * 0.08, 0.13 + v * 0.07, 0.14 + v * 0.07, THREE.SRGBColorSpace);
@@ -72,7 +73,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   };
   const rockGeo = lumpy(new THREE.DodecahedronGeometry(1, 1), 0.28, rand);
   const rockMat = new THREE.MeshStandardMaterial({ roughness: 0.95, flatShading: true });
-  const outcrop = [S.reef, S.basalt, S.rhyolite];
+  const outcrop = [S.reef, S.basalt, S.rhyolite].filter(Boolean);
   const scatter = 520, perOutcrop = 34;
   const boulders = creek.boulders.filter((b) => terrain.inside(b.x, b.z));
   const rockCount = scatter + perOutcrop * outcrop.length + boulders.length;
@@ -100,13 +101,13 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     else geoTint(x, z, rand());
     putRock(x, z, s, 0.35, s > 0.6);
   }
-  outcrop.forEach((src, k) => {
+  outcrop.forEach((src) => {
     for (let i = 0; i < perOutcrop; i++) {
       const a = rand() * Math.PI * 2, r = Math.sqrt(rand()) * 9;
       const x = src.x + Math.cos(a) * r, z = src.z + Math.sin(a) * r;
       const v = rand();
-      if (k === 0) col.setRGB(0.88 + v * 0.1, 0.84 + v * 0.08, 0.76 + v * 0.05, THREE.SRGBColorSpace);
-      else if (k === 1) col.setRGB(0.12 + v * 0.07, 0.12 + v * 0.06, 0.13 + v * 0.06, THREE.SRGBColorSpace);
+      if (src === S.reef) col.setRGB(0.88 + v * 0.1, 0.84 + v * 0.08, 0.76 + v * 0.05, THREE.SRGBColorSpace);
+      else if (src === S.basalt) col.setRGB(0.12 + v * 0.07, 0.12 + v * 0.06, 0.13 + v * 0.06, THREE.SRGBColorSpace);
       else col.setRGB(0.72 + v * 0.1, 0.5 + v * 0.08, 0.45 + v * 0.07, THREE.SRGBColorSpace);
       const s = 0.4 + Math.pow(rand(), 1.5) * 1.6;
       putRock(x, z, s, 0.3, s > 0.7);
@@ -124,7 +125,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   const torGeo = lumpy(new THREE.IcosahedronGeometry(1, 2), 0.1, rand);
   const tors = new THREE.InstancedMesh(torGeo, new THREE.MeshStandardMaterial({ roughness: 0.9 }), 90);
   let ti = 0;
-  for (let k = 0; k < 60 && ti < 86; k++) {
+  for (let k = 0; G && k < 60 && ti < 86; k++) {
     const a = rand() * Math.PI * 2, rr = Math.sqrt(rand()) * 22;
     const x = G.x + Math.cos(a) * rr, z = G.z + Math.sin(a) * rr;
     if (chan(x, z) < 3 || blocked(x, z, 3.2) || nearCamp(x, z, 12)) continue;
@@ -156,7 +157,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // ---------- spinifex tufts ----------
   const tuftGeo = spinifex(rand);
   const tuftMat = new THREE.MeshStandardMaterial({ roughness: 1, flatShading: true });
-  const tuftCount = 6000;
+  const tuftCount = profile.tufts ?? 6000;
   const tufts = new THREE.InstancedMesh(tuftGeo, tuftMat, tuftCount);
   let placed = 0;
   for (let tries = 0; tries < 60000 && placed < tuftCount; tries++) {

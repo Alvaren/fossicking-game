@@ -7,7 +7,8 @@ import { smoothstep } from './noise.js';
 const TAU = Math.PI * 2;
 
 export class Creek {
-  constructor(noise) {
+  constructor(noise, profile = {}) {
+    this.profile = profile;
     const r = noise.rand;
     this.n2 = noise.noise2;
     this.phase = r() * 100;
@@ -15,7 +16,7 @@ export class Creek {
     this.lam2 = 21 + r() * 8;
     this.ph1 = r() * TAU;
     this.ph2 = r() * TAU;
-    this.G = 0.009; // mean water-surface gradient
+    this.G = profile.slope ?? 0.009; // mean water-surface gradient
     this.tmp = {};
     this.level = 0; // flood rise above normal water level, metres
 
@@ -36,15 +37,15 @@ export class Creek {
   // ---------- plan shape ----------
   cx(z) {
     const p = this.phase;
-    return 26 * Math.sin(z * 0.013 + p) + 9 * Math.sin(z * 0.034 + p * 1.7);
+    return (26 * Math.sin(z * 0.013 + p) + 9 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   dcx(z) {
     const p = this.phase;
-    return 26 * 0.013 * Math.cos(z * 0.013 + p) + 9 * 0.034 * Math.cos(z * 0.034 + p * 1.7);
+    return (26 * 0.013 * Math.cos(z * 0.013 + p) + 9 * 0.034 * Math.cos(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   ddcx(z) {
     const p = this.phase;
-    return -26 * 0.013 * 0.013 * Math.sin(z * 0.013 + p) - 9 * 0.034 * 0.034 * Math.sin(z * 0.034 + p * 1.7);
+    return (-26 * 0.013 * 0.013 * Math.sin(z * 0.013 + p) - 9 * 0.034 * 0.034 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   curvature(z) {
     const d = this.dcx(z);
@@ -69,8 +70,8 @@ export class Creek {
   riffle(z) {
     return smoothstep(1.15, 1.7, this.slope(z) / this.G);
   }
-  halfWidth(z) { return 2.7 + 1.3 * this.riffle(z); }
-  depth(z) { return 0.95 - 0.6 * this.riffle(z); }
+  halfWidth(z) { return (2.7 + 1.3 * this.riffle(z)) * (this.profile.width ?? 1); }
+  depth(z) { return (0.95 - 0.6 * this.riffle(z)) * (this.profile.depth ?? 1); }
   baseSpeed(z) { return 0.22 + 1.05 * this.riffle(z); }
   // Where the current slows going downstream (riffle running into a pool).
   decel(z) {

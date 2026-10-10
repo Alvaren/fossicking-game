@@ -19,15 +19,15 @@ export class SurfaceFinds {
     this.colliders = colliders;
     this.glowTex = glowTexture();
     const rand = mulberry32(seed * 13 + 9);
-    this.place(rand, AGATES, (x, z) => deposits.surfaceAgateWeight(x, z), () => makeGem('agate', rand), 0);
-    this.place(rand, SPECKS, (x, z) => deposits.surfaceGemWeight(x, z),
+    this.place(rand, terrain.sources.rhyolite ? AGATES : 0, (x, z) => deposits.surfaceAgateWeight(x, z), () => makeGem('agate', rand), 0);
+    this.place(rand, terrain.sources.basalt ? SPECKS : 0, (x, z) => deposits.surfaceGemWeight(x, z),
       () => makeGem(rand() < 0.55 ? 'zircon' : rand() < 0.7 ? 'sapphire' : 'spinel', rand, 1.2), 1000);
     // Scheelite weathered out of the reef, lying about on the slopes below it.
     // Added after the others so the seeded finds above don't change.
-    this.place(rand, 24, (x, z) => deposits.eluvial(x, z, terrain.sources.reef, 22), () => makeGem('scheelite', rand), 2000);
+    this.place(rand, terrain.profile?.sources ? 0 : 24, (x, z) => deposits.eluvial(x, z, terrain.sources.reef, 22), () => makeGem('scheelite', rand), 2000);
     // Thundereggs weathered out of the rhyolite (from their own seed, so nothing above moves).
     const tr = mulberry32(seed * 29 + 41);
-    this.place(tr, 16, (x, z) => deposits.eluvial(x, z, terrain.sources.rhyolite, 30), () => makeThunderegg(tr), 3000);
+    this.place(tr, terrain.sources.rhyolite ? 16 : 0, (x, z) => deposits.eluvial(x, z, terrain.sources.rhyolite, 30), () => makeThunderegg(tr), 3000);
     for (const it of this.items) {
       if (collected.has(it.id)) it.collected = true;
       else this.spawn(it, rand);
@@ -37,6 +37,7 @@ export class SurfaceFinds {
   }
 
   place(rand, count, weightFn, makeFn, idBase) {
+    if (!count) return [];
     const half = PLAY - 3;
     const ws = [];
     for (let k = 0; k < 1500; k++) ws.push(weightFn((rand() * 2 - 1) * half, (rand() * 2 - 1) * half));
@@ -105,9 +106,9 @@ export class SurfaceFinds {
 
   // A flood strips the bars and leaves fresh stones lying on the new gravel.
   addFlood(deposits, rand) {
-    const agates = this.place(rand, 14, (x, z) => deposits.barWeight(x, z, 'agate'), () => makeGem('agate', rand), this.floodId);
+    const agates = this.place(rand, this.terrain.sources.rhyolite ? 14 : 0, (x, z) => deposits.barWeight(x, z, 'agate'), () => makeGem('agate', rand), this.floodId);
     this.floodId += 100;
-    const gems = this.place(rand, 5, (x, z) => deposits.barWeight(x, z, 'gem'),
+    const gems = this.place(rand, this.terrain.sources.basalt ? 5 : 0, (x, z) => deposits.barWeight(x, z, 'gem'),
       () => makeGem(rand() < 0.55 ? 'zircon' : rand() < 0.7 ? 'sapphire' : 'spinel', rand, 1.2), this.floodId);
     this.floodId += 100;
     for (const it of [...agates, ...gems]) this.spawn(it, rand);

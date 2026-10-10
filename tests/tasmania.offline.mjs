@@ -13,7 +13,14 @@ try{
   await context.addInitScript(()=>{if(sessionStorage.getItem('seeded'))return;sessionStorage.setItem('seeded','1');localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,cash:800,gold:.1,difficulty:'easy'}));localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.6,shadows:'off',aa:false,warned:true}));});
   await page.goto(`http://127.0.0.1:${server.address().port}/?test`,{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>navigator.serviceWorker.ready);
   await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>navigator.serviceWorker.controller&&window.fossick);
-  await context.setOffline(true);await page.locator('#travel-btn').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossickTas);
+  await context.setOffline(true);
+  for(const region of ['golden-triangle','qld-gemfields']){
+    await page.locator('#travel-btn').click();await page.locator('.region-location-list [data-location="'+region+'"]').click();await page.locator('#region-depart').click();await page.waitForFunction(id=>window.fossick?.region===id,region);
+    await page.locator('#play').click();const start=await page.evaluate(()=>({x:fossick.player.pos.x,z:fossick.player.pos.z}));await page.keyboard.down('KeyW');await page.waitForFunction(p=>Math.hypot(fossick.player.pos.x-p.x,fossick.player.pos.z-p.z)>.1,start);await page.keyboard.up('KeyW');
+    await page.keyboard.press('KeyM');assert.ok(await page.evaluate(()=>new Set(document.getElementById('map-canvas').getContext('2d').getImageData(0,0,560,560).data).size)>100);
+    await page.locator('#map-travel').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossick?.region==='new-england');assert.equal(await page.evaluate(()=>fossick.state.gold),.1);
+  }
+  await page.locator('#travel-btn').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossickTas);
   assert.equal(await page.locator('#tas-heading').textContent(),'Fern River catchment');await page.locator('#tas-resume').click();
   await page.keyboard.down('KeyW');await page.waitForFunction(()=>fossickTas.player.z<111.5);await page.keyboard.up('KeyW');
   await page.locator('#tas-journal').click();await page.locator('#tas-return').click();await page.waitForFunction(()=>window.fossick);
@@ -24,5 +31,5 @@ try{
   await page.locator('#tas-sieve').click();await page.locator('#game').click();await page.locator('#sieve-load').click();await page.waitForFunction(()=>fossickTas.expedition.sieveSession.flipped);
   await page.locator('#sieve-collect').click();await page.locator('#sieve-close').click();await page.locator('#tas-journal').click();await page.locator('#tas-locations').click();await page.locator('#region-depart').click();await page.waitForFunction(()=>window.fossick);
   assert.equal(await page.evaluate(()=>fossick.state.gold),.1);assert.deepEqual(errors,[]);
-  console.log('Production offline western movement, northeast rendered Easy sieve/collection, and return to cached home passed.');
+  console.log('Production offline mainland travel/movement/maps, western movement, northeast Easy sieve/collection and returns to cached home passed.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}

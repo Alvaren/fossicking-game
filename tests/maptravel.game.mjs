@@ -10,8 +10,8 @@ try{for(const phone of [false,true]){
   await page.goto(`http://127.0.0.1:5191/?test${phone?'&touch':''}`,{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await tap('#play');
   if(phone)await tap('#touch [data-act="map"]');else await page.keyboard.press('KeyM');
   await page.locator('#map').waitFor({state:'visible'});await page.screenshot({path:`node_modules/.cache/map-${phone?'touch':'desktop'}-home.png`});
-  await tap('#map-travel');assert.match(await page.locator('#region-fee').textContent(),/\$0/);
-  await tap('.region-location-list [data-location="golden-triangle"]');assert.equal(await page.locator('#region-depart').isDisabled(),true);
+  assert.match(await page.locator('#map-travel').textContent(),/\$0/);await tap('#map-travel');assert.match(await page.locator('#region-fee').textContent(),/\$0/);
+  await tap('.region-location-list [data-location="coober-pedy"]');assert.equal(await page.locator('#region-depart').isDisabled(),true);
   await tap('.region-location-list [data-location="tasmania-west"]');await page.screenshot({path:`node_modules/.cache/map-${phone?'touch':'desktop'}-destinations.png`});
   await tap('#region-close');await page.locator('#map').waitFor({state:'visible'});await tap('#map-travel');await tap('#region-depart');await page.waitForFunction(()=>window.fossickTas);
   const result=await page.evaluate(()=>({cash:JSON.parse(localStorage.getItem('fossicking-save-v2')).cash,path:!!fossickTas.world.path,guides:fossickTas.world.siteGroups.some(g=>!!g.guide),mapColors:new Set(Array.from(document.getElementById('tas-map').getContext('2d').getImageData(0,0,520,610).data).filter((_,i)=>i%4===0)).size}));

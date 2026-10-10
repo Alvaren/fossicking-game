@@ -328,7 +328,7 @@ export class CrystalField {
 
     // Quartz veins: straight-ish lines across the granite.
     this.veins = [];
-    for (let k = 0; k < 4; k++) {
+    for (let k = 0; g && k < 4; k++) {
       const a = rand() * Math.PI;
       const ox = g.x + (rand() - 0.5) * 18, oz = g.z + (rand() - 0.5) * 18;
       this.veins.push({ ox, oz, dx: Math.cos(a), dz: Math.sin(a), len: 14 + rand() * 12, width: 0.12 + rand() * 0.12 });
@@ -342,7 +342,7 @@ export class CrystalField {
       return [v.ox + v.dx * t, v.oz + v.dz * t, v];
     };
     // Vugs: in veins, under bare rock.
-    for (let tries = 0; tries < 2000 && this.sites.filter((s) => s.kind === 'vug').length < 6; tries++) {
+    for (let tries = 0; g && tries < 2000 && this.sites.filter((s) => s.kind === 'vug').length < 6; tries++) {
       const [x, z] = onVein();
       if (terrain.graniteFactor(x, z) < 0.3 || cover(x, z) > 0.08) continue;
       if (this.sites.some((s) => Math.hypot(s.x - x, s.z - z) < 3)) continue;
@@ -357,7 +357,7 @@ export class CrystalField {
       });
     }
     // Pockets: in the rotten granite between pavements, near the veins.
-    for (let tries = 0; tries < 3000 && this.sites.filter((s) => s.kind === 'pocket').length < 7; tries++) {
+    for (let tries = 0; g && tries < 3000 && this.sites.filter((s) => s.kind === 'pocket').length < 7; tries++) {
       const [vx, vz] = onVein();
       const x = vx + (rand() - 0.5) * 5, z = vz + (rand() - 0.5) * 5;
       if (terrain.graniteFactor(x, z) < 0.25) continue;

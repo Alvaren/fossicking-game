@@ -17,11 +17,12 @@ const MAX_DIG = 2.6;
 const srgb = (v) => Math.pow(v, 2.2);
 
 export class Terrain {
-  constructor(seed) {
+  constructor(seed, profile = {}) {
+    this.profile = profile;
     this.noise = makeNoise(seed);
     this.n2 = this.noise.noise2;
     const rand = this.noise.rand;
-    this.creek = new Creek(this.noise);
+    this.creek = new Creek(this.noise, profile.creek);
     this.benchSide = rand() < 0.5 ? 1 : -1;
     this.tmpL = {};
     this.worldHalf = HALF;
@@ -69,6 +70,20 @@ export class Terrain {
         && this.heaps.every((h) => Math.hypot(h.x - cand.x, h.z - cand.z) > 25)
         && this.shafts.every((h) => Math.hypot(h.x - cand.x, h.z - cand.z) > 25);
       if ((clear && Math.abs(cand.z) < 95 && Math.abs(cand.x) < 95) || k === 59) { this.sources.fossil = cand; break; }
+    }
+    // Regional geology narrows the existing generator; the original random
+    // stream and source placement remain untouched for old New England saves.
+    if (profile.sources) {
+      this.sources = Object.fromEntries(Object.entries(this.sources).filter(([id]) => profile.sources.includes(id)));
+      if (!this.sources.opal) { this.heaps = []; this.shafts = []; }
+    }
+    this.workings = [];
+    if (profile.id === 'golden-triangle') {
+      const reef = this.sources.reef, r = mulberry32(seed * 73 + 17);
+      for (let i = 0; i < 7; i++) this.workings.push({
+        x: reef.ex + reef.side * (4 + r() * 8), z: reef.z - 12 + i * 4.4,
+        r: 1.2 + r() * .7, depth: .25 + r() * .18, side: reef.side,
+      });
     }
     this.overlays = [];   // hand-excavation patches that replace the ground where they sit
     this.locked = null;   // terrain vertices tucked under a patch
@@ -118,6 +133,7 @@ export class Terrain {
   // 0..1 how far into the granite country a point is.
   graniteFactor(x, z) {
     const g = this.sources.granite;
+    if (!g) return 0;
     return Math.exp(-((x - g.x) ** 2 + (z - g.z) ** 2) / (2 * 17 * 17));
   }
 
@@ -136,10 +152,10 @@ export class Terrain {
     const n2 = this.n2;
     const d = L.d;
     const hills = fbm(n2, x * 0.007 + 11, z * 0.007 - 7, 5) * 0.5 + 0.5;
-    const hillAmp = 2 + 11 * smoothstep(10, 80, d);
+    const hillAmp = (2 + 11 * smoothstep(10, 80, d)) * (this.profile.hillScale ?? 1);
     let rise = Math.min(d * 0.045, 3.2) * smoothstep(6, 16, d) + hills * hillAmp * smoothstep(10, 38, d);
     const b = this.benchFactor(x, z, L);
-    rise += (2.6 + n2(x * 0.05, z * 0.05) * 0.15 - rise) * b;
+    rise += ((this.profile.benchHeight ?? 2.6) + n2(x * 0.05, z * 0.05) * 0.15 - rise) * b;
     const gf = this.graniteFactor(x, z);
     if (gf > 0.01) rise += gf * (this.pavement(x, z) * 0.45 + fbm(n2, x * 0.04 + 9, z * 0.04, 3) * 0.8);
     return this.creek.waterY(z) + 0.95 + n2(x * 0.02 + 5, z * 0.02) * 0.2 + rise + fbm(n2, x * 0.09, z * 0.09, 3) * 0.16;
@@ -158,7 +174,16 @@ export class Terrain {
     const h = this.rawHeight(x, z);
     const dc = Math.hypot(x - this.camp.x, z - this.camp.z);
     const f = smoothstep(11, 6, dc);
-    return h + (this.camp.y - h) * f + this.heapHeight(x, z);
+    let worked = 0;
+    for (const pit of this.workings) {
+      const dx = x - pit.x, dz = z - pit.z;
+      if (Math.abs(dx) > pit.r * 4 || Math.abs(dz) > pit.r * 2) continue;
+      const bowl = Math.max(0, 1 - (dx * dx + dz * dz) / (pit.r * pit.r));
+      const sx = dx - pit.side * pit.r * 1.65;
+      const spoil = Math.max(0, 1 - (sx * sx + dz * dz) / (pit.r * pit.r));
+      worked += pit.depth * (-bowl * bowl + .55 * spoil * spoil);
+    }
+    return h + (this.camp.y - h) * f + this.heapHeight(x, z) + worked * (1 - f);
   }
 
   // Height of mullock heaped up at (x, z): rounded cones of spoil.
@@ -463,10 +488,11 @@ export class Terrain {
     const S = this.sources;
 
     const t0 = n2(x * 0.03, z * 0.03) * 0.5 + 0.5;
-    let r = 0.60 + 0.14 * t0, g = 0.29 + 0.17 * t0, b = 0.15 + 0.10 * t0;
+    const soil = this.profile.soil || [0.60, 0.29, 0.15];
+    let r = soil[0] + 0.14 * t0, g = soil[1] + 0.17 * t0, b = soil[2] + 0.10 * t0;
     const mix = (k, cr, cg, cb) => { r += (cr - r) * k; g += (cg - g) * k; b += (cb - b) * k; };
 
-    const dist2 = (s) => (x - s.x) ** 2 + (z - s.z) ** 2;
+    const dist2 = (s) => s ? (x - s.x) ** 2 + (z - s.z) ** 2 : Infinity;
     mix(0.85 * Math.exp(-dist2(S.basalt) / (2 * 40 * 40)), 0.22, 0.18, 0.15);
     mix(0.6 * Math.exp(-dist2(S.reef) / (2 * 20 * 20)), 0.80, 0.70, 0.58);
     mix(0.6 * Math.exp(-dist2(S.rhyolite) / (2 * 36 * 36)), 0.74, 0.55, 0.47);

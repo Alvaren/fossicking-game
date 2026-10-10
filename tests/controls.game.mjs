@@ -5,10 +5,10 @@ import {createPan} from '../src/panning.js';
 import {travelTo} from '../src/regions.js';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
-try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','tasmania-west','ne-tasmania']){
-  const home=region==='new-england',context=await browser.newContext({viewport:{width:1280,height:860}});
+try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golden-triangle','qld-gemfields','tasmania-west','ne-tasmania']){
+  const home=['new-england','golden-triangle','qld-gemfields'].includes(region),context=await browser.newContext({viewport:{width:1280,height:860}});
   const base={seed:12345,cash:500,gold:.2,difficulty:'realistic',up:{pan:2,sieve:1},camp:{shelter:'tent'}};
-  const seed=home?base:travelTo(base,region,['bucket','classifier']);
+  const seed=region==='new-england'?base:travelTo(base,region,['bucket','classifier']);
   await context.addInitScript(value=>{
     localStorage.setItem('fossicking-save-v2',JSON.stringify(value));
     localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.6,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));
