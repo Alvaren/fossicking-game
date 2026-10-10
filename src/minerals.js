@@ -1,3 +1,4 @@
+import { roughFindGeometry, finishRoughStone } from './findvisuals.js';
 import { sieveRecovery } from './sieverecovery.js';
 import { assayGold } from './panning.js';
 import { makeThundereggMesh, thundereggRadius } from './geodes.js';
@@ -211,27 +212,26 @@ const agateTextures = new Map();
 export function agateTexture(bands) {
   const key = bands.join(',');
   if (agateTextures.has(key)) return agateTextures.get(key);
-  const s = 128;
+  const s = 256;
   const c = document.createElement('canvas');
   c.width = c.height = s;
-  const ctx = c.getContext('2d');
-  const r = mulberry32(bands.length * 97 + bands[0]);
-  ctx.fillStyle = `#${new THREE.Color(bands[0]).getHexString()}`;
-  ctx.fillRect(0, 0, s, s);
-  // Concentric wobbly bands, like a cut nodule.
-  for (let k = 22; k >= 0; k--) {
-    const col = new THREE.Color(bands[k % bands.length]);
-    ctx.fillStyle = `#${col.getHexString()}`;
-    ctx.beginPath();
-    const rad = (k + 1) * (s / 44);
-    for (let a = 0; a <= 32; a++) {
-      const t = (a / 32) * Math.PI * 2;
-      const rr = rad * (1 + 0.12 * Math.sin(t * 3 + k) + 0.06 * (r() - 0.5));
-      const px = s / 2 + Math.cos(t) * rr * 1.6, py = s / 2 + Math.sin(t) * rr;
-      if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.fill();
+  const ctx = c.getContext('2d'), pixels = ctx.createImageData(s, s);
+  const colours = bands.map(hex => [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255]);
+  // Continuous nested contours: neighbouring bands share their folds, like
+  // successive layers of chalcedony, instead of independently jagged rings.
+  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+    const px = (x / s - .47) / 1.15, py = y / s - .54;
+    const a = Math.atan2(py, px), r = Math.hypot(px, py);
+    const depth = r * (1 + .12 * Math.sin(a * 3) + .035 * Math.sin(a * 7)) + .009 * Math.sin(px * 30 + py * 12);
+    const band = depth * 32, whole = Math.floor(band), f = band - whole;
+    const col = colours[((whole % colours.length) + colours.length) % colours.length];
+    const fine = .84 + .16 * Math.pow(Math.sin(f * Math.PI), .3);
+    const line = f < .09 ? .78 : fine;
+    const i = (y * s + x) * 4;
+    for (let k = 0; k < 3; k++) pixels.data[i + k] = col[k] * line;
+    pixels.data[i + 3] = 255;
   }
+  ctx.putImageData(pixels, 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   agateTextures.set(key, tex);
@@ -250,7 +250,14 @@ function gemGeometry(type) {
   else if (type === 'scheelite') g = lumpy(new THREE.OctahedronGeometry(0.8, 1).scale(1, 1.25, 1), 0.2, mulberry32(11));
   else {
     // Agate nodule. Project the bands from above so it looks like a sliced, waterworn nodule.
-    g = lumpy(new THREE.SphereGeometry(1, 12, 9), 0.16, mulberry32(7));
+    g = new THREE.SphereGeometry(1, 24, 16);
+    const positions = g.attributes.position;
+    for (let i = 0; i < positions.count; i++) {
+      const x = positions.getX(i), y = positions.getY(i), z = positions.getZ(i);
+      const r = 1 + .065 * Math.sin(x * 4 + y * 2) * Math.cos(z * 3 - y) + .035 * Math.sin(z * 7 + x);
+      positions.setXYZ(i, x * r, y * r, z * r);
+    }
+    g.computeVertexNormals();
     const p = g.attributes.position;
     const uv = new Float32Array(p.count * 2);
     for (let i = 0; i < p.count; i++) {
@@ -290,10 +297,13 @@ export function makeGemMesh(gem, { hq = false, world = false } = {}) {
     mat = stoneMaterial({ type: gem.type, color: gem.color, finish: 'rough', hq, size: gemSize(gem), world });
   }
   const pebble = ROUNDNESS[gem.type] !== undefined;
-  const m = new THREE.Mesh(pebble ? pebbleGeometry(gem.type) : gemGeometry(gem.type), mat);
+  if (gem.type !== 'agate') finishRoughStone(mat, gem);
+  const model = roughFindGeometry(gem);
+  const m = new THREE.Mesh(model || (pebble ? pebbleGeometry(gem.type) : gemGeometry(gem.type)), mat);
   const s = gemSize(gem);
   m.scale.set(s, gem.type === 'agate' ? s * 0.7 : s, s);
-  if (pebble) m.scale.multiplyScalar(1.15); // rounding takes a bit off the size
+  m.userData.fallbackScale = pebble && !model ? 1.15 : 1;
+  if (pebble && !model) m.scale.multiplyScalar(1.15); // rounding takes a bit off the size
   m.castShadow = true;
   return m;
 }

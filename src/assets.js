@@ -3,13 +3,25 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // Models built in Blender (see blender/build_assets.py). Everything that uses
 // them has a built-in fallback shape, so the game works before they arrive.
 
-export const assets = { crystals: null, tools: {}, models: {} };
+export const assets = { crystals: null, finds: null, tools: {}, models: {} };
 
 export function loadAssets() {
   const loader = new GLTFLoader();
   const load = (url) => new Promise((res, rej) => loader.load(url, res, undefined, rej));
   const base = import.meta.env.BASE_URL;
   return Promise.all([
+    load(`${base}models/finds.glb`).then((g) => {
+      const map = {};
+      g.scene.updateMatrixWorld(true);
+      g.scene.traverse((o) => {
+        if (o.isMesh) {
+          const geometry = o.geometry.clone().applyMatrix4(o.matrixWorld);
+          geometry.name = o.name;
+          map[o.name] = geometry;
+        }
+      });
+      assets.finds = map;
+    }).catch((e) => console.warn('Rough find models unavailable; using built-in shapes.', e)),
     load(`${base}models/crystals.glb`).then((g) => {
       const map = {};
       g.scene.traverse((o) => { if (o.isMesh) map[o.name] = o.geometry; });

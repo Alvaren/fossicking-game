@@ -1,3 +1,4 @@
+import { roughFindGeometry } from './findvisuals.js';
 import { stoneMaterial } from './materials.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -35,7 +36,7 @@ export const CRYSTALS = {
 // Lightning Ridge is famous for shells and bones that turned to opal.
 const OPAL_MIX = [['potch', 52], ['milky opal', 32], ['crystal opal', 13], ['black opal', 3], ['opalised shell', 1.5]];
 const PATTERNS = [['pinfire', 50, 1], ['flash', 30, 1.5], ['broad flash', 15, 2.2], ['harlequin', 5, 4]];
-const PATTERN_FREQ = { pinfire: 38, flash: 16, 'broad flash': 7, harlequin: 9 };
+const PATTERN_FREQ = { pinfire: 58, flash: 27, 'broad flash': 15, harlequin: 18 };
 
 // How much light is on the opal (daylight, or your headlamp). Play-of-colour
 // needs light to show; main.js keeps this up to date.
@@ -195,18 +196,19 @@ function makeOpalMesh(c, def, col, geo = null) {
   const bright = c.bright || 1;
   const mat = new THREE.MeshPhysicalMaterial({
     color: col,
-    roughness: c.broken ? 0.5 : 0.12,
+    roughness: c.broken ? 0.42 : 0.24,
     metalness: 0,
-    clearcoat: def.opal ? 1 : 0.3,
+    clearcoat: def.opal ? 0.35 : 0.15,
+    clearcoatRoughness: 0.16,
     transparent: def.opacity < 1,
     opacity: def.opacity,
-    iridescence: def.opal ? 0.35 + bright * 0.13 : 0,
+    iridescence: def.opal ? 0.12 : 0,
     iridescenceIOR: 1.6 + bright * 0.12,
     iridescenceThicknessRange: [120, 300 + bright * 140],
     emissive: def.opal ? col.clone().multiplyScalar(0.05) : new THREE.Color(0),
   });
   if (def.opal) addPlayOfColour(mat, c, def, bright);
-  const m = new THREE.Mesh(geo || crystalGeometry('chip'), mat);
+  const m = new THREE.Mesh(geo || roughFindGeometry({ ...c, type: 'opal' }) || crystalGeometry('chip'), mat);
   if (geo) return m; // a cut cabochon sizes and places itself
   const len = c.broken ? c.len * 0.6 : c.len;
   m.scale.set(len * 0.9, len, len * 0.9);
@@ -233,20 +235,23 @@ export function makeOpalCab(item, geo) {
 // Play-of-colour: patches of spectral colour, laid out by the stone's pattern,
 // whose hue slides as the angle between you, the light and the stone changes.
 function addPlayOfColour(mat, c, def, bright) {
-  const freq = PATTERN_FREQ[c.pattern] || 16;
+  const freq = PATTERN_FREQ[c.pattern] || 27;
   const blocky = c.pattern === 'harlequin' ? 1 : 0;
   const strength = (0.08 + bright * 0.12) * (def.color === 0x14161e ? 1.4 : def.opacity < 1 ? 1.35 : 0.8)
-    * (c.polished ? 2.4 : 1); // a polished face shows the colour far better than a rough chip
+    * (c.polished ? 1.4 : 0.85); // a polished face shows the colour far better than a rough chip
   const seed = ((c.id || 1) * 0.6180339) % 1;
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uOpalLight = opalLight;
     sh.vertexShader = sh.vertexShader
       .replace('void main() {', `varying vec3 vOpalPos;
+varying vec3 vOpalView;
 void main() {`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
-vOpalPos = position;`);
+vOpalPos = position;
+vOpalView = normalize(cameraPosition - (modelMatrix * vec4(position, 1.0)).xyz) * mat3(modelMatrix);`);
     sh.fragmentShader = sh.fragmentShader
       .replace('void main() {', `varying vec3 vOpalPos;
+varying vec3 vOpalView;
 uniform float uOpalLight;
 float oHash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 float oNoise(vec3 p) {
@@ -259,15 +264,33 @@ void main() {`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
 {
   vec3 p = vOpalPos * ${freq.toFixed(1)};
-  float cell = ${blocky} > 0 ? oHash(floor(p)) : oNoise(p);
-  float facing = dot(normalize(normal), normalize(vViewPosition));
-  float hue = fract(cell * 1.9 + facing * 1.6 + ${seed.toFixed(4)});
-  float oMask = smoothstep(0.45, 0.6, fract(cell * 3.7 + facing * 0.8)); // ('patch' is reserved in GLSL)
+  vec2 uv = vec2(p.x + p.y * 0.32, p.z + p.y * 0.57);
+  vec2 tile = floor(uv), local = fract(uv);
+  float nearest = 8.0, second = 8.0, cell = 0.0;
+  // Irregular optical domains, not a painted checkerboard. Pinfire uses
+  // smaller domains; broad flash uses fewer larger ones.
+  for (int ox = -1; ox <= 1; ox++) for (int oy = -1; oy <= 1; oy++) {
+    vec2 offset = vec2(float(ox), float(oy));
+    vec2 id = tile + offset;
+    vec2 jitter = vec2(oHash(vec3(id, ${seed.toFixed(4)})), oHash(vec3(id, 5.3)));
+    vec2 centre = offset + mix(jitter, vec2(0.5), ${blocky ? '0.9' : '0.0'}) - local;
+    float distance2 = dot(centre, centre);
+    if (distance2 < nearest) { second = nearest; nearest = distance2; cell = oHash(vec3(id, 9.1)); }
+    else second = min(second, distance2);
+  }
+  vec3 view = normalize(vOpalView);
+  float angle = dot(view, normalize(vec3(sin(cell * 17.0), 0.5, cos(cell * 11.0))));
+  float hue = 0.02 + fract(cell * 1.3 + angle * 0.13 + ${seed.toFixed(4)}) * 0.67;
+  float flash = pow(0.5 + 0.5 * sin(angle * 7.0 + cell * 20.0), 4.0);
+  float seam = smoothstep(0.0, 0.06, second - nearest);
+  float body = smoothstep(0.35, 0.65, oNoise(vOpalPos * 8.0 + ${seed.toFixed(4)}));
+  float fleck = 1.0 - smoothstep(0.03, 0.55, nearest);
+  float oMask = seam * fleck * (0.015 + flash * 0.985) * (0.15 + body * 0.85);
   vec3 rainbow = oHue(hue);
   totalEmissiveRadiance += rainbow * oMask * ${strength.toFixed(3)} * uOpalLight;
 }`);
   };
-  mat.customProgramCacheKey = () => `opal-${freq}-${blocky}-${strength.toFixed(2)}-${seed.toFixed(3)}`;
+  mat.customProgramCacheKey = () => `opal-v2-${freq}-${blocky}-${strength.toFixed(3)}-${seed.toFixed(4)}`;
 }
 
 // The find you put in your bag.

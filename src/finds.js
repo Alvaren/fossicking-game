@@ -1,3 +1,4 @@
+import { roughFindGeometry } from './findvisuals.js';
 import { makeThunderegg } from './geodes.js';
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
@@ -87,6 +88,19 @@ export class SurfaceFinds {
     g.position.set(it.x, this.terrain.getHeight(it.x, it.z) + it.lift, it.z);
     this.scene.add(g);
     it.mesh = g;
+  }
+
+  // Surface finds are spawned before the asset stream finishes. Replace just
+  // their geometry; placement, pickup identity, UV glow and materials survive.
+  applyModels() {
+    for (const it of this.items) {
+      if (it.makeMesh) continue;
+      const mesh = it.mesh?.children[0], model = roughFindGeometry(it.gem);
+      if (!mesh?.isMesh || !model || mesh.geometry === model) continue;
+      mesh.geometry = model;
+      mesh.scale.multiplyScalar(1 / (mesh.userData.fallbackScale || 1));
+      mesh.userData.fallbackScale = 1;
+    }
   }
 
   // Extra items placed by other systems (quartz float, saved flood finds).

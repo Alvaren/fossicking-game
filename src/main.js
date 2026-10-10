@@ -317,6 +317,7 @@ let detShown = false;
 let rightHeld = false, touchPin = false;
 // Blender-made models stream in; crystals and hand tools use them once they arrive.
 loadAssets().then(() => {
+  finds.applyModels();
   view.applyModels(assets.tools);
   view.applyGear(assets.models);
   if (assets.models.detector) worldDet.setModel(assets.models.detector, view.coilRingMat, view.detScreen.material);

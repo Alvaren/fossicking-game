@@ -1,7 +1,7 @@
 import { CUTS } from './materials.js';
 import { FOSSILS } from './fossils.js';
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { findStudioEnvironment } from './findvisuals.js';
 import { GOLD_PRICE } from './shop.js';
 
 // The inventory: everything you're carrying, plus the collection you're
@@ -43,25 +43,27 @@ export class Inventory {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.9;
     this.scene = new THREE.Scene();
-    const pm = new THREE.PMREMGenerator(this.renderer);
-    this.scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
-    const key = new THREE.DirectionalLight(0xfff2e0, 2.2);
+    this.environmentTarget = findStudioEnvironment(this.renderer);
+    this.scene.environment = this.environmentTarget.texture;
+    const key = new THREE.DirectionalLight(0xfff2e0, 1.7);
     key.position.set(1, 2, 1.5);
-    this.scene.add(key, new THREE.HemisphereLight(0xffffff, 0x554433, 0.6));
-    // The backdrop: dark and warm at the edges with a soft glow straight
+    const rim = new THREE.DirectionalLight(0xd5e9ff, 1.1);
+    rim.position.set(-2, 1, -1);
+    this.scene.add(key, rim, new THREE.HemisphereLight(0xffffff, 0x39312a, 0.4));
+    // The backdrop: dark and neutral at the edges with a soft glow straight
     // behind the stone, like holding it up to the light. See-through stones
     // only show what's behind them, so this is what makes them glow.
     // Worked out per pixel: the view is only ~15 degrees wide, too fine for vertex colours.
     this.scene.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.ShaderMaterial({
       side: THREE.BackSide,
       depthWrite: false,
-      uniforms: { dark: { value: new THREE.Color(0x2a1d14) }, glow: { value: new THREE.Color(0xe2d4bd) } },
+      uniforms: { dark: { value: new THREE.Color(0x111d24) }, glow: { value: new THREE.Color(0x859292) } },
       vertexShader: 'varying vec3 vDir; void main() { vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
       fragmentShader: `uniform vec3 dark, glow;
 varying vec3 vDir;
 void main() {
-  vec3 c = dark * (0.5 + 0.5 * smoothstep(-0.8, 0.8, vDir.y));
-  c = mix(c, glow, pow(smoothstep(0.962, 0.9995, -vDir.z), 1.8)); // the camera looks down -z
+  vec3 dir = normalize(vDir);
+  vec3 c = mix(dark, glow, pow(smoothstep(0.962, 1.0, -dir.z), 2.0) * 0.65);
   gl_FragColor = vec4(c, 1.0);
   #include <colorspace_fragment>
 }`,
@@ -77,7 +79,9 @@ void main() {
       this.spin.x = Math.max(-1.4, Math.min(1.4, this.spin.x + (e.clientY - this.spin.py) * 0.01));
       this.spin.px = e.clientX; this.spin.py = e.clientY;
     });
-    canvas.addEventListener('pointerup', () => { this.spin.dragging = false; });
+    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+      canvas.addEventListener(event, () => { this.spin.dragging = false; });
+    }
     canvas.addEventListener('wheel', (e) => { e.preventDefault(); this.zoom = Math.max(0.5, Math.min(2.5, (this.zoom || 1) * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
   }
 
@@ -100,14 +104,15 @@ void main() {
     if (!this.isOpen) return;
     const canvas = this.renderer.domElement;
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (canvas.width !== Math.round(w * this.renderer.getPixelRatio())) {
+    if (w && h && (canvas.width !== Math.round(w * this.renderer.getPixelRatio()) || canvas.height !== Math.round(h * this.renderer.getPixelRatio()))) {
       this.renderer.setSize(w, h, false);
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
     }
     if (this.spin.auto) this.spin.y += 0.006;
     this.holder.rotation.set(this.spin.x, this.spin.y, 0, 'XYZ');
-    const d = (this.radius || 0.05) * 3.4 * (this.zoom || 1);
+    const halfFov = Math.atan(Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * Math.min(1, this.camera.aspect));
+    const d = (this.radius || 0.05) / Math.sin(halfFov) * 1.04 * (this.zoom || 1);
     this.camera.position.set(0, 0, d);
     this.camera.lookAt(0, 0, 0);
     this.renderer.render(this.scene, this.camera);

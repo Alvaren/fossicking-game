@@ -218,19 +218,19 @@ export function stoneMaterial({ type, color, finish, hq, size = 0.01, opacity = 
   // The real thing: light goes in, bends, picks up colour the further it travels.
   // thickness is in the mesh's own units (three scales it by the object's size);
   // attenuation is in metres, against the stone's real size.
-  const thickLocal = finish === 'cut' ? 1.3 : finish === 'crystal' ? 1.5 : 0.9;
+  const thickLocal = finish === 'cut' ? 1.3 : finish === 'crystal' ? 0.8 : 0.9;
   const tint = col.clone().lerp(new THREE.Color(1, 1, 1), op.deep ? 0.1 : finish === 'rough' ? 0.15 : 0.35);
   return new THREE.MeshPhysicalMaterial({
     color: tint,
     metalness: 0,
     roughness: finish === 'rough' ? 0.32 : smooth,
-    transmission: world ? 0.6 : 1,
+    transmission: world ? 0.6 : finish === 'rough' ? 0.72 : 1,
     ior: op.ior,
     dispersion: finish === 'rough' ? 0 : op.fire,
     thickness: thickLocal,
     attenuationColor: col,
     // How far light travels before it's taken on the stone's full colour.
-    attenuationDistance: size * (op.deep ? 0.35 : finish === 'rough' ? 0.7 : finish === 'crystal' ? 2.4 : 0.8) * (world ? 2.5 : 1),
+    attenuationDistance: size * (op.deep ? 0.7 : finish === 'rough' ? 1.1 : finish === 'crystal' ? 3.5 : 0.8) * (world ? 2.5 : 1),
     specularIntensity: 1,
     envMapIntensity: finish === 'cut' ? 1.6 : 1.2,
     emissive: col.clone().multiplyScalar((finish === 'rough' ? 0.1 : 0.03) + (world ? 0.08 : 0)),
@@ -421,11 +421,19 @@ export function nuggetGeometry(seed, { detail = 3, style = 'waterworn' } = {}) {
   const p = m.attributes.position;
   const v = new THREE.Vector3();
   const sharp = style !== 'waterworn';
+  const rseed = mulberry32(seed);
+  const hollows = Array.from({ length: 3 }, () => ({
+    dir: new THREE.Vector3(rseed() - .5, rseed() - .5, rseed() - .5).normalize(),
+    depth: .1 + rseed() * .18,
+  }));
   for (let i = 0; i < p.count; i++) {
     v.fromBufferAttribute(p, i);
     let r = 1 + (vnoise3(v.x * 1.2 + 3, v.y * 1.2, v.z * 1.2, seed) - 0.5) * 0.7
       + (vnoise3(v.x * 3, v.y * 3, v.z * 3 + 5, seed + 1) - 0.5) * 0.28;
     if (sharp) r += Math.abs(vnoise3(v.x * 6, v.y * 6 + 2, v.z * 6, seed + 2) - 0.5) * 0.35;
+    // Unequal lobes and shallow dimples give a nugget a recognisable outline.
+    r += Math.sin(v.x * 3.8 + seed) * Math.cos(v.z * 3.1 - seed) * .13;
+    for (const h of hollows) r -= Math.pow(Math.max(0, v.dot(h.dir)), 18) * h.depth;
     p.setXYZ(i, v.x * r, v.y * r, v.z * r);
   }
   m.computeVertexNormals();
