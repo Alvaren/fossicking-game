@@ -1,3 +1,4 @@
+import { createPointerLock, bindToolWheel, TOOL_ORDER as TOOLS, toolForKey } from './controls.js';
 import { TRAVEL_FEE } from './regions.js';
 import * as THREE from 'three';
 import { RegionUI } from './regionui.js';
@@ -570,34 +571,22 @@ const playBtn = document.getElementById('play');
 // ?test skips pointer lock so the game can be driven from automation/devtools.
 const TEST = new URLSearchParams(location.search).has('test');
 
-function lock() {
-  sound.init();
-  if (TEST || IS_TOUCH) {
-    playing = true;
-    overlay.classList.add('hidden');
-    hud.show(true);
-    touch?.show(IS_TOUCH);
-    if (IS_TOUCH) document.documentElement.requestFullscreen?.().catch(() => {});
-    return;
-  }
-  const p = canvas.requestPointerLock?.();
-  if (p && p.catch) p.catch(() => { /* too soon after ESC; user can click again */ });
-}
-playBtn.addEventListener('click', lock);
-canvas.addEventListener('click', () => { if (!playing && !modalOpen()) lock(); });
-
-document.addEventListener('pointerlockchange', () => {
-  playing = document.pointerLockElement === canvas;
+const pointer = createPointerLock(canvas, { test: TEST, touch: IS_TOUCH, onChange: active => {
+  playing = active;
   if (!playing) exitPhoto();
   overlay.classList.toggle('hidden', playing || modalOpen());
   hud.show(playing || modalOpen());
+  touch?.show(playing && IS_TOUCH);
   if (!playing) {
     if (!modalOpen()) { writeSave(); updateSaveStatus(); }
-    mouseHeld = false;
-    keys.clear();
+    mouseHeld = false; rightHeld = false; keys.clear();
+    if (touch) { touch.use = false; touch.move.x = 0; touch.move.y = 0; touch.run = false; }
     playBtn.textContent = 'Paused. Click to resume';
   }
-});
+} });
+function lock() { sound.init(); pointer.resume(); }
+playBtn.addEventListener('click', lock);
+canvas.addEventListener('click', () => { if (!playing && !modalOpen()) lock(); });
 
 // Difficulty, on the title and pause screen. Changing it restarts on the same claim.
 function renderDifficulty() {
@@ -640,16 +629,7 @@ function pause() {
   mouseHeld = false;
   keys.clear();
   playBtn.textContent = 'Paused. Click to resume';
-  if (TEST || IS_TOUCH) {
-    playing = false;
-    overlay.classList.remove('hidden');
-    hud.show(false);
-    touch?.show(false);
-    writeSave();
-    updateSaveStatus();
-  } else {
-    document.exitPointerLock();
-  }
+  pointer.pause();
 }
 
 function openModal(m) {
@@ -657,8 +637,7 @@ function openModal(m) {
   if (m === map) m.open(player, { sluice, patches: excav.patches, sources: terrain.sources, camp: terrain.camp, flood: bedload.lastFlood });
   else m.open();
   touch?.show(false);
-  if (TEST || IS_TOUCH) playing = false;
-  else document.exitPointerLock();
+  pointer.pause();
 }
 
 document.addEventListener('mousemove', (e) => {
@@ -672,7 +651,7 @@ document.addEventListener('mousemove', (e) => {
 });
 let clicked = false;
 let splitHold = 0, prise = 0, drillTick = 0, workProgress = 0;
-document.addEventListener('mousedown', (e) => {
+canvas.addEventListener('mousedown', (e) => {
   if (!playing) return;
   if (photo.active) { if (e.button === 0) photo.snap(); return; }
   if (e.button === 0) { mouseHeld = true; clicked = true; }
@@ -681,7 +660,6 @@ document.addEventListener('mousedown', (e) => {
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('mouseup', (e) => { if (e.button === 0) mouseHeld = false; if (e.button === 2) rightHeld = false; });
 
-const TOOLS = ['detector', 'shovel', 'pan', 'sieve', 'sluice', 'hammer', 'uv'];
 const ownsUv = () => (state.up.uv || 0) > 0;
 const ownsSluice = () => (state.up.sluice || 0) > 0;
 function selectTool(name) {
@@ -704,26 +682,12 @@ function selectTool(name) {
   hud.tool(name);
   sound.click();
 }
-document.addEventListener('wheel', (e) => {
-  if (!playing) return;
-  if (photo.active) { photo.zoom(e.deltaY); return; }
-  if (driving) {
-    keys.add(e.code);
-    if (e.code === 'KeyE' && !e.repeat) exitUte();
-    if (e.code === 'KeyL' && !e.repeat) toggleHeadlamp();
-    if (e.code === 'KeyN' && !e.repeat) openModal(notes);
-    if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
-    if (e.code === 'KeyM' && !e.repeat) openModal(map);
-    return;
-  }
-  if (kneel) {
-    const k = KNEEL_TOOLS.indexOf(kneel.tool);
-    setKneelTool(KNEEL_TOOLS[(k + (e.deltaY > 0 ? 1 : KNEEL_TOOLS.length - 1)) % KNEEL_TOOLS.length]);
-    return;
-  }
-  const list = TOOLS.filter((t) => (t !== 'sluice' || ownsSluice()) && (t !== 'uv' || ownsUv()));
-  const i = list.indexOf(state.tool);
-  selectTool(list[(i + (e.deltaY > 0 ? 1 : list.length - 1)) % list.length]);
+bindToolWheel({
+  isPlaying: () => playing,
+  special: e => { if (photo.active) { photo.zoom(e.deltaY); return true; } return driving; },
+  items: () => kneel ? KNEEL_TOOLS : TOOLS.filter(t => (t !== 'sluice' || ownsSluice()) && (t !== 'uv' || ownsUv())),
+  current: () => kneel ? kneel.tool : state.tool,
+  select: name => kneel ? setKneelTool(name) : selectTool(name),
 });
 
 function saveNow() {
@@ -771,11 +735,11 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.code === 'KeyC' && !e.repeat) { kneelDown(); return; }
   keys.add(e.code);
-  const n = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7'].indexOf(e.code);
+  const tool = toolForKey(e.code);
   if (e.code === 'KeyL' && !e.repeat) toggleHeadlamp();
   if (e.code === 'KeyM' && !e.repeat) { openModal(map); return; }
   if (e.code === 'KeyF' && !e.repeat) rightClick();
-  if (n >= 0) selectTool(TOOLS[n]);
+  if (tool) selectTool(tool);
   if (e.code === 'KeyE' && !e.repeat) interact();
   if (e.code === 'KeyN' && !e.repeat) openModal(notes);
   if (e.code === 'KeyI' && !e.repeat) openModal(inventory);
@@ -2161,7 +2125,6 @@ const touch = IS_TOUCH ? new TouchControls({
     pause: () => pause(),
   },
 }) : null;
-let touchUseWas = false;
 
 // Tool slots can be tapped (or clicked).
 for (const el of document.querySelectorAll('.slot[data-tool]')) {
@@ -2304,8 +2267,7 @@ function frame() {
   }
   if (touch && playing) {
     mouseHeld = touch.use;
-    if (touch.use && !touchUseWas) clicked = true;
-    touchUseWas = touch.use;
+    if (touch.consumeUsePress()) clicked = true;
   }
   elapsed += dt;
   const detWas = detShown;

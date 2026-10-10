@@ -63,3 +63,26 @@ Integration outcome: local main was fast-forwarded to implementation commit `236
 The user rejected development commentary in the field journal. Removed the game-balancing/fictional-site captions, future-sniping section, implementation language about saved state/reward transactions, and the equivalent northeast/sieve/travel commentary. Journals retain route information, map-reading help, real prospecting technique, controls and useful progress. Research, simplifications and future work remain documented here. AGENTS.md now records this copy rule so later additions keep developer notes out of the game.
 
 Copy correction validation: production build passed. Inspected the rendered western desktop journal and northeast portrait-touch journal, wet-sieve text and unavailable-destination message in disposable browser contexts; no page errors. No gameplay or simulation changes.
+
+## Controls correction — original game is the baseline
+
+The user rejected duplicated regional controls and reported missing mouse lock and mouse-wheel tool selection. Reuse the home game's handlers in a shared module rather than adding another independent input implementation. Keep regional terrain and prospecting content; this is a controls correction, not another scene rewrite.
+
+- Extract the original pointer-lock lifecycle, wheel cycling and number-key tool mapping for all three scenes. Desktop play begins after lock succeeds; menus release it and closing them reacquires it. A rejected request must leave a usable resume button.
+- Preserve the existing explicit ?test automation bypass and touch input. Check actual pointer lock on the normal URL separately; ?test is not evidence that locking works.
+- Cycle only tools available at the location, in original order. The digging tool uses 2, pan 3 and sieve 4. Selecting a tool equips it; Use performs the action. Reuse the existing held-tool renderer so the selected item is visible.
+- Menus scroll without switching tools or turning the camera. Clear held inputs on pause/focus loss. Verify home, west and northeast, plus desktop/touch prospecting regressions and the production build.
+
+Implemented on `codex/location-travel`, starting from `1a2f4f4` and brought forward to `aeb026f` before final validation. `src/controls.js` contains the original lock lifecycle, wheel selection and tool-number mapping; home and both Tasmania profiles call it. Region-specific terrain and movement constraints remain in their existing modules. Regional held tools now use the original `Viewmodel`, asset loader and tool assets, retaining built-in shapes if a model fails to load.
+
+The regional toolbar now selects a tool; left click or touch Use performs the action. The digging slot is 2, pan 3 and northeast sieve 4. The wheel wraps through the carried tools without cancelling walking. Right-click also flips the northeast sieve. Pending/failed mouse-lock requests cannot activate camera control; pause and menus clear held inputs and release the cursor.
+
+Browser checks exposed two additional input defects: a brief touch Use could finish between frames, and a home toolbar tap could bubble into the world-use handler. The existing shared TouchControls now retains the press until consumed, and the original world mouse handler listens on the game canvas. Neither tool selection nor closing a menu replays an old Use press.
+
+Validation: 51 logic tests and the production build pass. `tests/controls.game.mjs` checks actual desktop pointer lock on the normal URL in all three locations, camera motion, wheel/number keys, walking while switching, menu isolation, pause/resume, rejected-lock recovery, and regional pan/sieve close. Its phone check verifies the original toolbar, brief Use taps, pan/map close and no stale input. Northeast and western desktop/emulated-touch journeys pass, including real input, saved partial work, collection, camp and return travel. Map-travel checks also pass in both input modes. Rendered held-tool and phone sieve screenshots were inspected. Tests use disposable saves; no player storage was cleared. Physical-phone performance remains unmeasured.
+
+The normal preview is `http://127.0.0.1:5191/`. The existing `?test` URL deliberately bypasses desktop pointer lock, in both the original game and regional scenes. Use it only for automation that needs that bypass.
+
+Final checks: `tests/panning.game.mjs` passes original-map mouse entry, partial-pan reload and exactly-once reward collection after the canvas-only mouse change. `tests/tasmania.offline.mjs` passes against the production build with Claude's cache fix: offline western movement, northeast Easy sieving/collection and return to home. All successful browser runs report no page errors. Claude's cache and touch-toolbar fixes are preserved from `aeb026f`; its checkout is unchanged. No dependencies, generators, terrain, save formats or prospecting rules were replaced.
+
+Delivery paths: `AGENTS.md`, this plan, `src/controls.js`, `src/main.js`, `src/touch.js`, `src/tasmania/main.js`, `src/tasmania/sieveui.js`, and the controls/west/northeast/offline browser checks. Local main integration follows the user's existing integration instruction after clean-status and port checks. No push or publication is included.

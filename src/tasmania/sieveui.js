@@ -18,6 +18,7 @@ export class SieveUI {
       target.addEventListener('pointerdown',ev=>{if(ev.button!==0)return;ev.preventDefault();target.focus();target.setPointerCapture(ev.pointerId);this.held=true;});
       for(const event of ['pointerup','pointercancel','lostpointercapture'])target.addEventListener(event,()=>{this.held=false;});
     }
+    this.root.addEventListener('contextmenu',ev=>{ev.preventDefault();this.flip();});
     this.root.addEventListener('keydown',ev=>{
       if(ev.code==='Escape'){ev.stopPropagation();this.close();}
       if(ev.code==='Space'&&['sieve-jig','sieve-view'].includes(ev.target.id)){ev.preventDefault();this.held=true;}

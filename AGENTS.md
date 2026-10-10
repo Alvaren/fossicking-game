@@ -6,6 +6,7 @@
 - Follow more specific instructions in nested AGENTS.md files, if present.
 - The game is a semi-educational Australian fossicking simulator: teach real technique while retaining approachable difficulty modes. Prefer player skill over arbitrary stat bonuses. Explain useful prospecting principles in field notes; record model simplifications and research caveats in project documentation.
 - Player-facing text must read as game content: directions, technique, controls and useful feedback. Keep development status, roadmap commentary, implementation details and game-balancing explanations in docs, not journals, maps or tool screens. A brief unavailable-destination label is enough on the travel map.
+- Use the original claim as the usability foundation for new locations. Reuse shared input, pointer-lock, tool selection and existing tool models; do not build independent substitutes. Check normal desktop mouse lock, wheel/number keys, menu transitions and touch controls across locations.
 - This setup does not authorize building the entire roadmap. Work on the user's requested slice; propose regions and overseas expansion before implementing them.
 
 ## Worktree and ownership

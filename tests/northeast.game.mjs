@@ -32,20 +32,20 @@ try{for(const phone of [false,true]){
   await tap('#tas-scoop');await hold(phone?'#t-use':'#game');await page.waitForFunction(()=>fossickTas.expedition.bucket.length===1);await release();
   assert.equal(await page.evaluate(()=>fossickTas.expedition.bucket[0].classified),true);
   await page.screenshot({path:`node_modules/.cache/ne-${phone?'touch':'desktop'}-river.png`});
-  await tap('#tas-sieve');await tap('#sieve-load');await page.locator('#sieve-jig').scrollIntoViewIfNeeded();
+  await tap('#tas-sieve');await tap(phone?'#t-use':'#game');await tap('#sieve-load');await page.locator('#sieve-jig').scrollIntoViewIfNeeded();
   await hold('#sieve-jig');await page.waitForFunction(()=>fossickTas.expedition.sieveSession.I>.56);await release();
   await page.waitForFunction(()=>fossickTas.expedition.sieveSession.I<.3);assert.ok(await page.evaluate(()=>fossickTas.expedition.sieveSession.time)>0);
   await tap('#sieve-close');const partial=(await stored()).expeditions['ne-tasmania'].sieveSession;assert.ok(partial.time>0);assert.equal(partial.classified,true);
   await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossickTas);assert.deepEqual(await page.evaluate(()=>fossickTas.expedition.sieveSession),partial);
-  await tap('#tas-resume');await tap('#tas-sieve');
+  await tap('#tas-resume');await tap('#tas-sieve');await tap(phone?'#t-use':'#game');
   await page.evaluate(async()=>{const {stepSieve,jigZone}=await import('/src/tasmania/sieving.js');const s=fossickTas.expedition.sieveSession;for(let i=0;i<3000&&s.strat<1;i++){const [lo,hi]=jigZone(s);stepSieve(s,s.I<(lo+hi)/2,1/60,'realistic');}if(s.strat<1)throw Error('Manual controller failed');fossickTas.sieveUI.refresh();});
-  await tap('#sieve-flip');await page.waitForTimeout(500);await page.screenshot({path:`node_modules/.cache/ne-${phone?'touch':'desktop'}-sieve.png`});
+  if(phone)await tap('#sieve-flip');else await page.locator('#sieve-view').click({button:'right'});await page.waitForTimeout(500);await page.screenshot({path:`node_modules/.cache/ne-${phone?'touch':'desktop'}-sieve.png`});
   const found=await page.evaluate(()=>fossickTas.expedition.sieveSession.result.finds.length);assert.ok(found>0);
   await page.locator('#sieve-collect').evaluate(b=>{b.click();b.click();});assert.equal(await page.evaluate(()=>fossickTas.expedition.gems.length),found);await page.waitForFunction(()=>fossickTas.sieveUI.view.sieveFinds.children.length===0);
   await tap('#sieve-close');
   // Reserve both an unfinished pan and a second wet-sieve parcel before travel.
   await page.evaluate(()=>{fossickTas.collectSample();fossickTas.collectSample();});
-  await tap('#tas-pan');await tap('#pan-load');await tap('#pan-close');await tap('#tas-sieve');await tap('#sieve-load');await tap('#sieve-close');
+  await tap('#tas-pan');await tap(phone?'#t-use':'#game');await tap('#pan-load');await tap('#pan-close');await tap('#tas-sieve');await tap(phone?'#t-use':'#game');await tap('#sieve-load');await tap('#sieve-close');
   await tap('#tas-journal');const packed=(await stored()).expeditions['ne-tasmania'];assert.ok(packed.panSession&&packed.sieveSession);
   await tap('#tas-locations');await tap('.region-location-list [data-location="tasmania-west"]');await tap('#region-depart');await page.waitForFunction(()=>window.fossickTas?.region==='tasmania-west');assert.equal(await page.locator('#tas-heading').textContent(),'Fern River catchment');
   const banked=await stored();assert.equal(banked.gems.length,found);assert.equal(banked.cash,500);assert.deepEqual(banked.expeditions['ne-tasmania'].sieveSession,packed.sieveSession);assert.deepEqual(banked.expeditions['ne-tasmania'].panSession,packed.panSession);

@@ -52,7 +52,7 @@ try{
     if(phone)await touchEnd();else await page.mouse.up();
     const sampled=await page.evaluate(()=>structuredClone(fossickTas.expedition));assert.equal(sampled.siteUse[site.id],1);assert.equal(sampled.bucket[0].classified,true);
     await page.screenshot({path:`node_modules/.cache/tas-${phone?'touch':'desktop'}-river.png`});
-    await tap('#tas-pan');await page.locator('#panning').waitFor({state:'visible'});await tap('#pan-load');
+    await tap('#tas-pan');await tap(phone?'#t-use':'#game');await page.locator('#panning').waitFor({state:'visible'});await tap('#pan-load');
     if(phone){
       await page.locator('.pan-mobile-actions [data-pan-action="clay"]').tap();
       await page.locator('#pan-canvas').scrollIntoViewIfNeeded();
@@ -65,7 +65,7 @@ try{
     await tap('#pan-close');const partial=await stored(page);assert.ok(partial.expeditions['tasmania-west'].panSession);assert.equal(partial.expeditions['tasmania-west'].bucket[0].panVolume,.5);
     await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossickTas);
     const resumed=await page.evaluate(()=>structuredClone(fossickTas.expedition));assert.deepEqual(resumed.panSession,partial.expeditions['tasmania-west'].panSession);assert.equal(resumed.siteUse[site.id],1);
-    await tap('#tas-resume');await tap('#tas-pan');
+    await tap('#tas-resume');await tap('#tas-pan');await tap(phone?'#t-use':'#game');
     const expected=await page.evaluate(async()=>{const {stepPan,automaticStroke,panResult}=await import('/src/panning.js');const s=fossickTas.expedition.panSession;for(let i=0;i<20000&&!s.finished;i++)stepPan(s,automaticStroke(s),1/60);if(!s.finished)throw Error('Unfinished');fossickTas.panUI.refresh();return panResult(s).gold;});
     await page.locator('#pan-collect').evaluate(b=>{b.click();b.click();});assert.equal((await stored(page)).expeditions['tasmania-west'].gold,expected);assert.ok(expected>0);
     await tap('#pan-close');

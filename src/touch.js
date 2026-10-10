@@ -12,6 +12,7 @@ export class TouchControls {
     this.move = { x: 0, y: 0 };
     this.run = false;
     this.use = false;
+    this.usePressed = false;
     this.jump = false;
     this.stickId = null;
     this.lookId = null;
@@ -21,7 +22,10 @@ export class TouchControls {
     this.bind();
   }
 
-  show(v) { this.root.classList.toggle('hidden', !v); }
+  show(v) { this.root.classList.toggle('hidden', !v); if (!v) this.usePressed = false; }
+
+  // Keep a quick tap until the game reads it, even if it ends between frames.
+  consumeUsePress() { const pressed = this.usePressed; this.usePressed = false; return pressed; }
 
   // Show the right button labels for standing or kneeling.
   setKneeling(k) { this.root.classList.toggle('kneeling', k); }
@@ -75,7 +79,7 @@ export class TouchControls {
     // Hold buttons.
     const hold = (id, key) => {
       const el = document.getElementById(id);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); this[key] = true; el.classList.add('down'); }, { passive: false });
+      el.addEventListener('touchstart', (e) => { e.preventDefault(); this[key] = true; if (key === 'use') this.usePressed = true; el.classList.add('down'); }, { passive: false });
       const up = (e) => { e.preventDefault(); this[key] = false; el.classList.remove('down'); };
       el.addEventListener('touchend', up, { passive: false });
       el.addEventListener('touchcancel', up, { passive: false });
