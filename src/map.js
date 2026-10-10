@@ -115,15 +115,15 @@ export class ClaimMap {
     // Sources you've been near.
     ctx.font = 'bold 12px Segoe UI, sans-serif';
     for (const [key, s] of Object.entries(sources)) {
-      if (!this.state.discovered[key]) continue;
+      if (!this.state.discovered[key] && !s.known) continue;
       const [px, py] = this.toPx(s.x, s.z);
-      ctx.fillStyle = SOURCES[key].colour;
+      ctx.fillStyle = s.colour || SOURCES[key]?.colour || '#b89059';
       ctx.strokeStyle = '#2a1a0c';
       ctx.beginPath();
       ctx.arc(px, py, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      label(ctx, SOURCES[key].label, px + 10, py + 4);
+      label(ctx, s.label || SOURCES[key]?.label || key, px + 10, py + 4);
     }
     // Camp.
     const [cx, cy] = this.toPx(camp.x, camp.z);

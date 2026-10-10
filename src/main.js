@@ -27,6 +27,7 @@ import { MILESTONES, findMilestones } from './milestones.js';
 import { DustDevils } from './dustdevil.js';
 import { Boulders } from './boulders.js';
 import { Mine } from './mine.js';
+import { Dugouts } from './dugouts.js';
 import { OreWorks, ORE_BAG, crushedLoad } from './orework.js';
 import { Cabinet } from './cabinet.js';
 import { FossilBed, makeFossil, makeFossilMesh, FOSSILS } from './fossils.js';
@@ -115,7 +116,7 @@ function writeSave() {
     show: state.show,
     photos: state.photos,
     boulders: boulders.snapshot(),
-    mine: mine.snapshot(),
+    mine: mine.snapshot(player),
     works: works.snapshot(),
     ore: state.ore,
     panTests: state.panTests,
@@ -262,8 +263,10 @@ const field = new CrystalField(scene, terrain, state.seed, new Set(saved.crystal
 const world = buildWorld(scene, terrain, state.seed, field.sites, settings.shadows === 'off');
 const campStation = new CampStation(scene, terrain, state.camp, world.colliders);
 const campShelter = new CampShelter(scene, terrain, state.camp, world.colliders);
-const mine = new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
-if (mine.ok) terrain.sources.mine = { x: mine.x, z: mine.z };
+const mine = region === 'coober-pedy'
+  ? new Dugouts(scene, terrain, state.seed, saved.mine, world.colliders)
+  : new Mine(scene, terrain, state.seed, saved.mine, world.colliders);
+if (mine.ok && !mine.portal) terrain.sources.mine = { x: mine.x, z: mine.z };
 const works = new OreWorks(scene, terrain, world.oreSpots, saved.works);
 const boulders = new Boulders(scene, terrain, state.seed, saved.boulders, world.colliders);
 const excav = new Excavation(scene, terrain, field);
@@ -275,10 +278,10 @@ const targets = new Targets(scene, terrain, deposits, state.seed, new Set(saved.
 const finds = new SurfaceFinds(scene, terrain, deposits, state.seed, new Set(saved.surface || []), world.colliders);
 const environmentDetail = dressEnvironment(scene, {
   seed: state.seed, height: (x,z) => terrain.getHeight(x,z),
-  bank: (x,z) => { const l = creek.local(x,z,{}); return l.d-l.w; },
+  bank: (x,z) => { if (region === 'coober-pedy') return 30; const l = creek.local(x,z,{}); return l.d-l.w; },
   waterY: z => creek.surfaceY(z),
   anchors: scene.children.filter(o => o.isInstancedMesh && (o.userData.tree || ['Granite tors','Geological scenery rocks'].includes(o.name))),
-  blocked: (x,z) => Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<15 || !!terrain.overlayAt(x,z)
+  blocked: (x,z) => terrain.dugoutAt(x,z) || Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<15 || !!terrain.overlayAt(x,z)
     || field.sites.some(s => Math.hypot(x-s.x,z-s.z)<3)
     || finds.items.some(s => Math.hypot(x-s.x,z-s.z)<.8)
     || (terrain.sources.fossil && Math.hypot(x-terrain.sources.fossil.x,z-terrain.sources.fossil.z)<8),
@@ -327,12 +330,12 @@ if (saved.ute) ute.placeAt(saved.ute.x, saved.ute.z, saved.ute.h);
 const landscape = buildLandscape(scene, {
   region, seed:state.seed, height:(x,z)=>terrain.getHeight(x,z), riverX:z=>creek.cx(z), riverWidth:z=>creek.halfWidth(z),
   placementHeight:(x,z)=>terrain.getOrigHeight(x,z),obstacles:[...world.sceneryColliders,...boulders.list.map(b=>({x:b.x,z:b.z,r:b.r}))],
-  bank:(x,z)=>{const l=creek.local(x,z,{});return l.d-l.w;}, colliders:world.colliders, low:settings.shadows==='off',
-  blocked:(x,z)=>Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
+  bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w;}, colliders:world.colliders, low:settings.shadows==='off',
+  blocked:(x,z)=>terrain.dugoutAt(x,z)||Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
     ||field.sites.some(s=>Math.hypot(x-s.x,z-s.z)<5)||finds.items.some(s=>s.id<100000&&Math.hypot(x-s.x,z-s.z)<2)
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
-const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
+const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
 let driving = false;
 // The detector is held out in the world, its coil riding just above the ground.
 const worldDet = new WorldDetector(scene);
@@ -353,7 +356,7 @@ const hud = new Hud();
 const view = new Viewmodel(env);
 const settingsPanel = new SettingsPanel({ onApply: () => applyGraphics(), beforeReload: () => writeSave() });
 view.setAspect(camera.aspect);
-view.setTool(state.tool);
+view.setTool(state.tool === 'hammer' ? 'pick' : state.tool);
 hud.tool(state.tool);
 
 // Little ring that shows where the shovel will bite.
@@ -1324,6 +1327,12 @@ function finishLoad(method, opts = {}) {
 // ---------- hard-rock gold: the mine and the ore works ----------
 
 function startClimb(down) {
+  if (mine.portal) {
+    if (down) { mine.enter(player); award('underground'); }
+    else mine.leave(player);
+    mouseHeld = false; clicked = false; sound.click(); writeSave();
+    return;
+  }
   mine.climb = { down, t: 0, clank: 0 };
   mouseHeld = false;
   if (down) {
@@ -1404,6 +1413,21 @@ function updateMineTools(dt) {
   digCooldown -= dt;
   camera.getWorldDirection(camDir);
   marker.visible = false;
+  if (mine.portal) {
+    const action = mine.workFace({origin:camera.position,dir:camDir,tool:state.tool,held:mouseHeld,dt,easy:state.difficulty==='easy'});
+    if (action.tapped) {view.playTap();sound.tap(.15);}
+    if (action.result) {
+      if (action.result.gem) {
+        addFind(action.result.gem,'Chipped from a seam in Colour Rise workings',mine.active);
+        hud.toast(cap(action.result.gem.label),action.result.gem.variety==='potch'?'':'gold');
+      } else hud.toast('Pale host rock. No opal in this sample.');
+      sound.crack();writeSave();
+    }
+    sound.setDetector(false,0,null);hud.meter(0,null,false);
+    view.setTool(viewTool());clicked=false;hud.progress(action.progress);
+    hud.prompt(mine.nearLadder(player.pos)?'Exit · E / Interact: return to the surface':action.prompt);
+    return;
+  }
   let prompt = '';
   let progress = 0;
   if (state.tool === 'hammer') {
@@ -2092,7 +2116,7 @@ function updateTools(dt, motion) {
   else if (stall.near(player.pos)) prompt = daynight.hour >= OPENS && daynight.hour < CLOSES
     ? (state.show?.day === state.day && state.show.stage === 'done' ? 'Gem & Mineral Show · E: see how you went' : 'Gem & Mineral Show · E: talk to the steward')
     : 'Gem & Mineral Show (closed)';
-  else if (mine.nearCollar(player.pos)) prompt = 'The Lucky Strike shaft · E: climb down the ladder';
+  else if (mine.nearCollar(player.pos)) prompt = mine.portal ? `${mine.active.plan.name} · E / Interact: enter` : 'The Lucky Strike shaft · E: climb down the ladder';
   else if (works.nearMill(player.pos)) prompt = works.mill.out.length ? `Hammer mill · E: shovel out the crushed ore (${works.mill.out.length})` : works.milling ? `Hammer mill crushing... (${works.mill.queue.length} to go)` : state.ore.length ? `Hammer mill · E: feed it your ore (${state.ore.length})` : 'Hammer mill';
   else if (works.nearDolly(player.pos)) prompt = state.ore.length ? `Dolly pot · E: crush your ore (${state.ore.length} lump${state.ore.length === 1 ? '' : 's'})` : 'Dolly pot: for crushing reef ore';
   else if (works.nearFire(player.pos) && (works.roast || state.ore.some((l) => !l.roasted))) prompt = works.roast ? (works.roast.left > 0 ? `Ore roasting on the fire... ${Math.ceil(works.roast.left)} s` : 'E: take the roasted ore off the fire') : `E: put your raw ore on the fire to roast (${state.ore.filter((l) => !l.roasted).length})`;
@@ -2224,7 +2248,7 @@ function checkDiscoveries(dt) {
     hint('boulders', 'Loose boulders here. Some hide a vug: tap round them with the rock hammer (6) and listen for a dull, hollow spot.', 3600);
   }
   for (const [key, src] of Object.entries(terrain.sources)) {
-    if (state.discovered[key]) continue;
+    if (state.discovered[key] || src.known) continue;
     if (Math.hypot(player.pos.x - src.x, player.pos.z - src.z) < (key === 'mine' ? 12 : key === 'fossil' ? 14 : key === 'granite' || key === 'opal' ? 24 : 26)) {
       state.discovered[key] = true;
       if (key === 'reef') setTimeout(checkLead, 100);
@@ -2252,7 +2276,7 @@ function duskHints() {
 
 // Where a photo was taken, for the date stamp.
 function placeName() {
-  if (mine.inside || mine.climb) return 'Lucky Strike mine';
+  if (mine.inside || mine.climb) return mine.portal ? mine.active.plan.name : 'Lucky Strike mine';
   const p = camera.position;
   if (Math.hypot(p.x - terrain.camp.x, p.z - terrain.camp.z) < 14) return 'Camp';
   let best = null, bd = 32;
@@ -2260,7 +2284,7 @@ function placeName() {
     const d = Math.hypot(p.x - src.x, p.z - src.z);
     if (d < bd && state.discovered[key] && PLACE_NAMES[key]) { bd = d; best = PLACE_NAMES[key].label; }
   }
-  return best || (Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? (creek.dry ? 'Dry wash' : 'The creek') : creek.dry ? profile.title : 'The claim');
+  return best || (region === 'coober-pedy' ? profile.title : Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? (creek.dry ? 'Dry wash' : 'The creek') : creek.dry ? profile.title : 'The claim');
 }
 
 const photo = new PhotoMode({
@@ -2364,11 +2388,12 @@ function frame() {
   // In the close walls of the drive the lamp needs far less punch than out in the bush.
   headlampLight.intensity = headlamp ? 40 * (1 - mine.under(camera.position) * 0.8) : 0;
   // Opal only shows its colour in good light: daylight, your headlamp, or the inventory lamp.
-  opalLight.value = inventory.isOpen ? 1 : Math.max(daynight.daylight, headlamp ? 0.7 : 0.05);
+  opalLight.value = inventory.isOpen ? 1 : Math.max(mine.inside ? (mine.portal ? .4 : .05) : daynight.daylight, headlamp ? 0.7 : 0.05);
   uvLight.intensity = uvOn ? 7 : 0;
   const under = mine.under(camera.position);
   view.setLight(daynight.daylight * (1 - under), headlamp, uvOn);
   weather.update(dt, camera.position);
+  if (mine.portal && mine.inside) weather.rain.visible = false;
   const rainfall=Math.max(0,(weather.storm-.6)/.4);
   updateEnvironmentWeather(playing?dt:0,rainfall);
   surfaceEffects.update(playing?dt:0,player.pos,rainfall,playing&&under<.5&&!driving);
@@ -2420,6 +2445,7 @@ function frame() {
 }
 
 restoreWorld();
+mine.restore?.(player);
 if (sluice.kind === 'highbanker') document.querySelector('.slot[data-tool="sluice"]').innerHTML = '<kbd>5</kbd>Highbanker';
 applyGraphics();
 view.setTool(viewTool());

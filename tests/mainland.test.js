@@ -46,7 +46,7 @@ test('pegging a new claim replaces only the current world and difficulty follows
   root=saveClaim(root,{...readClaim(root),seed:98765,digs:undefined,panSession:undefined});root=serialize(root);
   assert.equal(root.seed,12345);assert.deepEqual(root.digs,home().digs);assert.deepEqual(root.claims['qld-gemfields'],before.claims['qld-gemfields']);
   assert.equal(readClaim(root).seed,98765);assert.equal(readClaim(root).panSession,undefined);assert.equal(readClaim(root).digs,undefined);
-  assert.equal(travelTo(root,'coober-pedy'),null);assert.equal(travelTo(root,'golden-triangle'),null);
+  assert.equal(travelTo(root,'lightning-ridge'),null);assert.equal(travelTo(root,'golden-triangle'),null);
 });
 
 // Geometry arrays without a renderer: generation/geology are the production methods.

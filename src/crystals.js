@@ -449,7 +449,7 @@ export class CrystalField {
         const ground = T.getOrigHeight(x, z) - hh;
         // Mostly in the top half-metre of the heap, where noodlers scratch.
         const y = ground + 0.03 + Math.max(0, hh - 0.04 - r() * Math.min(0.55, hh));
-        const variety = pickW(OPAL_MIX, r);
+        const variety = pickW(T.profile.opalMix || OPAL_MIX, r);
         const pt = pattern(r);
         const tilt = r() * 1.2, az = r() * Math.PI * 2;
         list.push({

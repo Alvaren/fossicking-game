@@ -1,6 +1,6 @@
 // Authored, tileable mineral surfaces. Independent of every world/save RNG.
 // Two small shared atlases: sRGB colour, then linear height + roughness.
-export const ROCK_TYPES = ['granite', 'rhyolite', 'basalt', 'quartz', 'ironstone', 'slate'];
+export const ROCK_TYPES = ['granite', 'rhyolite', 'basalt', 'quartz', 'ironstone', 'slate', 'sandstone'];
 export const ROCK_ID = Object.fromEntries(ROCK_TYPES.map((name, i) => [name, i]));
 export const TILE = 256, BORDER = 8, INNER = TILE - BORDER * 2;
 export const ATLAS_WIDTH = TILE * 4, ATLAS_HEIGHT = TILE * 2;
@@ -71,6 +71,11 @@ function surface(type, u, v) {
     colour = blend(colour, [57, 40, 29], crack * .55);
     colour = colour.map(n => n * (.84 + grain * .28));
     height = .37 + cloud * .25 + grain * .13 - crack * .17; rough = .95;
+  } else if (type === 'sandstone') {
+    const layers = .5 + Math.sin((v * 8 + noise(u, v, 4, 531) * .14) * Math.PI * 2) * .5;
+    colour = blend([179, 154, 112], [227, 211, 174], cloud * .7 + layers * .3);
+    colour = colour.map(n => n * (.92 + grain * .14));
+    height = .43 + grain * .15 + layers * .04; rough = .96;
   } else {
     const layers = v * 38 + noise(u, v, 4, 331) * .45;
     const crease = Math.pow(.5 + Math.sin(layers * Math.PI * 2) * .5, 8);

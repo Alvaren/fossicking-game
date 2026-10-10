@@ -83,7 +83,7 @@ void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
 uniform sampler2D rockColour;
 uniform sampler2D rockRelief;
-uniform vec3 rockAverages[6];
+uniform vec3 rockAverages[${tex.averages.length}];
 varying vec3 vRockPosition;
 varying vec3 vRockNormal;
 varying float vRockKind;

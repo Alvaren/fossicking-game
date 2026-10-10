@@ -2,6 +2,16 @@
 // its default generator and its legacy top-level world snapshot.
 export const CLAIM_PROFILES = {
   'new-england': {id:'new-england',name:'New England',title:'New England claim',startTool:'detector'},
+  'coober-pedy': {
+    id:'coober-pedy',name:'Coober Pedy',title:'Painted Ridge',salt:0xc00be,startTool:'hammer',
+    description:'Painted Ridge: pale mullock heaps and opal country. Noodle the old spoil, explore the dugout homes and follow the drives beneath Colour Rise.',
+    sources:['opal'],hillScale:.42,benchHeight:.8,soil:[.77,.68,.52],treeCount:0,tufts:60,clay:.03,
+    creek:{dry:true,meander:.2,width:.8,depth:.2,slope:.002},
+    opalMix:[['potch',58],['milky opal',29],['crystal opal',12],['opalised shell',1]],
+    minerals:{gold:0,sapphire:0,zircon:0,spinel:0,garnet:0,topaz:0,agate:0},
+    how:['Kneel at a mullock heap and brush through the loose spoil. Look closely for chips of opal; check their colour in good light.', 'Visit Lantern House and Old No. 4. Their entrances are marked on your map; follow the access cut down to the door and use Interact to enter.', 'Explore Colour Rise workings with your headlamp (L). Follow the galleries and inspect pale seams beside the clay band.', 'Select Hammer (6), then hold Use to take a small sample from a seam. Potch has no play-of-colour; some seams contain no opal.', 'Bring your finds to camp to cut, polish or display them. Press M for the topographic map and travel.'],
+    notes:'Noodling means searching discarded mullock for opal missed during mining. Work small patches of loose spoil and inspect chips in good light. Underground, opal can occur in thin, discontinuous seams around changes in the host rock. A pale seam may be barren or contain potch without play-of-colour. Lantern House and Old No. 4 welcome visitors; Colour Rise has branching galleries and opal faces to sample.',
+  },
   'wa-goldfields': {
     id:'wa-goldfields',name:'WA Goldfields',title:'Mulga Flat',salt:0xa17d3,startTool:'detector',
     description:'Mulga Flat: red dirt, dry washes and quartz-strewn ridges. Search the shallow old diggings, follow scattered gold patches and bring your samples back to camp.',

@@ -1,5 +1,7 @@
 # Locations and map travel — execution plan
 
+Current addition (11 October 2026): **Coober Pedy → Painted Ridge**, with two furnished underground homes, branching opal workings and surface noodling. The user explicitly rejected the inherited riverbed and invented hills. Keep this field low and open, with descending access cuts and rooms below original ground level. Reuse mainland inputs, $0 travel and always-on topography. Read [COOBER-PEDY.md](COOBER-PEDY.md) before changing this destination.
+
 Current addition (11 October 2026): the user approved **WA Goldfields → Mulga Flat**, built on the original mainland engine. Their landscape clarification selects low scrub and dry grass, without tall gums. It joins the five existing destinations through $0 map travel and always-on topography. Read [WA-GOLDFIELDS.md](WA-GOLDFIELDS.md) for its execution checklist, research, dry-world behavior, tests and publication record; the older sections below retain their historical scope.
 
 Status: COMPLETE for the confirmed Northeast Tasmania and shared map/travel slice. Branch: `codex/location-travel`. Base: `6ca7a41`.

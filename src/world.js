@@ -20,7 +20,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const profile = terrain.profile || {};
   const half = SIZE / 2;
   const L = {};
-  const chan = (x, z) => { creek.local(x, z, L); return L.d - L.w; }; // metres outside the wetted channel
+  const chan = (x, z) => { if(profile.id==='coober-pedy')return 30; creek.local(x, z, L); return L.d - L.w; }; // metres outside the wetted channel
 
   // Reserve clear pads for the two camp rooms without changing terrain or RNG.
   const campFlip = creek.cx(camp.z) > camp.x ? -1 : 1;
@@ -28,6 +28,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const nearCamp = (x, z, r) => Math.hypot(x - camp.x, z - camp.z) < r;
   const fossil = terrain.sources.fossil;
   const blocked = (x, z, r) => avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
+    || terrain.dugoutAt(x,z,r)
     || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < r + 7); // keep the shale bed clear
   const m4 = new THREE.Matrix4();
   const q = new THREE.Quaternion();
@@ -83,7 +84,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const rockGeo = lumpy(new THREE.DodecahedronGeometry(1, 1), 0.28, rand);
   const rockMat = rockMaterial('slate', { mixed: true, flat: true });
   const outcrop = [S.reef, S.basalt, S.rhyolite].filter(Boolean);
-  const scatter = 520, perOutcrop = 34;
+  const scatter = profile.id === 'coober-pedy' ? 900 : 520, perOutcrop = 34;
   const boulders = creek.boulders.filter((b) => terrain.inside(b.x, b.z));
   const rockCount = scatter + perOutcrop * outcrop.length + boulders.length;
   const rocks = new THREE.InstancedMesh(rockGeo, rockMat, rockCount);
@@ -91,6 +92,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const setRockKind = rockKinds(rockGeo, rockCount);
   let ri = 0;
   const putRock = (x, z, s, sink, collide) => {
+    if (terrain.profile.id === 'coober-pedy') { rockKind = 'sandstone'; col.setRGB(.65,.53,.4,THREE.SRGBColorSpace); }
     q.setFromEuler(new THREE.Euler(rand() * 3, rand() * 3, rand() * 3));
     const y = terrain.getHeight(x, z) - s * sink;
     m4.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(s, s * (0.55 + rand() * 0.4), s * (0.8 + rand() * 0.4)));
@@ -108,7 +110,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
       z = (rand() * 2 - 1) * (half - 4);
     } while (nearCamp(x, z, 9) || blocked(x, z, 2));
     const inCreek = chan(x, z) < 1;
-    const s = inCreek ? 0.12 + rand() * 0.4 : 0.15 + Math.pow(rand(), 2.5) * 1.5;
+    const s = profile.id === 'coober-pedy' ? .045 + Math.pow(rand(),2)*.28 : inCreek ? 0.12 + rand() * 0.4 : 0.15 + Math.pow(rand(), 2.5) * 1.5;
     if (inCreek) { rockKind = sourceRockKind(S, x, z); col.setRGB(0.45 + rand() * 0.15, 0.42 + rand() * 0.13, 0.38 + rand() * 0.12, THREE.SRGBColorSpace); }
     else geoTint(x, z, rand());
     putRock(x, z, s, 0.35, s > 0.6);

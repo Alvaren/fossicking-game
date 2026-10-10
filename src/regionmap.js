@@ -3,7 +3,7 @@ export const LOCATIONS = [
   {id:'new-england',name:'New England',state:'NSW',coord:[151.112,-29.780],available:true},
   {id:'tasmania-west',name:'Western Tasmania',state:'TAS',coord:[145.5,-42],available:true},
   {id:'golden-triangle',name:'Golden Triangle',state:'VIC',coord:[143.734,-36.860],available:true},
-  {id:'coober-pedy',name:'Coober Pedy',state:'SA',coord:[134.755,-29.013]},
+  {id:'coober-pedy',name:'Coober Pedy',state:'SA',coord:[134.755,-29.013],available:true},
   {id:'lightning-ridge',name:'Lightning Ridge',state:'NSW',coord:[147.97,-29.43]},
   {id:'ne-tasmania',name:'Northeast Tasmania',state:'TAS',coord:[147.875,-41.130],available:true},
   {id:'wa-goldfields',name:'WA Goldfields',state:'WA',coord:[121.17,-30.95],available:true},

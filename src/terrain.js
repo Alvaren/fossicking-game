@@ -3,6 +3,8 @@ import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
 import { groundMaterial } from './environmentmaterials.js';
 import { goldfieldPatches } from './goldfields.js';
+import { cooberHeight, dugoutReserved } from './cooberpedy.js';
+import { cooberMaterial } from './coobermaterials.js';
 
 // Diggable heightfield terrain built around the creek, with a simple geology:
 // topsoil over gravel "wash" over bedrock. Heights live in a flat grid so the
@@ -51,6 +53,10 @@ export class Terrain {
     }
     this.heaps = [];
     this.shafts = [];
+    if (profile.id === 'coober-pedy') {
+      this.sources.opal = {x:57,z:-65,ex:57,ez:-65,side:1};
+      this.creek.boulders = [];
+    }
     const O = this.sources.opal;
     for (let k = 0; k < 400 && this.heaps.length < 14; k++) {
       const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 18;
@@ -165,6 +171,7 @@ export class Terrain {
   }
 
   rawHeight(x, z) {
+    if (this.profile.id === 'coober-pedy') return cooberHeight(x,z,this.n2);
     const L = this.creek.local(x, z, this.tmpL);
     const hv = this.valleyHeight(x, z, L);
     if (L.d > 30) return hv;
@@ -210,6 +217,9 @@ export class Terrain {
 
   // How deep the loose material goes, and how much of it is topsoil.
   geology(x, z, h) {
+    if (this.profile.id === 'coober-pedy') {
+      return {bedrock:h-this.heapHeight(x,z)-.12-(this.n2(x*.1,z*.1)+1)*.09,topsoil:.025};
+    }
     const C = this.creek;
     const L = C.local(x, z, this.tmpL);
     const q = L.nIn / L.w;
@@ -325,6 +335,7 @@ export class Terrain {
   }
 
   inside(x, z) { return Math.abs(x) < HALF && Math.abs(z) < HALF; }
+  dugoutAt(x,z,r=0) { return this.profile.id === 'coober-pedy' && dugoutReserved(x,z,r); }
 
   // March a ray against the heightfield. Returns a Vector3 or null.
   raycast(origin, dir, maxDist) {
@@ -450,7 +461,7 @@ export class Terrain {
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = groundMaterial();
+    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial();
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -480,6 +491,10 @@ export class Terrain {
         this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
         this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
+        if (this.profile.id === 'coober-pedy') {
+          this.surface[i * 3] = 0;
+          this.surface[i * 3 + 1] = .45;
+        }
       }
     }
     const g = this.geo;
@@ -492,6 +507,12 @@ export class Terrain {
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,
   // pinkish rhyolite, grey creek gravel, slate where bedrock shows.
   surfaceColor(x, z, h, ny, orig, bedrock, topsoil) {
+    if (this.profile.id === 'coober-pedy') {
+      const tone=this.n2(x*.035,z*.035)*.045,heap=smoothstep(.02,.25,this.heapHeight(x,z));
+      const band=(1-smoothstep(.7,.95,ny))*Math.sin(h*3.8)*.035;
+      const dug=Math.min(.1,Math.max(0,orig-h)*.2);
+      return [.77+tone+heap*.16+band-dug,.65+tone+heap*.23+band-dug,.51+tone+heap*.28+band-dug].map(srgb);
+    }
     const n2 = this.n2;
     const C = this.creek;
     const L = C.local(x, z, this.tmpL);
@@ -553,7 +574,7 @@ export class Terrain {
         const i = iz * FN + ix;
         const inner = Math.max(Math.abs(x), Math.abs(z));
         // Tuck it under the detailed terrain inside the claim.
-        const h = this.rawHeight(x, z) - (inner < HALF - 1 ? 3 : 0);
+        const h = this.rawHeight(x, z) - (inner < HALF - 1 ? (this.profile.id === 'coober-pedy' ? 15 : 3) : 0);
         pos[i * 3] = x; pos[i * 3 + 1] = h; pos[i * 3 + 2] = z;
         const c = this.surfaceColor(x, z, h, 0.95, h, h - 2, 0.4);
         col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];

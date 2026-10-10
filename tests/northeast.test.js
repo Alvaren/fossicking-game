@@ -51,6 +51,6 @@ test('direct travel banks once, charges once, preserves both expedition work and
   const backWest=travelTo(saveExpedition(ne,e),TASMANIA,['bucket']);assert.equal(backWest.gems.length,1);assert.equal(backWest.log.sapphire.n,1);assert.equal(backWest.expeditions[TASMANIA].siteUse.crack,2);
   const backNE=travelTo(backWest,NORTHEAST,['bucket']);assert.equal(backNE.gems.length,1);assert.equal(backNE.expeditions[NORTHEAST].sieveSession.id,'partial');assert.equal(backNE.expeditions[NORTHEAST].siteUse.bar,3);
   assert.deepEqual(returnHome(backNE).panSession,h.panSession);assert.equal(travelTo(backNE,NORTHEAST,[]),null);
-  assert.equal(travelTo(backNE,'coober-pedy',[]),null);assert.equal(travelTo(backNE,TASMANIA,[],151),null);
+  assert.equal(travelTo(backNE,'lightning-ridge',[]),null);assert.equal(travelTo(backNE,TASMANIA,[],151),null);
 });
 

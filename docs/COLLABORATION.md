@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Current build: Coober Pedy (11 October 2026)
+
+Codex is implementing the user-approved opal district, underground homes and workings on `codex/coober-pedy`, based on `480d3bc`. Read [COOBER-PEDY.md](COOBER-PEDY.md) for scope, corrections and verification. The user's explicit corrections are **no inherited riverbed, no invented hills/hillsides, and homes below the existing ground**. The final terrain uses descending access cuts into a low open field; do not reinstate the rejected mound terrain. Shared original movement, mouse lock, wheel, touch, collection, camps and $0 travel remain the foundation. Main and Claude were clean when inspected, Claude's committed work is already an ancestor of main, and only Codex's 5191 preview is listening. No other agent was launched or messaged. Publishing remains authorized by the standing instruction below; complete the listed checks before integration.
+
 ## Completed build: WA Goldfields (11 October 2026)
 
 The approved WA slice was implemented on `codex/wa-goldfields`, based on `ce4afd3`, and published from main at `362b36c`. Read [WA-GOLDFIELDS.md](WA-GOLDFIELDS.md) for the completed plan, actual checks, touched paths and publication record. Mulga Flat reuses the original mainland engine and existing difficulties/controls, with deterministic gold patches, dry hydrology and camp-tub panning. The user clarified low scrub and dry grass with no tall gums; other destinations retain their vegetation. Main and Claude were inspected before the fast-forward integration; Claude remains untouched and clean at `aeb026f`. No other agent was launched or messaged, and no dependencies or Blender outputs changed. Pages run `38062954102` succeeded, followed by full public-site desktop and emulated-phone recovery/save/travel checks. Codex's preview remains on 5191; the other game ports were inactive at integration.

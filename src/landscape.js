@@ -6,6 +6,7 @@ import { rockMaterial } from './rockmaterials.js';
 import { vegetationLOD } from './vegetationlod.js';
 
 const profiles = {
+  'coober-pedy': { leaf:0x9a9679, bark:0x9f8c71, rock:'sandstone', names:[], forms:[], z:[], scrub:true, density:18 },
   'new-england': { leaf:0x718154, bark:0xb7ae96, rock:'granite', names:['Split gum bend','Granite shoulder'], forms:['roots','tor'], z:[28,-56] },
   'golden-triangle': { leaf:0x6c7148, bark:0x534236, rock:'ironstone', names:['Broken ironbark','Old timber stack'], forms:['snag','timber'], z:[32,-42] },
   'qld-gemfields': { leaf:0x8b9367, bark:0x8a7760, rock:'basalt', names:['Dry wash sentinel','Basalt steps'], forms:['snag','steps'], z:[-32,53] },
@@ -80,7 +81,7 @@ export function buildLandscape(scene,{region,seed,height,placementHeight=height,
     }
     return true;
   };
-  for(let i=0;i<2;i++) {
+  for(let i=0;i<profile.forms.length;i++) {
     let spot;
     for(let k=0;k<600;k++) {
       const z=profile.z[i]+(k%25-12)*1.8,side=k%2?1:-1,x=riverX(z)+side*(riverWidth(z)+8+Math.floor(k/25)*1.3);
@@ -112,7 +113,7 @@ export function buildLandscape(scene,{region,seed,height,placementHeight=height,
   }
   // Saplings and shrubs add age/shape variety without advancing any world RNG.
   const leaf=vegetationMaterial({color:profile.leaf,forest:profile.forest}),bark=vegetationMaterial({color:profile.bark,forest:profile.forest});
-  const entries=[],limit=profile.scrub?(low?150:260):low?100:200;
+  const entries=[],limit=profile.density || (profile.scrub?(low?150:260):low?100:200);
   for(let i=0;i<limit*20&&entries.length<limit;i++) {
     const x=(rand()-.5)*(profile.forest?180:216),z=(rand()-.5)*(profile.forest?280:216);
     if(!safe(x,z,1)||landmarks.some(l=>Math.hypot(x-l.x,z-l.z)<5))continue;

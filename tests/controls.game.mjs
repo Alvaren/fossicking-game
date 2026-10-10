@@ -5,8 +5,8 @@ import {createPan} from '../src/panning.js';
 import {travelTo} from '../src/regions.js';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
-try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golden-triangle','qld-gemfields','wa-goldfields','tasmania-west','ne-tasmania']){
-  const home=['new-england','golden-triangle','qld-gemfields','wa-goldfields'].includes(region),context=await browser.newContext({viewport:{width:1280,height:860}});
+try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy','tasmania-west','ne-tasmania']){
+  const home=['new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy'].includes(region),context=await browser.newContext({viewport:{width:1280,height:860}});
   const base={seed:12345,cash:500,gold:.2,difficulty:'realistic',up:{pan:2,sieve:1},camp:{shelter:'tent'}};
   const seed=region==='new-england'?base:travelTo(base,region,['bucket','classifier']);
   await context.addInitScript(value=>{
@@ -56,6 +56,18 @@ try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golde
   const failed=(await state()).yaw;await page.mouse.move(700,400);assert.equal((await state()).yaw,failed);
   await page.evaluate(()=>{document.getElementById('game').requestPointerLock=window.restoreLock;});
   await page.locator(resume).click();await locked();
+  if(region==='coober-pedy') {
+    assert.equal(await page.evaluate(()=>{const f=fossick,e=f.mine.entries[0];return f.mine.nearCollar({x:e.x+2.7,y:f.terrain.getHeight(e.x+2.7,e.z-1.5),z:e.z-1.5});}),false,'The door cannot be used through rock from ground level');
+    await page.evaluate(()=>{const f=fossick,e=f.mine.entries[0];f.player.pos.set(e.x,f.terrain.getHeight(e.x,e.z-1.5),e.z-1.5);f.player.vel.set(0,0,0);});
+    await page.keyboard.press('KeyE');await page.waitForFunction(()=>fossick.mine.inside);await locked();
+    const start=await page.evaluate(()=>fossick.mine.toLocal(fossick.player.pos).z);
+    await page.keyboard.down('KeyW');await page.mouse.wheel(0,-120);assert.ok((await state()).keys.includes('KeyW'));
+    await page.waitForFunction(z=>fossick.mine.toLocal(fossick.player.pos).z>z+.3,start);await page.keyboard.up('KeyW');
+    await page.keyboard.press('KeyM');await unlocked();await page.locator('#map-close').click();await locked();
+    assert.equal(await page.evaluate(()=>fossick.mine.inside),true);
+    await page.evaluate(()=>{const f=fossick;f.mine.last={x:.5,z:3.5};f.player.pos.copy(f.mine.toWorld(f.player.pos.clone().set(.5,0,3.5)));f.player.vel.set(0,0,0);});
+    await page.keyboard.press('KeyE');await page.waitForFunction(()=>!fossick.mine.inside);await locked();
+  }
   if(!home){
     await page.evaluate(()=>{const f=fossickTas,s=f.model.sites.find(s=>s.kind==='crevice')||f.model.sites[1];Object.assign(f.player,{x:s.x-1,z:s.z});});
     await page.keyboard.press('Digit3');await page.mouse.click(600,400);await page.locator('#panning').waitFor({state:'visible'});await unlocked();

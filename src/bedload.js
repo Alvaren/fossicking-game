@@ -30,7 +30,7 @@ export class Bedload {
     const C = this.creek;
     const r = mulberry32(seed * 53 + 11);
     this.stones = [];
-    for (let z = 130; z > -130; z -= 2.2 + r() * 3.5) {
+    for (let z = terrain.profile.id === 'coober-pedy' ? -130 : 130; z > -130; z -= 2.2 + r() * 3.5) {
       const w = C.halfWidth(z), d = C.dcx(z);
       const n = (r() * 2 - 1) * 0.95 * w;
       const x = C.cx(z) + n * Math.sqrt(1 + d * d);
