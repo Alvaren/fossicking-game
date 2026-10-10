@@ -1,8 +1,8 @@
 # Codex and Claude collaboration
 
-## Current build: WA Goldfields (11 October 2026)
+## Completed build: WA Goldfields (11 October 2026)
 
-The approved WA slice is implemented on `codex/wa-goldfields`, based on `ce4afd3`. Read [WA-GOLDFIELDS.md](WA-GOLDFIELDS.md) for the durable plan, actual checks, touched paths and publication status. Mulga Flat reuses the original mainland engine and existing difficulties/controls, with deterministic gold patches, dry hydrology and camp-tub panning. The user clarified low scrub and dry grass with no tall gums; other destinations retain their vegetation. Main and Claude were read-only inspected, no other agent was launched or messaged, and no dependencies or Blender outputs changed. The standing publishing instruction below applies to this build.
+The approved WA slice was implemented on `codex/wa-goldfields`, based on `ce4afd3`, and published from main at `362b36c`. Read [WA-GOLDFIELDS.md](WA-GOLDFIELDS.md) for the completed plan, actual checks, touched paths and publication record. Mulga Flat reuses the original mainland engine and existing difficulties/controls, with deterministic gold patches, dry hydrology and camp-tub panning. The user clarified low scrub and dry grass with no tall gums; other destinations retain their vegetation. Main and Claude were inspected before the fast-forward integration; Claude remains untouched and clean at `aeb026f`. No other agent was launched or messaged, and no dependencies or Blender outputs changed. Pages run `38062954102` succeeded, followed by full public-site desktop and emulated-phone recovery/save/travel checks. Codex's preview remains on 5191; the other game ports were inactive at integration.
 
 ## Current publishing instruction (10 October 2026)
 

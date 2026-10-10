@@ -21,7 +21,7 @@ Travel opens from the local map, costs $0 and preserves each claim's worked grou
 - [x] Test patch/barren behavior, determinism, minerals, dry hydrology and save/travel isolation.
 - [x] Test actual desktop mouse lock/wheel, detecting/digging/recovery, camp, ute and map travel; check emulated phone controls/layout and offline reload.
 - [x] Inspect Low and High screenshots; run the full logic suite and production build.
-- [ ] Review other worktrees/main/remote, integrate completed work, push main and verify GitHub Pages.
+- [x] Review other worktrees/main/remote, integrate completed work, push main and verify GitHub Pages.
 
 ## Research and model limits
 
@@ -49,4 +49,4 @@ Browser scripts accept `PLAYWRIGHT_MODULE` for an external Playwright installati
 
 Touched paths: `src/{audio,claimregions,creek,deposits,goldfields,landscape,main,map,regionmap,targets,terrain,water,weather}.js`; `tests/controls.game.mjs`; `tests/goldfields.{test.js,game.mjs,offline.mjs}`; `README.md`; this plan; `docs/LOCATION-PLAN.md`; `docs/COLLABORATION.md`.
 
-Publication: all local checks complete; authorized integration follows. Main and origin/main were clean/aligned at `ce4afd3`; Claude's `claude/touch-toolbar` checkout was clean at `aeb026f`, with no commits missing from main. Only Codex's 5191 preview was listening at the pre-integration inspection.
+Publication: implementation commit `362b36c69476e00db501cb2e5e77ead501f78dde` was fast-forwarded into main and pushed. [GitHub Pages run 38062954102](https://github.com/Alvaren/fossicking-game/actions/runs/38062954102) completed successfully. The full desktop and emulated-phone WA browser flow then passed against `https://alvaren.github.io/fossicking-game/`, including digging/collection, camp purchases, actual pan input, driving, portrait map/travel, reload and round-trip recovery preservation, with no page/console errors. Before integration, main and origin/main were clean/aligned at `ce4afd3`; Claude's `claude/touch-toolbar` checkout was clean at `aeb026f`, with no commits missing from main. Only Codex's 5191 preview was listening. No player or Claude server was restarted and Claude's checkout remains untouched. A documentation-only follow-up records these successful public checks.
