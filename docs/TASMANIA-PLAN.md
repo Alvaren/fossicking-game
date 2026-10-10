@@ -1,6 +1,6 @@
 # Tasmania expedition — execution plan
 
-Status: IMPLEMENTED AND VERIFIED. Owner: Codex. Branch: `codex/tasmania-expedition`. Base: `7ad5b15`.
+Status: IMPLEMENTED, VERIFIED AND INTEGRATED LOCALLY. Owner: Codex. Branch: `codex/tasmania-expedition`. Base: `7ad5b15`.
 
 ## User decision and scope
 
@@ -49,7 +49,7 @@ Keep hand-worked pockets finite across visits. Panning moves assayed gold out of
 - Passed 42 logic tests and the production build. Desktop Easy and portrait emulated-touch Realistic round trips passed: departure/loadout, real movement and sampling input, pan input, partial-pan reload, accelerated completion, exactly-once recovery, remote camp/sleep, walk-out, preservation of the home camp/ground/pan and repeated travel.
 - Traversed the generated route in both directions with actual scene colliders. Existing desktop/touch camp regression tests passed. Normal pointer lock, Escape and resume worked outside test mode; portrait/landscape, journal, river, trailhead, camp and cascade screenshots were inspected. No game page errors occurred in the successful checks; existing three.js warnings remain.
 - Production offline departure, rendered movement and return passed after warming the cache online. No physical-phone performance claim is made.
-- Ready for the authorized local integration after a clean-worktree/port check. Publishing remains a separate user action. The next gameplay slice is sniping; do not implement it merely because foundations exist.
+- Integrated into local main by fast-forward after the clean-worktree/port check: plan `e9cfa2b`, implementation `134b98c`. Main and Codex are clean; Claude remains unchanged at `ea39cfa`. Remote main remains `7ad5b15`; nothing was pushed or deployed. The next gameplay slice is sniping; do not implement it merely because foundations exist.
 
 ## Implemented structure and checks
 
