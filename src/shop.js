@@ -256,7 +256,7 @@ export class Shop {
       info.innerHTML = `<div class="name">${cap(g.label)}${g.keep ? ' <span class="h-note">collection</span>' : ''}</div>`
         + `<div class="desc">Worth $${Math.round(g.value)} rough. Cut, maybe $${Math.round(lo)} to $${Math.round(hi)}.</div>`;
       const btn = document.createElement('button');
-      btn.textContent = `Cut it ($${fee})`;
+      btn.textContent = `${['geode', 'thunderegg'].includes(g.type) ? 'Saw open' : 'Cut it'} ($${fee})`;
       btn.disabled = s.cash < fee;
       btn.onclick = () => {
         if (g.specimen && !confirm(`${cap(g.label)} is a specimen piece. Cut it and it's a gem, not a specimen any more. Go ahead?`)) return;
@@ -274,7 +274,7 @@ export class Shop {
     if (!rough.length && !away.length) {
       const none = document.createElement('p');
       none.className = 'desc';
-      none.textContent = 'Nothing worth cutting yet: sapphires, zircons, garnets, topaz, spinel, clear crystal points, agates, precious opal and thundereggs.';
+      none.textContent = 'Nothing worth cutting yet: sapphires, zircons, garnets, topaz, spinel, clear crystal points, agates, precious opal, thundereggs and geodes.';
       cutter.append(none);
     }
 

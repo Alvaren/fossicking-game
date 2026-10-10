@@ -50,6 +50,7 @@ export class Cabinet {
     const sig = items.map((i) => i.label + i.value + (i.ribbons?.length || 0)).join('|');
     if (sig === this.sig) return;
     this.sig = sig;
+    this.contents.traverse(o => o.userData.dispose?.());
     this.contents.clear();
     this.stands = [];
     const standGeo = new THREE.CylinderGeometry(0.03, 0.036, 0.025, 20);

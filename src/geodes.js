@@ -1,3 +1,4 @@
+import { makeHollowHalves } from './geodevisuals.js';
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
 
@@ -13,6 +14,27 @@ export const CORES = {
   'red jasper': { w: 10, mult: 2.2, solid: '#8e3526' },
   'opal-filled': { w: 4, mult: 7, opal: true },
 };
+
+// A geode is a hollow lined with crystals; thundereggs retain their own
+// rhyolite matrix and may be completely filled. Contents are chosen once.
+export const GEODE_CORES = {
+  'quartz-lined': { w: 52, mult: 3.2, colour: 0xe5eaf0, bands: [0x85919b, 0xd4dadb, 0xf1ede4] },
+  'amethyst-lined': { w: 20, mult: 5.5, colour: 0x9465c3, bands: [0x74718e, 0xc0b7ce, 0xe7e1ec] },
+  'agate and quartz': { w: 28, mult: 4.2, colour: 0xe9e7df, bands: [0x8c5e41, 0xe1c7a0, 0xb38160, 0xf1e7d1], opening: .56 },
+};
+export const noduleCore = it => it.type === 'geode'
+  ? (GEODE_CORES[it.core] || GEODE_CORES['quartz-lined'])
+  : (CORES[it.core] || CORES['blue agate']);
+
+export function makeGeode(random) {
+  let pick = random() * 100, core = 'quartz-lined';
+  for (const [name, def] of Object.entries(GEODE_CORES)) { pick -= def.w; if (pick <= 0) { core = name; break; } }
+  const grams = Math.round(110 + Math.pow(random(), 2) * 650);
+  const roll = random(), grade = roll < .2 ? 'A' : roll < .65 ? 'B' : 'C';
+  return { type: 'geode', core, grams, grade, seed: Math.floor(random() * 1e6),
+    value: Math.round((9 + grams * .025) * ({ A: 1.4, B: 1, C: .75 })[grade] * 100) / 100,
+    label: `unopened geode, ${grams} g` };
+}
 
 export function makeThunderegg(r) {
   let t = r() * Object.values(CORES).reduce((s, c) => s + c.w, 0);
@@ -151,6 +173,7 @@ export function makeThundereggMesh(it) {
     m.castShadow = true;
     return m;
   }
+  if (noduleCore(it).hollow) return makeHollowHalves(it, { radius: rad, star: true });
   // Sawn and polished: the two halves side by side, faces to you.
   const g = new THREE.Group();
   const faceMat = new THREE.MeshPhysicalMaterial({ map: faceTexture(it), roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.05 });
@@ -172,4 +195,13 @@ export function makeThundereggMesh(it) {
     g.add(half);
   }
   return g;
+}
+
+const geodeRind = new THREE.MeshStandardMaterial({ color: 0x867d6d, roughness: .95 });
+export function makeGeodeMesh(it) {
+  const rad = thundereggRadius(it);
+  if (it.cut) return makeHollowHalves(it, { radius: rad, ...noduleCore(it) });
+  const mesh = new THREE.Mesh(knobbly(it.seed || 1), geodeRind);
+  mesh.scale.setScalar(rad); mesh.castShadow = true;
+  return mesh;
 }

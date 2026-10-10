@@ -991,7 +991,7 @@ function interact() {
   }
   if (p?.find) {
     finds.collect(p.find);
-    addFind(p.find.gem, p.find.glowing ? 'Spotted glowing under the UV torch' : p.find.gem.type === 'agate' ? 'Spotted lying on the ground' : p.find.gem.type === 'scheelite' ? 'Picked up off the slope below the reef' : 'Spotted glinting on a gravel bar', p.find);
+    addFind(p.find.gem, p.find.glowing ? 'Spotted glowing under the UV torch' : p.find.gem.type === 'agate' ? 'Spotted lying on the ground' : p.find.gem.type === 'scheelite' ? 'Picked up off the slope below the reef' : ['geode', 'thunderegg'].includes(p.find.gem.type) ? 'Collected below the rhyolite' : 'Spotted glinting on a gravel bar', p.find);
     if (p.find.gem.type === 'scheelite') hint('scheelite', "Scheelite. Dull by day, but it glows blue-white under UV, and it comes out of gold-bearing reefs.", 600);
     hud.toast(`Picked up: ${p.find.gem.label}`, 'gold');
     if (p.find.id >= 5000 && p.find.id < 6000) hint('float', 'Quartz float: shards shed from a crystal pocket. Follow them uphill and dig where they stop.', 300);
@@ -2046,7 +2046,7 @@ function updateTools(dt, motion) {
   else if (kelpie.near(player.pos)) prompt = 'E: pat your kelpie';
   else if (campStation.near(player.pos)) prompt = 'E: wash bench · practise, recover tailings & build camp';
   else if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
-  else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : near.find.gem.type === 'thunderegg' ? 'thunderegg' : 'glinting stone'}`;
+  else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : ['thunderegg', 'geode'].includes(near.find.gem.type) ? near.find.gem.type : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
   else if (sluice.stranded && Math.hypot(player.pos.x - sluice.stranded.x, player.pos.z - sluice.stranded.z) < 2.6) prompt = 'E: pick up your sluice';
   else if (oversize.near(player.pos)) { const pl = oversize.near(player.pos); prompt = `Classifier oversize (${pl.loads} load${pl.loads === 1 ? '' : 's'}) · E: pick through it`; }

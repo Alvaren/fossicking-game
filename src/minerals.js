@@ -1,7 +1,9 @@
+import { agateTexture } from './agatevisuals.js';
+export { agateTexture } from './agatevisuals.js';
 import { roughFindGeometry, finishRoughStone } from './findvisuals.js';
 import { sieveRecovery } from './sieverecovery.js';
 import { assayGold } from './panning.js';
-import { makeThundereggMesh, thundereggRadius } from './geodes.js';
+import { makeThundereggMesh, makeGeodeMesh, thundereggRadius } from './geodes.js';
 import { stoneMaterial, roundedHabit } from './materials.js';
 import { makeCutMesh } from './cutting.js';
 import * as THREE from 'three';
@@ -71,7 +73,12 @@ export const GEMS = {
       { v: 'banded', bands: [0x8a5a3a, 0xe8dcc8, 0xb08060], w: 30, m: 2.5 },
       { v: 'carnelian', bands: [0xc0461e, 0xe88a4a], w: 20, m: 3 },
       { v: 'fortification', bands: [0x6a3a2a, 0xf0e8dc, 0x9a6a4a, 0xe0d0c0], w: 10, m: 7 },
-      { v: 'moss', bands: [0x5a7a4a, 0xd8dcd0], w: 5, m: 4 },
+      { v: 'moss', bands: [0x46633b, 0x78904e, 0xd8dcd0], w: 8, m: 4 },
+      { v: 'dendritic', bands: [0x322b24, 0x65513a, 0xe9e2ce], w: 6, m: 4.5 },
+      { v: 'plume', bands: [0x913c23, 0xc6783b, 0xe9ddd0], w: 5, m: 5 },
+      { v: 'eye', bands: [0x754930, 0xeadfca, 0x97a8b7, 0x3e5266], w: 4, m: 6 },
+      { v: 'waterline', bands: [0x778b9b, 0xd9e2e8, 0xb7c5ce, 0xf0ebe0], w: 6, m: 4 },
+      { v: 'brecciated', bands: [0x87412e, 0xb67247, 0xe3cfaa], w: 5, m: 4.5 },
     ],
   },
 };
@@ -95,7 +102,8 @@ GEMS.fluorite = { name: 'Fluorite', plural: 'fluorite crystals' };
 GEMS.opal = { name: 'Opal', plural: 'opals' };
 GEMS.fossil = { name: 'Fossil', plural: 'fossils' };
 GEMS.thunderegg = { name: 'Thunderegg', plural: 'thundereggs' };
-export const CRYSTAL_ORDER = ['opal', 'fossil', 'thunderegg', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
+GEMS.geode = { name: 'Geode', plural: 'geodes' };
+export const CRYSTAL_ORDER = ['opal', 'fossil', 'thunderegg', 'geode', 'quartz', 'feldspar', 'calcite', 'fluorite', 'scheelite'];
 
 export function makeGem(type, rand, sizeBias = 1) {
   const def = GEMS[type];
@@ -208,36 +216,6 @@ export function summarise(finds) {
 
 // ---------- meshes ----------
 
-const agateTextures = new Map();
-export function agateTexture(bands) {
-  const key = bands.join(',');
-  if (agateTextures.has(key)) return agateTextures.get(key);
-  const s = 256;
-  const c = document.createElement('canvas');
-  c.width = c.height = s;
-  const ctx = c.getContext('2d'), pixels = ctx.createImageData(s, s);
-  const colours = bands.map(hex => [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255]);
-  // Continuous nested contours: neighbouring bands share their folds, like
-  // successive layers of chalcedony, instead of independently jagged rings.
-  for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
-    const px = (x / s - .47) / 1.15, py = y / s - .54;
-    const a = Math.atan2(py, px), r = Math.hypot(px, py);
-    const depth = r * (1 + .12 * Math.sin(a * 3) + .035 * Math.sin(a * 7)) + .009 * Math.sin(px * 30 + py * 12);
-    const band = depth * 32, whole = Math.floor(band), f = band - whole;
-    const col = colours[((whole % colours.length) + colours.length) % colours.length];
-    const fine = .84 + .16 * Math.pow(Math.sin(f * Math.PI), .3);
-    const line = f < .09 ? .78 : fine;
-    const i = (y * s + x) * 4;
-    for (let k = 0; k < 3; k++) pixels.data[i + k] = col[k] * line;
-    pixels.data[i + 3] = 255;
-  }
-  ctx.putImageData(pixels, 0, 0);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  agateTextures.set(key, tex);
-  return tex;
-}
-
 const geoCache = {};
 function gemGeometry(type) {
   if (geoCache[type]) return geoCache[type];
@@ -279,7 +257,7 @@ function pebbleGeometry(type) {
 
 // World-space size in metres, exaggerated a little so finds are visible.
 export function gemSize(gem) {
-  if (gem.type === 'thunderegg') return thundereggRadius(gem) * 2;
+  if (gem.type === 'thunderegg' || gem.type === 'geode') return thundereggRadius(gem) * 2;
   if (gem.type === 'agate') return Math.cbrt(gem.grams / 2.6) * 0.012;
   if (gem.type === 'scheelite') return Math.cbrt(gem.grams / 6) * 0.014;
   return 0.006 * Math.cbrt(gem.ct) * 2.2;
@@ -288,11 +266,12 @@ export function gemSize(gem) {
 export function makeGemMesh(gem, { hq = false, world = false } = {}) {
   if (gem.cut) return makeCutMesh(gem, { hq });
   if (gem.type === 'thunderegg') return makeThundereggMesh(gem);
+  if (gem.type === 'geode') return makeGeodeMesh(gem);
   let mat;
   if (gem.type === 'scheelite') {
     mat = new THREE.MeshStandardMaterial({ color: gem.color, roughness: 0.55 }); // dull and greasy by day
   } else if (gem.type === 'agate') {
-    mat = new THREE.MeshStandardMaterial({ map: agateTexture(gem.bands), roughness: 0.35 });
+    mat = new THREE.MeshStandardMaterial({ map: agateTexture(gem.bands, gem.variety, gem.grams), roughness: 0.35 });
   } else {
     mat = stoneMaterial({ type: gem.type, color: gem.color, finish: 'rough', hq, size: gemSize(gem), world });
   }
@@ -302,6 +281,7 @@ export function makeGemMesh(gem, { hq = false, world = false } = {}) {
   const m = new THREE.Mesh(model || (pebble ? pebbleGeometry(gem.type) : gemGeometry(gem.type)), mat);
   const s = gemSize(gem);
   m.scale.set(s, gem.type === 'agate' ? s * 0.7 : s, s);
+  if (gem.type === 'agate' && !world) m.rotation.x = 1.1; // show the patterned face in specimen viewers
   m.userData.fallbackScale = pebble && !model ? 1.15 : 1;
   if (pebble && !model) m.scale.multiplyScalar(1.15); // rounding takes a bit off the size
   m.castShadow = true;

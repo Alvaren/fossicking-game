@@ -1,8 +1,8 @@
-import { CORES, makeThundereggMesh } from './geodes.js';
+import { noduleCore, makeThundereggMesh, makeGeodeMesh } from './geodes.js';
 import * as THREE from 'three';
 import { mulberry32 } from './noise.js';
 import { stoneMaterial, cutGeometry, CUTS } from './materials.js';
-import { agateTexture } from './minerals.js';
+import { agateTexture } from './agatevisuals.js';
 import { CRYSTALS, makeOpalCab } from './crystals.js';
 
 // The gem cutter in town. Send him a rough stone and it comes back next
@@ -17,7 +17,7 @@ const QUARTZ_CUTS = ['emerald', 40, 'cushion', 30, 'oval', 30];
 
 function kind(item) {
   if (item.cut) return null;
-  if (item.type === 'thunderegg') return 'saw';
+  if (item.type === 'thunderegg' || item.type === 'geode') return 'saw';
   if (item.type === 'agate') return 'polish';
   if (item.type === 'opal') return CRYSTALS[item.variety]?.opal && item.variety !== 'opalised shell' ? 'cab' : null;
   if (CRYSTAL_CUT[item.variety] !== undefined) return 'crystal';
@@ -75,9 +75,10 @@ export function cutStone(rough, seed) {
   let note = null;
   if (k === 'saw') {
     out.cut = 'halves';
-    out.value = Math.round(rough.value * CORES[rough.core].mult * ({ A: 1.3, B: 1, C: 0.75 })[rough.grade || 'B'] * (0.85 + r() * 0.3) * 100) / 100;
-    out.label = `thunderegg halves, ${rough.core} (${rough.grade}-grade)`;
+    out.value = Math.round(rough.value * noduleCore(rough).mult * ({ A: 1.3, B: 1, C: 0.75 })[rough.grade || 'B'] * (0.85 + r() * 0.3) * 100) / 100;
+    out.label = `${rough.type} halves, ${rough.core} (${rough.grade}-grade)`;
     if (rough.core === 'opal-filled') note = "Kev reckons he's only seen a handful with opal inside.";
+    else if (rough.type === 'geode') note = rough.core === 'amethyst-lined' ? 'Purple amethyst points line the hollow.' : 'Quartz points grow inwards from the chalcedony wall.';
     else if (rough.core === 'crystal-lined') note = 'Hollow in the middle, lined with little quartz crystals.';
   } else if (k === 'polish') {
     out.cut = 'cabochon';
@@ -116,6 +117,7 @@ export function cutStone(rough, seed) {
 
 export function makeCutMesh(item, { hq = false } = {}) {
   if (item.type === 'thunderegg') return makeThundereggMesh(item);
+  if (item.type === 'geode') return makeGeodeMesh(item);
   const geo = cutGeometry(item.cut);
   // About 6.5 mm across a 1 ct round brilliant, scaling with the cube root of weight.
   const radius = item.type === 'agate' ? 0.012 : (6.5 * Math.cbrt(Math.max(0.05, item.ct || 1))) / 2000;
@@ -123,7 +125,7 @@ export function makeCutMesh(item, { hq = false } = {}) {
   if (item.type === 'opal') {
     m = makeOpalCab(item, geo);
   } else if (item.type === 'agate') {
-    m = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ map: agateTexture(item.bands), roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.03 }));
+    m = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ map: agateTexture(item.bands, item.variety, item.grams), roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.03 }));
   } else {
     const def = CRYSTALS[item.variety];
     m = new THREE.Mesh(geo, stoneMaterial({

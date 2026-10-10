@@ -87,6 +87,11 @@ const RULES = [
   ['Thundereggs',
     'Knobbly brown nodules that weather out of rhyolite. They grew in gas pockets in the lava and filled up later, usually with agate in '
     + 'a star shape, sometimes leaving a hollow full of crystals, and once in a blue moon with opal. The only way to know is to saw one open.'],
+  ['Agates and geodes',
+    'Look below the pink rhyolite for agate float and rounded geodes. Bands can form eyes, angular fortifications or level waterlines. '
+    + 'Moss and dendritic patterns are mineral inclusions; plumes resemble feathers. Brecciated agate contains angular fragments cemented together. '
+    + 'A geode is hollow, with crystals growing inwards from its walls. Its outside does not tell you whether the lining is quartz or amethyst. '
+    + 'Have Kev saw it open, or use the camp lapidary. Keep both halves as one specimen.'],
   ['Splitting shale for fossils',
     'Shale is mud that settled in still water, layer on layer, and it splits along those layers. Tap along the edge of a slab with the rock hammer '
     + 'to open it. Most are barren, but some hold Glossopteris leaves (the seed fern that covered Gondwana in the Permian), insect wings, or fish. '
