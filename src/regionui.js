@@ -18,12 +18,12 @@ export class RegionUI {
   refresh(){
     const save=readSave(),current=save?.activeRegion||'new-england',l=LOCATIONS.find(l=>l.id===this.destination),kg=packWeight(this.selection),old=save?.expeditions?.[this.destination];
     this.map.select(l.id,current);this.$('region-name').textContent=l.name;
-    this.$('region-description').textContent=!l.available?'This location is on the earlier Australia plan. It has not been built yet.':l.id===NORTHEAST?'Tin Fern River: northeast sapphire, zircon and spinel wash. Walk in from the roadside track, classify gravel and jig a wet sieve. The sieve kit is available here; your purchased nested screens carry over.':l.id===TASMANIA?'Fern River catchment: foot access, river sampling and panning. Your home claim, camp and unfinished home pan are preserved.':'Your home claim and camp. Returning banks recovered expedition finds once and preserves unworked expedition wash for your next visit.';
+    this.$('region-description').textContent=!l.available?'Travel to this destination is not yet available.':l.id===NORTHEAST?'Tin Fern River: sapphire, zircon and spinel wash. Walk in from the roadside track, classify gravel and wet-sieve the heavies.':l.id===TASMANIA?'Fern River catchment: steep forest tracks, gravel bars and bedrock cracks. Carry your pan down to the river and compare small samples.':'Return to your home claim and camp with your finds. Unfinished river samples will be waiting at their location when you visit again.';
     this.$('region-loadout').classList.toggle('hidden',!EXPEDITIONS.includes(l.id)||current===l.id);
     this.$('region-weight').textContent=`Pack ${kg.toFixed(1)} / ${PACK_LIMIT_KG} kg before collecting wash`;
-    this.$('region-resume').textContent=old?`Previous visits: ${old.trips}. Worked pockets and unfinished pans are preserved.`:'Worked pockets stay worked between visits.';
+    this.$('region-resume').textContent=old?`Previous visits: ${old.trips}. Your unfinished samples are waiting for you.`:'Worked pockets stay worked between visits.';
     this.$('region-fee').textContent=`Travel fee: $${TRAVEL_FEE}`;
-    this.$('region-depart').textContent=current===l.id?'You are here':!l.available?'Planned · not built':`Travel to ${l.name} · $${TRAVEL_FEE}`;
+    this.$('region-depart').textContent=current===l.id?'You are here':!l.available?'Not yet available':`Travel to ${l.name} · $${TRAVEL_FEE}`;
     this.$('region-depart').disabled=!l.available||l.id===current||(EXPEDITIONS.includes(l.id)&&kg>PACK_LIMIT_KG);
     this.$('region-error').textContent='';
   }

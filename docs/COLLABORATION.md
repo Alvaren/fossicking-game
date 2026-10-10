@@ -112,7 +112,7 @@ Touched paths: `index.html`, `src/main.js`, `src/boot.js`, `src/regions.js`, `sr
 
 ## Active follow-up: locations and map travel
 
-Read [LOCATION-PLAN.md](LOCATION-PLAN.md). The user requested a few more locations, map-based travel with a $0 fee, and always-on original-style topography, and rejected the added Tasmania world guidance. Codex is working on codex/location-travel from 6ca7a41. Shared map/topography/travel work is implemented and checked. The user confirmed the documented second Tasmanian location: northeast sapphire/zircon country. That slice is now implemented; see the current checklist and verification in LOCATION-PLAN.md. Do not silently choose a region from visualization selection state or mark planned blips playable. No other agent was launched, and no integration or publishing has occurred for this still-in-progress slice.
+Read [LOCATION-PLAN.md](LOCATION-PLAN.md). The user requested a few more locations, map-based travel with a $0 fee, and always-on original-style topography, and rejected the added Tasmania world guidance. Codex is working on codex/location-travel from 6ca7a41. Shared map/topography/travel work is implemented and checked. The user confirmed the documented second Tasmanian location: northeast sapphire/zircon country. That slice is now implemented; see the current checklist and verification in LOCATION-PLAN.md. Do not silently choose a region from visualization selection state or mark planned blips playable. The completed slice was integrated locally at 2367bfa, with its integration record at c262c39. No other agent was launched and nothing was published.
 
 ## Northeast Tasmania handoff (10 October 2026)
 

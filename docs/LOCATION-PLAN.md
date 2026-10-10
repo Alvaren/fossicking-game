@@ -57,3 +57,9 @@ Commands: npm test; npm run build; node tests/northeast.game.mjs; node tests/tas
 Delivery: Codex worktree on codex/location-travel, based on 6ca7a41, preview 5191. Local main integration follows the previously authorized workflow after clean-status/fetch/port checks. No push or deployment is part of this slice. Main and Claude were clean before integration; only Codex's 5191 was listening.
 
 Integration outcome: local main was fast-forwarded to implementation commit `2367bfa` after a successful fetch, clean main/Claude checks and confirmation that no player/Claude/LAN preview was listening. Codex and main contain the same completed location build. Claude remains unchanged at `ea39cfa`; remote main remains `7ad5b15`. Nothing was pushed or deployed.
+
+## Player-facing copy correction
+
+The user rejected development commentary in the field journal. Removed the game-balancing/fictional-site captions, future-sniping section, implementation language about saved state/reward transactions, and the equivalent northeast/sieve/travel commentary. Journals retain route information, map-reading help, real prospecting technique, controls and useful progress. Research, simplifications and future work remain documented here. AGENTS.md now records this copy rule so later additions keep developer notes out of the game.
+
+Copy correction validation: production build passed. Inspected the rendered western desktop journal and northeast portrait-touch journal, wet-sieve text and unavailable-destination message in disposable browser contexts; no page errors. No gameplay or simulation changes.
