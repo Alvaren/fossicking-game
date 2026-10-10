@@ -1,6 +1,6 @@
 # Mainland locations — execution plan
 
-Status: COMPLETE. Validated for local main integration; no publication. Owner: Codex. Branch: `codex/mainland-locations`. Base: `e5c35c8`.
+Status: COMPLETE. Integrated locally at 525add4. Publication authorized by the subsequent standing per-run instruction. Owner: Codex. Branch: `codex/mainland-locations`. Base: `e5c35c8`.
 
 ## Scope and selection
 
@@ -56,3 +56,7 @@ Names and terrain are fictional/compressed game areas. Physical sources inform m
 Branch: codex/mainland-locations. Base: e5c35c8. Preview: 127.0.0.1:5191. Integrate by fast-forward into clean local main after these checks; no push or deployment is included. The shared local ownership record retains the resulting commit. Pre-integration fetch found origin/main at 1fa41d3, already contained in the local base. Claude is clean at aeb026f with its ownership claim released; only Codex's 5191 server is listening.
 
 Touched paths: src/claimregions.js; original scene/save integration in src/main.js; profiles in src/terrain.js, src/creek.js, src/world.js and src/deposits.js; source guards in src/finds.js, src/targets.js, src/crystals.js and src/boulders.js; src/regions.js, src/regionmap.js, src/regionui.js, src/notes.js and src/style.css; mainland tests and affected control/travel/offline tests; README.md, docs/LOCATION-PLAN.md and this plan. Dependencies, Blender generators and models are unchanged.
+
+## Publication follow-up
+
+After local integration, the user instructed "push everything online after every run". Publish all integrated changes through 525add4 together with the updated publishing rules. This supersedes the local-only scope of the original handoff above; ongoing policy is in AGENTS.md and docs/COLLABORATION.md.

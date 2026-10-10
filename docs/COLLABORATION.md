@@ -1,5 +1,11 @@
 # Codex and Claude collaboration
 
+## Current publishing instruction (10 October 2026)
+
+The user explicitly instructed: "push everything online after every run". Finish each implementation run by validating and committing completed work, integrating all ready changes into main, pushing main and verifying the GitHub Pages deployment. Routine publishing is already authorized. Preserve unfinished or uncommitted work in other checkouts and never force-push. Earlier local-only/no-publishing entries below describe previous runs and are superseded by this instruction. A later user instruction can change it.
+
+The first publication under this instruction includes all integrated work through 525add4: both Tasmania destinations, shared original controls, topographic travel and the two mainland locations, alongside the previously published Claude fixes.
+
 ## Current setup (10 October 2026, Australia/Brisbane)
 
 | Owner | Checkout | Branch at setup | Port |
