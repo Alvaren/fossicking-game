@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { mulberry32 } from '../noise.js';
 import * as western from './model.js';
+import { rockMaterial, rockKinds } from '../rockmaterials.js';
 const material = (color,extra={}) => new THREE.MeshStandardMaterial({color,roughness:.94,...extra});
 const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
 
@@ -95,11 +96,14 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   fernTrunks.count=ft;scene.add(ferns,fernTrunks);
   const rockGeo=new THREE.IcosahedronGeometry(1,1),rp=rockGeo.attributes.position;
   for(let i=0;i<rp.count;i++){const s=.83+rand()*.3;rp.setXYZ(i,rp.getX(i)*s,rp.getY(i)*s,rp.getZ(i)*s);}rockGeo.computeVertexNormals();
-  const rocks=new THREE.InstancedMesh(rockGeo,material(0xffffff),190);
+  const rocks=new THREE.InstancedMesh(rockGeo,rockMaterial('slate',{mixed:true}),190);
+  rocks.name='Catchment geology';
+  const setRockKind=rockKinds(rockGeo,190);
   for(let i=0;i<190;i++) {
     let x,z,s;
     do{z=rand()*280-140;x=riverX(z)+(rand()-.5)*65;s=.5+rand()*1.8;}while(nearestTrail(x,z).distance<s+1.6||Math.hypot(x-CAMP.x,z-CAMP.z)<5||model.sites.some(p=>Math.hypot(x-p.x,z-p.z)<s+2));
     dummy.position.set(x,model.height(x,z)+s*.2,z);dummy.rotation.set(rand(),rand()*6.28,rand()*.3);dummy.scale.set(s,s*.55,s*.85);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);rocks.setColorAt(i,new THREE.Color().setHSL(northeast?.09:.22,northeast?.07:.10+rand()*.15,northeast?(i%4?.46:.19):.22+rand()*.12));colliders.push({x,z,r:s*.8});
+    setRockKind(i,northeast?(z<-55?(i%4?'basalt':'granite'):(i%4?'granite':'basalt')):'slate');
   }
   scene.add(rocks);
   for(let i=0;i<12;i++) {
@@ -115,12 +119,12 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     if(northeast){
       // Natural mixed gravel, not the western slate cracks or a target outline.
       const gravel=new THREE.Group();group.add(gravel);
-      for(let k=0;k<12;k++){const stone=new THREE.Mesh(rockGeo,material(k%4?0x969184:0x3e403a));const angle=rand()*6.28,r=rand()*.85;stone.position.set(Math.cos(angle)*r,.015,Math.sin(angle)*r);stone.scale.set(.09+rand()*.12,.04+rand()*.06,.08+rand()*.14);gravel.add(stone);}
-    }else for(let k=0;k<3;k++){const slab=new THREE.Mesh(new THREE.BoxGeometry(.18,.09,1.5),material(0x56615a));slab.position.set((k-1)*.37,.03,0);slab.rotation.y=.4;group.add(slab);}
+      for(let k=0;k<12;k++){const stone=new THREE.Mesh(rockGeo,rockMaterial(k%4?'granite':'basalt',{wet:true}));const angle=rand()*6.28,r=rand()*.85;stone.position.set(Math.cos(angle)*r,.015,Math.sin(angle)*r);stone.scale.set(.09+rand()*.12,.04+rand()*.06,.08+rand()*.14);gravel.add(stone);}
+    }else for(let k=0;k<3;k++){const slab=new THREE.Mesh(new THREE.BoxGeometry(.18,.09,1.5),rockMaterial('slate',{wet:true}));slab.position.set((k-1)*.37,.03,0);slab.rotation.y=.4;group.add(slab);}
     siteGroups.push({s,group,pocket});
   }
   for(const p of model.snipingPockets) {
-    const slab=new THREE.Mesh(new THREE.BoxGeometry(1.6,.13,.8),material(0x4f5955));slab.position.set(p.x,model.height(p.x,p.z)+.07,p.z);scene.add(slab);
+    const slab=new THREE.Mesh(new THREE.BoxGeometry(1.6,.13,.8),rockMaterial('slate',{wet:true}));slab.position.set(p.x,model.height(p.x,p.z)+.07,p.z);scene.add(slab);
     const crack=new THREE.Mesh(new THREE.BoxGeometry(1.3,.02,.055),material(0x111c19));crack.position.copy(slab.position);crack.position.y+=.08;scene.add(crack);
   }
   function sign(point,title,subtitle) {

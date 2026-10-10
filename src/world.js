@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SIZE, PLAY } from './terrain.js';
 import { mulberry32, smoothstep } from './noise.js';
+import { rockMaterial, rockKinds, sourceRockKind } from './rockmaterials.js';
 
 // Scenery: gum trees, rocks (coloured by the local geology), outcrops of the
 // source rocks, creek boulders, spinifex, claim pegs and the camp.
@@ -62,22 +63,26 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // ---------- rocks ----------
   // Float rock tells you what's upslope: white quartz from the reef, black
   // basalt from the cap, pink rhyolite with agate nodules, red ironstone elsewhere.
+  let rockKind = 'ironstone';
   const geoTint = (x, z, v) => {
     const k = (s, R) => s ? Math.exp(-((x - s.x) ** 2 + (z - s.z) ** 2) / (2 * R * R)) : 0;
     const kb = k(S.basalt, 40), kr = k(S.reef, 24), ky = k(S.rhyolite, 36);
     const roll = rand();
+    rockKind = roll < kb ? 'basalt' : roll < kb + kr ? 'quartz' : roll < kb + kr + ky ? 'rhyolite' : sourceRockKind(S, x, z, 'ironstone');
     if (roll < kb) return col.setRGB(0.13 + v * 0.08, 0.13 + v * 0.07, 0.14 + v * 0.07, THREE.SRGBColorSpace);
     if (roll < kb + kr) return col.setRGB(0.86 + v * 0.1, 0.82 + v * 0.08, 0.74 + v * 0.06, THREE.SRGBColorSpace);
     if (roll < kb + kr + ky) return col.setRGB(0.70 + v * 0.12, 0.48 + v * 0.1, 0.44 + v * 0.08, THREE.SRGBColorSpace);
     return col.setRGB(0.42 + v * 0.2, 0.30 + v * 0.14, 0.24 + v * 0.1, THREE.SRGBColorSpace);
   };
   const rockGeo = lumpy(new THREE.DodecahedronGeometry(1, 1), 0.28, rand);
-  const rockMat = new THREE.MeshStandardMaterial({ roughness: 0.95, flatShading: true });
+  const rockMat = rockMaterial('slate', { mixed: true, flat: true });
   const outcrop = [S.reef, S.basalt, S.rhyolite].filter(Boolean);
   const scatter = 520, perOutcrop = 34;
   const boulders = creek.boulders.filter((b) => terrain.inside(b.x, b.z));
   const rockCount = scatter + perOutcrop * outcrop.length + boulders.length;
   const rocks = new THREE.InstancedMesh(rockGeo, rockMat, rockCount);
+  rocks.name = 'Geological scenery rocks';
+  const setRockKind = rockKinds(rockGeo, rockCount);
   let ri = 0;
   const putRock = (x, z, s, sink, collide) => {
     q.setFromEuler(new THREE.Euler(rand() * 3, rand() * 3, rand() * 3));
@@ -86,6 +91,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     if (campRoom(x,z,s)) m4.scale(new THREE.Vector3(0,0,0));
     rocks.setMatrixAt(ri, m4);
     rocks.setColorAt(ri, col);
+    setRockKind(ri, rockKind);
     ri++;
     if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * 0.85 });
   };
@@ -97,7 +103,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
     } while (nearCamp(x, z, 9) || blocked(x, z, 2));
     const inCreek = chan(x, z) < 1;
     const s = inCreek ? 0.12 + rand() * 0.4 : 0.15 + Math.pow(rand(), 2.5) * 1.5;
-    if (inCreek) col.setRGB(0.45 + rand() * 0.15, 0.42 + rand() * 0.13, 0.38 + rand() * 0.12, THREE.SRGBColorSpace);
+    if (inCreek) { rockKind = sourceRockKind(S, x, z); col.setRGB(0.45 + rand() * 0.15, 0.42 + rand() * 0.13, 0.38 + rand() * 0.12, THREE.SRGBColorSpace); }
     else geoTint(x, z, rand());
     putRock(x, z, s, 0.35, s > 0.6);
   }
@@ -106,6 +112,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
       const a = rand() * Math.PI * 2, r = Math.sqrt(rand()) * 9;
       const x = src.x + Math.cos(a) * r, z = src.z + Math.sin(a) * r;
       const v = rand();
+      rockKind = src === S.reef ? 'quartz' : src === S.basalt ? 'basalt' : 'rhyolite';
       if (src === S.reef) col.setRGB(0.88 + v * 0.1, 0.84 + v * 0.08, 0.76 + v * 0.05, THREE.SRGBColorSpace);
       else if (src === S.basalt) col.setRGB(0.12 + v * 0.07, 0.12 + v * 0.06, 0.13 + v * 0.06, THREE.SRGBColorSpace);
       else col.setRGB(0.72 + v * 0.1, 0.5 + v * 0.08, 0.45 + v * 0.07, THREE.SRGBColorSpace);
@@ -115,6 +122,7 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   });
   // Creek boulders: they make the slack water the heavies settle in.
   for (const b of boulders) {
+    rockKind = sourceRockKind(S, b.x, b.z);
     col.setRGB(0.42 + rand() * 0.12, 0.40 + rand() * 0.1, 0.37 + rand() * 0.1, THREE.SRGBColorSpace);
     putRock(b.x, b.z, b.r * 1.15, 0.1, true);
   }
@@ -123,7 +131,8 @@ export function buildWorld(scene, terrain, seed, avoid = []) {
   // Granite tors: rounded boulders weathered out of the granite and left stacked on the pavements.
   const G = terrain.sources.granite;
   const torGeo = lumpy(new THREE.IcosahedronGeometry(1, 2), 0.1, rand);
-  const tors = new THREE.InstancedMesh(torGeo, new THREE.MeshStandardMaterial({ roughness: 0.9 }), 90);
+  const tors = new THREE.InstancedMesh(torGeo, rockMaterial('granite'), 90);
+  tors.name = 'Granite tors';
   let ti = 0;
   for (let k = 0; G && k < 60 && ti < 86; k++) {
     const a = rand() * Math.PI * 2, rr = Math.sqrt(rand()) * 22;

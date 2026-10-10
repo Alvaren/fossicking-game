@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
+import { rockMaterial, rockKinds, sourceRockKind } from './rockmaterials.js';
 
 // Bedload: the cobbles and small boulders a flood rolls along the bed.
 //
@@ -41,7 +42,10 @@ export class Bedload {
       if (terrain.inside(x, z)) this.stones.push(s);
     }
     const geo = lumpy(new THREE.DodecahedronGeometry(1, 1), 0.22, r);
-    this.mesh = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), this.stones.length);
+    this.mesh = new THREE.InstancedMesh(geo, rockMaterial('slate', { mixed: true, wet: true, flat: true }), this.stones.length);
+    this.mesh.name = 'Creek bedload rocks';
+    const setKind = rockKinds(geo, this.stones.length);
+    this.stones.forEach((s, i) => setKind(i, sourceRockKind(terrain.sources, s.x, s.z)));
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
     const col = new THREE.Color();

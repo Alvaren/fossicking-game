@@ -3,6 +3,7 @@ import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { mulberry32 } from './noise.js';
 import { makeCrystalMesh, crystalLOD } from './crystals.js';
 import { gemsRealistic } from './settings.js';
+import { rockMaterial } from './rockmaterials.js';
 
 // Loose boulders that can hide a vug. Granite boulders weathered out of the
 // granite country sometimes carry a crystal-lined cavity (smoky and clear
@@ -85,53 +86,8 @@ function halfGeometry(b, side) {
   return g;
 }
 
-// The rock itself, worked out per pixel: granite's grains on a fresh face
-// (pink feldspar, grey glassy quartz, black mica), a sparkly druse of tiny
-// crystals lining a cavity, and orange and grey lichen on the weathered outside.
-const boulderMats = {};
-function boulderMaterial(kind) {
-  if (boulderMats[kind]) return boulderMats[kind];
-  const quartz = kind === 'quartz';
-  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: quartz ? 0.55 : 0.9 });
-  mat.onBeforeCompile = (sh) => {
-    sh.vertexShader = sh.vertexShader
-      .replace('void main() {', 'attribute float aFace;\nattribute float aCave;\nvarying float vFace;\nvarying float vCave;\nvarying vec3 vBPos;\nvoid main() {')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvFace = aFace;\nvCave = aCave;\nvBPos = position;');
-    sh.fragmentShader = sh.fragmentShader
-      .replace('void main() {', `varying float vFace;
-varying float vCave;
-varying vec3 vBPos;
-float bHash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
-float bNoise(vec3 x) {
-  vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
-  return mix(mix(mix(bHash(i), bHash(i + vec3(1, 0, 0)), f.x), mix(bHash(i + vec3(0, 1, 0)), bHash(i + vec3(1, 1, 0)), f.x), f.y),
-             mix(mix(bHash(i + vec3(0, 0, 1)), bHash(i + vec3(1, 0, 1)), f.x), mix(bHash(i + vec3(0, 1, 1)), bHash(i + vec3(1, 1, 1)), f.x), f.y), f.z);
-}
-void main() {`)
-      .replace('#include <color_fragment>', `#include <color_fragment>
-  float bFace = smoothstep(0.5, 0.9, vFace), bCave = smoothstep(0.3, 0.9, vCave);
-  // Grains a few millimetres across.
-  float grain = bHash(floor(vBPos * 220.0));
-  vec3 mineral = ${quartz
-    ? 'mix(vec3(0.86, 0.85, 0.82), vec3(0.95, 0.94, 0.92), grain)'
-    : 'grain < 0.12 ? vec3(0.05, 0.045, 0.04) : grain < 0.5 ? vec3(0.78, 0.56, 0.5) : vec3(0.6, 0.6, 0.62)'};
-  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * mineral * 1.6, bFace);
-  // Lichen on the weathered rind: orange and grey-green crusts.
-  float lich = bNoise(vBPos * 9.0) * 0.7 + bNoise(vBPos * 30.0) * 0.3;
-  float rindK = (1.0 - bFace) * (1.0 - bCave) * ${quartz ? '0.5' : '1.0'};
-  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.78, 0.48, 0.16), smoothstep(0.66, 0.7, lich) * rindK * 0.85);
-  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.62, 0.66, 0.58), smoothstep(0.3, 0.27, lich) * rindK * 0.6);
-  // Druse: the cavity glitters with crystals too small to pick out.
-  float sp = bHash(floor(vBPos * 600.0));
-  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.95, 0.93, 0.9), step(0.93, sp) * bCave);`)
-      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-  roughnessFactor = mix(roughnessFactor, grain > 0.5 ? 0.25 : 0.7, bFace * ${quartz ? '0.3' : '1.0'}); // quartz grains are glassy
-  roughnessFactor = mix(roughnessFactor, 0.12, step(0.93, sp) * bCave);`);
-  };
-  mat.customProgramCacheKey = () => `boulder-v1-${kind}`;
-  boulderMats[kind] = mat;
-  return mat;
-}
+// Shared geological surfaces retain the fresh-face/cavity vertex masks.
+const boulderMaterial = kind => rockMaterial(kind, { split: true });
 
 export class Boulders {
   constructor(scene, terrain, seed, saved, colliders) {
