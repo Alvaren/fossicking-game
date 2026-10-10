@@ -5,7 +5,9 @@ import { RegionUI } from '../regionui.js';
 import { topographyCanvas } from '../topography.js';
 import * as THREE from 'three';
 import { readSave, storeSave } from '../save.js';
-import { TASMANIA, NORTHEAST, TRAVEL_FEE, saveExpedition, returnHome, carriedWeight, sampleCapacity } from '../regions.js';
+import { TASMANIA, NORTHEAST, TRAVEL_FEE, saveExpedition, returnHome, carriedWeight, sampleCapacity, packWeight, PACK_LIMIT_KG } from '../regions.js';
+import { ensureSniping, nearestSnipingSite, SNIPING_TOOLS, SNIPING_FORCES } from '../sniping.js';
+import { SnipingView } from './snipingview.js';
 import * as western from './model.js';
 import * as eastern from './northeast-content.js';
 import { SieveUI } from './sieveui.js';
@@ -24,6 +26,7 @@ export function startTasmania(region = TASMANIA) {
   const home=readSave(), expedition=structuredClone(home.expeditions[region]);
   const model=new Catchment(expedition.seed), test=new URLSearchParams(location.search).has('test');
   expedition.snipingPockets ||= Object.fromEntries(model.snipingPockets.map(p=>[p.id,{remainingGold:p.gold,remainingMaterial:p.capacity}]));
+  if(!northeast)ensureSniping(expedition,model.snipingPockets);
   const canvas=document.getElementById('game'), touchRoot=document.getElementById('touch');
   document.body.replaceChildren(canvas,touchRoot);
   document.body.classList.add('tasmania');document.body.classList.toggle('touch',IS_TOUCH);
@@ -46,7 +49,7 @@ export function startTasmania(region = TASMANIA) {
   const world=buildCatchment(scene,model,expedition,low,profile);
   const player={x:TRAILHEAD.x,z:TRAILHEAD.z,yaw:.39,pitch:-.14,...expedition.player};
   let playing=false,leaving=false,held=false,tool='scoop',work=0,messageUntil=0,previous=performance.now(),elapsed=0,lampOn=false;
-  const keys=new Set();let touch;
+  const keys=new Set();let touch,sniping;
   const distance=p=>Math.hypot(player.x-p.x,player.z-p.z);
   const atWater=()=>Math.abs(player.x-riverX(player.z))<riverWidth(player.z)+3 && model.depth(player.x,player.z)<.72;
   const atCamp=()=>distance(CAMP)<5;
@@ -59,7 +62,7 @@ export function startTasmania(region = TASMANIA) {
     if(!ok)notify('Storage is full or unavailable. Your last saved expedition is still there; free storage before leaving.');
     return ok;
   }
-  function release(){held=false;keys.clear();work=0;if(touch){touch.use=false;touch.move.x=0;touch.move.y=0;touch.run=false;touch.stickId=null;touch.lookId=null;touch.knob.style.transform='';}}
+  function release(){held=false;keys.clear();work=0;if(touch){touch.use=false;touch.consumeUsePress();touch.move.x=0;touch.move.y=0;touch.run=false;touch.stickId=null;touch.lookId=null;touch.knob.style.transform='';}}
   const pointer=createPointerLock(canvas,{test,touch:IS_TOUCH,onChange:active=>{
     playing=active;release();touch?.show(active&&IS_TOUCH);
     if(active){modal.classList.add('hidden');document.body.classList.remove('tas-modal-open');$('tas-resume').textContent='Back to the river';}
@@ -80,21 +83,45 @@ export function startTasmania(region = TASMANIA) {
   }
   const regionUI=new RegionUI({onSave:save,onClose:()=>openJournal()});
   regionUI.onDepart=()=>{leaving=true;};
+  if(!northeast){
+    sniping=new SnipingView(renderer,expedition,{onSave:save,onRelease:release,onExit:exitSniping});
+    $('tas-pan').insertAdjacentHTML('afterend','<button id="tas-mask" class="hidden">4 · Mask</button>');
+    $('tas-mask').onclick=()=>selectTool('mask');
+    $('tas-results').insertAdjacentHTML('beforebegin','<h2>Search beneath the surface</h2><p>Pack a sniping kit, then select Mask beside the bedrock pools at Fern Bend, Slate Narrows or Upper Cascade. Use enters the pool; Interact returns to the bank. Shift your view along the cracks, gently fan aside loose gravel, pick out packed fill and snuff exposed gold. Dark heavies may remain even where there is no gold. Hard fanning clouds the water and can sweep loose gold downstream. Stop to let the silt settle.</p><p>Easy demonstrates each step while Use is held. In Prospector and Realistic, choose the tool and stroke strength yourself.</p><button id="tas-sniping-kit"></button><p id="tas-sniping-note" class="tas-muted"></p>');
+    $('tas-sniping-kit').onclick=()=>{
+      if(!atGate())return;
+      const has=expedition.loadout.includes('sniping'),next=has?expedition.loadout.filter(i=>i!=='sniping'):[...expedition.loadout,'sniping'];
+      if(packWeight(next)>PACK_LIMIT_KG){notify('The kit needs 1.1 kg of pack space. Choose a lighter loadout on the travel map.');return;}
+      expedition.loadout=next;if(has&&tool==='mask'){tool='scoop';view.setTool('shovel');}
+      save();refreshJournal();
+    };
+  }
+  function openSniping(){
+    if(!expedition.loadout.includes('sniping')){notify('Pack a sniping kit at the trailhead or on the travel map.');return;}
+    const site=nearestSnipingSite(model,player);
+    if(!site){notify('Inspect from the bank beside Fern Bend, Slate Narrows or Upper Cascade.');return;}
+    release();sniping.open(site);sound.click();
+  }
+  function exitSniping(){if(sniping?.active){release();sniping.close();}}
   $('tas-locations').onclick=()=>{modal.classList.add('hidden');regionUI.open();};
   function openPan(){
     if(!atWater()){notify('Work at the shallow water edge to pan your wash.');return;}
     release();panUI.open();touch?.show(false);pointer.pause();
   }
-  const availableTools=northeast?['scoop','pan','sieve']:['scoop','pan'];
+  const availableTools=()=>northeast?['scoop','pan','sieve']:expedition.loadout.includes('sniping')?['scoop','pan','mask']:['scoop','pan'];
   function selectTool(value){
-    if(!availableTools.includes(value)||value===tool)return;
+    if(sniping?.active){held=false;if(touch){touch.use=false;touch.consumeUsePress();}sniping.select(value);return;}
+    if(!availableTools().includes(value)||value===tool)return;
     tool=value;held=false;work=0;if(touch){touch.use=false;touch.consumeUsePress();}
     $('tas-scoop').classList.toggle('active',tool==='scoop');$('tas-pan').classList.toggle('active',tool==='pan');$('tas-sieve')?.classList.toggle('active',tool==='sieve');
-    view.setTool(tool==='scoop'?'shovel':tool);sound.click();
+    $('tas-mask')?.classList.toggle('active',tool==='mask');
+    if(tool!=='mask')view.setTool(tool==='scoop'?'shovel':tool);sound.click();
   }
-  bindToolWheel({isPlaying:()=>playing,items:()=>availableTools,current:()=>tool,select:selectTool});
+  bindToolWheel({isPlaying:()=>playing,items:()=>sniping?.active?SNIPING_TOOLS:availableTools(),current:()=>sniping?.active?sniping.tool:tool,select:selectTool});
 
   function interact(){
+    if(sniping?.active){exitSniping();return;}
+    if(tool==='mask'){openSniping();return;}
     if(atGate()){openJournal();return;}
     if(atCamp()){openJournal();$('tas-camp').focus();return;}
     if(tool==='pan'){openPan();return;}
@@ -113,14 +140,20 @@ export function startTasmania(region = TASMANIA) {
     release();modal.classList.remove('hidden');document.body.classList.add('tas-modal-open');touch?.show(false);pointer.pause();save();refreshJournal();$('tas-resume').focus();
   }
   function refreshJournal(){
+    if(sniping){
+      const has=expedition.loadout.includes('sniping');$('tas-mask').classList.toggle('hidden',!has);
+      $('tas-sniping-kit').textContent=has?'Leave sniping kit at trailhead':'Pack sniping kit · 1.1 kg';$('tas-sniping-kit').disabled=!atGate();
+      $('tas-sniping-note').textContent=has?'Mask, snorkel, crevice pick and snuffer packed.':atGate()?'Choose your kit before walking down to the river.':'Return to the trailhead to repack your kit.';
+    }
     $('tas-journal-summary').innerHTML=`<b>${carriedWeight(expedition).toFixed(1)} kg carried · ${expedition.bucket.length}/${sampleCapacity(expedition)} parcels</b><br>Recovered this trip: ${(expedition.gold*1000).toFixed(2)} mg · ${expedition.gems.length} stones<br>${expedition.difficulty==='easy'?'Easy · demonstrated technique':expedition.difficulty==='realistic'?'Realistic · manual technique':'Prospector · forgiving manual technique'}<br>${expedition.nights} overnight stops · ${expedition.trips} completed trips${expedition.panSession?'<br>Unfinished expedition pan saved':''}${expedition.sieveSession?'<br>Unfinished wet sieve saved':''}`;
     const kit=expedition.loadout.includes('camp');
     $('tas-camp').disabled=!kit||!atCamp()||expedition.campPitched;$('tas-sleep').disabled=!kit||!atCamp()||!expedition.campPitched;
     $('tas-camp-note').textContent=!kit?'Pack an overnight kit at home to camp here.':!atCamp()?`The sheltered camping terrace is at ${campName}.`:expedition.campPitched?'Shelter pitched. Sleep until 07:00.':'Pitch your small shelter on this terrace.';
     $('tas-reaches').innerHTML=REACHES.map(r=>`<div class="tas-summary"><b>${r.name} ${expedition.visited.includes(r.id)?'· visited':'· unexplored'}</b><br>${r.description}</div>`).join('');
-    $('tas-results').innerHTML='<h2>Your sample results</h2>'+(expedition.tests.length?expedition.tests.slice(-8).reverse().map(p=>`<div class="tas-summary">${REACHES.find(r=>r.id===p.reach)?.name||'River'} · ${p.method==='sieve'?'Wet sieve':'Pan'} · ${(p.gold*1000).toFixed(2)} mg · ${p.finds?.length||0} stones${p.finds?.length?'<br>'+p.finds.map(f=>f.label).join('; '):''}</div>`).join(''):'<p class="tas-muted">No samples completed yet. Keep the source of each parcel in mind.</p>');
+    $('tas-results').innerHTML='<h2>Your sample results</h2>'+(expedition.tests.length?expedition.tests.slice(-8).reverse().map(p=>`<div class="tas-summary">${REACHES.find(r=>r.id===p.reach)?.name||'River'} · ${p.method==='sieve'?'Wet sieve':p.method==='sniping'?'Sniping':'Pan'} · ${(p.gold*1000).toFixed(2)} mg · ${p.finds?.length||0} stones${p.finds?.length?'<br>'+p.finds.map(f=>f.label).join('; '):''}</div>`).join(''):'<p class="tas-muted">No samples completed yet. Keep the source of each parcel in mind.</p>');
     $('tas-controls').textContent=IS_TOUCH?'Left stick: walk; drag the open view: look. Select Scoop and hold Use near a pocket. Select Pan and tap Use at the water edge. Tap Interact at camp or the trailhead.':'WASD: walk · mouse: look · Shift: quick pace · 2: scoop · 3: pan · mouse wheel: tools · left click: use · E: interact · M/N/I/P or Esc: journal · L: lamp';
     if(northeast)$('tas-controls').textContent+=IS_TOUCH?' Select Sieve and tap Use at the water edge; hold and release Jig, then tap Flip to inspect.':' · 4: sieve · hold/release to jig · F: flip';
+    else $('tas-controls').textContent+=' · 4: mask (with kit). Underwater: wheel / 1–3 choose fan, pick or snuffer; F cycles stroke strength; E returns to the bank. Touch: choose tools and strength below the view, hold Use to work.';
     $('tas-return').disabled=!atGate();$('tas-return-note').textContent=atGate()?'Take your finds home. Your unfinished samples will be waiting here for your next visit.':'Walk back to the trailhead to return home. If you get stuck, Recover to trailhead brings you back with your pack.';
     drawMap();
   }
@@ -147,13 +180,13 @@ export function startTasmania(region = TASMANIA) {
   $('tas-resume').onclick=resume;$('tas-scoop').onclick=()=>selectTool('scoop');$('tas-pan').onclick=()=>selectTool('pan');$('tas-interact').onclick=interact;$('tas-journal').onclick=openJournal;
   if(northeast)$('tas-sieve').onclick=()=>selectTool('sieve');
   $('tas-camp').onclick=pitchCamp;$('tas-sleep').onclick=sleep;$('tas-save').onclick=()=>{if(save())notify('Expedition saved on this browser.');};$('tas-return').onclick=travelHome;
-  $('tas-recover').onclick=()=>{Object.assign(player,TRAILHEAD,{yaw:.39,pitch:-.14});save();refreshJournal();notify('Back at the trailhead with your pack.');};
-  function look(dx,dy){if(playing){player.yaw-=dx*.0022;player.pitch=THREE.MathUtils.clamp(player.pitch-dy*.0022,-1.5,1.45);}}
+  $('tas-recover').onclick=()=>{exitSniping();Object.assign(player,TRAILHEAD,{yaw:.39,pitch:-.14});save();refreshJournal();notify('Back at the trailhead with your pack.');};
+  function look(dx,dy){if(playing){if(sniping?.active){sniping.look(dx,dy);return;}player.yaw-=dx*.0022;player.pitch=THREE.MathUtils.clamp(player.pitch-dy*.0022,-1.5,1.45);}}
   touch=new TouchControls({onLook:look,actions:{inventory:openJournal,map:openJournal,notes:openJournal,pause:openJournal,save:()=>{if(save())notify('Expedition saved.');},lamp:()=>{lampOn=!lampOn;},interact}});
   $('t-use').textContent='Use';
   if(IS_TOUCH){$('tas-scoop').textContent='Scoop';$('tas-pan').textContent='Pan';$('tas-interact').textContent='Interact';if(northeast)$('tas-sieve').textContent='Sieve';}
   document.addEventListener('mousemove',e=>look(e.movementX,e.movementY));
-  canvas.addEventListener('mousedown',e=>{if(e.button===0&&playing){held=true;if(tool==='pan')openPan();if(tool==='sieve')openSieve();}});
+  canvas.addEventListener('mousedown',e=>{if(e.button===0&&playing){held=true;if(sniping?.active)return;if(tool==='pan')openPan();if(tool==='sieve')openSieve();if(tool==='mask')openSniping();}});
   canvas.addEventListener('click',()=>{if(!playing&&modal.classList.contains('hidden')&&!panUI.isOpen&&!sieveUI?.isOpen&&!regionUI.isOpen)resume();});
   window.addEventListener('mouseup',()=>{held=false;work=0;});
   document.addEventListener('contextmenu',e=>e.preventDefault());
@@ -163,7 +196,10 @@ export function startTasmania(region = TASMANIA) {
     if(['Escape','KeyP'].includes(e.code)&&!e.repeat){e.preventDefault();if(playing)openJournal();return;}
     if(['KeyM','KeyN','KeyI'].includes(e.code)&&!e.repeat){e.preventDefault();if(playing)openJournal();else resume();return;}
     if(!playing)return;
-    keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)interact();const selected=toolForKey(e.code);if(selected)selectTool(selected==='shovel'?'scoop':selected);if(e.code==='KeyL'&&!e.repeat)lampOn=!lampOn;
+    keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)interact();const selected=toolForKey(e.code);
+    if(selected)selectTool(sniping?.active?({detector:'fan',shovel:'pick',pan:'snuffer'}[selected]):selected==='shovel'?'scoop':!northeast&&selected==='sieve'?'mask':selected);
+    if(sniping?.active&&expedition.difficulty!=='easy'&&e.code==='KeyF'&&!e.repeat){const forces=Object.keys(SNIPING_FORCES);sniping.force=forces[(forces.indexOf(sniping.force)+1)%forces.length];sniping.refreshButtons();}
+    if(e.code==='KeyL'&&!e.repeat)lampOn=!lampOn;
   });
   window.addEventListener('keyup',e=>keys.delete(e.code));
   modal.addEventListener('keydown',e=>{if(e.code==='Tab'){const items=[...modal.querySelectorAll('button')].filter(b=>!b.disabled);if(e.shiftKey&&document.activeElement===items[0]){e.preventDefault();items.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===items.at(-1)){e.preventDefault();items[0].focus();}}});
@@ -191,11 +227,12 @@ export function startTasmania(region = TASMANIA) {
     requestAnimationFrame(frame);const dt=Math.min(.05,(now-previous)/1000);previous=now;elapsed+=dt;
     panUI.update(dt);sieveUI?.update(dt);
     if(playing){
-      move(dt);expedition.hour=(expedition.hour+dt*.018)%24;
+      if(sniping?.active){sniping.move(dt,(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)+touch.move.y,(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)+touch.move.x);}
+      else move(dt);expedition.hour=(expedition.hour+dt*.018)%24;
       const reach=model.reach(player.z);if(Math.abs(player.z-reach.z)<22&&Math.abs(player.x-riverX(player.z))<18&&!expedition.visited.includes(reach.id)){expedition.visited.push(reach.id);save();notify(`Reached ${reach.name}. Your journal now records this reach.`);}
-      if((held||touch.use)&&tool==='scoop'){work+=dt;if(work>=1.5){collectSample();work=0;held=false;touch.use=false;}}else work=0;
+      if(!sniping?.active&&(held||touch.use)&&tool==='scoop'){work+=dt;if(work>=1.5){collectSample();work=0;held=false;touch.use=false;}}else work=0;
       const use=touch.consumeUsePress()||touch.use;
-      if(use&&tool==='pan')openPan();if(use&&tool==='sieve')openSieve();
+      if(!sniping?.active){if(use&&tool==='pan')openPan();if(use&&tool==='sieve')openSieve();if(use&&tool==='mask')openSniping();}
     }
     const daylight=Math.max(.12,Math.sin((expedition.hour-6)/12*Math.PI));hemi.intensity=.35+daylight*1.35;sun.intensity=daylight*1.6;lamp.intensity=lampOn?5:0;
     const bob=playing?Math.abs(Math.sin(stride))*.035*Math.min(1,movingSpeed/3):0;
@@ -215,10 +252,12 @@ export function startTasmania(region = TASMANIA) {
     $('tas-work').classList.toggle('hidden',!work);$('tas-work').value=work;
     $('tas-prompt').textContent=atGate()?'E / Interact · trailhead and return home':atCamp()?`E / Interact · ${campName} campsite`:tool==='pan'?'Use at the shallow water edge · pan your saved wash':tool==='sieve'?'Use at the shallow water edge · wet-sieve your saved wash':site?`${site.kind==='crevice'?'Bedrock crack':site.kind==='basal'?'Basal gem wash':'Gravel bar'} · ${Math.max(0,site.capacity-(expedition.siteUse[site.id]||0))} small parcels left · hold Use to sample`:'Follow the river banks · scoop small traps · open Journal for the route';
     if(now>messageUntil)$('tas-message').classList.add('hidden');
-    renderer.clear();renderer.render(scene,camera);
-    if(playing){renderer.clearDepth();renderer.render(view.scene,view.camera);}
+    if(tool==='mask'&&!sniping?.active)$('tas-prompt').textContent=nearestSnipingSite(model,player)?'Use · inspect the bedrock pool with your mask':'Follow the banks to a bedrock pool at one of the three reaches';
+    sniping?.update(dt,{using:held||touch.use,playing});
+    renderer.clear();renderer.render(sniping?.active?sniping.scene:scene,sniping?.active?sniping.camera:camera);
+    if(playing&&!sniping?.active&&tool!=='mask'){renderer.clearDepth();renderer.render(view.scene,view.camera);}
   }
   setInterval(save,30000);openJournal();requestAnimationFrame(frame);
   // Same objects and movement rule as play, exposed for reproducible disposable-save checks.
-  window.fossickTas={get playing(){return playing;},get tool(){return tool;},view,region,profile,sieveUI,regionUI,expedition,model,world,player,panUI,save,openJournal,resume,interact,collectSample,move,touch,keys,renderer,camera,scene};
+  window.fossickTas={get playing(){return playing;},get tool(){return tool;},view,region,profile,sieveUI,regionUI,expedition,model,world,player,panUI,sniping,save,openJournal,resume,interact,collectSample,move,touch,keys,renderer,camera,scene};
 }

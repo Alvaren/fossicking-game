@@ -34,7 +34,7 @@ export class TouchControls {
     const canvasLayer = document.getElementById('touch-look');
     // Move stick.
     this.stick.addEventListener('touchstart', (e) => {
-      e.preventDefault();
+      if(e.cancelable)e.preventDefault();
       const t = e.changedTouches[0];
       this.stickId = t.identifier;
       const r = this.stick.getBoundingClientRect();
@@ -45,7 +45,7 @@ export class TouchControls {
     }, { passive: false });
     // Look: drag anywhere that isn't a control.
     canvasLayer.addEventListener('touchstart', (e) => {
-      e.preventDefault();
+      if(e.cancelable)e.preventDefault();
       if (this.lookId !== null) return;
       const t = e.changedTouches[0];
       this.lookId = t.identifier;
@@ -79,8 +79,8 @@ export class TouchControls {
     // Hold buttons.
     const hold = (id, key) => {
       const el = document.getElementById(id);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); this[key] = true; if (key === 'use') this.usePressed = true; el.classList.add('down'); }, { passive: false });
-      const up = (e) => { e.preventDefault(); this[key] = false; el.classList.remove('down'); };
+      el.addEventListener('touchstart', (e) => { if(e.cancelable)e.preventDefault(); this[key] = true; if (key === 'use') this.usePressed = true; el.classList.add('down'); }, { passive: false });
+      const up = (e) => { if(e.cancelable)e.preventDefault(); this[key] = false; el.classList.remove('down'); };
       el.addEventListener('touchend', up, { passive: false });
       el.addEventListener('touchcancel', up, { passive: false });
     };
@@ -89,7 +89,7 @@ export class TouchControls {
     // Tap buttons.
     for (const el of this.root.querySelectorAll('[data-act]')) {
       el.addEventListener('touchstart', (e) => {
-        e.preventDefault();
+        if(e.cancelable)e.preventDefault();
         el.classList.add('down');
         this.actions[el.dataset.act]?.();
       }, { passive: false });

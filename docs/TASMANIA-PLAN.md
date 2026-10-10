@@ -1,5 +1,7 @@
 # Tasmania expedition — execution plan
 
+Current follow-up (11 October 2026): the user has now approved the full sniping slice. Its plan, implementation and verification live in [SNIPING.md](SNIPING.md). Earlier deferred-sniping statements below describe the original catchment delivery, not the current scope. Northeast Tasmania and publishing have also since been authorized; follow the current collaboration guide.
+
 Status: IMPLEMENTED, VERIFIED AND INTEGRATED LOCALLY. Owner: Codex. Branch: `codex/tasmania-expedition`. Base: `7ad5b15`.
 
 ## User decision and scope

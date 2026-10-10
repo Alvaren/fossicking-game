@@ -14,6 +14,7 @@ export const PACK_ITEMS = [
   { id: 'classifier', name: 'Hand classifier', kg: 1.2, detail: 'Removes oversize before the wash goes into the pan.' },
   { id: 'bucket', name: 'Sample bucket', kg: 1, detail: 'Carry four wash parcels instead of one.' },
   { id: 'camp', name: 'Overnight kit', kg: 3.4, detail: 'Pitch a small shelter at the river campsite and sleep until morning.' },
+  { id: 'sniping', name: 'Sniping kit', kg: 1.1, detail: 'Mask, snorkel, crevice pick and snuffer for the bedrock pools of Fern River.' },
 ];
 export const BASE_PACK_KG = 4.2; // pack, pan, scoop, lamp, food and water: game weights
 export const PACK_LIMIT_KG = 10;
