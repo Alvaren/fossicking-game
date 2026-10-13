@@ -231,12 +231,14 @@ Names below are planned boundaries, not claims that the files exist. Inspect cur
 
 ## B8 — Release and handoff
 
+These release items apply to the first delivery and must be repeated for later milestones. Their completion does not close the open art/whole-map gates. Publication evidence is in [the delivery record](NSW-ENVIRONMENT-BUILD.md#publication).
+
 - [ ] B8-01 — Review diff against scope; remove abandoned experiments and leave any optional unbuilt work explicitly unchecked. Check that completed visuals satisfy the rubric.
 - [x] B8-02 — Update audit/build records with delivered tasks, images, actual tests, hardware results and limitations. Retain this plan as the source of unfinished work.
-- [ ] B8-03 — Recheck worktrees, claims, main, remote commits and active servers; fetch if available. Preserve unfinished work and never force-push.
-- [ ] B8-04 — Commit owned completed work, integrate ready project changes safely and push main under the standing user instruction. Avoid hot-reloading an actively played user checkout.
-- [ ] B8-05 — Verify the matching GitHub Pages deployment and a public-game smoke check, including the new assets and controls. Record commit/run URL and any pending device checks.
-- [ ] B8-06 — Release the coordination claim and provide a concise handoff with what looks different, screenshots, checks and next unfinished milestone.
+- [x] B8-03 — Recheck worktrees, claims, main, remote commits and active servers; fetch if available. Preserve unfinished work and never force-push.
+- [x] B8-04 — Commit owned completed work, integrate ready project changes safely and push main under the standing user instruction. Avoid hot-reloading an actively played user checkout.
+- [x] B8-05 — Verify the matching GitHub Pages deployment and a public-game smoke check, including the new assets and controls. Record commit/run URL and any pending device checks.
+- [x] B8-06 — Release the coordination claim and provide a concise handoff with what looks different, screenshots, checks and next unfinished milestone.
 
 ## Reproducing the current audit
 

@@ -82,3 +82,7 @@ Next art work is to improve the reef assemblies, contact depth and woodland tran
 ## Handoff
 
 Owned code: `src/newengland/`, the optional loader, ground/rock materials, terrain/excavation render adapters, narrow main-loop/settings hooks and foliage statistics. Owned art: the new Blender generator and its `public/models/newengland/` output. Owned checks/docs: the NSW tests/evidence, pointer-lock harness timing, offline-kit assertion and linked plans. No other agent was launched or messaged. Main and Claude were clean when inspected; final integration and deployment identifiers are recorded in the coordination handoff.
+
+## Publication
+
+Implementation `de0d1e3` and evidence `2e98aeb` were fast-forwarded into clean main and pushed. [Pages run 38397556111](https://github.com/Alvaren/fossicking-game/actions/runs/38397556111) succeeded. The live page references the tested `index-CvZfiV4S.js` bundle; the 3,808,508-byte public GLB exactly matches the local asset (SHA-256 `5adb7bd7e44ad599a802afe3ca65c36ef948f76eff023a70fddee7be5939f29c`). Public New England High desktop and emulated-touch rendering/tool input pass; desktop digging/save/reload, dawn/night and flood checks pass in that public suite. No page/console errors were recorded. Main and Claude were clean, Claude's commits were already integrated, and only Codex's 5191 preview was listening. A final documentation-only commit records this result; its deployment is checked before handoff.
