@@ -42,6 +42,20 @@ For each substantial delivery: record branch/base, owned paths, implementation r
 
 ## Build sequence and dependencies
 
+### Landform completion pass — 14 October 2026
+
+Branch `codex/nsw-landforms`, base `4c1c8ea`. The user is playing promoted main. Build and test in the isolated 5191 worktree; keep main and the live deployment stable during play. The user approved extra geometry where it improves form. Increase useful silhouette/surface detail, not indiscriminate subdivision. Continue the existing reference target and preserve sources, saved terrain, inputs and collision footprints.
+
+- [ ] LF-01 — Compose connected host-rock exposures at existing reef anchors; replace repeated detached wedges with shared joint/seam direction and grounded bases.
+- [x] LF-02 — Repair the repeated through-cuts and clipped caps in ordinary rocks; reshape granite corestone volume and creek-boulder curvature and compare polygon counts. Granite is now 320 triangles per prototype (previously 208–254). [Repair evidence](NSW-ENVIRONMENT-BUILD.md#intact-rock-repair). This closes the mesh defect, not the connected-formation art gate.
+- [ ] LF-03 — Add irregular bank-face detail that follows the actual bank and removed surface; connect lip, roots, gravel and water edge without blocking work areas.
+- [ ] LF-04 — Finish exposed layers/inclusions and disturbed rims on real shovel/hand digs, including reload and decoration invalidation.
+- [ ] LF-05 — Review water margins, broad ground transitions and source/camp approaches together, with noon/weather/reverse views and three seeds.
+- [x] LF-06 — Repeat world/save/input/fallback/quality checks, build and isolated performance measurement for the intact-rock repair. 103 logic/asset tests, seven-location controls/touch, three-seed world/save regression, offline checks and a 60-second measured desktop route pass; evidence and limitations are in [the repair record](NSW-ENVIRONMENT-BUILD.md#intact-rock-repair). Repeat for subsequent polish changes.
+- [ ] LF-07 — Commit and push the ready feature branch. Promote main only once the user's play session is over; verify deployment after promotion.
+
+The user-reported repeated saw cuts were prioritised during this pass. Ordinary-rock slicing is removed, closed-volume checks are added, and flat decorative bank/source slabs are removed. Experimental connected surfaces and new dig/bank geometry were inspected and rejected; they are not shipped. LF-01/03/04/05 remain open. Do not claim the unfinished visual work is complete.
+
 ### Current correction pass
 
 Execution branch `codex/nsw-environment-fix`, base `aedeba5`. Work through all eight direct-audit areas, preserving the existing world and controllers. These are implementation/review steps, not automatic reference-quality passes. Record new evidence separately in `docs/audits/nsw-fix/`; retain both previous sets unchanged.

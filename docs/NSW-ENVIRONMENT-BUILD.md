@@ -190,3 +190,24 @@ Owned code: `src/newengland/`, the optional loader, ground/rock materials, terra
 ## Publication
 
 Implementation `de0d1e3` and evidence `2e98aeb` were fast-forwarded into clean main and pushed. [Pages run 38397556111](https://github.com/Alvaren/fossicking-game/actions/runs/38397556111) succeeded. The live page references the tested `index-CvZfiV4S.js` bundle; the 3,808,508-byte public GLB exactly matches the local asset (SHA-256 `5adb7bd7e44ad599a802afe3ca65c36ef948f76eff023a70fddee7be5939f29c`). Public New England High desktop and emulated-touch rendering/tool input pass; desktop digging/save/reload, dawn/night and flood checks pass in that public suite. No page/console errors were recorded. Main and Claude were clean, Claude's commits were already integrated, and only Codex's 5191 preview was listening. A final documentation-only commit records this result; its deployment is checked before handoff.
+
+## Intact rock repair
+
+14 October 2026. Branch `codex/nsw-landforms`, base `4c1c8ea`, implementation `0b36e4b`. The user's screenshot identified identical straight slots through many boulders. The generator was slicing ordinary rocks into separated solids. That operation is removed, along with plane-clipped caps on rounded rocks. Granite now has a weathered rounded silhouette; quartz remains enclosed in the host-rock variants. Flat decorative shelves at banks/source rocks are also removed.
+
+[Repaired granite at normal playing height](audits/nsw-landforms/high-granite.jpg), [close granite, seed 1](audits/nsw-landforms/seed-1/high-granite.jpg), [host/quartz](audits/nsw-landforms/high-reef.jpg), [touch granite](audits/nsw-landforms/quality/touch-medium-granite.jpg). [Capture metadata and source hashes](audits/nsw-landforms/build.json). Fourteen stills were captured across three seeds and High/Low/emulated-touch settings; selected granite, reef and bank views were inspected. Original supplied reference images remain the benchmark; they are not republished here.
+
+Granite prototypes increase from 208–254 to 320 triangles each. Removing repeated slice faces lowers the complete kit from 90,384 to 89,580 triangles and from 5,663,244 to 5,465,832 bytes. Stable asset names, pivots and original world transforms remain. No controller, terrain generation, save format, dependency or other-region recipe changed.
+
+Verification for this repair:
+
+- 103 logic/asset tests pass, including 19 exported ordinary-rock checks for a single connected closed volume, finite coordinates and non-degenerate triangles. The new checks also caught small clipping remnants, which were welded before export.
+- Production build passes (119 modules). World/save regression passes for seeds 1, 12345 and 798887 through loading and quality changes; actual held trowel input/save/reload and missing/corrupt kit fallback pass.
+- Original pointer lock/look, wheel/number switching, simultaneous movement/tool switching, menus and rejection recovery pass across seven locations. Original touch toolbar/Use/pan/menu checks pass.
+- Built offline reload passes for New England desktop and Northeast Tasmania touch, including rendering and original tool input.
+- Capture reports contain no page/console errors or failed shader programs. Existing Three.js/ANGLE warnings are retained in the metadata; this is not a warning-free claim.
+- [Isolated desktop measurement](audits/nsw-landforms/performance.json): RTX 3090, High, 1920×1080, 60 measured seconds after a 15-second warm-up. Frame interval 16.7 ms median / 16.8 ms p95; CPU 8.9/12.5 ms; GPU 6.97/9.80 ms (120 timer samples). Median full-frame submission 807 calls / 16,263,895 triangles including extra rendering passes. This is a short desktop check, not a phone result or temporal-art acceptance.
+
+The connected-heightfield outcrop prototype looked rounded and exposed poor contact edges; new bank/dig detail also failed the composition review. Those experiments were removed instead of being promoted as completed work. **LF-01/03/04/05 and the reference-quality gates remain open.** The repair does not complete the outstanding environment polish. Continue connected outcrops, real bank/root contacts, broad ground transitions, water margins and excavation/spoil volume from the durable checklist.
+
+The user finished playing main and explicitly asked to publish the fix. Publication/offline results are recorded below when verified.

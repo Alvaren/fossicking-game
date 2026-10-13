@@ -1,0 +1,282 @@
+{
+  "baseCommit": "4c1c8ead780b4fe9d9b1709ba1416278ae2df2f7",
+  "branch": "codex/nsw-landforms",
+  "hashes": {
+    "blender/build_newengland_environment.py": "3d1601c36d1a8dda16aa21c18e748505bd5af06555e0dac4a94c19e430cf847c",
+    "src/newengland/composition.js": "b0ea47009e49ad2fd24c8f3850e4a99b9ebb16655db040200101a78e0cd57f85",
+    "public/models/newengland/environment.glb": "b178ec269960ce73ce3592fac6454fb184b6b8a8252a75707de423f29cec2f39"
+  },
+  "seed": 798887,
+  "method": "Disposable Chromium contexts; direct camera relocation at normal player eye height. Explicit world render counters include renderer passes, exclude held-tool overlay. Not device FPS or a playthrough.",
+  "cases": [
+    {
+      "mode": "high",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "environment": {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 7387,
+          "visible": 3606,
+          "quality": "high"
+        },
+        "camp": {
+          "x": -10.736376681262138,
+          "z": 0,
+          "y": 1.4908111519825578
+        },
+        "sources": {
+          "reef": {
+            "x": 23.043346378497773,
+            "z": 36.396330101415515,
+            "ex": 7.221711806277245,
+            "ez": 36.396330101415515,
+            "side": 1,
+            "entryZ": 36.396330101415515
+          },
+          "basalt": {
+            "x": -62.82727013376899,
+            "z": 67.08350948058069,
+            "ex": -43.48998994237995,
+            "ez": 67.08350948058069,
+            "side": -1,
+            "entryZ": 67.08350948058069
+          },
+          "rhyolite": {
+            "x": -71.51879440618757,
+            "z": -21.36505488306284,
+            "ex": -54.1671074423811,
+            "ez": -21.36505488306284,
+            "side": -1,
+            "entryZ": -21.36505488306284
+          },
+          "granite": {
+            "x": 30.2267862471904,
+            "z": -86.9473476530984,
+            "ex": 15.000433005873205,
+            "ez": -86.9473476530984,
+            "side": 1,
+            "entryZ": -86.9473476530984
+          },
+          "opal": {
+            "x": 11.854832551317237,
+            "z": -42.297897569369525,
+            "ex": -3.8068782818039857,
+            "ez": -42.297897569369525,
+            "side": 1,
+            "entryZ": -42.297897569369525
+          },
+          "fossil": {
+            "x": -51.493675716574174,
+            "z": 5.745801501907408,
+            "ex": -40.1866748433321,
+            "ez": 5.745801501907408,
+            "side": -1,
+            "entryZ": 5.745801501907408
+          },
+          "mine": {
+            "x": 31.89113829764399,
+            "z": 48.52671711673141
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -29.483705977291883,
+            "z": 24.4
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -34.34642407770683,
+            "z": -59.6
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/newengland/environment.glb",
+            "decodedBytes": 5465832
+          },
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "granite",
+          "file": "high-granite.jpg",
+          "pose": {
+            "x": 37.226786247190404,
+            "z": -78.9473476530984,
+            "target": {
+              "x": 30.2267862471904,
+              "z": -86.9473476530984
+            },
+            "yaw": 0.7188299996216247,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 346,
+          "triangles": 5401607,
+          "geometries": 373,
+          "textures": 37,
+          "programs": 84,
+          "camera": {
+            "position": [
+              37.226786247190404,
+              8.764652591649124,
+              -78.9473476530984
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216247,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 616,
+              "far": 1333,
+              "culled": 4451,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2562968
+            },
+            "landscape": {
+              "near": 133,
+              "far": 174,
+              "culled": 493,
+              "fullTriangles": 730800,
+              "drawnTriangles": 172534
+            }
+          }
+        },
+        {
+          "view": "reef",
+          "file": "high-reef.jpg",
+          "pose": {
+            "x": 30.043346378497773,
+            "z": 44.396330101415515,
+            "target": {
+              "x": 23.043346378497773,
+              "z": 36.396330101415515
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 986,
+          "triangles": 5538352,
+          "geometries": 659,
+          "textures": 43,
+          "programs": 133,
+          "camera": {
+            "position": [
+              30.043346378497773,
+              9.221359402871654,
+              44.396330101415515
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 632,
+              "far": 1414,
+              "culled": 4354,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2675996
+            },
+            "landscape": {
+              "near": 140,
+              "far": 244,
+              "culled": 416,
+              "fullTriangles": 730800,
+              "drawnTriangles": 199748
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n\n\n\u0000",
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    }
+  ]
+}
