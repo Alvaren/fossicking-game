@@ -461,7 +461,7 @@ export class Terrain {
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial();
+    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england'});
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -568,6 +568,7 @@ export class Terrain {
     const FS = 1500, FSEG = 150, FN = FSEG + 1, fc = FS / FSEG;
     const pos = new Float32Array(FN * FN * 3);
     const col = new Float32Array(FN * FN * 3);
+    const surface=this.profile.id==='new-england' ? new Float32Array(FN*FN*3) : null;
     for (let iz = 0; iz < FN; iz++) {
       for (let ix = 0; ix < FN; ix++) {
         const x = -FS / 2 + ix * fc, z = -FS / 2 + iz * fc;
@@ -578,14 +579,20 @@ export class Terrain {
         pos[i * 3] = x; pos[i * 3 + 1] = h; pos[i * 3 + 2] = z;
         const c = this.surfaceColor(x, z, h, 0.95, h, h - 2, 0.4);
         col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+        if(surface) {
+          const bank=this.creek.local(x,z,{}),dry=bank.d-bank.w;
+          surface[i*3]=smoothstep(-.1,.55,this.n2(x*.05+100,z*.05))*smoothstep(1,5,dry);
+          surface[i*3+1]=1-smoothstep(1,6,dry);surface[i*3+2]=h-this.creek.waterY(z);
+        }
       }
     }
     const geo = new THREE.BufferGeometry();
     geo.setIndex(new THREE.BufferAttribute(gridIndex(FSEG), 1));
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    if(surface)geo.setAttribute('aSurface',new THREE.BufferAttribute(surface,3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }));
+    const mesh = new THREE.Mesh(geo,surface ? groundMaterial({newEngland:true,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
     mesh.receiveShadow = false;
     return mesh;
   }

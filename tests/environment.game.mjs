@@ -31,12 +31,24 @@ try {
     try {
       await page.goto(origin + '?test' + (phone ? '&touch' : ''), { waitUntil: 'networkidle' });
       await page.waitForFunction(() => window.fossick || window.fossickTas);
+      if (region === 'new-england' && !before) {
+        await page.evaluate(() => fossick.newEngland.ready);
+        assert.equal(await page.evaluate(() => fossick.newEngland.stats.status), 'ready');
+      }
       if (process.env.ENV_OFFLINE) {
         await page.evaluate(() => navigator.serviceWorker.ready);
         await page.reload({ waitUntil: 'networkidle' });
         await page.waitForFunction(() => (window.fossick || window.fossickTas) && navigator.serviceWorker.controller);
+        if (region === 'new-england' && !before) {
+          await page.evaluate(() => fossick.newEngland.ready);
+          await page.waitForFunction(async () => !!await caches.match(new URL('models/newengland/environment.glb', location.href)));
+        }
         await context.setOffline(true); await page.reload({ waitUntil: 'networkidle' });
         await page.waitForFunction(() => window.fossick || window.fossickTas);
+        if (region === 'new-england' && !before) {
+          await page.evaluate(() => fossick.newEngland.ready);
+          assert.equal(await page.evaluate(() => fossick.newEngland.stats.status), 'ready', 'Authored kit loads from the offline cache');
+        }
       }
       await click(tas ? '#tas-resume' : '#play');
       if (phone) await click(tas ? '#tas-pan' : '.slot[data-tool="hammer"]');

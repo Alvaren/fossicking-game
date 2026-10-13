@@ -6,13 +6,15 @@ import { IS_TOUCH } from './touch.js';
 const KEY = 'fossicking-settings-v1';
 
 export const PRESETS = {
-  low: { res: 0.75, shadows: 'off', aa: false, gems: 'simple', reflections: 'static' },
-  medium: { res: 1, shadows: 'low', aa: false, gems: 'inventory', reflections: 'slow' },
-  high: { res: 1.5, shadows: 'high', aa: true, gems: 'full', reflections: 'live' },
-  ultra: { res: 2, shadows: 'ultra', aa: true, gems: 'full', reflections: 'live' },
+  low: { res: 0.75, shadows: 'off', aa: false, gems: 'simple', reflections: 'static', environment:'low',water:'simple' },
+  medium: { res: 1, shadows: 'low', aa: false, gems: 'inventory', reflections: 'slow', environment:'medium',water:'simple' },
+  high: { res: 1.5, shadows: 'high', aa: true, gems: 'full', reflections: 'live', environment:'high',water:'scene' },
+  ultra: { res: 2, shadows: 'ultra', aa: true, gems: 'full', reflections: 'live', environment:'high',water:'scene' },
 };
 
 export const OPTIONS = {
+  environment: { label:'Environment detail',note:'Leaf density and small scenery distance.',choices:[['low','Low'],['medium','Medium'],['high','High']] },
+  water: {label:'Water detail',note:'Reflections of the banks and trees, and distortion beneath the surface.',choices:[['simple','Simple'],['scene','Full']]},
   res: { label: 'Resolution', note: 'The biggest one for speed. Lower looks softer.', choices: [[0.6, 'Very low'], [0.75, 'Low'], [1, 'Normal'], [1.5, 'Sharp'], [2, 'Full (retina)']] },
   shadows: { label: 'Shadows', note: 'Sun shadows from trees, rocks and you.', choices: [['off', 'Off'], ['low', 'Low'], ['high', 'High'], ['ultra', 'Ultra']] },
   aa: { label: 'Smooth edges', note: 'Antialiasing. Restarts the game to change.', choices: [[false, 'Off'], [true, 'On']] },
@@ -32,7 +34,7 @@ function load() {
 const stored = load();
 export const settings = stored || { preset: IS_TOUCH ? 'medium' : 'high', ...PRESETS[IS_TOUCH ? 'medium' : 'high'], fps: false, warned: false };
 // Fill anything a newer version added.
-for (const [k, v] of Object.entries(PRESETS.high)) if (settings[k] === undefined) settings[k] = v;
+for (const [k, v] of Object.entries(PRESETS[settings.preset] || PRESETS.high)) if (settings[k] === undefined) settings[k] = v;
 export const firstRun = !stored;
 
 export function saveSettings() {

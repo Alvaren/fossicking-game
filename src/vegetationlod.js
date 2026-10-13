@@ -67,7 +67,9 @@ export function vegetationLOD(scene, sources, low = false) {
       }
       const triangles = g => (g.index?.count || g.attributes.position.count) / 3;
       stats.near += n; stats.far += f;
-      stats.fullTriangles += source.count * triangles(source.geometry);
+      // A regional asset kit may replace only the render geometry, retaining
+      // original source transforms. Compare against that kit's full near mesh.
+      stats.fullTriangles += source.count * triangles(near.geometry);
       stats.drawnTriangles += n * triangles(near.geometry) + f * triangles(far.geometry);
     }
   }};

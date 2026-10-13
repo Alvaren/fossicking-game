@@ -10,6 +10,8 @@ try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golde
   const base={seed:12345,cash:500,gold:.2,difficulty:'realistic',up:{pan:2,sieve:1},camp:{shelter:'tent'}};
   const seed=region==='new-england'?base:travelTo(base,region,['bucket','classifier']);
   await context.addInitScript(value=>{
+    window.controlLockDelivered=false;
+    document.addEventListener('pointerlockchange',()=>{window.controlLockDelivered=document.pointerLockElement===document.getElementById('game');});
     localStorage.setItem('fossicking-save-v2',JSON.stringify(value));
     localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.6,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));
   },seed);
@@ -17,8 +19,28 @@ try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golde
   await page.goto('http://127.0.0.1:5191/',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>window.fossick||window.fossickTas);
   const resume=home?'#play':'#tas-resume';
-  const locked=()=>page.waitForFunction(()=>document.pointerLockElement===document.getElementById('game'));
-  const unlocked=()=>page.waitForFunction(()=>!document.pointerLockElement);
+  const locked=async()=>{
+    await page.waitForFunction(()=>document.pointerLockElement===document.getElementById('game')&&window.controlLockDelivered);
+    // The browser property can change before its queued pointerlockchange event
+    // updates the game's playing state. Send keys only once the UI has resumed.
+    await page.locator(resume).waitFor({state:'hidden'});
+    // Chromium now rate-limits repeated pointer-lock requests. This suite
+    // deliberately unlocks/relocks many times; leave ordinary play time between
+    // gestures instead of exhausting the browser quota in under two seconds.
+    await page.waitForTimeout(2500);
+  };
+  const unlocked=()=>page.waitForFunction(()=>!document.pointerLockElement&&!window.controlLockDelivered);
+  const closeTool=async selector=>{
+    await page.locator(selector).click();
+    await page.waitForFunction(()=>document.pointerLockElement||!document.getElementById('tas-modal').classList.contains('hidden'));
+    if(!await page.evaluate(()=>!!document.pointerLockElement)) {
+      // Chromium may deny a rapid relock after its native unlock path above.
+      // Verify the visible recovery screen, then retry with a fresh gesture.
+      assert.equal(await page.locator(resume).isVisible(),true);
+      await page.waitForTimeout(1300);await page.locator(resume).click();
+    }
+    await locked();
+  };
   const state=()=>page.evaluate(()=>{const f=window.fossick||window.fossickTas;return {tool:window.fossick?f.state.tool:f.tool,yaw:f.player.yaw,keys:[...f.keys]};});
   async function tool(expected){await page.waitForFunction(t=>(window.fossick?.state.tool||window.fossickTas?.tool)===t,expected);}
   await page.locator(resume).click();await locked();
@@ -71,10 +93,10 @@ try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:['new-england','golde
   if(!home){
     await page.evaluate(()=>{const f=fossickTas,s=f.model.sites.find(s=>s.kind==='crevice')||f.model.sites[1];Object.assign(f.player,{x:s.x-1,z:s.z});});
     await page.keyboard.press('Digit3');await page.mouse.click(600,400);await page.locator('#panning').waitFor({state:'visible'});await unlocked();
-    await page.locator('#pan-close').click();await locked();
+    await closeTool('#pan-close');
     if(region==='ne-tasmania'){
       await page.keyboard.press('Digit4');await page.mouse.click(600,400);await page.locator('#wet-sieve').waitFor({state:'visible'});await unlocked();
-      await page.locator('#sieve-close').click();await locked();
+      await closeTool('#sieve-close');
     }
     await page.keyboard.press('Escape');await unlocked();assert.equal(await page.locator('#tas-modal').isVisible(),true);
   }

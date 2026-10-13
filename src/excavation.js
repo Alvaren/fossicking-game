@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { makeCrystalMesh, crystalLOD } from './crystals.js';
 import { gemsRealistic } from './settings.js';
 import { CELL } from './terrain.js';
+import { groundMaterial } from './environmentmaterials.js';
 
 // Kneeling hand-excavation. Where you kneel, a small high-detail patch of
 // ground (1.4 m square, 1.25 cm cells) takes over from the terrain. You work
@@ -309,11 +310,18 @@ export class Patch {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    if(this.terrain.profile.id==='new-england') {
+      geo.setAttribute('aSurface',new THREE.BufferAttribute(new Float32Array(pos.length),3));
+      geo.setAttribute('aCut',new THREE.BufferAttribute(new Float32Array(pos.length/3),1));
+    }
     geo.setIndex(idx);
     this.geo = geo;
     this.pos = pos; this.col = col;
     this.refresh(0, CELLS, 0, CELLS);
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, map: this.terrain.material.map }));
+    const surface=this.terrain.profile.id==='new-england'
+      ? groundMaterial({newEngland:true,excavation:true,waterLevel:this.terrain.material.userData.waterLevel})
+      : new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,map:this.terrain.material.map});
+    this.mesh = new THREE.Mesh(geo, surface);
     this.mesh.receiveShadow = true;
     this.mesh.castShadow = true;
     this.group.add(this.mesh);
@@ -350,6 +358,13 @@ export class Patch {
         const y = this.h[k];
         this.pos[k * 3 + 1] = y;
         const bareVein = this.field && this.bed[k] > y - 0.03 && this.field.veinDist(x, z) < 0;
+        if(this.geo.attributes.aSurface) {
+          const t=this.terrain,dug=this.top[k]-y;
+          this.geo.attributes.aSurface.setXYZ(k,
+            t.sampleGrid(t.surface,x,z,3,0)*(1-Math.min(1,dug/.08)),
+            Math.max(t.sampleGrid(t.surface,x,z,3,1),Math.min(1,dug*2)),y-t.creek.waterY(z));
+          this.geo.attributes.aCut.setX(k,bareVein ? 1 : Math.min(1,Math.max(0,dug-.003)/.05));
+        }
         if (this.top[k] - y < 0.003 && !bareVein) {
           this.col[k * 3] = this.topCol[k * 3];
           this.col[k * 3 + 1] = this.topCol[k * 3 + 1];
@@ -370,6 +385,9 @@ export class Patch {
     }
     this.geo.attributes.position.needsUpdate = true;
     this.geo.attributes.color.needsUpdate = true;
+    if(this.geo.attributes.aSurface) {
+      this.geo.attributes.aSurface.needsUpdate=true;this.geo.attributes.aCut.needsUpdate=true;
+    }
     this.geo.computeVertexNormals();
   }
 }

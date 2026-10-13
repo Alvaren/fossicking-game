@@ -43,11 +43,11 @@ export function sourceRockKind(sources, x, z, fallback = 'slate') {
   return kind;
 }
 
-export function rockMaterial(kind = 'slate', { mixed = false, split = false, wet = false, flat = false } = {}) {
-  const key = `${kind}:${mixed}:${split}:${wet}:${flat}`;
+export function rockMaterial(kind = 'slate', { mixed = false, split = false, wet = false, flat = false, authored = false } = {}) {
+  const key = `${kind}:${mixed}:${split}:${wet}:${flat}:${authored}`;
   if (cache.has(key)) return cache.get(key);
   const tex = textures();
-  const material = new THREE.MeshStandardMaterial({ roughness: wet ? .58 : .9, flatShading: flat });
+  const material = new THREE.MeshStandardMaterial({ roughness: wet ? .58 : .9, flatShading: flat, vertexColors: authored });
   material.name = `Rock: ${mixed ? 'mixed geology' : kind}`;
   material.userData.rock = { kind, mixed, split, wet };
   material.onBeforeCompile = shader => {
@@ -60,6 +60,7 @@ varying float vRockWater;
 varying vec3 vRockWorld;
 varying vec3 vRockUp;
 ${mixed ? 'attribute float aRockKind; attribute float aRockWater;' : ''}
+${authored ? 'attribute float aAuthoredRockKind;' : ''}
 ${split ? 'attribute float aFace; attribute float aCave; varying vec2 vRockFace;' : ''}
 void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
   vec3 rockScale = vec3(length(modelMatrix[0].xyz), length(modelMatrix[1].xyz), length(modelMatrix[2].xyz));
@@ -69,7 +70,7 @@ void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
   rockScale = max(rockScale, vec3(0.00001));
   vRockPosition = position * rockScale;
   vRockNormal = normalize(normal / rockScale);
-  vRockKind = ${mixed ? 'aRockKind' : (ROCK_ID[kind] ?? ROCK_ID.slate).toFixed(1)};
+  vRockKind = ${authored ? 'aAuthoredRockKind' : mixed ? 'aRockKind' : (ROCK_ID[kind] ?? ROCK_ID.slate).toFixed(1)};
   vRockWater = ${mixed ? 'aRockWater' : '-1000000.0'};
   vec4 rockWorld = vec4(position,1.0);
   vec3 rockUp = normal;
@@ -119,6 +120,7 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   vec3 rockAlbedo = rockTriplanar(rockColour, vRockPosition / .32, rockWeights, rockKind).rgb;
   vec4 rockSurface = rockTriplanar(rockRelief, vRockPosition / .32, rockWeights, rockKind);
   rockAlbedo = mix(rockAverages[int(rockKind)], rockAlbedo, rockDetail);
+  ${authored ? 'rockAlbedo = diffuseColor.rgb * clamp(rockAlbedo / max(rockAverages[int(rockKind)],vec3(.025)),vec3(.65),vec3(1.35));' : ''}
   float rockFace = ${split ? 'smoothstep(.5, .9, vRockFace.x)' : '0.0'};
   float rockCave = ${split ? 'smoothstep(.3, .9, vRockFace.y)' : '0.0'};
   float weather = rockNoise(vRockPosition * 6.0 + vec3(7,19,31));

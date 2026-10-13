@@ -8,6 +8,9 @@ import { Terrain, PLAY } from './terrain.js';
 import { buildWorld } from './world.js';
 import { dressEnvironment } from './environmentdetail.js';
 import { buildLandscape } from './landscape.js';
+import { buildNewEnglandEnvironment } from './newengland/environment.js';
+import { newEnglandWater } from './newengland/water.js';
+import { newEnglandLight } from './newengland/lighting.js';
 import { SurfaceEffects, surfaceUnderfoot, environmentWeather, updateEnvironmentWeather } from './environmentmotion.js';
 import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
@@ -198,7 +201,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.62;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.autoClear = false;
 
 const scene = new THREE.Scene();
@@ -336,6 +339,15 @@ const landscape = buildLandscape(scene, {
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
 const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
+const newEngland = region === 'new-england' ? buildNewEnglandEnvironment(scene, {
+  seed:state.seed,terrain,world,field,finds,targets,boulders,settings,
+  equipment:()=>[
+    ...(sluice.placed ? [{x:sluice.model.position.x,z:sluice.model.position.z,r:2.5}] : []),
+    ...oversize.piles.map(p=>({x:p.x,z:p.z,r:.9})),
+    ...finds.items.filter(p=>p.id>=100000).map(p=>({x:p.x,z:p.z,r:.65})),
+  ],
+}) : null;
+const creekRendering = newEngland ? newEnglandWater(water,creek,settings) : null;
 let driving = false;
 // The detector is held out in the world, its coil riding just above the ground.
 const worldDet = new WorldDetector(scene);
@@ -801,6 +813,7 @@ function applyGraphics() {
     sun.shadow.map = null;
   }
   fpsEl.classList.toggle('hidden', !settings.fps);
+  newEngland?.quality();
   envTimer = 0;
   envHour = -99;
 }
@@ -2373,11 +2386,13 @@ function frame() {
   view.externalDetector = detShown;
   updateHud();
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
+  if(newEngland)newEnglandLight(daynight);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
   world.update(dt, night, 1 + weather.storm * 1.5, player.pos);
   landscape.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   environmentDetail.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
+  newEngland?.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   campShelter.update(night);
   campBuildings.update(dt, state, player.pos, night);
   kelpie.update(dt, state, player.pos, driving || mine.inside || !!mine.climb);
@@ -2436,9 +2451,10 @@ function frame() {
   sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
   sun.target.position.copy(player.pos);
 
+  creekRendering?.capture(renderer,scene,camera,under);
   renderer.clear();
   renderer.render(scene, camera);
-  if (photo.active) photo.capture(() => { renderer.clear(); renderer.render(scene, camera); });
+  if (photo.active) photo.capture(() => { creekRendering?.capture(renderer,scene,camera,under); renderer.clear(); renderer.render(scene, camera); });
   renderer.clearDepth();
   if (!driving && !photo.active) renderer.render(view.scene, view.camera);
   requestAnimationFrame(frame);
@@ -2470,7 +2486,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = { region, profile,
-  landscape, surfaceEffects, environmentWeather, world,
+  landscape, surfaceEffects, environmentWeather, world, newEngland, creekRendering,
   regionUI, campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,

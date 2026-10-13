@@ -45,11 +45,10 @@ function groundAtlas() {
   return atlas;
 }
 
-export function groundMaterial({ forest = false, dampness = 0 } = {}) {
+export function groundMaterial({ forest = false, dampness = 0, newEngland = false, excavation = false, waterLevel = { value:0 } } = {}) {
   const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .96 });
   material.name = forest ? 'Damp forest floor' : 'Blended claim ground';
   material.userData.environment = 'ground';
-  const waterLevel = { value: 0 };
   material.userData.waterLevel = waterLevel;
   material.onBeforeCompile = shader => {
     shader.uniforms.groundAtlas = { value: groundAtlas() };
@@ -60,8 +59,10 @@ attribute vec3 aSurface;
 varying vec3 vGround;
 varying vec3 vSurface;
 varying float vGroundUp;
+${excavation ? 'attribute float aCut; varying float vCut;' : ''}
 void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
-vGround = position; vSurface = aSurface; vGroundUp = normal.y;`);
+vGround = position; vSurface = aSurface; vGroundUp = normal.y;
+${excavation ? 'vCut=aCut;' : ''}`);
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
 uniform sampler2D groundAtlas;
 uniform float groundWaterLevel;
@@ -69,6 +70,7 @@ uniform float groundWet;
 varying vec3 vGround;
 varying vec3 vSurface;
 varying float vGroundUp;
+${excavation ? 'varying float vCut;' : ''}
 vec3 groundTile(vec2 uv, vec2 tile) {
   vec2 dx = dFdx(uv)*.46875, dy = dFdy(uv)*.46875;
   float footprint = max(length(dx),length(dy))*512.0;
@@ -76,6 +78,11 @@ vec3 groundTile(vec2 uv, vec2 tile) {
   // Canvas textures are flipped vertically on upload.
   vec2 st = (tile*256.0+8.0+fract(uv)*240.0)/512.0;
   return textureGrad(groundAtlas, st, dx*limit, dy*limit).rgb;
+}
+float soilHash(vec2 p) { return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float soilNoise(vec2 p) {
+  vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+  return mix(mix(soilHash(i),soilHash(i+vec2(1,0)),f.x),mix(soilHash(i+vec2(0,1)),soilHash(i+vec2(1,1)),f.x),f.y);
 }
 void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   vec2 gp = vGround.xz;
@@ -95,6 +102,17 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   float groundPixel = max(length(dFdx(gp)),length(dFdy(gp)));
   float detail = 1.0-smoothstep(.025,.2,groundPixel);
   groundColour = mix(vec3(.65),groundColour,detail);
+  ${newEngland ? `
+  float macro=soilNoise(gp*.12)+soilNoise(gp*.43)*.35;
+  vec3 grus=mix(vec3(.19,.145,.083),vec3(.31,.25,.155),smoothstep(.25,1.05,macro));
+  vec3 wash=mix(vec3(.19,.205,.175),vec3(.29,.28,.22),macro*.65);
+  float creekbed=1.0-smoothstep(.1,1.0,vSurface.z-groundWaterLevel);
+  vec3 regionGround=mix(grus,wash,creekbed*.65);
+  regionGround=mix(regionGround,vec3(.22,.23,.14),organic*.4);
+  // Retain a little of the original geological colour information.
+  diffuseColor.rgb=mix(regionGround,diffuseColor.rgb,${excavation ? 'mix(.18,1.0,vCut)' : '.18'});
+  groundColour=mix(groundColour,vec3(.67),.28);
+  ` : ''}
   diffuseColor.rgb *= groundColour*1.38;
   diffuseColor.rgb *= 1.0-wetness*.14;
   diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.13,.17,.16),puddle*.35);
@@ -109,6 +127,6 @@ float gd=dot(gdx,grx);
 normal=normalize(abs(gd)*normal-sign(gd)*(dFdx(groundHeight)*grx+dFdy(groundHeight)*gry)*(1.0-puddle*.97));
 `);
   };
-  material.customProgramCacheKey = () => `ground-layers-v2:${forest}:${dampness}`;
+  material.customProgramCacheKey = () => `ground-layers-v3:${forest}:${dampness}:${newEngland}:${excavation}`;
   return material;
 }
