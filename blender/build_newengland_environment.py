@@ -25,11 +25,11 @@ def material(name, value):
 
 M = {k: material(k, v) for k, v in {
     'bark':'b3ad95','bark_dark':'777266','bark_light':'d2c9ac',
-    'leaf':'586d42','leaf_light':'788752','leaf_dark':'465a3e',
-    'grass':'98925d','grass_dry':'b9ac71','grass_green':'667c50',
+    'leaf':'687447','leaf_light':'89925d','leaf_dark':'566642',
+    'grass':'a19966','grass_dry':'c0b380','grass_green':'788653',
     'host':'68655e','host_light':'807a6e','host_dark':'484b49',
     'quartz':'d9d6c9','quartz_light':'efeadc','quartz_dark':'b9b8ad',
-    'granite':'9b9181','cobble':'898a7c','basalt':'535753',
+    'granite':'9b9181','cobble':'817e70','basalt':'535753',
     'rhyolite':'968579','slab':'79776d',
 }.items()}
 
@@ -77,8 +77,8 @@ def leaves(name, centres, rng, group, small=False):
             direction=a+rng.uniform(-1.6,1.6)
             d=Vector((math.cos(direction),math.sin(direction),-.2-rng.random()*.45))
             side=Vector((-math.sin(direction),math.cos(direction),.1))
-            length=(.19+rng.random()*.15)*( .55 if small else 1)
-            width=length*(.5 if small else .39)
+            length=(.12+rng.random()*.10)*( .68 if small else 1)
+            width=length*(.58 if small else .40)
             v=[c-d*length,c-d*length*.35+side*width,c+Vector((0,0,width*.3)),c+d*length,c-d*length*.35-side*width]
             n=len(verts); verts.extend(v)
             faces.extend([(n,n+1,n+2),(n+1,n+3,n+2),(n+3,n+4,n+2),(n+4,n,n+2)])
@@ -91,34 +91,39 @@ def leaves(name, centres, rng, group, small=False):
     for p in o.data.polygons:
         for vi in p.vertices:
             co=o.data.vertices[vi].co
-            normals.append(Vector((co.x*.12,co.y*.12,.8)).normalized())
+            normals.append(Vector((co.x*.09,co.y*.09,.72)).normalized())
     o.data.normals_split_custom_set(normals)
 
 def tree(index, young=False):
     rng=random.Random(1800+index+(500 if young else 0))
     g=parent(('young_' if young else 'gum_')+str(index))
-    h=(4.2 if young else [7.2,10.5,8.4,6.0][index])+rng.random()*1.2
-    lean=Vector((rng.uniform(-.65,.65),rng.uniform(-.65,.65),0))
-    trunk=[Vector((0,0,0)),Vector((.02,-.02,h*.23)),lean*.45+Vector((0,0,h*.46)),lean+Vector((0,0,h*.72))]
-    tube('bark_trunk',trunk,[.28,.225,.155,.065] if not young else [.14,.12,.08,.035],'bark',g,9)
+    h=(4.2 if young else [7.6,10.2,8.2,6.3][index])
+    lean=Vector((rng.uniform(-.8,.8),rng.uniform(-.7,.7),0))
+    trunk=[Vector((0,0,0)),Vector((.06,-.03,h*.20)),lean*.5+Vector((0,0,h*.43)),lean+Vector((0,0,h*.68))]
+    tube('bark_trunk',trunk,[.27,.215,.145,.045] if not young else [.13,.10,.06,.02],'bark',g,9)
     centres=[]
-    # Connected scaffold forks, then secondary branches and hanging sprays.
-    for j in range(7 if not young else 5):
-        a=j*2.399+rng.uniform(-.3,.3)
-        start=trunk[1].lerp(trunk[3],.22+j*.105)
-        spread=(2.2+rng.random()*1.35)*( .65 if young else [1.15,.8,1.3,.85][index])
-        end=Vector((start.x+math.cos(a)*spread,start.y+math.sin(a)*spread,h*(.8+rng.random()*.2)))
-        elbow=start.lerp(end,.52)+Vector((0,0,.4))
-        tube('bark_fork',[start,elbow,end],[.12*(1-j*.06),.068,.018],'bark_light' if j%3 else 'bark',g)
-        for k in range(3):
-            b=a+(k-1)*.7
-            tip=end+Vector((math.cos(b)*.9,math.sin(b)*.9,rng.uniform(-.2,.6)))
-            tube('bark_twig',[elbow.lerp(end,.7),tip],[.025,.005],'bark',g,5)
-            centres.append((tip,.8+rng.random()*.42,95 if not young else 65))
+    # Uneven lower spreading limbs, upper forks and hanging secondary crowns.
+    # Branch ends occupy different levels rather than a common fan-shaped top.
+    for j in range(8 if not young else 5):
+        a=j*2.399+rng.uniform(-.5,.5)
+        fraction=.16+j*.095
+        start=trunk[1].lerp(trunk[3],fraction)
+        spread=(2.2+rng.random()*1.55)*( .57 if young else [1.18,.90,1.12,.91][index])
+        tip_z=h*(.52+j*.045)+rng.uniform(-.55,.50)
+        end=Vector((start.x+math.cos(a)*spread,start.y+math.sin(a)*spread,tip_z))
+        elbow=start.lerp(end,.47)+Vector((-.10,.12,.30))
+        tube('bark_fork',[start,elbow,end],[.12*(1-j*.07),.065,.014],'bark',g)
+        for k in range(4):
+            b=a+(k-1.5)*.53
+            tip=end+Vector((math.cos(b)*rng.uniform(.35,1.0),math.sin(b)*rng.uniform(.35,1.0),rng.uniform(-.55,.65)))
+            tube('bark_twig',[elbow.lerp(end,.66),tip],[.024,.004],'bark_light',g,5)
+            centres.append((tip,.65+rng.random()*.33,105 if not young else 70))
+    # A small asymmetric top; each variant retains a different overall silhouette.
+    centres.append((trunk[-1]+Vector((.2,-.3,h*.17)),.95,180))
     leaves('leaf_crown',centres,rng,g)
     for j in range(5):
         a=j*math.tau/5+.2
-        tube('bark_root',[(0,0,.35),(math.cos(a)*.35,math.sin(a)*.35,.09),(math.cos(a)*.65,math.sin(a)*.65,-.035)],[.13,.08,.008],'bark_dark',g,6)
+        tube('bark_root',[(0,0,.3),(math.cos(a)*.30,math.sin(a)*.30,.065),(math.cos(a)*.55,math.sin(a)*.55,-.06)],[.11,.065,.006],'bark_dark',g,6)
 
 def shrub(index):
     rng=random.Random(600+index);g=parent('shrub_'+str(index)); centres=[]
@@ -132,10 +137,10 @@ def shrub(index):
 def grass(index, sedge=False):
     rng=random.Random(300+index+100*sedge);g=parent(('sedge_' if sedge else 'grass_')+str(index))
     verts=[];faces=[]
-    for j in range(42 if sedge else 32):
+    for j in range(54 if sedge else 44):
         a=rng.random()*math.tau; r=math.sqrt(rng.random())*.19
-        h=.4+rng.random()*(.65 if sedge else .4);bend=.2+rng.random()*.4
-        width=.018+rng.random()*.022
+        h=.30+rng.random()*(.65 if sedge else .48);bend=.28+rng.random()*.45
+        width=.016+rng.random()*.018
         d=Vector((math.cos(a),math.sin(a),0));s=Vector((-math.sin(a),math.cos(a),0))
         base=d*r
         points=[base,base+d*bend*.17+Vector((0,0,h*.42)),base+d*bend*.55+Vector((0,0,h*.78)),base+d*bend+Vector((0,0,h*.86))]
@@ -147,11 +152,14 @@ def grass(index, sedge=False):
     o=mesh('grass_blades',verts,faces,'grass_green' if sedge else 'grass',g)
     o.data.materials.append(M['grass_dry'])
     for p in o.data.polygons: p.material_index=int(not sedge and rng.random()<.4)
+    # Bent blade geometry remains, while a shared upward normal represents
+    # light scattered through the clump and avoids black edge-on cards.
+    o.data.normals_split_custom_set([Vector((.12,.12,1)).normalized()] * len(o.data.loops))
 
 def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
     # A bevelled, sheared block with independent joint cuts: broad planes remain.
     if role=='cobble': bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=1)
-    elif role in ['host','basalt','rhyolite','slab']:
+    elif role in ['basalt','rhyolite','slab']:
         points=[]
         for height,radius in [(-.95,.83),(-.18,1),(.85,.74)]:
             for j in range(7):
@@ -167,14 +175,14 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         x,y,z=v.co
         if role=='cobble':
             shape=1+.07*math.sin(x*5+y*3)+.06*math.sin(y*4-z*2)
-            v.co=(x*shape*scale[0],y*shape*scale[1],z*scale[2])
+            v.co=(x*shape*scale[0]+z*.06,y*shape*scale[1],z*scale[2]*(1+.12*math.sin(x*4-y*3)))
         else:
             v.co=(x*scale[0]+z*.20+rng.uniform(-.15,.15), y*scale[1]+x*.15+rng.uniform(-.1,.1), z*scale[2]+x*.11+rng.uniform(-.08,.08))
     if role!='cobble':
-        bevel=o.modifiers.new('weathered edges','BEVEL');bevel.width=.28 if rounded else .13;bevel.segments=3 if rounded else 1
+        bevel=o.modifiers.new('weathered edges','BEVEL');bevel.width=.30 if rounded else .13;bevel.segments=3 if rounded else 1
         bpy.ops.object.modifier_apply(modifier=bevel.name)
     bm=bmesh.new();bm.from_mesh(o.data)
-    for j in range(5 if rounded else 10):
+    for j in range(10 if rounded else 8):
         n=Vector((rng.uniform(-1,1),rng.uniform(-1,1),rng.uniform(-1,1))).normalized()
         result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=n*(.73+rng.random()*.35),plane_no=n,clear_outer=True)
         edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
@@ -192,14 +200,9 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         m.diffuse_color=(*col,1);m.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(*col,1)
         o.data.materials.append(m)
     for p in o.data.polygons:p.material_index=rng.choices([0,1,2],[8,1,1])[0]
-    if rounded and role!='cobble':
-        # Weighted smooth normals retain joint planes while rounding shoulders.
-        for p in o.data.polygons:p.use_smooth=True
-        mod=o.modifiers.new('weighted rock normals','WEIGHTED_NORMAL');mod.keep_sharp=True;mod.weight=30
-        bpy.ops.object.modifier_apply(modifier=mod.name)
     if seam:
         # Partition the SAME solid with two planes. Quartz occupies the gap.
-        normal=Vector((-.35,.08,1)).normalized();width=.075+rng.random()*.075
+        normal=Vector((-.7,.08,1)).normalized();width=.07+rng.random()*.075
         original=o.data.copy()
         bm=bmesh.new();bm.from_mesh(original)
         bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=2,use_grid_fill=True)
@@ -208,17 +211,41 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
             bm=bmesh.new();bm.from_mesh(original)
             for dist,clear_inner in [(lo,True),(hi,False)]:
                 if abs(dist)>90:continue
-                result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*dist,plane_no=normal,clear_inner=clear_inner,clear_outer=not clear_inner)
+                result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*(dist+.28),plane_no=normal,clear_inner=clear_inner,clear_outer=not clear_inner)
                 edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
                 if edges:bmesh.ops.holes_fill(bm,edges=edges,sides=0)
             data=bpy.data.meshes.new(name+str(k));bm.normal_update();bm.to_mesh(data);bm.free()
             for v in data.vertices:
-                v.co.z+=.045*math.sin(v.co.x*7+v.co.y*3)+.022*math.sin(v.co.x*17-v.co.y*5)
+                # All slices share the same deformation, concentrated around
+                # the seam. Preserve broad host planes away from the quartz.
+                near=math.exp(-((normal.dot(v.co)-.28)/.35)**2)
+                v.co.z+=near*(.075*math.sin(v.co.x*5+v.co.y*3)+.025*math.sin(v.co.x*13-v.co.y*7))
             obj=bpy.data.objects.new(('quartz_seam' if k==1 else 'host_joint')+str(k),data);bpy.context.collection.objects.link(obj);obj.parent=group
             data.materials.append(M[mat])
             for p in data.polygons:p.material_index=0
         bpy.data.objects.remove(o,do_unlink=True)
     return group
+
+def joints(group, rng, role):
+    # Slice every material in the same volume so the vein follows the joints.
+    # Tiny dark gaps divide an irregular mass into broad pieces, not loose cubes.
+    pieces=list(group.children)
+    cuts=[-2,-.27,.39,2] if role=='host' else [-2,.10,2]
+    for source in pieces:
+        for i in range(len(cuts)-1):
+            bm=bmesh.new();bm.from_mesh(source.data)
+            normal=Vector((1,.17,-.13)).normalized()
+            for d,inner in [(cuts[i]+.015,True),(cuts[i+1]-.015,False)]:
+                if abs(d)>1.8:continue
+                result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*d,plane_no=normal,clear_inner=inner,clear_outer=not inner)
+                edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
+                if edges:bmesh.ops.holes_fill(bm,edges=edges,sides=0)
+            if len(bm.faces):
+                data=bpy.data.meshes.new(source.name+'_joint');bm.normal_update();bm.to_mesh(data)
+                for m in source.data.materials:data.materials.append(m)
+                obj=bpy.data.objects.new(source.name+'_joint',data);bpy.context.collection.objects.link(obj);obj.parent=group
+            bm.free()
+        bpy.data.objects.remove(source,do_unlink=True)
 
 for i in range(4):tree(i)
 for i in range(2):tree(i,True)
@@ -229,6 +256,7 @@ for kind,count in [('host',4),('granite',4),('cobble',6),('basalt',3),('rhyolite
         rng=random.Random(7000+sum(map(ord,kind))+i*59);g=parent(f'{kind}_{i}')
         sc=(.85+rng.random()*.12,.7+rng.random()*.22,.3 if kind=='slab' else .65+rng.random()*.2)
         block(kind,rng,g,kind,sc,kind in ['granite','cobble'],kind=='host')
+        if kind in ['host','granite','basalt','rhyolite']:joints(g,rng,kind)
 for kind,count in [('root',2),('branch',3)]:
     for i in range(count):
         rng=random.Random(900+i);g=parent(f'{kind}_{i}')

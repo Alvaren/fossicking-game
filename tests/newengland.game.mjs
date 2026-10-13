@@ -111,4 +111,4 @@ try {
     report.cases.push({failure,fallback});console.log(`${failure} kit: original scenery and tool use retained.`);
     await context.close();
   }
-} finally {await browser.close();await writeFile('docs/audits/nsw-build/regression.json',JSON.stringify(report,null,2)+'\n');}
+} finally {await browser.close();await writeFile((process.env.NSW_AUDIT_DIR || 'docs/audits/nsw-build')+'/regression.json',JSON.stringify(report,null,2)+'\n');}

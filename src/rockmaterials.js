@@ -120,7 +120,7 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   vec3 rockAlbedo = rockTriplanar(rockColour, vRockPosition / .32, rockWeights, rockKind).rgb;
   vec4 rockSurface = rockTriplanar(rockRelief, vRockPosition / .32, rockWeights, rockKind);
   rockAlbedo = mix(rockAverages[int(rockKind)], rockAlbedo, rockDetail);
-  ${authored ? 'rockAlbedo = diffuseColor.rgb * clamp(rockAlbedo / max(rockAverages[int(rockKind)],vec3(.025)),vec3(.65),vec3(1.35));' : ''}
+  ${authored ? 'rockAlbedo = diffuseColor.rgb * mix(vec3(1.0),clamp(rockAlbedo / max(rockAverages[int(rockKind)],vec3(.025)),vec3(.65),vec3(1.35)),.24);' : ''}
   float rockFace = ${split ? 'smoothstep(.5, .9, vRockFace.x)' : '0.0'};
   float rockCave = ${split ? 'smoothstep(.3, .9, vRockFace.y)' : '0.0'};
   float weather = rockNoise(vRockPosition * 6.0 + vec3(7,19,31));
@@ -137,7 +137,7 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   float druse = step(.94, rockHash(floor(vRockPosition * 530.0))) * rockCave * rockDetail;
   rockAlbedo = mix(rockAlbedo, vec3(.85,.84,.79), druse);
   diffuseColor.rgb = rockAlbedo * mix(1.0,.77,rockWet);
-  float rockHeight = rockSurface.r * rockDetail * .0022;
+  float rockHeight = rockSurface.r * rockDetail * ${authored ? '.0007' : '.0022'};
 `).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
   roughnessFactor = mix(.9, rockSurface.g, rockDetail);
   roughnessFactor = mix(roughnessFactor, max(roughnessFactor, .85), rind * .45);

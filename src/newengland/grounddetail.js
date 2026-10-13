@@ -1,0 +1,51 @@
+import * as THREE from 'three';
+import { rockMaterial, rockKinds } from '../rockmaterials.js';
+
+// Small exposed inclusions and root ends follow the *current* worked surface.
+// No new excavatable material, collision, inventory or saved state is created.
+export function newEnglandGroundDetail(root, terrain, kit) {
+  const geo = kit.cobble_3.clone(), setKind = rockKinds(geo, 720);
+  const stones = new THREE.InstancedMesh(geo, rockMaterial('slate', { mixed:true, authored:true }), 720);
+  const crumbs = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0),
+    new THREE.MeshStandardMaterial({ color:0x8d7353, roughness:1 }), 420);
+  const roots = new THREE.InstancedMesh(new THREE.CylinderGeometry(.004, .006, 1, 5),
+    new THREE.MeshStandardMaterial({ color:0x6e5940, roughness:1 }), 160);
+  stones.name='NSW exposed inclusions';crumbs.name='NSW disturbed soil';roots.name='NSW exposed root ends';
+  for (const mesh of [stones, crumbs, roots]) { mesh.count=0;mesh.receiveShadow=true;mesh.castShadow=true;root.add(mesh); }
+  const d=new THREE.Object3D(), up=new THREE.Vector3(0,1,0), direction=new THREE.Vector3();
+  const random=(x,z)=>{const n=Math.sin(x*127.1+z*311.7)*43758.5453;return n-Math.floor(n);};
+  const cut=(x,z)=>terrain.sampleGrid(terrain.orig,x,z)-terrain.getHeight(x,z);
+  return { update(player, low) {
+    let ns=0,nc=0,nr=0;
+    const step=low ? .24 : .16, radius=low ? 3 : 5;
+    const x0=Math.floor((player.x-radius)/step),z0=Math.floor((player.z-radius)/step);
+    const count=Math.ceil(radius*2/step);
+    for(let j=0;j<count;j++)for(let i=0;i<count;i++) {
+      const ix=x0+i,iz=z0+j,r=random(ix,iz);
+      const x=(ix+.2+r*.6)*step,z=(iz+.2+random(iz,ix)*.6)*step;
+      if(!terrain.inside(x,z))continue;
+      const depth=cut(x,z);
+      if(depth<.025||depth>.6)continue;
+      const overlay=terrain.overlayAt(x,z);
+      if(overlay?.mine || overlay?.crystals?.some(e=>!e.c.collected&&Math.hypot(e.c.x-x,e.c.z-z)<.065))continue;
+      const h=terrain.getHeight(x,z),edge=Math.min(cut(x+.16,z),cut(x-.16,z),cut(x,z+.16),cut(x,z-.16));
+      d.position.set(x,h-.006,z);d.rotation.set(.3*r,r*6.28,.2*r);
+      if(r>.55&&ns<720) {
+        const s=.012+r*.021;d.scale.set(s*1.2,s*.6,s);d.updateMatrix();
+        stones.setMatrixAt(ns,d.matrix);setKind(ns++,'slate',terrain.creek.waterY(z));
+      }
+      if(edge<depth*.65&&nc<420) {
+        const s=.009+r*.018;d.scale.set(s*1.4,s*.8,s);d.position.y=h+s*.2;d.updateMatrix();crumbs.setMatrixAt(nc++,d.matrix);
+      }
+      // Root tips appear only just below the old organic surface at a cut lip.
+      if(depth<.16&&edge<.018&&r>.65&&nr<160) {
+        const a=r*6.28,ex=x+Math.cos(a)*.08,ez=z+Math.sin(a)*.08,ey=terrain.getHeight(ex,ez);
+        direction.set(ex-x,ey-h,ez-z);const length=direction.length();
+        d.position.set((x+ex)*.5,(h+ey)*.5+.003,(z+ez)*.5);
+        d.quaternion.setFromUnitVectors(up,direction.normalize());d.scale.setScalar(1);d.scale.y=length;d.updateMatrix();roots.setMatrixAt(nr++,d.matrix);
+      }
+    }
+    for(const [mesh,n] of [[stones,ns],[crumbs,nc],[roots,nr]]) {mesh.count=n;mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();}
+    stones.geometry.attributes.aRockWater.needsUpdate=true;
+  }};
+}

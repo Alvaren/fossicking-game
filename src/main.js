@@ -340,7 +340,7 @@ const landscape = buildLandscape(scene, {
 });
 const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
 const newEngland = region === 'new-england' ? buildNewEnglandEnvironment(scene, {
-  seed:state.seed,terrain,world,field,finds,targets,boulders,settings,
+  seed:state.seed,terrain,world,landscape,field,finds,targets,boulders,settings,
   equipment:()=>[
     ...(sluice.placed ? [{x:sluice.model.position.x,z:sluice.model.position.z,r:2.5}] : []),
     ...oversize.piles.map(p=>({x:p.x,z:p.z,r:.9})),

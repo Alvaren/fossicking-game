@@ -455,13 +455,16 @@ export class Terrain {
     geo.setAttribute('normal', new THREE.BufferAttribute(this.nor, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(this.col, 3));
     geo.setAttribute('aSurface', new THREE.BufferAttribute(this.surface, 3));
+    // NSW's surface palette must yield to the existing geological colours as
+    // the shovel exposes soil, wash and bedrock. This is render data only.
+    if (this.profile.id === 'new-england') geo.setAttribute('aCut', new THREE.BufferAttribute(new Float32Array(count), 1));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     this.geo = geo;
     this.refresh(0, SEG, 0, SEG);
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england'});
+    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',excavation:this.profile.id === 'new-england'});
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -488,6 +491,7 @@ export class Terrain {
         const x = this.pos[i * 3], z = this.pos[i * 3 + 2];
         const local = this.creek.local(x, z, this.tmpL), bank = local.d - local.w;
         const dug = this.orig[i] - h[i];
+        if (this.geo.attributes.aCut) this.geo.attributes.aCut.array[i] = smoothstep(.005, .10, dug);
         this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
         this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
@@ -502,6 +506,7 @@ export class Terrain {
     g.attributes.normal.needsUpdate = true;
     g.attributes.color.needsUpdate = true;
     g.attributes.aSurface.needsUpdate = true;
+    if (g.attributes.aCut) g.attributes.aCut.needsUpdate = true;
   }
 
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,

@@ -25,11 +25,21 @@ uniform sampler2D waterSceneDepth;
 uniform mat4 waterTextureMatrix;
 uniform vec2 waterViewport;
 uniform vec3 waterPlane;
-uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','float chop = 0.035 + spd * 0.10 + vFoam * .08;')
+float foamHash(vec2 p) {return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float foamNoise(vec2 p) {
+  vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+  return mix(mix(foamHash(i),foamHash(i+vec2(1,0)),f.x),mix(foamHash(i+vec2(0,1)),foamHash(i+vec2(1,1)),f.x),f.y);
+}
+uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','float chop = 0.018 + min(spd,1.5) * 0.025 + vFoam * .035;')
+    .replace('flowSample(vUv, 0.55,', 'flowSample(vUv, 0.18,')
+    .replace('flowSample(vUv * vec2(1.0, 0.6) + 3.1, 0.31,', 'flowSample(vUv * vec2(1.0, 0.8) + 3.1, 0.11,')
+    .replace('n1.xy += fine.xy * .12;', 'n1.xy += fine.xy * .035;')
+    .replace('220.0);','360.0);')
+    .replace('float deep = smoothstep', 'fres *= mix(.45,1.0,smoothstep(.18,1.1,depth));\n  float deep = smoothstep')
     .replace('float spec = pow',`
   if(sceneWater>.5) {
     vec4 projected=waterTextureMatrix*vec4(vWorld,1.0);
-    vec2 uv=projected.xy/projected.w+N.xz*.05;
+    vec2 uv=projected.xy/projected.w+N.xz*.025;
     float edge=smoothstep(0.0,.06,min(min(uv.x,uv.y),min(1.0-uv.x,1.0-uv.y)));
     float planeY=waterPlane.y+waterPlane.z*(vWorld.z-waterPlane.x);
     float profileMatch=1.0-smoothstep(.035,.13,abs(vWorld.y+level-planeY));
@@ -48,11 +58,18 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     // Avoid pulling the above-water bank/foreground into the submerged image.
     if(texture2D(waterSceneDepth,uv).x<gl_FragCoord.z-.00001)uv=screen;
     vec3 below=texture2D(waterTransmission,uv).rgb;
-    float absorb=mix(.16,.68,deep)+flood*.28;
+    float absorb=mix(.04,.35,deep)+flood*.60;
     body=mix(below,body,clamp(absorb,0.0,.96));
-    col=mix(body,refl,fres*(1.0-.7*flood))+sunColor*spec*1.7*(1.0-flood);
+    col=mix(body,refl,fres*(1.0-.7*flood))+sunColor*spec*.48*(1.0-flood);
     alpha=1.0;
   }`);
+  material.fragmentShader=material.fragmentShader
+    .replace('float fn = flowSample(vUv * 1.7, 0.9, spd * 1.3, time * 0.5).x;',
+      'float fn = foamNoise(vUv*vec2(2.2,.8)-vec2(0,time*spd*.6))+.15*foamNoise(vUv*6.3-time*.2);')
+    .replace('smoothstep(0.48, 0.78, fn + fv * 0.25)', 'smoothstep(.68,.90,fn+fv*.12)')
+    .replace('float fv = min(1.0, vFoam + flood * 0.45);',
+      'float fv = min(1.0, vFoam * smoothstep(.12,.32,depth) * .58 + flood * .45);')
+    .replace('float alpha = mix(mix(0.14, 0.84, deep)', 'float alpha = mix(mix(0.10, 0.75, deep)');
   material.needsUpdate=true;
   return {stats,capture(renderer,scene,camera,underground=0) {
     // The first ordinary render allocates the light's comparison-depth texture.
