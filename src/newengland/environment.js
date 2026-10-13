@@ -7,6 +7,7 @@ import { rockMaterial, rockKinds, ROCK_ID } from '../rockmaterials.js';
 import { placementMask } from './placement.js';
 import { composeNewEngland } from './composition.js';
 import { newEnglandGroundDetail } from './grounddetail.js';
+import { newEnglandBankRoots } from './bankroots.js';
 
 // One regional rendering recipe, layered over the original game world.
 // Never consume the world RNG or modify physical/saved source objects.
@@ -41,7 +42,7 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     surface.material.customProgramCacheKey = () => `nsw-foliage-v2:${surface===plants}`;
   }
   const batches = [], treeBatches = [], grassBatches=[], stats = { status:'loading', assets:0, dressing:0, visible:0, quality:settings.environment || 'high' };
-  let kit, groundDetail, elapsed=0, timer=1;
+  let kit, groundDetail, bankRoots, elapsed=0, timer=1;
   const geometryCache = new Map();
   function plantGeometry(name, stride=1) {
     const key=`${name}:${stride}`;
@@ -125,9 +126,16 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     activeEquipment=equipment();
     composeNewEngland({terrain,world,mask,workingMask,rng,add,rockAnchors});
     for(const batch of batches) {
-      const stone=/^(cobble|host|granite|basalt|rhyolite|slab)_/.test(batch.name),wood=/^(branch|root)_/.test(batch.name);
+      const stone=/^(cobble|host|granite|basalt|rhyolite|slab|quartzfloat)_/.test(batch.name),wood=/^(branch|root)_/.test(batch.name);
       batch.stone=stone;
-      const g=kit[batch.name].clone();
+      const float=batch.name.startsWith('quartzfloat_');
+      const g=kit[float?batch.name.replace('quartzfloat_','slab_'):batch.name].clone();
+      if(float) {
+        // Small quartz float uses closed angular chips, not the whole detailed
+        // outcrop scaled down to a few pixels. Keep the existing kit contract.
+        const color=new THREE.Color(0xc6c1ac),colours=g.attributes.color,kind=g.attributes.aAuthoredRockKind;
+        for(let i=0;i<colours.count;i++) {colours.setXYZ(i,color.r,color.g,color.b);kind.setX(i,ROCK_ID.quartz);}
+      }
       const material=stone ? rockMaterial('slate',{mixed:true,authored:true}) : wood ? bark.material : plants.material;
       if(stone) { const setKind=rockKinds(g,batch.entries.length);batch.entries.forEach((e,i)=>setKind(i,'slate',c.waterY(e.z))); }
       batch.mesh=new THREE.InstancedMesh(g,material,batch.entries.length);
@@ -181,7 +189,9 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     });
     replaceRocks(scene.getObjectByName('Geological scenery rocks'));
     replaceRocks(scene.getObjectByName('Granite tors'),true);
-    dressing();groundDetail=newEnglandGroundDetail(root,terrain,kit);quality();stats.status='ready';
+    dressing();groundDetail=newEnglandGroundDetail(root,terrain,kit);
+    bankRoots=newEnglandBankRoots(root,terrain,world,mask,workingMask);
+    stats.bankRoots=bankRoots.branches.length;quality();stats.status='ready';
   });
   return {root,stats,ready,mask,quality,update(dt,time,player,wind=1) {
     elapsed=time;plants.update(elapsed,wind);bark.update(elapsed,wind);timer+=dt;
@@ -192,6 +202,7 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     timer=0;stats.visible=0;activeEquipment=equipment();
     const low=stats.quality==='low',medium=stats.quality==='medium';
     groundDetail.update(player,low);
+    bankRoots.update(player,low);
     const distance=low ? 28 : medium ? 48 : 80,density=low ? .4 : medium ? .7 : 1;
     for(const {entries,mesh,stone} of batches) {
       let n=0;

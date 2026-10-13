@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 
 // Check the shipped mesh, not just its generator. A through-cut makes two
 // individually closed pieces, so watertight edges alone would miss the defect.
-const file = readFileSync(new URL('../public/models/newengland/environment.glb', import.meta.url));
+const file = readFileSync(process.env.NSW_KIT_FILE || new URL('../public/models/newengland/environment.glb', import.meta.url));
 assert.equal(file.readUInt32LE(0), 0x46546c67);
 const jsonLength = file.readUInt32LE(12);
 const gltf = JSON.parse(file.toString('utf8', 20, 20 + jsonLength));
@@ -19,9 +19,27 @@ function readAccessor(id) {
   return Array.from({ length:a.count }, (_, i) => Array.from({ length:width }, (_, j) =>
     binary[read](offset + i * (view.byteStride || width * size) + j * size)));
 }
-const manifest = JSON.parse(readFileSync(new URL('../public/models/newengland/manifest.json', import.meta.url)));
-const rocks = gltf.nodes.filter(n => /^(granite|cobble|basalt|rhyolite|slab)_\d$/.test(n.name));
-assert.equal(rocks.length, 19, 'All ordinary rock variants must be present');
+const manifest = JSON.parse(readFileSync(process.env.NSW_KIT_MANIFEST || new URL('../public/models/newengland/manifest.json', import.meta.url)));
+test('all 42 named environment assets contain finite, nonempty geometry', () => {
+  assert.equal(Object.keys(manifest.assets).length,42);
+  for(const [name,asset] of Object.entries(manifest.assets)) {
+    const node=gltf.nodes.find(n=>n.name===name);
+    assert.ok(node,`Missing ${name}`);
+    assert.ok(asset.triangles>0,`Empty ${name}`);
+    assert.ok(asset.blenderBounds.flat().every(Number.isFinite));
+    let count=0;
+    function walk(n) {
+      if(n.mesh!==undefined)for(const p of gltf.meshes[n.mesh].primitives) {
+        count+=gltf.accessors[p.indices??p.attributes.POSITION].count/3;
+        assert.ok(readAccessor(p.attributes.POSITION).every(v=>v.every(Number.isFinite)),`${name} finite positions`);
+      }
+      for(const child of n.children||[])walk(gltf.nodes[child]);
+    }
+    walk(node);assert.equal(count,asset.triangles,`${name} exported triangle count`);
+  }
+});
+const rocks = gltf.nodes.filter(n => /^(host|granite|cobble|basalt|rhyolite|slab)_\d$/.test(n.name));
+assert.equal(rocks.length, 23, 'All rock variants must be present');
 for (const node of rocks) {
   test(`${node.name}: one closed, connected rock without a through-cut`, () => {
     const vertices = new Map(), edges = new Map(), neighbours = [];

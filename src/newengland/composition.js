@@ -61,7 +61,7 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
     const direction = Math.sign(c.cx(a.z) - a.x);
     for (let k = 0; k < 14; k++) {
       const distance = .8 + rng() * 5, px = a.x + direction * distance, pz = a.z + (rng() - .5) * distance;
-      put(`${family === 'host' ? 'host' : family}_${k % (family === 'host' || family === 'granite' ? 4 : 3)}`,
+      put(`${family === 'host' ? 'quartzfloat' : family}_${k % (family === 'granite' ? 4 : 3)}`,
         px, pz, .05 + rng() * .16, { surface: true, sy: .55, radius: .15, lift: -.025 });
     }
     if (i % 3 === 0) clump(a.x + 1.4, a.z - 1, 2.1, false, 55);

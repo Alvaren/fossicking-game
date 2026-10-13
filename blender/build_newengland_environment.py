@@ -27,7 +27,7 @@ M = {k: material(k, v) for k, v in {
     'bark':'b3ad95','bark_dark':'777266','bark_light':'d2c9ac',
     'leaf':'687447','leaf_light':'89925d','leaf_dark':'566642',
     'grass':'a19966','grass_dry':'c0b380','grass_green':'788653',
-    'host':'68655e','host_light':'807a6e','host_dark':'484b49',
+    'host':'8b8073','host_light':'807a6e','host_dark':'484b49',
     'quartz':'d9d6c9','quartz_light':'efeadc','quartz_dark':'b9b8ad',
     'granite':'9b9181','cobble':'817e70','basalt':'535753',
     'rhyolite':'968579','slab':'79776d',
@@ -159,7 +159,26 @@ def grass(index, sedge=False):
 def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
     # Weathered volumes: extra vertices shape curved edges and shallow erosion.
     # Ordinary rocks are intact; never apply a repeated full-width saw cut.
-    if role in ['cobble','granite']: bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3 if role=='granite' else 2,radius=1)
+    if role=='host':
+        # Overlapping weathered blocks form one connected exposure. Recesses
+        # stop within the surface; none is a repeated slot through the body.
+        parts=[]
+        for j,(centre,half) in enumerate([((-.33,.10,-.08),(.65,.72,.70)),((.39,.12,.07),(.56,.65,.76)),((-.05,-.45,-.15),(.65,.38,.61))]):
+            bpy.ops.mesh.primitive_cube_add(size=2)
+            part=bpy.context.object
+            for v in part.data.vertices:
+                v.co=(v.co.x*half[0]+centre[0]+rng.uniform(-.06,.06),v.co.y*half[1]+centre[1]+rng.uniform(-.04,.04),v.co.z*half[2]+centre[2]+rng.uniform(-.04,.04))
+            parts.append(part)
+        bpy.ops.object.select_all(action='DESELECT')
+        for part in parts:part.select_set(True)
+        o=parts[0];bpy.context.view_layer.objects.active=o;bpy.ops.object.join()
+        remesh=o.modifiers.new('connected weathered volume','REMESH');remesh.mode='VOXEL';remesh.voxel_size=.08
+        bpy.ops.object.modifier_apply(modifier=remesh.name)
+        soften=o.modifiers.new('weathered corners','SMOOTH');soften.factor=.5;soften.iterations=2
+        bpy.ops.object.modifier_apply(modifier=soften.name)
+        decimate=o.modifiers.new('broad rock planes','DECIMATE');decimate.ratio=.24
+        bpy.ops.object.modifier_apply(modifier=decimate.name)
+    elif role in ['cobble','granite']: bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3 if role=='granite' else 2,radius=1)
     elif role in ['basalt','rhyolite','slab']:
         points=[]
         for height,radius in [(-.95,.83),(-.18,1),(.85,.74)]:
@@ -182,13 +201,15 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         elif role=='cobble':
             shape=1+.07*math.sin(x*5+y*3)+.06*math.sin(y*4-z*2)
             v.co=(x*shape*scale[0]+z*.06,y*shape*scale[1],z*scale[2]*(1+.12*math.sin(x*4-y*3)))
+        elif role=='host':
+            v.co=(x*scale[0]*(.87-.28*z)+z*.24+.025*math.sin(y*5+z*3),y*scale[1]*(.90-.22*z)+x*.12+.02*math.sin(z*5-x*3),z*scale[2]*.83+x*.08+.025*math.sin(x*4+y*3))
         else:
             v.co=(x*scale[0]+z*.20+rng.uniform(-.15,.15), y*scale[1]+x*.15+rng.uniform(-.1,.1), z*scale[2]+x*.11+rng.uniform(-.08,.08))
-    if role not in ['cobble','granite']:
+    if role not in ['cobble','granite','host']:
         bevel=o.modifiers.new('weathered edges','BEVEL');bevel.width=.30 if rounded else .13;bevel.segments=3 if rounded else 1
         bpy.ops.object.modifier_apply(modifier=bevel.name)
     bm=bmesh.new();bm.from_mesh(o.data)
-    for j in range(0 if rounded else 8):
+    for j in range(0 if rounded else 2 if role=='host' else 8):
         n=Vector((rng.uniform(-1,1),rng.uniform(-1,1),rng.uniform(-1,1))).normalized()
         result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=n*(.73+rng.random()*.35),plane_no=n,clear_outer=True)
         edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
@@ -212,29 +233,23 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         p.material_index=0
         if rounded:p.use_smooth=True
     if seam:
-        # Partition the SAME solid with two planes. Quartz occupies the gap.
-        normal=Vector((-.7,.08,1)).normalized();width=.07+rng.random()*.075
-        original=o.data.copy()
-        bm=bmesh.new();bm.from_mesh(original)
-        bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=2,use_grid_fill=True)
-        bm.to_mesh(original);bm.free()
-        for k,(lo,hi,mat) in enumerate([(-99,-width,role),(-width,width,'quartz'),(width,99,role)]):
-            bm=bmesh.new();bm.from_mesh(original)
-            for dist,clear_inner in [(lo,True),(hi,False)]:
-                if abs(dist)>90:continue
-                result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*(dist+.28),plane_no=normal,clear_inner=clear_inner,clear_outer=not clear_inner)
-                edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
-                if edges:bmesh.ops.holes_fill(bm,edges=edges,sides=0)
-            data=bpy.data.meshes.new(name+str(k));bm.normal_update();bm.to_mesh(data);bm.free()
-            for v in data.vertices:
-                # All slices share the same deformation, concentrated around
-                # the seam. Preserve broad host planes away from the quartz.
-                near=math.exp(-((normal.dot(v.co)-.28)/.35)**2)
-                v.co.z+=near*(.075*math.sin(v.co.x*5+v.co.y*3)+.025*math.sin(v.co.x*13-v.co.y*7))
-            obj=bpy.data.objects.new(('quartz_seam' if k==1 else 'host_joint')+str(k),data);bpy.context.collection.objects.link(obj);obj.parent=group
-            data.materials.append(M[mat])
-            for p in data.polygons:p.material_index=0
-        bpy.data.objects.remove(o,do_unlink=True)
+        # Split the exterior faces at the mineral boundaries while retaining
+        # one watertight solid. No interior caps can show as white plates.
+        normal=Vector((-.7,.08,1)).normalized();width=.032+rng.random()*.043
+        o.data.materials.append(M['quartz']);quartz_index=len(o.data.materials)-1
+        bm=bmesh.new();bm.from_mesh(o.data)
+        bmesh.ops.subdivide_edges(bm,edges=[e for e in bm.edges if e.calc_length()>.28],cuts=1,use_grid_fill=True)
+        for offset in [-width,width]:
+            bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*(offset+.28),plane_no=normal)
+        for face in bm.faces:
+            face.material_index=quartz_index if abs(normal.dot(face.calc_center_median())-.28)<width+.00001 else 0
+        for v in bm.verts:
+            near=math.exp(-((normal.dot(v.co)-.28)/.35)**2)
+            v.co.z+=near*(.075*math.sin(v.co.x*5+v.co.y*3)+.025*math.sin(v.co.x*13-v.co.y*7))
+        bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.0001)
+        bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=.0001)
+        bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+        bm.to_mesh(o.data);bm.free()
     return group
 
 for i in range(4):tree(i)

@@ -104,19 +104,20 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   groundColour = mix(vec3(.65),groundColour,detail);
   ${newEngland ? `
   float macro=soilNoise(gp*.12)+soilNoise(gp*.43)*.35;
-  vec3 grus=mix(vec3(.23,.166,.087),vec3(.34,.27,.16),smoothstep(.25,1.05,macro));
-  vec3 wash=mix(vec3(.19,.205,.175),vec3(.29,.28,.22),macro*.65);
-  float creekbed=1.0-smoothstep(.1,1.0,vSurface.z-groundWaterLevel);
-  vec3 regionGround=mix(grus,wash,creekbed*.65);
-  regionGround=mix(regionGround,vec3(.22,.23,.14),organic*.4);
+  vec3 grus=mix(vec3(.20,.143,.080),vec3(.36,.28,.17),smoothstep(.30,1.0,macro));
+  vec3 wash=mix(vec3(.14,.16,.135),vec3(.28,.285,.235),smoothstep(.25,1.08,macro));
+  float creekbed=1.0-smoothstep(.03,.8,vSurface.z-groundWaterLevel);
+  vec3 regionGround=mix(grus,wash,creekbed*.9);
+  float litterPatch=organic*smoothstep(.25,.7,soilNoise(gp*.28+13.0));
+  regionGround=mix(regionGround,vec3(.135,.117,.076),litterPatch*.65);
   // Retain a little of the original geological colour information.
-  diffuseColor.rgb=mix(regionGround,diffuseColor.rgb,${excavation ? 'mix(.18,1.0,vCut)' : '.18'});
+  diffuseColor.rgb=mix(regionGround,diffuseColor.rgb,${excavation ? 'mix(.24,1.0,vCut)' : '.24'});
   // The old gravel tile remains for other regions. Here fine aggregate is
   // subordinate to actual embedded stones and metre-scale material patches.
   groundColour=mix(vec3(.68),groundColour,.12);
   float face=1.0-smoothstep(.70,.96,vGroundUp);
-  float strata=soilNoise(vec2(gp.x*.8+gp.y*.7,vGround.y*17.0));
-  diffuseColor.rgb*=1.0-face*(.06+.12*strata);
+  float strata=soilNoise(vec2(gp.x*.7+gp.y*.5,vGround.y*9.0));
+  diffuseColor.rgb*=1.0-face*(.04+.16*strata);
   ${excavation ? 'diffuseColor.rgb*=1.0-vCut*.08;' : ''}
   ` : ''}
   diffuseColor.rgb *= groundColour*1.38;
