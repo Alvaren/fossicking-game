@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-13",
+  "cases": [
+    {
+      "seed": 1,
+      "worldHash": "325c6c33ecfe327a5b7388f4318d1b7a05151ecfe1c3fbb51a7b01fc041540b5",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1553,
+          "visible": 542,
+          "quality": "low",
+          "triangles": 657726
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1553,
+          "visible": 1077,
+          "quality": "medium",
+          "triangles": 921628
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1553,
+          "visible": 1553,
+          "quality": "high",
+          "triangles": 1255798
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1553,
+          "visible": 542,
+          "quality": "low",
+          "triangles": 657726
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641
+      },
+      "errors": []
+    },
+    {
+      "seed": 12345,
+      "worldHash": "d1e3a37bf9e53a818bec2aab593c3d13907ec475da3992ff119a274c8f7352f8",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1404,
+          "visible": 554,
+          "quality": "low",
+          "triangles": 647770
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1404,
+          "visible": 963,
+          "quality": "medium",
+          "triangles": 913224
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1404,
+          "visible": 1404,
+          "quality": "high",
+          "triangles": 1252038
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1404,
+          "visible": 554,
+          "quality": "low",
+          "triangles": 647770
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641
+      },
+      "errors": []
+    },
+    {
+      "seed": 798887,
+      "worldHash": "40e3568ef505d51879e674ad94d0a37acb203bb2499572bf731bd14f8b72fd5a",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1525,
+          "visible": 556,
+          "quality": "low",
+          "triangles": 638210
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1525,
+          "visible": 1075,
+          "quality": "medium",
+          "triangles": 902288
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1525,
+          "visible": 1525,
+          "quality": "high",
+          "triangles": 1242422
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 1525,
+          "visible": 556,
+          "quality": "low",
+          "triangles": 638210
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641
+      },
+      "errors": []
+    },
+    {
+      "failure": "missing",
+      "fallback": {
+        "status": "fallback",
+        "rocks": true,
+        "tors": true,
+        "trees": true
+      }
+    },
+    {
+      "failure": "corrupt",
+      "fallback": {
+        "status": "fallback",
+        "rocks": true,
+        "tors": true,
+        "trees": true
+      }
+    }
+  ]
+}

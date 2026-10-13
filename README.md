@@ -58,7 +58,7 @@ Every push to `main` builds and publishes the game to GitHub Pages (`.github/wor
 
 Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md) before editing. Codex and Claude Code use separate worktrees and server ports, with file ownership checked before integration.
 
-The next New England environment upgrade is specified in the [visual audit](docs/NSW-ENVIRONMENT-AUDIT.md) and [action/build checklist](docs/NSW-ENVIRONMENT-BUILD-PLAN.md), with 19 baseline screenshots. These are planning documents; the graphics upgrade is not yet implemented. The supplied visual references set the quality target, with graphics presets providing hardware scaling.
+The New England environment upgrade has its first implementation: authored gum/rock/plant models, the first creek section, matching ground and excavation materials, and richer water on High/Ultra. See the [delivery and screenshots](docs/NSW-ENVIRONMENT-BUILD.md), [visual audit](docs/NSW-ENVIRONMENT-AUDIT.md) and [remaining build checklist](docs/NSW-ENVIRONMENT-BUILD-PLAN.md). The full-map reference-quality gate remains open. The supplied visual references set the target; graphics presets provide hardware scaling.
 
 Gold panning: select the pan (3) in the creek, then click or tap Use. Drag on the close-up pan; the action buttons select clay breakup, stratification, washing and reveal. Put aside saves the partly worked pan. See [panning controls and model notes](docs/PANNING.md).
 

@@ -2,7 +2,7 @@
 
 Date: 13 October 2026 (Australia/Brisbane). Owner: Codex. Plan base: `2a319467be058cce5425fdd1041f1c10c8b7058e`.
 
-Read the [audit and baseline evidence](NSW-ENVIRONMENT-AUDIT.md) first. This document is the durable task list for bringing **the existing New England, NSW map** toward the six user-supplied environment references. Audit/documentation work is complete; the visual build tasks below have not been implemented. Checked audit items must not be presented as completed graphics work.
+Read the [audit and baseline evidence](NSW-ENVIRONMENT-AUDIT.md) first. This document is the durable task list for bringing **the existing New England, NSW map** toward the six user-supplied environment references. The first implementation is recorded in [NSW-ENVIRONMENT-BUILD.md](NSW-ENVIRONMENT-BUILD.md), with its art contract and before/after evidence. The kit, regional rendering and first creek dressing are implemented; the complete scene/reference-quality gate and whole-map rollout remain open. Checked technical items do not certify visual acceptance.
 
 ## Quality target and scope
 
@@ -57,13 +57,13 @@ Authoring is iterative: B3 may send a rock or tree back to B2. B4 may expose wea
 
 ## B1 — Establish the concrete art specification
 
-- [ ] B1-01 — Create a small reference board with a clearly labelled game target for creek, host rock/quartz, granite, ground, mature trees and shrubs. Keep user references distinct from researched NSW species/geology and from generated concept art, if any is later used.
-- [ ] B1-02 — Choose and document the New England plant palette and material palette. Include dry/wet soil, pale granite, darker host rock, quartz, basalt and foliage colours under neutral lighting. Use regional reference sources; do not reuse a desert palette by default.
+- [x] B1-01 — Create a small reference board with a clearly labelled game target for creek, host rock/quartz, granite, ground, mature trees and shrubs. Keep user references distinct from researched NSW species/geology and from generated concept art, if any is later used.
+- [x] B1-02 — Choose and document the New England plant palette and material palette. Include dry/wet soil, pale granite, darker host rock, quartz, basalt and foliage colours under neutral lighting. Use regional reference sources; do not reuse a desert palette by default.
 - [ ] B1-03 — Define the first section around `creek.cx(z)`, approximately z=0..28, with camp access and both bank working spaces protected. Record 3 ground-level views in each direction, one kneeling view and one elevated inspection view. Resolve anchors from the save, not hard-coded seed-12345 coordinates.
-- [ ] B1-04 — Define separate reef and granite close-up scenes at their existing anchors. A white seam must belong to the existing source; do not relocate a reef to decorate the creek screenshot.
-- [ ] B1-05 — Inventory all protected footprints: camp upgrade extremes, shop, ute route, mine collar, sluice/highbanker, targets, surface finds, crystal/vug sites, excavation patches and existing boulders. Store a reusable placement mask/clearance query, based on those actual objects.
-- [ ] B1-06 — Specify mesh names, metre scale, pivot/origin, Y-up game result from Blender Z-up, material slots, LOD names and collision-proxy rules for the environment kit. Keep existing tool/crystal contracts intact.
-- [ ] B1-07 — Record asset-source/licence and generator provenance. Start with authored headless Blender work using the existing installation; use a fresh process and absolute paths. Verify availability at build time rather than assuming the old MCP connection works.
+- [x] B1-04 — Define separate reef and granite close-up scenes at their existing anchors. A white seam must belong to the existing source; do not relocate a reef to decorate the creek screenshot.
+- [x] B1-05 — Inventory all protected footprints: camp upgrade extremes, shop, ute route, mine collar, sluice/highbanker, targets, surface finds, crystal/vug sites, excavation patches and existing boulders. Store a reusable placement mask/clearance query, based on those actual objects.
+- [x] B1-06 — Specify mesh names, metre scale, pivot/origin, Y-up game result from Blender Z-up, material slots, LOD names and collision-proxy rules for the environment kit. Keep existing tool/crystal contracts intact.
+- [x] B1-07 — Record asset-source/licence and generator provenance. Start with authored headless Blender work using the existing installation; use a fresh process and absolute paths. Verify availability at build time rather than assuming the old MCP connection works.
 
 **Gate:** the scene layout and asset list describe a concrete result. If the intended appearance is still being invented during integration, finish this stage first.
 
@@ -91,24 +91,24 @@ Each delivered asset needs a source/generator, intended GLB or native geometry, 
 ## B2 — Build and validate the kit
 
 - [ ] B2-01 — Author RK-01/02 prototypes first. Inspect the host rock and vein together from front, side, above and player eye height; avoid thin decorative white strips hovering above solid rock.
-- [ ] B2-02 — Author RK-03/04. Give granite and creek stones their own shape language; show scale beside the existing shovel/player height. Check seams and normals before export.
+- [x] B2-02 — Author RK-03/04. Give granite and creek stones their own shape language; show scale beside the existing shovel/player height. Check seams and normals before export.
 - [ ] B2-03 — Author VG-01/02/03 prototypes. Review backlit leaves, the underside of canopies and distant silhouettes. Avoid dense sheets, detached branches and uniformly black foliage.
 - [ ] B2-04 — Author DT-01 and MT-01/02 with close-view scale references. Use material roughness/normal detail to support the meshes; keep minerals readable without excessive speckle.
-- [ ] B2-05 — Add an optional New England environment asset manifest through the existing loader. Load failures must preserve a playable fallback and must not discard successful tool/find loads.
-- [ ] B2-06 — Validate GLBs in game: bounds, origin, scale, material colour spaces, normal direction, transparency, shader variants, instancing compatibility and offline paths. Include missing/corrupt asset simulation.
-- [ ] B2-07 — Supply initial reduced versions and share textures/materials. Record file bytes, texture dimensions and GPU-memory estimate. Do not freeze arbitrary triangle limits until representative in-game quality is visible.
+- [x] B2-05 — Add an optional New England environment asset manifest through the existing loader. Load failures must preserve a playable fallback and must not discard successful tool/find loads.
+- [x] B2-06 — Validate GLBs in game: bounds, origin, scale, material colour spaces, normal direction, transparency, shader variants, instancing compatibility and offline paths. Include missing/corrupt asset simulation.
+- [x] B2-07 — Supply initial reduced versions and share textures/materials. Record file bytes, texture dimensions and GPU-memory estimate. Do not freeze arbitrary triangle limits until representative in-game quality is visible.
 
 **Gate:** the first kit looks coherent inside the game, with normal lighting, tools visible and photo filters disabled. New geological formations must already look better than their [baseline](audits/nsw-environment/high-reef.jpg).
 
 ## B3 — Compose the first playable section
 
-- [ ] B3-01 — Introduce a New England environment profile/recipe, using an independent decoration seed. Keep global default rendering unchanged elsewhere. Isolate orchestration from `main.js` rather than growing another controller there.
-- [ ] B3-02 — Replace selected visible scenery in the first section with the new kit. Retain source objects/IDs where used by old regression data; explicitly hide replaced rendering so it is not doubled.
+- [x] B3-01 — Introduce a New England environment profile/recipe, using an independent decoration seed. Keep global default rendering unchanged elsewhere. Isolate orchestration from `main.js` rather than growing another controller there.
+- [x] B3-02 — Replace selected visible scenery in the first section with the new kit. Retain source objects/IDs where used by old regression data; explicitly hide replaced rendering so it is not doubled.
 - [ ] B3-03 — Compose large forms first: bank exposures, a small number of embedded rock groups, mature trees and open working margins. Preserve the original terrain/water surface and crossings.
-- [ ] B3-04 — Add medium forms: shrubs, grasses, gravel bars, small stones and exposed roots. Placement follows slope, moisture and parent formations, with deliberate empty areas.
+- [x] B3-04 — Add medium forms: shrubs, grasses, gravel bars, small stones and exposed roots. Placement follows slope, moisture and parent formations, with deliberate empty areas.
 - [ ] B3-05 — Finish soil, gravel, litter and rock transitions. Correct floating bases, texture scale, tiling, hard colour patches and close-up depth. No permanent bank skin across diggable ground unless it updates with the same surface.
-- [ ] B3-06 — Integrate camp's existing paths and surroundings. Check the largest existing camp upgrades and ute clearance, not just the empty starter camp.
-- [ ] B3-07 — Compose reef/granite companion views at their original positions using the same kit and lighting. Keep geological clues distinct from rewards; barren areas still look natural.
+- [x] B3-06 — Integrate camp's existing paths and surroundings. Check the largest existing camp upgrades and ute clearance, not just the empty starter camp.
+- [x] B3-07 — Compose reef/granite companion views at their original positions using the same kit and lighting. Keep geological clues distinct from rewards; barren areas still look natural.
 - [ ] B3-08 — Walk both banks and inspect from the opposite side; kneel, point a tool at the ground and inspect small finds. Capture a 30–60 second ordinary-play movement clip and the matched stills.
 - [ ] B3-09 — Review the complete scene against Photos 1, 3 and 5 and the rubric below. Record visual shortcomings and revise the kit/composition before wider rollout. Present the concrete results to the user at the milestone; their feedback can change the next stage.
 
@@ -116,12 +116,12 @@ Each delivered asset needs a source/generator, intended GLB or native geometry, 
 
 ## B4 — Lighting, water and atmosphere
 
-- [ ] B4-01 — Tune the actual day/night/weather update paths: sun/fill ratio, exposure, sky/ground colour and fog. Preserve the existing day clock and weather effects; validate neutral noon before dramatic dawn.
+- [x] B4-01 — Tune the actual day/night/weather update paths: sun/fill ratio, exposure, sky/ground colour and fog. Preserve the existing day clock and weather effects; validate neutral noon before dramatic dawn.
 - [ ] B4-02 — Replace the unsupported soft-shadow configuration with a supported, visually tested treatment. Stabilise resolution/filtering at ordinary movement speed. Check leaf animation in shadow maps and contact beneath roots/rocks.
 - [ ] B4-03 — Evaluate contact shading with authored crevice detail and, if still useful, a bounded AO pass. Check screen edges, thin foliage, water and camera motion. Add a postprocess pipeline only if its measured visual benefit justifies the extra integration; preserve the held-tool overlay and photo capture.
-- [ ] B4-04 — Improve water-bed composition, shallow transparency, wet stone edges, ripple scales and foam placement using existing depth/velocity data. Verify the water still communicates shallow working areas and high-flow hazards.
+- [x] B4-04 — Improve water-bed composition, shallow transparency, wet stone edges, ripple scales and foam placement using existing depth/velocity data. Verify the water still communicates shallow working areas and high-flow hazards.
 - [ ] B4-05 — Prototype actual scene-aware water reflection/refraction against the sloping creek. Compare segmented reflection, screen-space sampling and a cheaper approximate fallback. Select and document one after inspecting banks/trees, off-screen objects, close camera angles and moving water; do not assume one flat reflector fits the whole river.
-- [ ] B4-06 — Integrate the chosen water method into the existing update/render order, including correct resize and disposal. Avoid reflected HUD/tools, duplicated highlights, transparent sorting artifacts and artificial foam at dry edges.
+- [x] B4-06 — Integrate the chosen water method into the existing update/render order, including correct resize and disposal. Avoid reflected HUD/tools, duplicated highlights, transparent sorting artifacts and artificial foam at dry edges.
 - [ ] B4-07 — Review noon, dawn, dusk, night/headlamp, UV, rain, peak flood and drying ground. Keep useful night darkness and inspection readability; do not bake one sunny setup into everything.
 - [ ] B4-08 — Establish distant terrain/tree grouping and atmospheric depth; avoid fog that conceals missing art or removes useful nearby landmarks.
 
@@ -134,7 +134,7 @@ Each delivered asset needs a source/generator, intended GLB or native geometry, 
 - [ ] B5-03 — Finish granite pavements, tors, existing veins and vug/pocket approaches; validate kneeling proximity and splittable boulders separately from decorative tors.
 - [ ] B5-04 — Complete RK-05/06 and integrate basalt, rhyolite, fossil shale and legacy opal workings. Maintain distinctive forms and source-related debris. Preserve every existing specimen/recovery interaction.
 - [ ] B5-05 — Extend regional plants to woodland/terrace/open-slope patches with natural transitions. Refine the two existing landscape landmarks; avoid inventing more attractions.
-- [ ] B5-06 — Align ground/dig materials: exposed soil and wash follow actual removed depth; roots and stones react appropriately when excavated. Check the seam between the main heightfield and fine hand-work patches.
+- [x] B5-06 — Align ground/dig materials: exposed soil and wash follow actual removed depth; roots and stones react appropriately when excavated. Check the seam between the main heightfield and fine hand-work patches.
 - [ ] B5-07 — Finish camp surroundings for swag, tent, caravan, shed and full facilities. Keep display specimens and approaches readable. Review mine entrance/interior lighting continuity without expanding mine scope.
 - [ ] B5-08 — Audit every zone from front/reverse approaches, the river, camp and boundary. Remove abrupt quality transitions, floating pieces, repeated hero silhouettes, inaccessible pockets and vegetation through working surfaces.
 - [ ] B5-09 — Repeat representative views on seeds `1`, `12345` and `798887`, plus a populated legacy save fixture. Seed 12345 cannot be the only good-looking layout.
@@ -155,9 +155,9 @@ Keep the existing Low/Medium/High/Ultra selector as the primary control. Extend 
 | Resolution/AA | Crisp image; measured upper cap | Existing scalable resolution and AA choice | UI legibility, especially small finds |
 | Atmosphere/effects | Full restrained effects | Reduced particles/expensive passes | Time, weather, navigation visibility |
 
-- [ ] B6-01 — Record a real desktop hardware/browser baseline at 1920 x 1080, with a fixed route, warm-up and ten-minute run. Log median/p95 frame time, GPU/CPU limitation, memory trend and full-frame render passes. The current SwiftShader counts cannot substitute for this.
+- [x] B6-01 — Record a real desktop hardware/browser baseline at 1920 x 1080, with a fixed route, warm-up and ten-minute run. Log median/p95 frame time, GPU/CPU limitation, memory trend and full-frame render passes. The current SwiftShader counts cannot substitute for this.
 - [ ] B6-02 — Define the supported baseline after hardware is recorded. Working goals: smooth 60 fps desktop High where feasible, and a stable 30 fps or better on representative recent phones using a suitable preset. These are targets, not existing measurements or universal guarantees; Ultra can remain a higher-end option.
-- [ ] B6-03 — Implement explicit environment quality values and safe defaults for old settings. Separate rendering detail from the `shadows === 'off'` world-generation shortcut. Make live updates work where possible; when restart is necessary, save first and label it accurately.
+- [x] B6-03 — Implement explicit environment quality values and safe defaults for old settings. Separate rendering detail from the `shadows === 'off'` world-generation shortcut. Make live updates work where possible; when restart is necessary, save first and label it accurately.
 - [ ] B6-04 — Profile terrain/water submission. If needed, partition render meshes using the original height data and optional distant LOD. Preserve grid indices, `orig`, dig millimetres, `getHeight`, `raycast`, normals, `refresh`, `tuckUnder`, overlays and flood refill. Keep the old single render mesh as a fallback, never concurrently visible.
 - [ ] B6-05 — Add appropriate spatial batches/culling to new scenery; tune existing foliage LOD, transitions, bounds and update intervals. Share materials/textures; preserve full near silhouettes. Measure calls and overdraw as well as triangles.
 - [ ] B6-06 — Bound reflection/AO/particle cost and render-target memory. Inspect resize, orientation changes, repeated travel/reload and disposal for leaks or accumulating scenes.
@@ -183,13 +183,13 @@ Keep the existing Low/Medium/High/Ultra selector as the primary control. Extend 
 | Offline/deployment | Built game at Pages base path; cached travel/assets and offline reload | Fresh disposable browser cache, network-disabled check, public smoke |
 | Other destinations | At least representative screenshots across all six other worlds; full controls suite for shared changes | No unintended new plants, rock palettes, water or lighting |
 
-- [ ] B7-01 — Run `npm test` and `npm run build`; add focused tests only for new meaningful logic (placement invariants, quality scaling, terrain-update mapping, save compatibility).
-- [ ] B7-02 — Run the relevant existing browser suites below and record exactly which cases ran. Adapt old scenery hashes narrowly if rendering changes intentionally; preserve data/placement invariants rather than deleting checks.
+- [x] B7-01 — Run `npm test` and `npm run build`; add focused tests only for new meaningful logic (placement invariants, quality scaling, terrain-update mapping, save compatibility).
+- [x] B7-02 — Run the relevant existing browser suites below and record exactly which cases ran. Adapt old scenery hashes narrowly if rendering changes intentionally; preserve data/placement invariants rather than deleting checks.
 - [ ] B7-03 — Complete the matrix's interaction and save cases using disposable saves. Do not clear user browser storage or claim camera teleportation as a walked route.
-- [ ] B7-04 — Inspect new asset load failures and built offline loading; check relative URLs, cache update behaviour and stale GLB versions.
+- [x] B7-04 — Inspect new asset load failures and built offline loading; check relative URLs, cache update behaviour and stale GLB versions.
 - [ ] B7-05 — Inspect page, console and shader errors. Resolve warnings touched by the work; distinguish old unrelated warnings from new failures.
-- [ ] B7-06 — Review the always-on topo map and travel screen at desktop/touch sizes. Baseline 720p map buttons sit at the lower viewport edge: verify scrolling/closing/reopening remains usable; do not replace the map UI.
-- [ ] B7-07 — Confirm no developer/roadmap prose, unwanted circles or instructional overlays were added to player screens.
+- [x] B7-06 — Review the always-on topo map and travel screen at desktop/touch sizes. Baseline 720p map buttons sit at the lower viewport edge: verify scrolling/closing/reopening remains usable; do not replace the map UI.
+- [x] B7-07 — Confirm no developer/roadmap prose, unwanted circles or instructional overlays were added to player screens.
 
 Existing checks to reuse selectively: `tests/controls.game.mjs`, `tests/environment.game.mjs`, `tests/environment.offline.mjs`, `tests/landscape.game.mjs`, `tests/rocks.game.mjs`, `tests/rocks.offline.mjs`, `tests/maptravel.game.mjs`, the panning, camp, shelter and facilities browser suites, and `tests/*.test.js`. New browser coverage should exercise the new environment, not duplicate entire unrelated recovery suites.
 
@@ -232,7 +232,7 @@ Names below are planned boundaries, not claims that the files exist. Inspect cur
 ## B8 — Release and handoff
 
 - [ ] B8-01 — Review diff against scope; remove abandoned experiments and leave any optional unbuilt work explicitly unchecked. Check that completed visuals satisfy the rubric.
-- [ ] B8-02 — Update audit/build records with delivered tasks, images, actual tests, hardware results and limitations. Retain this plan as the source of unfinished work.
+- [x] B8-02 — Update audit/build records with delivered tasks, images, actual tests, hardware results and limitations. Retain this plan as the source of unfinished work.
 - [ ] B8-03 — Recheck worktrees, claims, main, remote commits and active servers; fetch if available. Preserve unfinished work and never force-push.
 - [ ] B8-04 — Commit owned completed work, integrate ready project changes safely and push main under the standing user instruction. Avoid hot-reloading an actively played user checkout.
 - [ ] B8-05 — Verify the matching GitHub Pages deployment and a public-game smoke check, including the new assets and controls. Record commit/run URL and any pending device checks.
@@ -255,6 +255,7 @@ The first command writes the initial report and 15 screenshots. The supplement a
 
 | Date | Work | Status and evidence |
 | --- | --- | --- |
-| 13 October 2026 | Baseline audit and complete action/build specification | AUD-01..07 complete. 19 inspected screenshots, `baseline.json`, reproducible capture script, 82 passing logic checks and production build. High-quality target explicitly takes precedence over mobile scaling. All B1..B8 tasks remain pending. |
+| 13 October 2026 | Baseline audit and complete action/build specification | AUD-01..07 complete. 19 inspected screenshots, `baseline.json`, reproducible capture script, 82 passing logic checks and production build. High-quality target explicitly takes precedence over mobile scaling. All B1..B8 tasks remained pending at that point. |
+| 13 October 2026 | First environment implementation on `codex/nsw-environment-build`, base `dfa9a09` | Authored 42-asset kit; original-data-preserving regional adapters; first creek dressing; ground/excavation, light and scene water. [Delivery/evidence](NSW-ENVIRONMENT-BUILD.md). Checked task IDs are supported there; first-scene art acceptance and full-map B5 remain open. |
 
-**First build task:** B1-01..07, followed by the fractured host-rock/quartz and mature-eucalypt prototypes in B2. The first playable result to judge is B3's creek section, finished with B4 lighting/water; full-map rollout follows that visual gate.
+**Next build task:** finish the first-scene visual gate: refine host outcrop assemblies/contact depth, break up legacy undergrowth and sparse slope transitions, and complete movement/reverse-view coverage. The first implementation does not yet meet every rubric dimension; do not extend it across the map by simply increasing scatter density. Continue B3/B4 before the full B5 rollout. Hardware results and exact remaining coverage are in the delivery record.

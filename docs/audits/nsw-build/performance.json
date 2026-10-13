@@ -1,0 +1,481 @@
+{
+  "date": "2026-10-13",
+  "method": "1920\u00d71080 Chromium/D3D11, High, real desktop GPU. Ten-minute scripted camera route; first 15 seconds warm-up excluded. Separate clip uses normal pointer lock and keyboard/mouse input. Desktop headless results are not phone results.",
+  "walk": {
+    "inputSeconds": 43,
+    "method": "One initial placement, then original normal-URL pointer lock, held WASD and mouse events. Video also contains loading/title time. No photo filters.",
+    "path": [
+      {
+        "x": -0.9515252714969323,
+        "z": 28.034680774780256,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": 5.686120561887105,
+        "halfWidth": 4
+      },
+      {
+        "x": 20.860972423905984,
+        "z": 28.26134101869443,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": -16.113425782809916,
+        "halfWidth": 4
+      },
+      {
+        "x": 21.08825289522875,
+        "z": 28.26134101869443,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -16.34063193567225,
+        "halfWidth": 4
+      },
+      {
+        "x": 28.19439895121673,
+        "z": 7.514975631472551,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -24.384961501555146,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 7.782478032970571,
+        "z": 0.4080703397416644,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -4.870917841284928,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 7.647712798271886,
+        "z": 0.3619098955788434,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": -4.743812773699949,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 2.8974851047927483,
+        "z": 13.153960718905722,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": 1.2451818182033205,
+        "halfWidth": 2.7
+      }
+    ],
+    "errors": []
+  },
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ],
+    "cpu": "AMD Ryzen 9 5950X, 16 cores / 32 logical processors",
+    "driver": "32.0.15.9186"
+  },
+  "profile": {
+    "warmupSeconds": 15,
+    "measuredSeconds": 600,
+    "frames": 36013,
+    "frameMs": {
+      "median": 16.699999999982538,
+      "p95": 16.70000000006985
+    },
+    "cpuMs": {
+      "median": 7.399999976158142,
+      "p95": 9.5
+    },
+    "gpuMs": {
+      "median": 6.344704,
+      "p95": 8.840192,
+      "samples": 1201
+    },
+    "fullFrame": {
+      "medianCalls": 815,
+      "medianTriangles": 10701633
+    },
+    "memory": [
+      {
+        "age": 0.012800000011920928,
+        "heap": 161528986,
+        "geometries": 610,
+        "textures": 32
+      },
+      {
+        "age": 10.023399999976158,
+        "heap": 125255105,
+        "geometries": 614,
+        "textures": 32
+      },
+      {
+        "age": 20.02230000001192,
+        "heap": 139447545,
+        "geometries": 614,
+        "textures": 32
+      },
+      {
+        "age": 30.022,
+        "heap": 136838422,
+        "geometries": 614,
+        "textures": 33
+      },
+      {
+        "age": 40.02210000002384,
+        "heap": 146571550,
+        "geometries": 614,
+        "textures": 34
+      },
+      {
+        "age": 50.0215,
+        "heap": 143135322,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 60.020800000011924,
+        "heap": 163586008,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 70.02060000002385,
+        "heap": 177321800,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 80.01960000002384,
+        "heap": 175152572,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 90.01930000001192,
+        "heap": 180348276,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 100.01910000002384,
+        "heap": 196092552,
+        "geometries": 614,
+        "textures": 35
+      },
+      {
+        "age": 110.01830000001192,
+        "heap": 110647748,
+        "geometries": 629,
+        "textures": 35
+      },
+      {
+        "age": 120.01789999997615,
+        "heap": 116699046,
+        "geometries": 662,
+        "textures": 35
+      },
+      {
+        "age": 130.01760000002383,
+        "heap": 109773844,
+        "geometries": 662,
+        "textures": 35
+      },
+      {
+        "age": 140.01730000001191,
+        "heap": 115774488,
+        "geometries": 662,
+        "textures": 35
+      },
+      {
+        "age": 150.01730000001191,
+        "heap": 119196928,
+        "geometries": 662,
+        "textures": 35
+      },
+      {
+        "age": 160.0165,
+        "heap": 120676276,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 170.0161999999881,
+        "heap": 121735568,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 180.01530000001193,
+        "heap": 116355338,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 190.01560000002385,
+        "heap": 122835458,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 200.01539999997615,
+        "heap": 118205226,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 210.015,
+        "heap": 115518514,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 220.01410000002383,
+        "heap": 122106066,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 230.0136999999881,
+        "heap": 109175722,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 240.01360000002384,
+        "heap": 120693304,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 250.0136999999881,
+        "heap": 121498402,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 260.01239999997614,
+        "heap": 121234722,
+        "geometries": 663,
+        "textures": 36
+      },
+      {
+        "age": 270.01180000001193,
+        "heap": 133221757,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 280.0128000000119,
+        "heap": 124339270,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 290.011,
+        "heap": 123651834,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 300.0115,
+        "heap": 112546093,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 310.01039999997613,
+        "heap": 133876837,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 320.0096999999881,
+        "heap": 124806293,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 330.01,
+        "heap": 132732725,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 340.0091999999881,
+        "heap": 129219933,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 350.0091999999881,
+        "heap": 140938037,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 360.00889999997617,
+        "heap": 135505769,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 370.00819999998805,
+        "heap": 116383957,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 380.00760000002384,
+        "heap": 133634689,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 390.0075,
+        "heap": 116914173,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 400.00739999997614,
+        "heap": 139067649,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 410.00660000002387,
+        "heap": 137239925,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 420.0058999999762,
+        "heap": 130256027,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 430.0061000000238,
+        "heap": 116242677,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 440.00519999998806,
+        "heap": 119076633,
+        "geometries": 715,
+        "textures": 37
+      },
+      {
+        "age": 450.00489999997615,
+        "heap": 126049389,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 460.0048000000119,
+        "heap": 120334225,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 470.004,
+        "heap": 115502041,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 480.00389999997617,
+        "heap": 112769602,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 490.0038000000119,
+        "heap": 126703685,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 500.0033999999762,
+        "heap": 126887265,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 510.0033000000119,
+        "heap": 130669161,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 520.0025,
+        "heap": 137426605,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 530.0018999999761,
+        "heap": 135739489,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 540.0016999999881,
+        "heap": 131998741,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 550.0013999999761,
+        "heap": 131353125,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 560.0006000000238,
+        "heap": 132984632,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 570.000300000012,
+        "heap": 120513693,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 579.9998000000119,
+        "heap": 132169277,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 589.999,
+        "heap": 112120825,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 599.9988000000119,
+        "heap": 110137785,
+        "geometries": 763,
+        "textures": 37
+      },
+      {
+        "age": 609.999,
+        "heap": 125572313,
+        "geometries": 763,
+        "textures": 37
+      }
+    ],
+    "errors": [],
+    "memoryNote": "JS heap includes the growing profiler sample arrays. GPU object counts include resources first drawn during the route; geometry/texture counts plateau for the final approximately 165 seconds. Counts are not GPU byte measurements or proof against every lifecycle leak."
+  },
+  "codeCommit": "de0d1e3"
+}
