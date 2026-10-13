@@ -1,0 +1,1669 @@
+{
+  "codeBaseline": "2a319467be058cce5425fdd1041f1c10c8b7058e",
+  "seed": 12345,
+  "method": "Disposable Chromium contexts; direct camera relocation at normal player eye height. Explicit world render counters include renderer passes, exclude held-tool overlay. Not device FPS or a playthrough.",
+  "cases": [
+    {
+      "mode": "high",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "camp",
+          "file": "high-camp.jpg",
+          "pose": {
+            "x": 23.44609667815398,
+            "z": 7,
+            "target": {
+              "x": 16.44609667815398,
+              "z": 0
+            },
+            "yaw": 0.7853981633974483,
+            "pitch": -0.12,
+            "hour": 11
+          },
+          "calls": 729,
+          "triangles": 1826553,
+          "geometries": 618,
+          "textures": 31,
+          "programs": 64,
+          "camera": {
+            "position": [
+              23.44609667815398,
+              3.7094849550053763,
+              7
+            ],
+            "rotation": [
+              -0.12,
+              0.7853981633974483,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 676,
+              "far": 1432,
+              "culled": 4292,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 438400
+            },
+            "landscape": {
+              "near": 112,
+              "far": 283,
+              "culled": 405,
+              "fullTriangles": 220000,
+              "drawnTriangles": 57660
+            }
+          }
+        },
+        {
+          "view": "creek",
+          "file": "high-creek.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 468,
+          "triangles": 1781883,
+          "geometries": 625,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 675,
+              "far": 1423,
+              "culled": 4302,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 440980
+            },
+            "landscape": {
+              "near": 112,
+              "far": 302,
+              "culled": 386,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59440
+            }
+          }
+        },
+        {
+          "view": "bank",
+          "file": "high-bank.jpg",
+          "pose": {
+            "x": 0.7677718814146722,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1263771168937977,
+            "pitch": -0.75,
+            "hour": 11
+          },
+          "calls": 208,
+          "triangles": 1739381,
+          "geometries": 625,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              0.7677718814146722,
+              2.0763625347607313,
+              12
+            ],
+            "rotation": [
+              -0.75,
+              -1.1263771168937977,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 675,
+              "far": 1423,
+              "culled": 4302,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 440980
+            },
+            "landscape": {
+              "near": 112,
+              "far": 302,
+              "culled": 386,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59440
+            }
+          }
+        },
+        {
+          "view": "reef",
+          "file": "high-reef.jpg",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "target": {
+              "x": -41.15242070679212,
+              "z": 36.61508871242404
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 552,
+          "triangles": 1731004,
+          "geometries": 625,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              -34.15242070679212,
+              8.044813820938188,
+              44.61508871242404
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 627,
+              "far": 1463,
+              "culled": 4310,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 429540
+            },
+            "landscape": {
+              "near": 139,
+              "far": 204,
+              "culled": 457,
+              "fullTriangles": 220000,
+              "drawnTriangles": 57520
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "high-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 283,
+          "triangles": 1722239,
+          "geometries": 626,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 582,
+              "far": 1342,
+              "culled": 4476,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 416068
+            },
+            "landscape": {
+              "near": 112,
+              "far": 160,
+              "culled": 528,
+              "fullTriangles": 220000,
+              "drawnTriangles": 46000
+            }
+          }
+        },
+        {
+          "view": "basalt",
+          "file": "high-basalt.jpg",
+          "pose": {
+            "x": 60.42441967607242,
+            "z": 63.511059667915106,
+            "target": {
+              "x": 53.42441967607242,
+              "z": 55.511059667915106
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 992,
+          "triangles": 1724939,
+          "geometries": 628,
+          "textures": 42,
+          "programs": 66,
+          "camera": {
+            "position": [
+              60.42441967607242,
+              8.12941173455457,
+              63.511059667915106
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 624,
+              "far": 1402,
+              "culled": 4374,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 390184
+            },
+            "landscape": {
+              "near": 161,
+              "far": 111,
+              "culled": 528,
+              "fullTriangles": 220000,
+              "drawnTriangles": 54640
+            }
+          }
+        },
+        {
+          "view": "rhyolite",
+          "file": "high-rhyolite.jpg",
+          "pose": {
+            "x": 45.159746063176456,
+            "z": 4.866105757653713,
+            "target": {
+              "x": 38.159746063176456,
+              "z": -3.1338942423462868
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 729,
+          "triangles": 1738005,
+          "geometries": 628,
+          "textures": 42,
+          "programs": 66,
+          "camera": {
+            "position": [
+              45.159746063176456,
+              8.589104668743055,
+              4.866105757653713
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 673,
+              "far": 1440,
+              "culled": 4287,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 409276
+            },
+            "landscape": {
+              "near": 140,
+              "far": 224,
+              "culled": 436,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59780
+            }
+          }
+        },
+        {
+          "view": "opal",
+          "file": "high-opal.jpg",
+          "pose": {
+            "x": -40.89928629817774,
+            "z": -18.476476832758635,
+            "target": {
+              "x": -47.89928629817774,
+              "z": -26.476476832758635
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 318,
+          "triangles": 1698787,
+          "geometries": 628,
+          "textures": 42,
+          "programs": 66,
+          "camera": {
+            "position": [
+              -40.89928629817774,
+              7.105912855955815,
+              -18.476476832758635
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 611,
+              "far": 1390,
+              "culled": 4399,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 426500
+            },
+            "landscape": {
+              "near": 138,
+              "far": 237,
+              "culled": 425,
+              "fullTriangles": 220000,
+              "drawnTriangles": 60320
+            }
+          }
+        },
+        {
+          "view": "fossil",
+          "file": "high-fossil.jpg",
+          "pose": {
+            "x": 31.26265190553501,
+            "z": -40.36688445415348,
+            "target": {
+              "x": 24.26265190553501,
+              "z": -48.36688445415348
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 464,
+          "triangles": 1763147,
+          "geometries": 628,
+          "textures": 42,
+          "programs": 66,
+          "camera": {
+            "position": [
+              31.26265190553501,
+              6.760641052395814,
+              -40.36688445415348
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 635,
+              "far": 1478,
+              "culled": 4287,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 420800
+            },
+            "landscape": {
+              "near": 168,
+              "far": 185,
+              "culled": 447,
+              "fullTriangles": 220000,
+              "drawnTriangles": 63800
+            }
+          }
+        },
+        {
+          "view": "dawn",
+          "file": "high-dawn.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 6.5
+          },
+          "calls": 505,
+          "triangles": 1795951,
+          "geometries": 628,
+          "textures": 42,
+          "programs": 66,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 644,
+              "far": 1425,
+              "culled": 4331,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 439200
+            },
+            "landscape": {
+              "near": 108,
+              "far": 310,
+              "culled": 382,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59100
+            }
+          }
+        },
+        {
+          "view": "storm",
+          "file": "high-storm.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 476,
+          "triangles": 1788643,
+          "geometries": 629,
+          "textures": 42,
+          "programs": 67,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 644,
+              "far": 1425,
+              "culled": 4331,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 439200
+            },
+            "landscape": {
+              "near": 108,
+              "far": 310,
+              "culled": 382,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59100
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+        "[.WebGL-0x5dcc001b0200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x5dcc001b0200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ]
+    },
+    {
+      "mode": "low",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "creek",
+          "file": "low-creek.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 283,
+          "triangles": 1095379,
+          "geometries": 549,
+          "textures": 37,
+          "programs": 53,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            960,
+            540
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 219,
+              "far": 733,
+              "culled": 5448,
+              "fullTriangles": 915084,
+              "drawnTriangles": 138472
+            },
+            "landscape": {
+              "near": 20,
+              "far": 40,
+              "culled": 340,
+              "fullTriangles": 59600,
+              "drawnTriangles": 4380
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "low-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 140,
+          "triangles": 1036633,
+          "geometries": 572,
+          "textures": 37,
+          "programs": 58,
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            960,
+            540
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 170,
+              "far": 680,
+              "culled": 5550,
+              "fullTriangles": 915084,
+              "drawnTriangles": 104476
+            },
+            "landscape": {
+              "near": 20,
+              "far": 56,
+              "culled": 324,
+              "fullTriangles": 59600,
+              "drawnTriangles": 4940
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    },
+    {
+      "mode": "touch-medium",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "creek",
+          "file": "touch-medium-creek.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 504,
+          "triangles": 1808437,
+          "geometries": 591,
+          "textures": 41,
+          "programs": 62,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            844,
+            390
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 657,
+              "far": 1414,
+              "culled": 4329,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 439052
+            },
+            "landscape": {
+              "near": 108,
+              "far": 310,
+              "culled": 382,
+              "fullTriangles": 220000,
+              "drawnTriangles": 59100
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "touch-medium-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 287,
+          "triangles": 1759227,
+          "geometries": 625,
+          "textures": 41,
+          "programs": 64,
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            844,
+            390
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 623,
+              "far": 1324,
+              "culled": 4453,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 429616
+            },
+            "landscape": {
+              "near": 128,
+              "far": 153,
+              "culled": 519,
+              "fullTriangles": 220000,
+              "drawnTriangles": 49760
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+      ]
+    },
+    {
+      "mode": "high-supplement",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "mine",
+          "file": "high-mine.jpg",
+          "pose": {
+            "x": -23.73044635701381,
+            "z": 48.44465562261785,
+            "target": {
+              "x": -30.73044635701381,
+              "z": 40.44465562261785
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 710,
+          "triangles": 1765889,
+          "geometries": 565,
+          "textures": 23,
+          "programs": 61,
+          "camera": {
+            "position": [
+              -23.73044635701381,
+              5.9525353121294025,
+              48.44465562261785
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 621,
+              "far": 1497,
+              "culled": 4282,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 438744
+            },
+            "landscape": {
+              "near": 136,
+              "far": 203,
+              "culled": 461,
+              "fullTriangles": 220000,
+              "drawnTriangles": 56660
+            }
+          }
+        },
+        {
+          "view": "dig",
+          "file": "high-dig.jpg",
+          "pose": {
+            "x": 36.246096678153975,
+            "z": 21.8,
+            "target": {
+              "x": 34.44609667815398,
+              "z": 20
+            },
+            "yaw": 0.7853981633974473,
+            "pitch": -0.65,
+            "hour": 11
+          },
+          "calls": 490,
+          "triangles": 1758270,
+          "geometries": 605,
+          "textures": 35,
+          "programs": 65,
+          "camera": {
+            "position": [
+              36.246096678153975,
+              6.97565595920957,
+              21.8
+            ],
+            "rotation": [
+              -0.65,
+              0.7853981633974473,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 651,
+              "far": 1436,
+              "culled": 4313,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 424880
+            },
+            "landscape": {
+              "near": 128,
+              "far": 222,
+              "culled": 450,
+              "fullTriangles": 220000,
+              "drawnTriangles": 56240
+            }
+          }
+        },
+        {
+          "view": "night",
+          "file": "high-night.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 22
+          },
+          "calls": 520,
+          "triangles": 1800187,
+          "geometries": 608,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 645,
+              "far": 1442,
+              "culled": 4313,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 439832
+            },
+            "landscape": {
+              "near": 108,
+              "far": 298,
+              "culled": 394,
+              "fullTriangles": 220000,
+              "drawnTriangles": 57960
+            }
+          }
+        },
+        {
+          "view": "map",
+          "file": "high-map.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 466,
+          "triangles": 1780823,
+          "geometries": 608,
+          "textures": 41,
+          "programs": 65,
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 645,
+              "far": 1442,
+              "culled": 4313,
+              "fullTriangles": 1296252,
+              "drawnTriangles": 439832
+            },
+            "landscape": {
+              "near": 108,
+              "far": 298,
+              "culled": 394,
+              "fullTriangles": 220000,
+              "drawnTriangles": 57960
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+        "[.WebGL-0x52c001b5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x52c001b5600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ]
+    }
+  ]
+}
