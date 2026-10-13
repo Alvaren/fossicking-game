@@ -157,8 +157,9 @@ def grass(index, sedge=False):
     o.data.normals_split_custom_set([Vector((.12,.12,1)).normalized()] * len(o.data.loops))
 
 def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
-    # A bevelled, sheared block with independent joint cuts: broad planes remain.
-    if role=='cobble': bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=1)
+    # Weathered volumes: extra vertices shape curved edges and shallow erosion.
+    # Ordinary rocks are intact; never apply a repeated full-width saw cut.
+    if role in ['cobble','granite']: bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3 if role=='granite' else 2,radius=1)
     elif role in ['basalt','rhyolite','slab']:
         points=[]
         for height,radius in [(-.95,.83),(-.18,1),(.85,.74)]:
@@ -173,33 +174,43 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
     o=bpy.context.object;o.name=name;o.parent=group
     for v in o.data.vertices:
         x,y,z=v.co
-        if role=='cobble':
+        if role=='granite':
+            p=.64
+            x=math.copysign(abs(x)**p,x);y=math.copysign(abs(y)**p,y);z=math.copysign(abs(z)**p,z)
+            erosion=1+.06*math.sin(x*4+y*2)+.035*math.sin(z*7-y*3)
+            v.co=(x*scale[0]*erosion+z*.08,y*scale[1]*erosion,z*scale[2]*(1+.07*math.sin(x*3+y*2)))
+        elif role=='cobble':
             shape=1+.07*math.sin(x*5+y*3)+.06*math.sin(y*4-z*2)
             v.co=(x*shape*scale[0]+z*.06,y*shape*scale[1],z*scale[2]*(1+.12*math.sin(x*4-y*3)))
         else:
             v.co=(x*scale[0]+z*.20+rng.uniform(-.15,.15), y*scale[1]+x*.15+rng.uniform(-.1,.1), z*scale[2]+x*.11+rng.uniform(-.08,.08))
-    if role!='cobble':
+    if role not in ['cobble','granite']:
         bevel=o.modifiers.new('weathered edges','BEVEL');bevel.width=.30 if rounded else .13;bevel.segments=3 if rounded else 1
         bpy.ops.object.modifier_apply(modifier=bevel.name)
     bm=bmesh.new();bm.from_mesh(o.data)
-    for j in range(10 if rounded else 8):
+    for j in range(0 if rounded else 8):
         n=Vector((rng.uniform(-1,1),rng.uniform(-1,1),rng.uniform(-1,1))).normalized()
         result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=n*(.73+rng.random()*.35),plane_no=n,clear_outer=True)
         edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
         if edges:bmesh.ops.holes_fill(bm,edges=edges,sides=0)
+    bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.0001)
+    bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=.0001)
+    bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
     bm.normal_update();bm.to_mesh(o.data);bm.free()
     if role=='granite':
         # Existing tor stacks expect a unit vertical half-extent, not a flat slab.
         extent=max(abs(v.co.z) for v in o.data.vertices)
         for v in o.data.vertices:v.co.z*=1.04/extent
     o.data.materials.append(M[role])
-    # Add a subtle face colour variation, not random displacement of every vertex.
+    # Reserved material palette; broad forms use one base tint, mineral detail is shaded in-game.
     for suffix,factor in [('warm',1.08),('cool',.88)]:
         m=M[role].copy();m.name=role+'_'+suffix
         col=tuple(min(1,v*factor) for v in m.diffuse_color[:3])
         m.diffuse_color=(*col,1);m.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(*col,1)
         o.data.materials.append(m)
-    for p in o.data.polygons:p.material_index=rng.choices([0,1,2],[8,1,1])[0]
+    for p in o.data.polygons:
+        p.material_index=0
+        if rounded:p.use_smooth=True
     if seam:
         # Partition the SAME solid with two planes. Quartz occupies the gap.
         normal=Vector((-.7,.08,1)).normalized();width=.07+rng.random()*.075
@@ -226,27 +237,6 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bpy.data.objects.remove(o,do_unlink=True)
     return group
 
-def joints(group, rng, role):
-    # Slice every material in the same volume so the vein follows the joints.
-    # Tiny dark gaps divide an irregular mass into broad pieces, not loose cubes.
-    pieces=list(group.children)
-    cuts=[-2,-.27,.39,2] if role=='host' else [-2,.10,2]
-    for source in pieces:
-        for i in range(len(cuts)-1):
-            bm=bmesh.new();bm.from_mesh(source.data)
-            normal=Vector((1,.17,-.13)).normalized()
-            for d,inner in [(cuts[i]+.015,True),(cuts[i+1]-.015,False)]:
-                if abs(d)>1.8:continue
-                result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=normal*d,plane_no=normal,clear_inner=inner,clear_outer=not inner)
-                edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
-                if edges:bmesh.ops.holes_fill(bm,edges=edges,sides=0)
-            if len(bm.faces):
-                data=bpy.data.meshes.new(source.name+'_joint');bm.normal_update();bm.to_mesh(data)
-                for m in source.data.materials:data.materials.append(m)
-                obj=bpy.data.objects.new(source.name+'_joint',data);bpy.context.collection.objects.link(obj);obj.parent=group
-            bm.free()
-        bpy.data.objects.remove(source,do_unlink=True)
-
 for i in range(4):tree(i)
 for i in range(2):tree(i,True)
 for i in range(3):shrub(i);grass(i)
@@ -256,7 +246,6 @@ for kind,count in [('host',4),('granite',4),('cobble',6),('basalt',3),('rhyolite
         rng=random.Random(7000+sum(map(ord,kind))+i*59);g=parent(f'{kind}_{i}')
         sc=(.85+rng.random()*.12,.7+rng.random()*.22,.3 if kind=='slab' else .65+rng.random()*.2)
         block(kind,rng,g,kind,sc,kind in ['granite','cobble'],kind=='host')
-        if kind in ['host','granite','basalt','rhyolite']:joints(g,rng,kind)
 for kind,count in [('root',2),('branch',3)]:
     for i in range(count):
         rng=random.Random(900+i);g=parent(f'{kind}_{i}')

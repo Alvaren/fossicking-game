@@ -40,12 +40,6 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
       const scale = .11 + Math.pow(rng(), 1.4) * .42;
       put(`cobble_${k % 6}`, px, pz, scale, { lift: -.08, sy: .62, rank: .15 + rng() * .5 });
     }
-    // Partly buried slabs articulate selected banks without inventing cliffs.
-    for (let k = 0; k < 5; k++) {
-      const pz = z - 1.8 + k * .7, px = bank + side * (.8 + rng() * .6);
-      put(`slab_${k % 3}`, px, pz, .65 + rng() * .45,
-        { sx: 1.3, sy: .30, sz: .85, lift: -.06, rank: 0, rotation: Math.atan2(side, c.dcx(z)) });
-    }
   }
   for(let i=0;i<3400;i++) {
     const z=-102+rng()*204, width=c.halfWidth(z), side=rng()<.5?-1:1;
@@ -55,21 +49,14 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
     const scale=.08+Math.pow(rng(),2)*.30;
     put(`cobble_${i%6}`,x,z,scale,{surface:true,lift:-scale*.2,sy:.65,radius:.1});
   }
-  // Low fractured aprons tie the original rock footprints into an exposure.
-  // They disappear if excavated, leaving the real soil/vein available to tools.
+  // Loose float follows the existing source rocks without adding flat shelves.
+  // It disappears if excavated, leaving the real soil/vein available to tools.
   for (let i = 0; i < rockAnchors.length; i++) {
     const a = rockAnchors[i];
     if (a.radius < .6 || a.family === 'cobble') continue;
     const atSource = Object.values(terrain.sources).some(s => Math.hypot(a.x - s.x, a.z - s.z) < 14);
     if (!atSource) continue;
     const family = ['host', 'granite', 'basalt', 'rhyolite'].includes(a.family) ? a.family : 'slab';
-    for (let k = 0; k < 2; k++) {
-      const angle = k * 1.7 + .3, distance = a.radius * (.65 + rng() * .40);
-      put(`${family === 'host' ? 'basalt' : family}_${k % (family === 'host' || family === 'granite' ? 4 : 3)}`,
-        a.x + Math.cos(angle) * distance, a.z + Math.sin(angle) * distance,
-        a.radius * (.6 + rng() * .25), { surface: true, sx: 1.0, sy: .24, sz: .8, lift: -.13,
-          radius: .35, rank: 0, rotation: a.bearing });
-    }
     // Small angular float follows the downslope direction towards the creek.
     const direction = Math.sign(c.cx(a.z) - a.x);
     for (let k = 0; k < 14; k++) {
