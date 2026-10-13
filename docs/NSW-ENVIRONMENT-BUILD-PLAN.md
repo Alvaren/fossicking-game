@@ -42,6 +42,21 @@ For each substantial delivery: record branch/base, owned paths, implementation r
 
 ## Build sequence and dependencies
 
+### Current correction pass
+
+Execution branch `codex/nsw-environment-fix`, base `aedeba5`. Work through all eight direct-audit areas, preserving the existing world and controllers. These are implementation/review steps, not automatic reference-quality passes. Record new evidence separately in `docs/audits/nsw-fix/`; retain both previous sets unchanged.
+
+- [ ] FIX-01 / V01–02 — Reshape the rock kit into fractured assemblies with irregular enclosed quartz and weathered granite; compose connected low exposures/debris at existing sites and creek margins.
+- [x] FIX-02 / V03 — Remove dominant pebble stamps/micro-noise; connect dry soil, wash, litter and partly embedded stones.
+- [x] FIX-03 / V04 — Rework tree crown silhouettes, legacy undergrowth shading and clump forms; keep original trunk/obstacle locations.
+- [ ] FIX-04 / V05 — Calm repeated ripple structure, improve submerged bed volume and wet margins, retain real flow/flood behavior.
+- [x] FIX-05 / V06 — Balance sun/fill/materials and distant contrast at ordinary midday, then check weather/night.
+- [ ] FIX-06 / V07 — Add grounded inclusion/root/spoil detail tied to real exposed/dig surfaces, with invalidation as soil changes.
+- [ ] FIX-07 / V08 — Inspect all source/camp transitions, clean unobstructed captures, reverse views, three seeds and movement. Re-score honestly; leave remaining visual gaps open.
+- [ ] FIX-08 — Build, relevant interaction/save/fallback checks, publish owned ready work and verify Pages. No unrelated region art changes.
+
+Correction status: FIX-01 has a rebuilt jointed kit and low connecting pieces, but the large formations/banks are still unconvincing. FIX-04 removes the repeating bright foam and improves the visible bed; margin/reflection balance remains open. FIX-06 adds surface-following stones/crumbs/root tips and restores actual excavated material colours, but spoil volume remains weak. FIX-07 has clean stills, three seeds and a separate normal-input clip; complete motion/approach acceptance remains open. [Delivered changes and remaining gaps](NSW-ENVIRONMENT-BUILD.md#correction-pass-after-the-reference-audit). Checked correction steps do not override the still-open visual rubric: all eight dimensions remain below target.
+
 | Stage | Deliverable | Depends on | Completion gate |
 | --- | --- | --- | --- |
 | B1 | Art specification, fixed scene boundaries and asset contracts | Audit | Concrete composition and asset sheet; no unresolved guess about what is being built |
@@ -260,5 +275,6 @@ The first command writes the initial report and 15 screenshots. The supplement a
 | 13 October 2026 | Baseline audit and complete action/build specification | AUD-01..07 complete. 19 inspected screenshots, `baseline.json`, reproducible capture script, 82 passing logic checks and production build. High-quality target explicitly takes precedence over mobile scaling. All B1..B8 tasks remained pending at that point. |
 | 13 October 2026 | First environment implementation on `codex/nsw-environment-build`, base `dfa9a09` | Authored 42-asset kit; original-data-preserving regional adapters; first creek dressing; ground/excavation, light and scene water. [Delivery/evidence](NSW-ENVIRONMENT-BUILD.md). Checked task IDs are supported there; first-scene art acceptance and full-map B5 remain open. |
 | 13 October 2026 | User-requested direct reference comparison, audited at `c9e5692` | Re-inspected all six original references against published game screenshots. [V01..V08 findings and acceptance evidence](NSW-ENVIRONMENT-BUILD.md#direct-reference-comparison-audit). Earlier grounding/vegetation/water/close-up scores of 2 withdrawn; all eight still-image dimensions remain below target, temporal quality unestablished. Reopened B2-02, B3-04/06/07 and B4-04. No game changes or new captures in this audit. |
+| 13 October 2026 | Correction pass `6ba554e` on `codex/nsw-environment-fix`, base `aedeba5` | Corrections across V01..V08, 42 revised assets, original-data-preserving composition/detail, plant/foam fixes and actual cut-material colour. [Current evidence and unfinished art](NSW-ENVIRONMENT-BUILD.md#correction-pass-after-the-reference-audit). All eight still-image dimensions remain below reference; completed corrective work does not close those gates. |
 
-**Next build task:** V01/V02 first: compose the large bank/rock forms and rebuild the connected reef/granite assemblies at existing sites. Then V03/V04 ground and plant groupings; V05/V06 water and lighting; V07/V08 close-up work and consistency evidence. The first implementation remains below the reference in every still-image rubric dimension. Do not extend it across the map by simply increasing scatter density or polish it only through shaders. Continue B2/B3/B4 before the full B5 rollout. This audit records the next work; it does not claim that rework has happened. Hardware results and remaining coverage are in the delivery record.
+**Next build task:** V01/V02 remain first: compose the large bank/rock forms and connected reef/granite assemblies at existing sites. The correction improves the kit, debris, plants, foam and cut materials, but still does not meet the reference in any complete rubric dimension. Do not equate wider dressing coverage or more triangles with completed composition. Finish the first-scene art gate before further B5 rollout; then resolve broad ground transitions, reflection/margins and excavation/spoil volume. Hardware results and remaining coverage are in the delivery record.

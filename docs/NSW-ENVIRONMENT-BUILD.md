@@ -134,7 +134,50 @@ Reopened checklist items: **B2-02, B3-04, B3-06, B3-07 and B4-04**. Their assets
 
 Still pending separately: full temporal and reverse-approach coverage, populated legacy-save visual tour, UV/drying-ground checks, final asset/GPU budgets, and physical iPhone/Safari and Android/Chrome measurements. No new game code, assets, settings or screenshots were produced for this comparison audit.
 
-## Handoff
+## Correction pass after the reference audit
+
+13 October 2026. Branch `codex/nsw-environment-fix`, base `aedeba5`, implementation `6ba554e`. This pass addresses defects across V01–V08. It does **not** close the reference-quality gate. The original audit and earlier evidence above remain as historical records.
+
+| Area | Corrective work delivered | Remaining visible gap |
+| --- | --- | --- |
+| V01/V02: composition and rocks | Joint cuts through host/quartz, broader host faces, more weathered granite edges; low embedded aprons and downslope fragments resolve from the existing source anchors. Selected bank stone groups and bed cobbles follow saved terrain. | The reef still reads as separate blocks, granite still exposes the original stacked arrangements, and the creek remains an even channel. The reference's connected long exposure and irregular bank landform are not achieved. Some low connecting pieces look too planar. |
+| V03: ground | Greatly reduced the old pebble-stamp contribution and rock micro-noise. Actual small stones, litter and patch-centred plants supply close detail. | Bare soil can now look too smooth. Broad transitions and disturbed ground need stronger authored structure. |
+| V04: plants | Lateral branch levels and smaller leaf sprays; bent grass/sedge blades; replaced legacy black shrub sprays at their existing anchors; adjusted leaf lighting. | Repeated crown structure and regular woodland placement remain visible. This is still below the canopy depth and plant composition in the references. |
+| V05: water | Diagnosed the bright repeated pattern as foam sampling the ripple texture. Replaced that with broken noise patches carried by the existing flow. Reduced normal distortion/glare, increased bed visibility and retained flood turbidity. | Water is still too mirror-like in some views; pale margins and distant ribbons need further composition/material work. Broken foam does not itself prove natural flow. |
+| V06: light | Rebalanced regional sun/fill, ground bounce and distance haze; inspected midday, dawn, storm and headlamp night. | Noon soil/foliage values and contact depth remain weaker than the reference. No AO or photographic blur was used to hide missing form. |
+| V07: excavation | Small inclusions, crumbs and root ends follow current exposed soil. Decoration disappears after removal. Main shovel terrain now exposes the existing geological colours instead of being mostly overridden by the regional surface palette. | This is still a heightfield bowl with small details, not convincing spoil/rim/layer volume. Photo 6's material-depth target remains open. No new excavation simulation was introduced. |
+| V08: consistency/evidence | Extended grouping through creek reaches and source surrounds; preserved camp clearance. Capture waits for discovery messages to expire. Three-seed captures, Low/touch, all sources, camp, mine, dig, map and weather are recorded. | Camp/workings remain visibly basic; complete reverse-approach and populated legacy-save visual tours are still pending. |
+
+### Correction evidence and acceptance
+
+Current captures: [upstream](audits/nsw-fix/high-upstream.jpg), [opposite bank](audits/nsw-fix/high-reverse.jpg), [bank](audits/nsw-fix/high-bank.jpg), [reef](audits/nsw-fix/high-reef.jpg), [granite](audits/nsw-fix/high-granite.jpg), [dig](audits/nsw-fix/high-dig.jpg), [camp](audits/nsw-fix/high-camp.jpg), [night](audits/nsw-fix/high-night.jpg), [Low](audits/nsw-fix/low-creek.jpg), [emulated touch](audits/nsw-fix/touch-medium-creek.jpg). Additional seed evidence: [seed 1](audits/nsw-fix/seed-1/build.json), [seed 798887](audits/nsw-fix/seed-798887/build.json). [Full capture record](audits/nsw-fix/build.json).
+
+All eight still-image rubric dimensions remain **1 — below the supplied reference target**. Several specific defects have been reduced or removed, but no dimension is upgraded merely because a feature exists or a technical check passes. B2-02, B3-04/06/07 and B4-04 remain open. The next substantial art task is still the large bank and connected reef/granite composition, followed by soil transitions and close-up excavation volume. Phone quality settings remain a scaling mechanism, not the benchmark.
+
+### Correction verification
+
+- 84 logic tests and the 119-module production build pass. `git diff --check` passes. Headless Blender exports all 42 named assets; no dependencies added.
+- Normal pointer lock/look, wheel/number keys, menu transitions, rejection recovery and simultaneous movement/tool switching pass across all seven locations. Original touch toolbar/Use/pan/menu checks pass.
+- Three seeds (1, 12345, 798887) retain physical/saved world hashes through art loading and live quality changes. Actual held trowel use, saved soil millimetres and reload pass. Missing/corrupt kit retains original scenery and tool use. The suite was repeated after adding the terrain cut-colour attribute.
+- New England desktop/touch rock and landscape checks pass. Built offline reload passes for New England desktop and Northeast Tasmania touch. No other region recipe or controller is changed. Earlier shelter/facility/travel coverage is retained; this pass does not claim those full suites were repeated.
+- Capture stills relocate the camera; they are not walked routes. The separate performance/ordinary-input recording identifies its own method and hardware. Physical iPhone/Android performance remains unmeasured.
+- The final 27 stills comprise 21 seed-12345 views and three each for seeds 1 and 798887. No page/console errors or failed shader programs were recorded. Existing Clock/toNonIndexed warnings and the previously observed ANGLE X4122 constant-precision warning remain; this is not a warning-free run.
+
+### Correction desktop measurement
+
+[Full report](audits/nsw-fix/performance.json), implementation `6ba554e`: RTX 3090, Chromium 151 / ANGLE D3D11, actual 1920×1080 drawing buffer, High. The isolated scripted route measured 180 seconds after a 15-second warm-up (10,802 frames), with no recorded page/console/GL errors. This is a three-minute check, not a repeated ten-minute soak or phone measurement.
+
+| Measurement | Median | 95th percentile |
+| --- | --- | --- |
+| Frame interval | 16.7 ms (refresh-capped ~60 fps) | 16.7 ms |
+| CPU frame callback | 9.3 ms | 13.6 ms |
+| GPU timer query (360 samples) | 7.33 ms | 10.63 ms |
+
+Full-frame medians: 887 calls / 17,159,343 submitted triangles including shadow/water passes and tools. Cost is higher than the earlier kit and still needs profiling on weaker hardware; this machine's result does not establish a supported minimum. Geometry objects rose from 631 to 688 and textures from 32 to 36 as the route loaded views. This short run is not a leak certification or a GPU-memory-byte measurement.
+
+The separate [ordinary-input recording](audits/nsw-fix/walkthrough.webm) contains 43 seconds of original pointer-lock/WASD/mouse input after one initial placement, plus startup/title time. The route crosses the creek and returns towards camp; signed bank offsets are logged. [Native 1080p final still](audits/nsw-fix/high-1080-walk.jpg). Representative extracted frames were inspected; full temporal-art acceptance remains open. Do not infer absence of shimmer/popping from a few frames or the timing result.
+
+## Original implementation handoff
 
 Owned code: `src/newengland/`, the optional loader, ground/rock materials, terrain/excavation render adapters, narrow main-loop/settings hooks and foliage statistics. Owned art: the new Blender generator and its `public/models/newengland/` output. Owned checks/docs: the NSW tests/evidence, pointer-lock harness timing, offline-kit assertion and linked plans. No other agent was launched or messaged. Main and Claude were clean when inspected; final integration and deployment identifiers are recorded in the coordination handoff.
 

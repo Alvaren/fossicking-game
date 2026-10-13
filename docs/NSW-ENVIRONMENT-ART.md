@@ -1,6 +1,6 @@
 # New England environment art specification
 
-13 October 2026. Execution branch: `codex/nsw-environment-build`, base `dfa9a09`. Companion to the [build checklist](NSW-ENVIRONMENT-BUILD-PLAN.md).
+13 October 2026. First implementation: `codex/nsw-environment-build`, base `dfa9a09`. Current corrective build: `codex/nsw-environment-fix`, base `aedeba5`. Companion to the [build checklist](NSW-ENVIRONMENT-BUILD-PLAN.md).
 
 ## Reference board and interpretation
 
@@ -52,4 +52,8 @@ Child material names distinguish `bark`, `leaf`, `grass`, `host`, `quartz` and r
 
 Assets load independently of tools/finds. Validate the complete manifest before replacing render geometry. On a missing/corrupt kit, retain the original scenery. Environment quality changes draw lists and foliage detail only; it never changes terrain, deposits, saved IDs or collision data. Low retains the same silhouettes with reduced leaf density and dressing distance.
 
-The current kit contains 42 assets / 62,336 prototype triangles and occupies 3,808,508 GLB bytes. Flattened non-indexed position/normal/colour/foliage/rock-role arrays total about 7.85 MiB before extra render copies, LOD and instance buffers. Existing shared ground/rock atlases are reused; no image textures are shipped with the kit. This is an array-size estimate, not total GPU residency. Material roles become `aAuthoredRockKind` so a host block and its quartz seam sample different mineral detail within one draw.
+The corrective kit contains 42 assets / 90,384 prototype triangles and occupies 5,663,244 GLB bytes. The original names/pivots remain. Its extra geometry primarily supplies lateral crown branches, smaller leaf sprays, bent blades, joint cuts and weathered corners. Existing shared ground/rock atlases are reused; no image textures are shipped with the kit. Material roles become `aAuthoredRockKind` so a host block and its quartz seam sample different mineral detail within one draw. Prototype totals are not scene draw counts or total GPU residency.
+
+The correction adds deterministic groups along creek reaches and low aprons/downslope fragments at existing source rocks, plus selected tree litter. These are render-only and retain the protected camp, finds, target, excavation and equipment margins. Low pieces use a separate clearance query without changing colliders. Surface decoration is removed when its underlying ground changes; exposed inclusion/root detail is rebuilt from the actual cut surface. The main terrain now supplies the same cut-depth material signal as the fine hand patch, allowing the original soil/wash/bedrock colours to show through. Physical heights and saved dig data are unchanged.
+
+This is **not completed whole-map composition**. Low connecting pieces and additional triangles do not satisfy the connected-exposure or irregular-bank reference gates. Final quartz-float/spoil assets, convincing woodland transitions, full camp surrounds and source approaches remain open. See the correction review rather than treating a deployed asset as accepted art.

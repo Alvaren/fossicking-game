@@ -1,0 +1,4 @@
+high mine 804 6756475
+high dig 584 6320218
+high night 609 6969541
+high map 560 6956995

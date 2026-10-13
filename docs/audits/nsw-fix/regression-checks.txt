@@ -1,0 +1,15 @@
+Running newengland.game.mjs
+Seed 1: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 12345: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 798887: art and live quality preserve the world; real trowel/save/reload passed.
+missing kit: original scenery and tool use retained.
+corrupt kit: original scenery and tool use retained.
+Running controls.game.mjs
+new-england: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+golden-triangle: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+qld-gemfields: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+wa-goldfields: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+coober-pedy: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+tasmania-west: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+ne-tasmania: actual pointer lock, mouse look, wheel/number keys, shared held tools, walking while switching, menu isolation, pause/resume, rejection recovery and tool close passed.
+Original touch: toolbar selection, brief Use taps, pan/menu close and no stale input passed.

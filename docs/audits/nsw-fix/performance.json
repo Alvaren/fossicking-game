@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-13",
+  "method": "1920\u00d71080 Chromium/D3D11, High, real desktop GPU. Scripted camera route (duration recorded below); first 15 seconds warm-up excluded. Separate clip uses normal pointer lock and keyboard/mouse input. Desktop headless results are not phone results.",
+  "walk": {
+    "inputSeconds": 43,
+    "method": "One initial placement, then original normal-URL pointer lock, held WASD and mouse events. Video also contains loading/title time. No photo filters.",
+    "path": [
+      {
+        "x": -0.951380864188822,
+        "z": 28.087195628933884,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": 5.687326415643838,
+        "halfWidth": 4
+      },
+      {
+        "x": 20.848168967910734,
+        "z": 28.268619631875588,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": -16.100441484710785,
+        "halfWidth": 4
+      },
+      {
+        "x": 21.074703383828595,
+        "z": 28.268619631875588,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -16.32690184135008,
+        "halfWidth": 4
+      },
+      {
+        "x": 28.182000957852583,
+        "z": 7.518892392288623,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -24.372303639829507,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 7.713819779554024,
+        "z": 0.38451803803633267,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -4.8061635896156005,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 7.537609285278301,
+        "z": 0.32416156182713873,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": -4.639992608221938,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 2.9091611034015274,
+        "z": 13.135989354662861,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": 1.2323679248305686,
+        "halfWidth": 2.7
+      }
+    ],
+    "errors": []
+  },
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ]
+  },
+  "profile": {
+    "warmupSeconds": 15,
+    "measuredSeconds": 180,
+    "frames": 10802,
+    "frameMs": {
+      "median": 16.69999999999709,
+      "p95": 16.70000000001164
+    },
+    "cpuMs": {
+      "median": 9.299999952316284,
+      "p95": 13.599999964237213
+    },
+    "gpuMs": {
+      "median": 7.32672,
+      "p95": 10.62912,
+      "samples": 360
+    },
+    "fullFrame": {
+      "medianCalls": 887,
+      "medianTriangles": 17159343
+    },
+    "memory": [
+      {
+        "age": 0.01719999998807907,
+        "heap": 131043177,
+        "geometries": 631,
+        "textures": 32
+      },
+      {
+        "age": 10.015599999964238,
+        "heap": 123610613,
+        "geometries": 639,
+        "textures": 32
+      },
+      {
+        "age": 20.0325,
+        "heap": 137100501,
+        "geometries": 639,
+        "textures": 32
+      },
+      {
+        "age": 30.03219999998808,
+        "heap": 145719326,
+        "geometries": 639,
+        "textures": 33
+      },
+      {
+        "age": 40.032,
+        "heap": 164786338,
+        "geometries": 639,
+        "textures": 34
+      },
+      {
+        "age": 50.03069999998808,
+        "heap": 159909170,
+        "geometries": 639,
+        "textures": 35
+      },
+      {
+        "age": 60.03739999997616,
+        "heap": 164358044,
+        "geometries": 639,
+        "textures": 35
+      },
+      {
+        "age": 70.04739999997616,
+        "heap": 120392060,
+        "geometries": 639,
+        "textures": 35
+      },
+      {
+        "age": 80.04669999998808,
+        "heap": 135632016,
+        "geometries": 639,
+        "textures": 35
+      },
+      {
+        "age": 90.06280000001192,
+        "heap": 136675604,
+        "geometries": 639,
+        "textures": 35
+      },
+      {
+        "age": 100.06289999997615,
+        "heap": 122263412,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 110.06189999997616,
+        "heap": 128451948,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 120.06209999996423,
+        "heap": 131410695,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 130.061,
+        "heap": 148054159,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 140.06089999997616,
+        "heap": 144366932,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 150.0605,
+        "heap": 137470572,
+        "geometries": 687,
+        "textures": 35
+      },
+      {
+        "age": 160.05989999997615,
+        "heap": 142356936,
+        "geometries": 688,
+        "textures": 36
+      },
+      {
+        "age": 170.05980000001193,
+        "heap": 127959452,
+        "geometries": 688,
+        "textures": 36
+      },
+      {
+        "age": 180.05869999998808,
+        "heap": 136796167,
+        "geometries": 688,
+        "textures": 36
+      },
+      {
+        "age": 190.05889999997615,
+        "heap": 121789550,
+        "geometries": 688,
+        "textures": 36
+      }
+    ],
+    "errors": []
+  },
+  "codeBaseline": "6ba554e8ad64776f9ce9bd4e6e64720e28621620"
+}

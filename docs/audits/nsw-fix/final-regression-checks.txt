@@ -1,0 +1,6 @@
+Running newengland.game.mjs
+Seed 1: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 12345: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 798887: art and live quality preserve the world; real trowel/save/reload passed.
+missing kit: original scenery and tool use retained.
+corrupt kit: original scenery and tool use retained.
