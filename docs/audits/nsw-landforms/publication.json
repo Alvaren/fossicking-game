@@ -1,0 +1,9 @@
+{
+  "commit": "5e120b362935280cf9e024973365edc03a95f25a",
+  "run": "https://github.com/Alvaren/fossicking-game/actions/runs/38415766124",
+  "result": "success",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "js": "./assets/index-CeOXkd1_.js",
+  "modelBytes": 5465832,
+  "modelSha256": "b178ec269960ce73ce3592fac6454fb184b6b8a8252a75707de423f29cec2f39"
+}

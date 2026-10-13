@@ -52,7 +52,7 @@ Branch `codex/nsw-landforms`, base `4c1c8ea`. The user is playing promoted main.
 - [ ] LF-04 — Finish exposed layers/inclusions and disturbed rims on real shovel/hand digs, including reload and decoration invalidation.
 - [ ] LF-05 — Review water margins, broad ground transitions and source/camp approaches together, with noon/weather/reverse views and three seeds.
 - [x] LF-06 — Repeat world/save/input/fallback/quality checks, build and isolated performance measurement for the intact-rock repair. 103 logic/asset tests, seven-location controls/touch, three-seed world/save regression, offline checks and a 60-second measured desktop route pass; evidence and limitations are in [the repair record](NSW-ENVIRONMENT-BUILD.md#intact-rock-repair). Repeat for subsequent polish changes.
-- [ ] LF-07 — Commit and push the ready feature branch. Promote main only once the user's play session is over; verify deployment after promotion.
+- [x] LF-07 — The user finished playing and authorized publication. Repair `0b36e4b` plus evidence `5e120b3` were pushed to main; Pages run 38415766124 and public High desktop/touch checks pass. The remaining polish continues separately.
 
 The user-reported repeated saw cuts were prioritised during this pass. Ordinary-rock slicing is removed, closed-volume checks are added, and flat decorative bank/source slabs are removed. Experimental connected surfaces and new dig/bank geometry were inspected and rejected; they are not shipped. LF-01/03/04/05 remain open. Do not claim the unfinished visual work is complete.
 
