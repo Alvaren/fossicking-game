@@ -1,6 +1,6 @@
 # New England environment art specification
 
-13 October 2026. First implementation: `codex/nsw-environment-build`, base `dfa9a09`. Current corrective build: `codex/nsw-environment-fix`, base `aedeba5`. Companion to the [build checklist](NSW-ENVIRONMENT-BUILD-PLAN.md).
+13–14 October 2026. First implementation: `codex/nsw-environment-build`, base `dfa9a09`; correction: `codex/nsw-environment-fix`, base `aedeba5`. Current continuation: `codex/nsw-creek-polish`, base `e779054`. Companion to the [build checklist](NSW-ENVIRONMENT-BUILD-PLAN.md).
 
 ## Reference board and interpretation
 
@@ -25,7 +25,7 @@ Colours below are sRGB authoring swatches, transformed to linear for vertex colo
 | --- | --- | --- | --- |
 | Soil/grus | `#a38d69` | `#b5a07b`, `#756b55` | Metre-scale patches, fine aggregate at working distance |
 | Damp wash | `#777b6c` | `#515c55` | Rounded embedded stones, moisture follows water level |
-| Host rock | `#68655e` | `#807a6e`, `#484b49` | Broken slabs and bevelled joint planes |
+| Host rock | `#8b8073` | `#807a6e`, `#484b49` | Joined weathered volumes with broad sloping faces |
 | Quartz | `#d9d6c9` | `#b9b8ad`, `#efeadc` | Irregular vein inside the host volume |
 | Granite | `#9b9181` | `#b2a793`, `#756e63` | Weathered corners, broad joints, subtle mineral texture |
 | Basalt | `#535753` | `#6e7068` | Blocky fractures, denser/darker than granite |
@@ -48,13 +48,13 @@ The placement query must account for actual finds, targets, field sites, split b
 
 Blender metres, Z up; GLB result metres, Y up. Trees/shrubs/grass/root assets have ground-origin pivots. Rock assets have a centred, approximately unit-radius envelope so existing instance transforms and collision footprints can be retained. Export parents use stable names: `gum_0..3`, `young_0..1`, `shrub_0..2`, `grass_0..2`, `sedge_0..1`, `host_0..3`, `granite_0..3`, `cobble_0..5`, `basalt_0..2`, `rhyolite_0..2`, `slab_0..2`, `root_0..1`, `branch_0..2`.
 
-Child material names distinguish `bark`, `leaf`, `grass`, `host`, `quartz` and rock types. The optional loader bakes world transforms and material colours into merged geometry, converts plant roles to existing `aFoliage`, and supplies near/far render geometries. No shared tool/crystal names are changed. Host seams are enclosed volume slices of the same block, not stickers. Trees retain the old trunk footprint; larger crowns do not add invisible collisions.
+Child material names distinguish `bark`, `leaf`, `grass`, `host`, `quartz` and rock types. The optional loader bakes world transforms and material colours into merged geometry, converts plant roles to existing `aFoliage`, and supplies near/far render geometries. No shared tool/crystal names are changed. Host/quartz boundaries are now divided faces on one closed exterior, with no separate interior caps or gaps. Trees retain the old trunk footprint; larger crowns do not add invisible collisions.
 
 Assets load independently of tools/finds. Validate the complete manifest before replacing render geometry. On a missing/corrupt kit, retain the original scenery. Environment quality changes draw lists and foliage detail only; it never changes terrain, deposits, saved IDs or collision data. Low retains the same silhouettes with reduced leaf density and dressing distance.
 
-The corrective kit contains 42 assets / 90,384 prototype triangles and occupies 5,663,244 GLB bytes. The original names/pivots remain. Its extra geometry primarily supplies lateral crown branches, smaller leaf sprays, bent blades, joint cuts and weathered corners. Existing shared ground/rock atlases are reused; no image textures are shipped with the kit. Material roles become `aAuthoredRockKind` so a host block and its quartz seam sample different mineral detail within one draw. Prototype totals are not scene draw counts or total GPU residency.
+The historical 13 October corrective kit contained 42 assets / 90,384 prototype triangles and occupied 5,663,244 GLB bytes. Its later through-cut repair and current continuation are recorded below. The original names/pivots remain. Existing shared ground/rock atlases are reused; no image textures are shipped with the kit. Material roles become `aAuthoredRockKind` so a host block and its quartz seam sample different mineral detail within one draw. Prototype totals are not scene draw counts or total GPU residency.
 
-The correction adds deterministic groups along creek reaches and low aprons/downslope fragments at existing source rocks, plus selected tree litter. These are render-only and retain the protected camp, finds, target, excavation and equipment margins. Low pieces use a separate clearance query without changing colliders. Surface decoration is removed when its underlying ground changes; exposed inclusion/root detail is rebuilt from the actual cut surface. The main terrain now supplies the same cut-depth material signal as the fine hand patch, allowing the original soil/wash/bedrock colours to show through. Physical heights and saved dig data are unchanged.
+The correction added deterministic groups along creek reaches and downslope fragments at existing source rocks, plus selected tree litter. Its flat aprons were subsequently removed. These are render-only and retain the protected camp, finds, target, excavation and equipment margins. Low pieces use a separate clearance query without changing colliders. Surface decoration is removed when its underlying ground changes; exposed inclusion/root detail is rebuilt from the actual cut surface. The main terrain supplies the same cut-depth material signal as the fine hand patch, allowing the original soil/wash/bedrock colours to show through. Physical heights and saved dig data are unchanged.
 
 This is **not completed whole-map composition**. Low connecting pieces and additional triangles do not satisfy the connected-exposure or irregular-bank reference gates. Final quartz-float/spoil assets, convincing woodland transitions, full camp surrounds and source approaches remain open. See the correction review rather than treating a deployed asset as accepted art.
 
@@ -65,3 +65,13 @@ The repeated full-width slots were a generator defect, not a geological feature 
 Granite now uses a coherently deformed rounded volume with 320 triangles per variant, up from 208–254. Cobble silhouettes use their original ico subdivision level and smooth normals, without plane clipping. Removing duplicated slice faces reduces the complete kit from 90,384 to 89,580 triangles and from 5,663,244 to 5,465,832 GLB bytes. Thus the extra useful granite geometry does not increase the total prototype budget. Exported geometry is checked for connectedness, closed edges, finite positions and degenerate triangles. These checks support the defect repair only; the source assembly and reference-quality art gates remain open.
 
 Flat decorative slabs/aprons at banks and source rocks are removed after visual inspection. Small float, vegetation and original physical world anchors remain. The experimental heightfield-based connected rock/bank surfaces were rejected and removed; do not restore them as completed landforms.
+
+## Creek continuation — 14 October 2026
+
+The current kit has **42 assets / 95,672 prototype triangles / 5,832,052 GLB bytes**. Ordinary-rock repair is retained. Four host variants use joined, remeshed compound volumes, sloping faces and an uninterrupted quartz boundary on the exterior. They contain 1,984 / 1,952 / 2,070 / 2,108 triangles. All 23 exported rock prototypes are checked for finite coordinates, non-degenerate faces, closed edges and a single connected volume. A sound prototype is not evidence of a completed connected reef: the old source arrangement is still visibly separate.
+
+Small quartz float uses recoloured closed slab geometry with the quartz material role, rather than scaling down the full host prototype. `quartzfloat_0..2` are rendering batches, not extra required GLB names. No tool, crystal, collider, source or save contract changes.
+
+Selected surface roots are generated from the actual existing tree anchors and sample the saved bank every 8 cm. They taper partly into the soil, respect working/find clearances and hide when the supporting surface changes. Root silhouettes and small angular clods improve contact detail; they do not replace the authoritative bank or add spoil volume. Ground materials distinguish damp wash, grus and litter more strongly while preserving original exposed geological colours. High water uses the opaque scene's visible depth for shore/stone contact; original flow, flood state and lower-cost rendering remain authoritative.
+
+See [current screenshots, checks and limitations](NSW-ENVIRONMENT-BUILD.md#creek-and-exposed-ground-continuation). The whole reference-quality gate remains open, particularly continuous outcrops, substantial bank form, woodland composition and excavation volume.

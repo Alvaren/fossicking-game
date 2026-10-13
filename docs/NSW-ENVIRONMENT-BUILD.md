@@ -211,3 +211,40 @@ Verification for this repair:
 The connected-heightfield outcrop prototype looked rounded and exposed poor contact edges; new bank/dig detail also failed the composition review. Those experiments were removed instead of being promoted as completed work. **LF-01/03/04/05 and the reference-quality gates remain open.** The repair does not complete the outstanding environment polish. Continue connected outcrops, real bank/root contacts, broad ground transitions, water margins and excavation/spoil volume from the durable checklist.
 
 The user finished playing main and explicitly asked to publish the fix. Implementation `0b36e4b` and evidence `5e120b3` were fast-forwarded into clean main and pushed. [Pages run 38415766124](https://github.com/Alvaren/fossicking-game/actions/runs/38415766124) succeeded. The public `index-CeOXkd1_.js` bundle and 5,465,832-byte model match the tested local build (SHA-256 `b178ec269960ce73ce3592fac6454fb184b6b8a8252a75707de423f29cec2f39`). Public High desktop/touch rendering and original tool input pass. [Publication record](audits/nsw-landforms/publication.json), [public checks](audits/nsw-landforms/public-checks.txt). Main and Claude were clean; Claude commits were already integrated. No other agent was launched or messaged.
+
+## Creek and exposed-ground continuation
+
+14 October 2026. Branch `codex/nsw-creek-polish`, base `e779054`, implementation `09029c6`. Continued the authorized polish after publishing the separate through-cut repair. The full reference-quality environment is **still unfinished**.
+
+Delivered changes:
+
+- Host rocks have joined weathered forms, lower sloping faces and narrower quartz boundaries on one closed exterior. The old separate interior caps are removed. Small quartz float uses simpler angular chips. The kit contains 42 assets / 95,672 prototype triangles / 5,832,052 bytes; granite remains 320 triangles per variant. Original placements, colliders, sources and saved data are unchanged.
+- Selected existing trees have tapered surface roots fitted to the saved bank. They respect working/find clearances and withdraw if the supporting ground changes. Sparse angular clods, inclusions and root ends follow actual excavation, with larger clearance around uncollected finds.
+- Grus, damp wash and litter have broader material contrast; exposed geological colours remain visible. High water uses rendered bed depth for shore/stone contact, less refraction displacement and finer advected foam. Floating leaves have tapered silhouettes. The original flow, flood, leaf movement and lower-cost water path remain intact.
+
+Final evidence: [reef](audits/nsw-creek-polish/high-reef.jpg), [bank roots](audits/nsw-creek-polish/high-roots.jpg), [shallow water](audits/nsw-creek-polish/high-bank.jpg), [upstream](audits/nsw-creek-polish/high-upstream.jpg), [reverse](audits/nsw-creek-polish/high-reverse.jpg), [dug ground](audits/nsw-creek-polish/high-dig.jpg), [kneeling](audits/nsw-creek-polish/high-kneel.jpg), [granite](audits/nsw-creek-polish/high-granite.jpg), [dawn](audits/nsw-creek-polish/high-dawn.jpg), [night](audits/nsw-creek-polish/high-night.jpg), [storm](audits/nsw-creek-polish/high-storm.jpg). [Low](audits/nsw-creek-polish/quality/low-creek.jpg), [emulated touch](audits/nsw-creek-polish/quality/touch-medium-granite.jpg), [seed 1](audits/nsw-creek-polish/seed-1/high-reef.jpg), [seed 798887](audits/nsw-creek-polish/seed-798887/high-roots.jpg).
+
+Nineteen final stills comprise eleven seed-12345 High views, four Low/touch views, and two each for seeds 1 and 798887. Metadata records matching source/model hashes and confirms the actual kit loaded, with no candidate-model override. [Main metadata](audits/nsw-creek-polish/build.json), [quality](audits/nsw-creek-polish/quality/build.json), [seed 1](audits/nsw-creek-polish/seed-1/build.json), [seed 798887](audits/nsw-creek-polish/seed-798887/build.json). Stills use camera relocation; digging in the capture is a disposable surface edit. They are not a walked route or proof of full temporal stability. A normal discovery banner remains in the seed-1 reef view; it was not cropped away.
+
+### Continuation verification
+
+- **111 logic/asset tests pass**. All 23 rock prototypes are closed, connected and non-degenerate. New tests check bank-root ground contact, outward normals, removal/reload and equipment clearance, plus excavation-detail invalidation and find clearance.
+- Production build passes with 120 modules; no dependencies added. Three-seed world hashes remain unchanged through art loading and quality changes. Actual held trowel input, saving/reloading and missing/corrupt kit fallback pass. [Regression data](audits/nsw-creek-polish/regression.json), [game checks](audits/nsw-creek-polish/game-checks.txt).
+- New England High desktop and emulated-touch rendering/original input pass. Built offline checks ran in a fresh process for New England desktop and Northeast Tasmania touch. [Offline checks](audits/nsw-creek-polish/offline-checks.txt). Seven-location normal controls and original touch checks were run for the preceding rock repair in this session; they were not repeated after this continuation. No controller code changed.
+- Final captures record no page/console errors or failed shader programs. Existing Three.js deprecations and ANGLE X4122 warnings remain. Physical iPhone/Android measurements and full populated-legacy-save visual coverage remain pending.
+
+[Isolated desktop profile](audits/nsw-creek-polish/performance.json): RTX 3090, Chromium 151 / ANGLE D3D11, High, actual 1920×1080 drawing buffer. Sixty measured seconds after 15 seconds of warm-up, 3,572 frames, no recorded errors:
+
+| Measurement | Median | 95th percentile |
+| --- | --- | --- |
+| Frame interval | 16.7 ms | 16.8 ms |
+| CPU frame callback | 12.4 ms | 18.3 ms |
+| GPU timer query, 119 samples | 8.42 ms | 11.93 ms |
+
+Median full-frame submission is 822 calls / 16,217,385 triangles including extra passes. The preceding repair measured CPU 8.9/12.5 ms and GPU 6.97/9.80 ms: this pass has higher measured cost despite a similar refresh-capped frame rate. Do not generalise this short result to weaker hardware or phones. Geometry objects rise from 639 to 697 and textures from 32 to 35 as views load; this is not a leak certification. No new ordinary-input video was recorded for this continuation.
+
+### Remaining visual work
+
+LF-01/03/04/05 remain open. The reef still reads as separate rocks, granite keeps its stacked source arrangement, banks lack substantial irregular landform, soil and vegetation transitions remain sparse, and digs remain bowls with small detail rather than convincing exposed layers and spoil. Water is still too mirror-like in some views, with streaks in storm conditions. Camp/source approaches, broader woodland composition and full temporal/legacy-save coverage remain unfinished. All eight full still-image rubric dimensions retain their below-reference rating; technical passes do not close them.
+
+Next substantial task: connect the reef and bank composition at the existing sites while preserving authoritative terrain and collision footprints, then integrate broader ground/plant transitions and believable excavation volume. Do not spend another pass adding uniform scatter and call those larger tasks finished.

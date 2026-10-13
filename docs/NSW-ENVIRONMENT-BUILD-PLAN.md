@@ -56,6 +56,18 @@ Branch `codex/nsw-landforms`, base `4c1c8ea`. The user is playing promoted main.
 
 The user-reported repeated saw cuts were prioritised during this pass. Ordinary-rock slicing is removed, closed-volume checks are added, and flat decorative bank/source slabs are removed. Experimental connected surfaces and new dig/bank geometry were inspected and rejected; they are not shipped. LF-01/03/04/05 remain open. Do not claim the unfinished visual work is complete.
 
+### Creek and exposed-ground continuation — 14 October 2026
+
+Branch `codex/nsw-creek-polish`, base `e779054`. The user confirmed the rest of the polish remains due after the rock fix. Continue LF-03/04/05 using the original terrain, creek, digging and controls.
+
+- [x] CP-01 — Use the rendered bed depth for High water margins/refraction; retain the existing cheaper path and actual hydrology. Replace rectangular floating-leaf silhouettes while preserving flow. Delivered with finer advected foam; reflections and storm streaks still fall below the reference. [Evidence](NSW-ENVIRONMENT-BUILD.md#creek-and-exposed-ground-continuation).
+- [x] CP-02 — Improve metre-scale soil/wash/litter transitions and exposed cut materials, without obscuring geological clues or adding repeated stamps. Material changes delivered; broad terrain/plant composition remains unfinished.
+- [x] CP-03 — Fit selected tree roots to the actual bank and use sparse angular clods/inclusions at real cut lips; no floating rims, invented holes or decoration over finds. Roots and cut detail follow saved terrain and withdraw after removal; this does not complete LF-03/04's bank and spoil volume.
+- [x] CP-05 — Shape compound host-rock prototypes with sloping weathered faces and quartz boundaries on one closed surface; retain anchors and use simpler angular chips for small float. All 23 rock prototypes pass closed connected-volume checks. This is asset improvement; continuous site-wide exposures remain LF-01.
+- [ ] CP-04 — Inspect matched bank/upstream/reverse/kneeling/dig/noon/weather views, then verify saves, controls, Low/touch/fallback, build and publishing. Mark visual gaps honestly.
+
+Nineteen final stills, three-seed world/save/fallback checks, 111 logic/asset tests, the 120-module build, NSW desktop/touch and two-region offline checks pass. The isolated 60-second desktop profile remains refresh-capped at about 60 fps, but CPU/GPU time increased; see the delivery record rather than assuming the extra geometry is free. LF-01/03/04/05 and all full reference-quality gates remain open.
+
 ### Current correction pass
 
 Execution branch `codex/nsw-environment-fix`, base `aedeba5`. Work through all eight direct-audit areas, preserving the existing world and controllers. These are implementation/review steps, not automatic reference-quality passes. Record new evidence separately in `docs/audits/nsw-fix/`; retain both previous sets unchanged.

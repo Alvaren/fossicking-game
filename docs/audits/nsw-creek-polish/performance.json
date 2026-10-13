@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-14",
+  "method": "1920×1080 Chromium/D3D11, High, real desktop GPU. Scripted camera route (duration recorded below); first 15 seconds warm-up excluded. An ordinary-input clip is optional and is recorded only when NSW_PROFILE_ONLY is unset. Desktop headless results are not phone results.",
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ]
+  },
+  "profile": {
+    "warmupSeconds": 15,
+    "measuredSeconds": 60,
+    "frames": 3572,
+    "frameMs": {
+      "median": 16.69999999999709,
+      "p95": 16.79999999998836
+    },
+    "cpuMs": {
+      "median": 12.399999976158142,
+      "p95": 18.30000001192093
+    },
+    "gpuMs": {
+      "median": 8.423424,
+      "p95": 11.93472,
+      "samples": 119
+    },
+    "fullFrame": {
+      "medianCalls": 822,
+      "medianTriangles": 16217385
+    },
+    "memory": [
+      {
+        "age": 0.016,
+        "heap": 125612635,
+        "geometries": 639,
+        "textures": 32
+      },
+      {
+        "age": 10.000900000035763,
+        "heap": 129087715,
+        "geometries": 649,
+        "textures": 32
+      },
+      {
+        "age": 20.017400000035764,
+        "heap": 128744839,
+        "geometries": 649,
+        "textures": 33
+      },
+      {
+        "age": 30.0175,
+        "heap": 134612799,
+        "geometries": 649,
+        "textures": 33
+      },
+      {
+        "age": 40.03370000004768,
+        "heap": 120445387,
+        "geometries": 649,
+        "textures": 34
+      },
+      {
+        "age": 50.05020000004768,
+        "heap": 130987239,
+        "geometries": 649,
+        "textures": 35
+      },
+      {
+        "age": 60.05240000003576,
+        "heap": 128354571,
+        "geometries": 649,
+        "textures": 35
+      },
+      {
+        "age": 70.31920000004769,
+        "heap": 134405951,
+        "geometries": 697,
+        "textures": 35
+      }
+    ],
+    "errors": []
+  }
+}

@@ -1,0 +1,562 @@
+{
+  "baseCommit": "e779054e839ef5e3c90a67db303fd473698b5c9f",
+  "branch": "codex/nsw-creek-polish",
+  "hashes": {
+    "blender/build_newengland_environment.py": "a5f730ce6b644d55acacc3e7624c17b7f1be429b6663c9d444548f3a5bffe691",
+    "public/models/newengland/environment.glb": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+    "src/newengland/water.js": "f86c260caa57694c634bb87e4485fc4c93b505166260262b8d10382b9122495b",
+    "src/newengland/grounddetail.js": "3a3f95d00de2051291851bad6938c3edc10c1e370c79361546f604616df06561",
+    "src/newengland/environment.js": "1e0f52e3699b8ca0850631c675c1fab50b7c88966d10e685b2c15163e249e2ed",
+    "src/newengland/composition.js": "028ac64db2359165a2eab3540cb08aae590773359d46707c220018d07044c519",
+    "src/newengland/bankroots.js": "fb5fd00bfc0fd8fce6083992a61bff824bc1f46f0b9b8f2b57427aa7720395ca",
+    "src/environmentmaterials.js": "ece36ca7a720f5924e0f240773e5d651748ff8def5e897751d8afbccebfd1865"
+  },
+  "seed": 12345,
+  "candidateModelSha256": null,
+  "method": "Disposable Chromium contexts; direct camera relocation at normal player eye height. Explicit world render counters include renderer passes, exclude held-tool overlay. Not device FPS or a playthrough.",
+  "cases": [
+    {
+      "mode": "low",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "environment": {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 7090,
+          "visible": 169,
+          "quality": "low",
+          "bankRoots": 11
+        },
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/newengland/environment.glb",
+            "decodedBytes": 5832052
+          },
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "creek",
+          "file": "low-creek.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 311,
+          "triangles": 2061386,
+          "geometries": 617,
+          "textures": 37,
+          "programs": 63,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            960,
+            540
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 219,
+              "far": 733,
+              "culled": 5448,
+              "fullTriangles": 2361600,
+              "drawnTriangles": 1007128
+            },
+            "landscape": {
+              "near": 20,
+              "far": 40,
+              "culled": 340,
+              "fullTriangles": 139400,
+              "drawnTriangles": 12870
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "low-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 162,
+          "triangles": 1755886,
+          "geometries": 643,
+          "textures": 37,
+          "programs": 67,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            960,
+            540
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 170,
+              "far": 680,
+              "culled": 5550,
+              "fullTriangles": 2361600,
+              "drawnTriangles": 785856
+            },
+            "landscape": {
+              "near": 20,
+              "far": 56,
+              "culled": 324,
+              "fullTriangles": 139400,
+              "drawnTriangles": 15230
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n\n\n\u0000",
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    },
+    {
+      "mode": "touch-medium",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "world": {
+        "environment": {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 7090,
+          "visible": 1516,
+          "quality": "medium",
+          "bankRoots": 11
+        },
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/newengland/environment.glb",
+            "decodedBytes": 5832052
+          },
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "creek",
+          "file": "touch-medium-creek.jpg",
+          "pose": {
+            "x": -0.6322281185853278,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1992784716481877,
+            "pitch": -0.25,
+            "hour": 11
+          },
+          "calls": 587,
+          "triangles": 4412075,
+          "geometries": 683,
+          "textures": 41,
+          "programs": 74,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -0.6322281185853278,
+              2.6238826420331494,
+              12
+            ],
+            "rotation": [
+              -0.25,
+              -1.1992784716481877,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            844,
+            390
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 657,
+              "far": 1414,
+              "culled": 4329,
+              "fullTriangles": 4833600,
+              "drawnTriangles": 1946904
+            },
+            "landscape": {
+              "near": 108,
+              "far": 310,
+              "culled": 382,
+              "fullTriangles": 496800,
+              "drawnTriangles": 143736
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "touch-medium-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 359,
+          "triangles": 4187549,
+          "geometries": 719,
+          "textures": 41,
+          "programs": 76,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            844,
+            390
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 623,
+              "far": 1324,
+              "culled": 4453,
+              "fullTriangles": 4833600,
+              "drawnTriangles": 1912200
+            },
+            "landscape": {
+              "near": 128,
+              "far": 153,
+              "culled": 519,
+              "fullTriangles": 496800,
+              "drawnTriangles": 117076
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    }
+  ]
+}
