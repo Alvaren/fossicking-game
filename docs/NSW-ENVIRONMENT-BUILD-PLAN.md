@@ -53,7 +53,7 @@ Execution branch `codex/nsw-environment-fix`, base `aedeba5`. Work through all e
 - [x] FIX-05 / V06 — Balance sun/fill/materials and distant contrast at ordinary midday, then check weather/night.
 - [ ] FIX-06 / V07 — Add grounded inclusion/root/spoil detail tied to real exposed/dig surfaces, with invalidation as soil changes.
 - [ ] FIX-07 / V08 — Inspect all source/camp transitions, clean unobstructed captures, reverse views, three seeds and movement. Re-score honestly; leave remaining visual gaps open.
-- [ ] FIX-08 — Build, relevant interaction/save/fallback checks, publish owned ready work and verify Pages. No unrelated region art changes.
+- [x] FIX-08 — Build, relevant interaction/save/fallback checks, publish owned ready work and verify Pages. No unrelated region art changes.
 
 Correction status: FIX-01 has a rebuilt jointed kit and low connecting pieces, but the large formations/banks are still unconvincing. FIX-04 removes the repeating bright foam and improves the visible bed; margin/reflection balance remains open. FIX-06 adds surface-following stones/crumbs/root tips and restores actual excavated material colours, but spoil volume remains weak. FIX-07 has clean stills, three seeds and a separate normal-input clip; complete motion/approach acceptance remains open. [Delivered changes and remaining gaps](NSW-ENVIRONMENT-BUILD.md#correction-pass-after-the-reference-audit). Checked correction steps do not override the still-open visual rubric: all eight dimensions remain below target.
 

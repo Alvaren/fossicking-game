@@ -177,7 +177,13 @@ Full-frame medians: 887 calls / 17,159,343 submitted triangles including shadow/
 
 The separate [ordinary-input recording](audits/nsw-fix/walkthrough.webm) contains 43 seconds of original pointer-lock/WASD/mouse input after one initial placement, plus startup/title time. The route crosses the creek and returns towards camp; signed bank offsets are logged. [Native 1080p final still](audits/nsw-fix/high-1080-walk.jpg). Representative extracted frames were inspected; full temporal-art acceptance remains open. Do not infer absence of shimmer/popping from a few frames or the timing result.
 
-## Original implementation handoff
+## Correction publication and handoff
+
+Correction release: implementation `6ba554e` and evidence `9f24854` were fast-forwarded into clean main and pushed. [Pages run 38407938169](https://github.com/Alvaren/fossicking-game/actions/runs/38407938169) succeeded. The live `index-Bee88vN5.js` bundle and 5,663,244-byte GLB match the local build; SHA-256 `bb108f7fd9ebcc14963f25ffec916993879bee29342e23b53031e3f8ffa71ab0`. [Publication record](audits/nsw-fix/publication.json) and [public High desktop/touch checks](audits/nsw-fix/public-checks.txt). The public suite passes original tool input, desktop digging/save/reload and weather checks without page/console errors. Main and Claude were clean before integration; Claude's commits were already in main. Only Codex's 5191 preview was listening. A documentation-only follow-up records this verification, and its Pages deployment is checked before final handoff.
+
+Correction ownership: generator and its GLB/manifest; `src/newengland/{environment,composition,grounddetail,lighting,water}.js`; NSW-only branches in `environmentmaterials.js`, `rockmaterials.js` and `terrain.js`; one `landscape` argument in `main.js`; the regression-output path override in `tests/newengland.game.mjs`; linked art/checklist/collaboration docs and `docs/audits/nsw-fix/`. Branch `codex/nsw-environment-fix`, base `aedeba5`. No dependencies, controllers, save formats or other agents' work changed. Open art gates and unmeasured physical-phone performance remain as stated above.
+
+### Earlier implementation handoff
 
 Owned code: `src/newengland/`, the optional loader, ground/rock materials, terrain/excavation render adapters, narrow main-loop/settings hooks and foliage statistics. Owned art: the new Blender generator and its `public/models/newengland/` output. Owned checks/docs: the NSW tests/evidence, pointer-lock harness timing, offline-kit assertion and linked plans. No other agent was launched or messaged. Main and Claude were clean when inspected; final integration and deployment identifiers are recorded in the coordination handoff.
 

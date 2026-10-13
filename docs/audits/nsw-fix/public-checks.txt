@@ -1,0 +1,3 @@
+Running rocks.game.mjs
+new-england desktop high shadows/full gems: rock materials, rendering and original tool input passed without errors.
+new-england touch high shadows/full gems: rock materials, rendering and original tool input passed without errors.
