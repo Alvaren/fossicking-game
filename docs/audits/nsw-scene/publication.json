@@ -1,0 +1,51 @@
+{
+  "implementationCommit": "73b02f10bf5ae827d4a25b116a419e1599bdbac9",
+  "publishedHead": "117a5c616ac4f61650ccac11c1b79ce7329f82af",
+  "verifiedAt": "2026-10-14T02:21:09.661Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38500167021",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "546f54b976f69cb400d3560039a0af8e33eb1b06abc7746eed020bcf67105354",
+      "localSha256": "36851948b6071607ac9ab7af952307b34b8a60118763fb067ce241cb7bba0e50",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-LAWrUEBJ.js",
+      "bytes": 968727,
+      "sha256": "daeea80cb01d082cf9dff473b2d14cc4e8cb0e506f46a54f0a9e4cc000c1db87",
+      "localSha256": "daeea80cb01d082cf9dff473b2d14cc4e8cb0e506f46a54f0a9e4cc000c1db87",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "localSha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-Be0DsWP3.js",
+      "bytes": 316319,
+      "sha256": "6503cb83373fdf9e7e8e05b13dadc2a1846cf94c59338f056b55626b42e01b26",
+      "localSha256": "6503cb83373fdf9e7e8e05b13dadc2a1846cf94c59338f056b55626b42e01b26",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    }
+  ]
+}

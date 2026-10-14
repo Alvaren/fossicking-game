@@ -12,10 +12,13 @@ for(const path of files) {
   const local=await readFile('dist/'+path),response=await fetch(base+path+'?nsw-scene='+head);
   assert.equal(response.status,200,path);
   const remote=Buffer.from(await response.arrayBuffer());
-  assert.equal(sha(remote),sha(local),'Public bytes differ: '+path);
-  assets.push({path,bytes:remote.length,sha256:sha(remote)});
+  // Git checks HTML out with CRLF here and LF on the Pages Linux runner.
+  // Generated JS/CSS and the GLB must still be exactly byte-identical.
+  const canonical=bytes=>path.endsWith('.html')?Buffer.from(bytes.toString('utf8').replace(/\r/g,'')):bytes;
+  assert.equal(sha(canonical(remote)),sha(canonical(local)),'Public content differs: '+path);
+  assets.push({path,bytes:remote.length,sha256:sha(remote),localSha256:sha(local),comparison:path.endsWith('.html')?'CRLF/LF normalised':'byte-identical'});
 }
 const report={implementationCommit:'73b02f10bf5ae827d4a25b116a419e1599bdbac9',publishedHead:head,
   verifiedAt:new Date().toISOString(),url:base,pagesRun:`https://github.com/Alvaren/fossicking-game/actions/runs/${run}`,assets};
 await writeFile('docs/audits/nsw-scene/publication.json',JSON.stringify(report,null,2)+'\n');
-console.log(`Verified ${assets.length} public files against the tested build at ${head}.`);
+console.log(`Verified ${assets.length} public files against the tested build at ${head}; HTML line endings normalised.`);
