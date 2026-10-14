@@ -1,0 +1,20 @@
+Running newengland.game.mjs
+Seed 1: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 12345: art and live quality preserve the world; real trowel/save/reload passed.
+Seed 798887: art and live quality preserve the world; real trowel/save/reload passed.
+missing kit: original scenery and tool use retained.
+corrupt kit: original scenery and tool use retained.
+Running environment.game.mjs
+new-england-desktop-after: renders and original tool input passed; {"environments":["ground","ground","vegetation","vegetation","vegetation","vegetation","water","vegetation","vegetation","vegetation","vegetation"],"calls":298,"triangles":2115399,"shaders":[null,null,null,null,null,true,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+golden-triangle-desktop-after: renders and original tool input passed; {"environments":["ground","vegetation","vegetation","water","vegetation","vegetation","vegetation","vegetation","vegetation"],"calls":80,"triangles":1037471,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+qld-gemfields-desktop-after: renders and original tool input passed; {"environments":["ground","vegetation","vegetation","water","vegetation","vegetation","vegetation","vegetation"],"calls":150,"triangles":964182,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+tasmania-west-desktop-after: renders and original tool input passed; {"environments":["ground","water","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation"],"calls":29,"triangles":225653,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+ne-tasmania-desktop-after: renders and original tool input passed; {"environments":["ground","water","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation"],"calls":19,"triangles":180862,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+new-england-touch-after: renders and original tool input passed; {"environments":["ground","ground","vegetation","vegetation","vegetation","vegetation","water","vegetation","vegetation","vegetation","vegetation"],"calls":339,"triangles":2122138,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+ne-tasmania-touch-after: renders and original tool input passed; {"environments":["ground","water","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation"],"calls":20,"triangles":180898,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+Running shelter.game.mjs
+Desktop shelter progression, cash, capacity, model switching, reload and exactly-once dawn passed.
+Touch shelter progression, cash, capacity, model switching, reload and exactly-once dawn passed.
+Running facilities.game.mjs
+Desktop full facilities: purchases, live power, displays, kelpie, real input, reserved stone, reload and exactly-once crafted result passed.
+Touch full facilities: purchases, live power, displays, kelpie, real input, reserved stone, reload and exactly-once crafted result passed.

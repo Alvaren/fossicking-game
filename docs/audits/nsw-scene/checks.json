@@ -1,0 +1,44 @@
+{
+  "implementationCommit": "73b02f10bf5ae827d4a25b116a419e1599bdbac9",
+  "logicTests": 115,
+  "buildModules": 122,
+  "finalStills": 27,
+  "worldSeeds": [
+    1,
+    12345,
+    798887
+  ],
+  "normalDesktopLocations": [
+    "new-england",
+    "golden-triangle",
+    "qld-gemfields",
+    "wa-goldfields",
+    "coober-pedy",
+    "tasmania-west",
+    "ne-tasmania"
+  ],
+  "originalTouch": "passed",
+  "offline": [
+    "new-england desktop",
+    "ne-tasmania touch"
+  ],
+  "sourceHashes": {
+    "blender/build_newengland_environment.py": "a5f730ce6b644d55acacc3e7624c17b7f1be429b6663c9d444548f3a5bffe691",
+    "public/models/newengland/environment.glb": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+    "src/newengland/water.js": "f86c260caa57694c634bb87e4485fc4c93b505166260262b8d10382b9122495b",
+    "src/newengland/grounddetail.js": "baa9498a744199bdf3d8cb64dfccc0cf914f475dd973393a1eef407aed5de403",
+    "src/newengland/environment.js": "3e3fa950947e0a2bc22b4adece603bd5d42883c57b8b8e5ef26a90da814de4f8",
+    "src/newengland/composition.js": "ea7414aafe9cfdd0e597701fda6bfce2753f158e0e25682e762f7d53d3b0a0f8",
+    "src/newengland/bankroots.js": "fb5fd00bfc0fd8fce6083992a61bff824bc1f46f0b9b8f2b57427aa7720395ca",
+    "src/environmentmaterials.js": "601b2187f15ffe0b0189ebdea78fedbb41cfffad7e6a5b4528dc174463347bd1",
+    "src/newengland/landforms.js": "e06ca07d4bb9ca60871f747ab57792e7f1cb49eed8e0422f318bb03a5484bac8",
+    "src/newengland/groundcover.js": "f0f373669ed71cff47d5f2bbf3252809cb63a7c0df480f9a02f82d07cbbdbc0b",
+    "src/terrain.js": "3063180518ab9acef17973baf79d51e78e3cedbd73c01ad77af841fca1c9e1ce",
+    "src/excavation.js": "53b04b59f64157c3d489aa6a71d3ecfa400a8220bc2642d7f0a8c11d67be114d"
+  },
+  "limitations": [
+    "Camp/facility checks preceded final solid-model retention; final source/save/control checks followed it.",
+    "No physical-phone or sustained ten-minute performance certification.",
+    "Art implementation completion does not imply user visual sign-off."
+  ]
+}

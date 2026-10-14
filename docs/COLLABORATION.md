@@ -157,3 +157,12 @@ Branch `codex/nsw-creek-polish`, base `e779054`, implementation `09029c6`. Deliv
 Owned paths: `blender/build_newengland_environment.py`, `public/models/newengland/{environment.glb,manifest.json}`, `src/newengland/{environment,composition,water,grounddetail,bankroots}.js`, the NSW-only branch in `src/environmentmaterials.js`, `tests/newengland-{rocks,grounddetail}.test.js`, the three NSW environment plan/build/art docs, this guide and the new audit directory. No input, save format, dependency or other region recipe changed. Main and Claude were clean before integration; Claude's commits were already in main. No agents were launched or messaged. User publication authorization remains active; matching deployment/public verification is recorded in the build record after promotion.
 
 LF-01/03/04/05 and the full reference-quality gates remain unfinished. Continue large connected exposures/bank composition, broader ground and vegetation transitions, and real-looking excavation/spoil volume; do not treat this detail pass as completion. Codex's preview remains on 5191.
+
+
+## NSW scene pass — 14 October 2026
+
+Branch `codex/nsw-scene-completion`, base `5de1629`, implementation `73b02f1`. The user's selected four areas are implemented through connected source exposures, bank layers, coordinated ground/plant patches, real-cut spoil and wider camp/site composition. [Current evidence, checks, performance and limits](NSW-ENVIRONMENT-BUILD.md#four-area-scene-pass). The full art sign-off remains separate; B9 optimisation is deferred until that sign-off.
+
+Owned paths: `src/newengland/{landforms,groundcover,composition,environment,grounddetail}.js`, the NSW rendering branches in `src/{environmentmaterials,terrain,excavation}.js`, `tests/newengland-{landforms,grounddetail}.test.js`, `tests/newengland.game.mjs`, the three NSW environment plan/build/art docs, this guide and `docs/audits/nsw-scene/`. No GLB, generator, dependency, input, simulation yield or save-format changes. Main and Claude were clean at inspection; Claude's commits were already in main. No agent was launched or messaged. Codex preview remains on 5191.
+
+Retain the solid source models beneath removable connecting detail: hiding those models with an excavation would leave invisible original colliders. Hand patches must share the terrain's camp-colour uniform. Only completed, tested work is promoted under the standing publishing instruction; the delivery record contains the exact matching Pages result.

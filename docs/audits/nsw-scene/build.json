@@ -1,0 +1,1055 @@
+{
+  "baseCommit": "5de1629f6ad3982fb46d67b3298317070bc35ce2",
+  "branch": "codex/nsw-scene-completion",
+  "hashes": {
+    "blender/build_newengland_environment.py": "a5f730ce6b644d55acacc3e7624c17b7f1be429b6663c9d444548f3a5bffe691",
+    "public/models/newengland/environment.glb": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+    "src/newengland/water.js": "f86c260caa57694c634bb87e4485fc4c93b505166260262b8d10382b9122495b",
+    "src/newengland/grounddetail.js": "baa9498a744199bdf3d8cb64dfccc0cf914f475dd973393a1eef407aed5de403",
+    "src/newengland/environment.js": "3e3fa950947e0a2bc22b4adece603bd5d42883c57b8b8e5ef26a90da814de4f8",
+    "src/newengland/composition.js": "ea7414aafe9cfdd0e597701fda6bfce2753f158e0e25682e762f7d53d3b0a0f8",
+    "src/newengland/bankroots.js": "fb5fd00bfc0fd8fce6083992a61bff824bc1f46f0b9b8f2b57427aa7720395ca",
+    "src/environmentmaterials.js": "601b2187f15ffe0b0189ebdea78fedbb41cfffad7e6a5b4528dc174463347bd1",
+    "src/newengland/landforms.js": "e06ca07d4bb9ca60871f747ab57792e7f1cb49eed8e0422f318bb03a5484bac8",
+    "src/newengland/groundcover.js": "f0f373669ed71cff47d5f2bbf3252809cb63a7c0df480f9a02f82d07cbbdbc0b",
+    "src/terrain.js": "3063180518ab9acef17973baf79d51e78e3cedbd73c01ad77af841fca1c9e1ce",
+    "src/excavation.js": "53b04b59f64157c3d489aa6a71d3ecfa400a8220bc2642d7f0a8c11d67be114d"
+  },
+  "seed": 12345,
+  "candidateModelSha256": null,
+  "method": "Disposable Chromium contexts; direct camera relocation at normal player eye height. Explicit world render counters include renderer passes, exclude held-tool overlay. Not device FPS or a playthrough.",
+  "cases": [
+    {
+      "mode": "high",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "selectedTool": "shovel",
+      "campFixture": {
+        "shelter": "swag"
+      },
+      "world": {
+        "environment": {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 12104,
+          "visible": 6994,
+          "quality": "high",
+          "solidRocks": 726,
+          "landformPatches": 107,
+          "bankRoots": 11
+        },
+        "camp": {
+          "x": 16.44609667815398,
+          "z": 0,
+          "y": 1.5056387267472393
+        },
+        "sources": {
+          "reef": {
+            "x": -41.15242070679212,
+            "z": 36.61508871242404,
+            "ex": -22.702663200887955,
+            "ez": 36.61508871242404,
+            "side": -1,
+            "entryZ": 36.61508871242404
+          },
+          "basalt": {
+            "x": 53.42441967607242,
+            "z": 55.511059667915106,
+            "ex": 34.55409576774029,
+            "ez": 55.511059667915106,
+            "side": 1,
+            "entryZ": 55.511059667915106
+          },
+          "rhyolite": {
+            "x": 38.159746063176456,
+            "z": -3.1338942423462868,
+            "ex": 23.819249006055983,
+            "ez": -3.1338942423462868,
+            "side": 1,
+            "entryZ": -3.1338942423462868
+          },
+          "granite": {
+            "x": 2.2887093622497545,
+            "z": -86.65572614083067,
+            "ex": -10.991643216224244,
+            "ez": -86.65572614083067,
+            "side": 1,
+            "entryZ": -86.65572614083067
+          },
+          "opal": {
+            "x": -47.89928629817774,
+            "z": -26.476476832758635,
+            "ex": -30.327298568933234,
+            "ez": -26.476476832758635,
+            "side": -1,
+            "entryZ": -26.476476832758635
+          },
+          "fossil": {
+            "x": 24.26265190553501,
+            "z": -48.36688445415348,
+            "ex": 9.12098268575233,
+            "ez": -48.36688445415348,
+            "side": 1,
+            "entryZ": -48.36688445415348
+          },
+          "mine": {
+            "x": -30.73044635701381,
+            "z": 40.44465562261785
+          }
+        },
+        "landmarks": [
+          {
+            "name": "Split gum bend",
+            "x": -5.650941338885408,
+            "z": 38.8
+          },
+          {
+            "name": "Granite shoulder",
+            "x": -37.575533226890364,
+            "z": -74
+          }
+        ],
+        "modelAssets": [
+          {
+            "url": "/models/newengland/environment.glb",
+            "decodedBytes": 5832052
+          },
+          {
+            "url": "/models/finds.glb",
+            "decodedBytes": 200048
+          },
+          {
+            "url": "/models/crystals.glb",
+            "decodedBytes": 22296
+          },
+          {
+            "url": "/models/rock_pick.glb",
+            "decodedBytes": 8084
+          },
+          {
+            "url": "/models/trowel.glb",
+            "decodedBytes": 10596
+          },
+          {
+            "url": "/models/brush.glb",
+            "decodedBytes": 12108
+          },
+          {
+            "url": "/models/glove.glb",
+            "decodedBytes": 115476
+          },
+          {
+            "url": "/models/detector.glb",
+            "decodedBytes": 186528
+          },
+          {
+            "url": "/models/gold_pan.glb",
+            "decodedBytes": 33232
+          },
+          {
+            "url": "/models/gem_sieve.glb",
+            "decodedBytes": 94816
+          },
+          {
+            "url": "/models/sluice.glb",
+            "decodedBytes": 21940
+          },
+          {
+            "url": "/models/ute.glb",
+            "decodedBytes": 84316
+          },
+          {
+            "url": "/models/tent.glb",
+            "decodedBytes": 11144
+          },
+          {
+            "url": "/models/kangaroo.glb",
+            "decodedBytes": 71812
+          }
+        ]
+      },
+      "shots": [
+        {
+          "view": "reef",
+          "file": "high-reef.jpg",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "target": {
+              "x": -41.15242070679212,
+              "z": 36.61508871242404
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 702,
+          "triangles": 6856278,
+          "geometries": 713,
+          "textures": 27,
+          "programs": 132,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -34.15242070679212,
+              8.044813820938188,
+              44.61508871242404
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 622,
+              "far": 1451,
+              "culled": 4327,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2737824
+            },
+            "landscape": {
+              "near": 139,
+              "far": 200,
+              "culled": 461,
+              "fullTriangles": 730800,
+              "drawnTriangles": 186430
+            }
+          }
+        },
+        {
+          "view": "reef-close",
+          "file": "high-reef-close.jpg",
+          "pose": {
+            "x": -38.15242070679212,
+            "z": 40.61508871242404,
+            "target": {
+              "x": -41.15242070679212,
+              "z": 36.61508871242404
+            },
+            "yaw": 0.6435011087932844,
+            "pitch": -0.28,
+            "hour": 11
+          },
+          "calls": 685,
+          "triangles": 6913585,
+          "geometries": 717,
+          "textures": 27,
+          "programs": 132,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -38.15242070679212,
+              8.383465573260665,
+              40.61508871242404
+            ],
+            "rotation": [
+              -0.28,
+              0.6435011087932844,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 655,
+              "far": 1435,
+              "culled": 4310,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2766016
+            },
+            "landscape": {
+              "near": 133,
+              "far": 222,
+              "culled": 445,
+              "fullTriangles": 730800,
+              "drawnTriangles": 186670
+            }
+          }
+        },
+        {
+          "view": "granite",
+          "file": "high-granite.jpg",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "target": {
+              "x": 2.2887093622497545,
+              "z": -86.65572614083067
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 380,
+          "triangles": 6354417,
+          "geometries": 768,
+          "textures": 27,
+          "programs": 135,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              9.288709362249755,
+              5.700024211432339,
+              -78.65572614083067
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 582,
+              "far": 1340,
+              "culled": 4478,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2678624
+            },
+            "landscape": {
+              "near": 112,
+              "far": 160,
+              "culled": 528,
+              "fullTriangles": 730800,
+              "drawnTriangles": 149432
+            }
+          }
+        },
+        {
+          "view": "basalt",
+          "file": "high-basalt.jpg",
+          "pose": {
+            "x": 60.42441967607242,
+            "z": 63.511059667915106,
+            "target": {
+              "x": 53.42441967607242,
+              "z": 55.511059667915106
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 1211,
+          "triangles": 5996751,
+          "geometries": 825,
+          "textures": 45,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              60.42441967607242,
+              8.12941173455457,
+              63.511059667915106
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 624,
+              "far": 1402,
+              "culled": 4374,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2402456
+            },
+            "landscape": {
+              "near": 161,
+              "far": 111,
+              "culled": 528,
+              "fullTriangles": 730800,
+              "drawnTriangles": 180900
+            }
+          }
+        },
+        {
+          "view": "rhyolite",
+          "file": "high-rhyolite.jpg",
+          "pose": {
+            "x": 45.159746063176456,
+            "z": 4.866105757653713,
+            "target": {
+              "x": 38.159746063176456,
+              "z": -3.1338942423462868
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 903,
+          "triangles": 6435944,
+          "geometries": 825,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              45.159746063176456,
+              8.589104668743055,
+              4.866105757653713
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 673,
+              "far": 1440,
+              "culled": 4287,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2520552
+            },
+            "landscape": {
+              "near": 140,
+              "far": 224,
+              "culled": 436,
+              "fullTriangles": 730800,
+              "drawnTriangles": 193858
+            }
+          }
+        },
+        {
+          "view": "fossil",
+          "file": "high-fossil.jpg",
+          "pose": {
+            "x": 31.26265190553501,
+            "z": -40.36688445415348,
+            "target": {
+              "x": 24.26265190553501,
+              "z": -48.36688445415348
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 602,
+          "triangles": 6779351,
+          "geometries": 825,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              31.26265190553501,
+              6.760641052395814,
+              -40.36688445415348
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 652,
+              "far": 1466,
+              "culled": 4282,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2627684
+            },
+            "landscape": {
+              "near": 164,
+              "far": 182,
+              "culled": 454,
+              "fullTriangles": 730800,
+              "drawnTriangles": 203064
+            }
+          }
+        },
+        {
+          "view": "opal",
+          "file": "high-opal.jpg",
+          "pose": {
+            "x": -40.89928629817774,
+            "z": -18.476476832758635,
+            "target": {
+              "x": -47.89928629817774,
+              "z": -26.476476832758635
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 420,
+          "triangles": 7097445,
+          "geometries": 825,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -40.89928629817774,
+              7.105912855955815,
+              -18.476476832758635
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 638,
+              "far": 1389,
+              "culled": 4373,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2815648
+            },
+            "landscape": {
+              "near": 150,
+              "far": 221,
+              "culled": 429,
+              "fullTriangles": 730800,
+              "drawnTriangles": 203042
+            }
+          }
+        },
+        {
+          "view": "mine",
+          "file": "high-mine.jpg",
+          "pose": {
+            "x": -23.73044635701381,
+            "z": 48.44465562261785,
+            "target": {
+              "x": -30.73044635701381,
+              "z": 40.44465562261785
+            },
+            "yaw": 0.7188299996216245,
+            "pitch": -0.16,
+            "hour": 11
+          },
+          "calls": 880,
+          "triangles": 7084958,
+          "geometries": 826,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -23.73044635701381,
+              5.9525353121294025,
+              48.44465562261785
+            ],
+            "rotation": [
+              -0.16,
+              0.7188299996216245,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 621,
+              "far": 1480,
+              "culled": 4299,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2813220
+            },
+            "landscape": {
+              "near": 144,
+              "far": 195,
+              "culled": 461,
+              "fullTriangles": 730800,
+              "drawnTriangles": 189146
+            }
+          }
+        },
+        {
+          "view": "camp",
+          "file": "high-camp.jpg",
+          "pose": {
+            "x": 23.44609667815398,
+            "z": 7,
+            "target": {
+              "x": 16.44609667815398,
+              "z": 0
+            },
+            "yaw": 0.7853981633974483,
+            "pitch": -0.12,
+            "hour": 11
+          },
+          "calls": 898,
+          "triangles": 7385561,
+          "geometries": 826,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              23.44609667815398,
+              3.7094849550053763,
+              7
+            ],
+            "rotation": [
+              -0.12,
+              0.7853981633974483,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 667,
+              "far": 1451,
+              "culled": 4282,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2781036
+            },
+            "landscape": {
+              "near": 116,
+              "far": 274,
+              "culled": 410,
+              "fullTriangles": 730800,
+              "drawnTriangles": 187008
+            }
+          }
+        },
+        {
+          "view": "camp-approach",
+          "file": "high-camp-approach.jpg",
+          "pose": {
+            "x": 33.44609667815398,
+            "z": 18,
+            "target": {
+              "x": 16.44609667815398,
+              "z": 0
+            },
+            "yaw": 0.7568345055586883,
+            "pitch": -0.12,
+            "hour": 11
+          },
+          "calls": 912,
+          "triangles": 7159438,
+          "geometries": 826,
+          "textures": 46,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              33.44609667815398,
+              6.014670222909366,
+              18
+            ],
+            "rotation": [
+              -0.12,
+              0.7568345055586883,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 692,
+              "far": 1418,
+              "culled": 4290,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2742956
+            },
+            "landscape": {
+              "near": 139,
+              "far": 244,
+              "culled": 417,
+              "fullTriangles": 730800,
+              "drawnTriangles": 198690
+            }
+          }
+        },
+        {
+          "view": "upstream",
+          "file": "high-upstream.jpg",
+          "pose": {
+            "x": -0.9832096445145311,
+            "z": 24,
+            "target": {
+              "x": 4.626146069522042,
+              "z": 38
+            },
+            "yaw": -2.760510318496961,
+            "pitch": -0.15,
+            "hour": 11
+          },
+          "calls": 497,
+          "triangles": 7426321,
+          "geometries": 829,
+          "textures": 48,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              -0.9832096445145311,
+              2.6786673434952135,
+              24
+            ],
+            "rotation": [
+              -0.15,
+              -2.760510318496961,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 636,
+              "far": 1469,
+              "culled": 4295,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2837100
+            },
+            "landscape": {
+              "near": 95,
+              "far": 297,
+              "culled": 408,
+              "fullTriangles": 730800,
+              "drawnTriangles": 174628
+            }
+          }
+        },
+        {
+          "view": "reverse",
+          "file": "high-reverse.jpg",
+          "pose": {
+            "x": 10.235501783558615,
+            "z": 24,
+            "target": {
+              "x": 4.626146069522042,
+              "z": 38
+            },
+            "yaw": 2.760510318496961,
+            "pitch": -0.15,
+            "hour": 11
+          },
+          "calls": 534,
+          "triangles": 7599165,
+          "geometries": 829,
+          "textures": 48,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              10.235501783558615,
+              2.7037138517465182,
+              24
+            ],
+            "rotation": [
+              -0.15,
+              2.760510318496961,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 655,
+              "far": 1450,
+              "culled": 4295,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2861332
+            },
+            "landscape": {
+              "near": 99,
+              "far": 297,
+              "culled": 404,
+              "fullTriangles": 730800,
+              "drawnTriangles": 178282
+            }
+          }
+        },
+        {
+          "view": "bank",
+          "file": "high-bank.jpg",
+          "pose": {
+            "x": 0.7677718814146722,
+            "z": 12,
+            "target": {
+              "x": 7.067771881414672,
+              "z": 9
+            },
+            "yaw": -1.1263771168937977,
+            "pitch": -0.75,
+            "hour": 11
+          },
+          "calls": 362,
+          "triangles": 7471927,
+          "geometries": 829,
+          "textures": 48,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              0.7677718814146722,
+              2.0763625347607313,
+              12
+            ],
+            "rotation": [
+              -0.75,
+              -1.1263771168937977,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 653,
+              "far": 1459,
+              "culled": 4288,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2892928
+            },
+            "landscape": {
+              "near": 105,
+              "far": 305,
+              "culled": 390,
+              "fullTriangles": 730800,
+              "drawnTriangles": 185710
+            }
+          }
+        },
+        {
+          "view": "dig",
+          "file": "high-dig.jpg",
+          "pose": {
+            "x": 36.246096678153975,
+            "z": 21.8,
+            "target": {
+              "x": 34.44609667815398,
+              "z": 20
+            },
+            "yaw": 0.7853981633974473,
+            "pitch": -0.65,
+            "hour": 11
+          },
+          "calls": 683,
+          "triangles": 7103262,
+          "geometries": 830,
+          "textures": 48,
+          "programs": 145,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              36.246096678153975,
+              6.97565595920957,
+              21.8
+            ],
+            "rotation": [
+              -0.65,
+              0.7853981633974473,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 667,
+              "far": 1434,
+              "culled": 4299,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2737764
+            },
+            "landscape": {
+              "near": 148,
+              "far": 222,
+              "culled": 430,
+              "fullTriangles": 730800,
+              "drawnTriangles": 200926
+            }
+          }
+        },
+        {
+          "view": "hand-dig",
+          "file": "high-hand-dig.jpg",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "target": {
+              "x": 38.44609667815398,
+              "z": 20
+            },
+            "yaw": 0.7853981633974473,
+            "pitch": -0.65,
+            "hour": 11
+          },
+          "calls": 295,
+          "triangles": 6895217,
+          "geometries": 885,
+          "textures": 48,
+          "programs": 147,
+          "tool": "shovel",
+          "camera": {
+            "position": [
+              40.61782106690084,
+              7.364651125134044,
+              21.86782106690084
+            ],
+            "rotation": [
+              -0.95,
+              0.7853981633974473,
+              0,
+              "YXZ"
+            ],
+            "fov": 70
+          },
+          "drawingBuffer": [
+            1280,
+            720
+          ],
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "terrainTriangles": 627200,
+          "shaderFailures": 0,
+          "lod": {
+            "world": {
+              "near": 671,
+              "far": 1435,
+              "culled": 4294,
+              "fullTriangles": 7665600,
+              "drawnTriangles": 2697132
+            },
+            "landscape": {
+              "near": 156,
+              "far": 216,
+              "culled": 428,
+              "fullTriangles": 730800,
+              "drawnTriangles": 206816
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n\n\n\u0000",
+        "THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    }
+  ],
+  "implementationCommit": "73b02f10bf5ae827d4a25b116a419e1599bdbac9"
+}

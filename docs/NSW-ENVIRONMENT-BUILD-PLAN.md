@@ -2,7 +2,7 @@
 
 Date: 13 October 2026 (Australia/Brisbane). Owner: Codex. Plan base: `2a319467be058cce5425fdd1041f1c10c8b7058e`.
 
-Read the [audit and baseline evidence](NSW-ENVIRONMENT-AUDIT.md) first, then the [direct comparison of all six references with the published build](NSW-ENVIRONMENT-BUILD.md#direct-reference-comparison-audit). This document is the durable task list for bringing **the existing New England, NSW map** toward those references. The first implementation is recorded in [NSW-ENVIRONMENT-BUILD.md](NSW-ENVIRONMENT-BUILD.md), with its art contract and before/after evidence. The kit, regional rendering and first creek dressing are implemented; the complete scene/reference-quality gate and whole-map rollout remain open. The direct review withdraws the earlier visual passes for grounding, vegetation, water and close-up work. Checked technical items do not certify visual acceptance.
+Read the [audit and baseline evidence](NSW-ENVIRONMENT-AUDIT.md) first, then the [direct comparison of all six references with the published build](NSW-ENVIRONMENT-BUILD.md#direct-reference-comparison-audit). This document is the durable task list for bringing **the existing New England, NSW map** toward those references. The first implementation is recorded in [NSW-ENVIRONMENT-BUILD.md](NSW-ENVIRONMENT-BUILD.md), with its art contract and before/after evidence. The kit and regional rendering are implemented; SC-01..05 below extend the treatment across the existing claim. The complete scene/reference-quality gate remains open for visual review. The direct review withdraws the earlier visual passes for grounding, vegetation, water and close-up work. Checked technical items do not certify visual acceptance.
 
 ## Quality target and scope
 
@@ -41,6 +41,19 @@ For each substantial delivery: record branch/base, owned paths, implementation r
 - [x] AUD-07 — Write the audit, asset schedule, dependency order, acceptance gates, compatibility strategy and release checklist in the repository.
 
 ## Build sequence and dependencies
+
+### Four-area scene completion — 14 October 2026
+
+User-authorised continuation on `codex/nsw-scene-completion`, base `5de1629`. Complete the four outstanding areas selected in the conversation. B9 remains deferred until sign-off. Preserve authoritative terrain, collision footprints, source/find IDs, saved work and shared input.
+
+- [x] SC-01 — Connect existing reef and other source rocks through grounded exposed bedrock; improve tor grounding and remove conspicuous repeated isolated arrangements. Keep all working surfaces accessible.
+- [x] SC-02 — Give actual creek banks irregular layered faces and gravel/root contacts, tied to current terrain and withdrawn where excavated. Inspect both banks and multiple reaches.
+- [x] SC-03 — Compose broader grass/understorey/litter/soil transitions through woodland and source approaches, with readable bare ground and full camp-upgrade clearance.
+- [x] SC-04 — Add convincing exposed soil layers and grouped disturbed spoil from actual removed depth, preserving finds, digging/reload and the original material/reward simulation.
+- [x] SC-05 — Carry the treatment around camp, the mine and between existing sites. Check starter and upgraded camps, all source families, forward/reverse views and three seeds.
+- [ ] SC-06 — Capture and inspect the four areas against the supplied references, validate meaningful geometry/save/input/quality/fallback/offline behaviour, then publish tested changes and record any remaining limitation without treating tests as art sign-off.
+
+SC-01..05 implementation: `73b02f1`; [matched screenshots and explicit visual limits](NSW-ENVIRONMENT-BUILD.md#four-area-scene-pass). Checked implementation items do not mark the full reference rubric or user sign-off complete. Verification/publication is tracked by SC-06.
 
 ### Landform completion pass — 14 October 2026
 
@@ -90,7 +103,7 @@ Correction status: FIX-01 has a rebuilt jointed kit and low connecting pieces, b
 | B3 | Complete first creek scene plus reef/granite checks | B2 | Reference-comparable playable views, honest movement clip, preserved access |
 | B4 | Integrated lighting, water and atmosphere finish | B3; experiments may begin during B2 | Scene works at noon, dawn, night and in rain; no unstable effect shortcuts |
 | B5 | Whole New England claim rollout | B3+B4 visual gate | Every existing surface area and approach follows the same standard |
-| B6 | Explicit quality controls and measured optimisation | High-quality scene established; profiling begins early | Same world across presets, measured hardware results and documented tradeoffs |
+| B6 | Quality controls and performance checks | Continue compatibility measurements during the art build; systematic optimisation waits for B9 | Same world across presets, measured hardware results and documented tradeoffs |
 | B7 | Gameplay/save/offline/cross-region regression | B5+B6 | Acceptance matrix complete; no unexamined integration regressions |
 | B8 | Final review, main integration and deployment | All required gates | Published build verified, remaining limitations stated |
 
@@ -330,5 +343,9 @@ The first command writes the initial report and 15 screenshots. The supplement a
 | 13 October 2026 | Correction pass `6ba554e` on `codex/nsw-environment-fix`, base `aedeba5` | Corrections across V01..V08, 42 revised assets, original-data-preserving composition/detail, plant/foam fixes and actual cut-material colour. [Current evidence and unfinished art](NSW-ENVIRONMENT-BUILD.md#correction-pass-after-the-reference-audit). All eight still-image dimensions remain below reference; completed corrective work does not close those gates. |
 | 14 October 2026 | Intact-rock repair `0b36e4b`, then creek continuation `09029c6` | Published repaired rock topology, compound host shapes, grounded roots, water and cut detail. 111 current tests, matched evidence, world/save/fallback/desktop/touch/offline checks and public Pages verification pass. [Continuation evidence](NSW-ENVIRONMENT-BUILD.md#creek-and-exposed-ground-continuation). LF-01/03/04/05 and whole-scene acceptance remain open. |
 | 14 October 2026 | User-requested optimisation planning, branch `codex/nsw-optimisation-plan`, base `63fb4df` | Added B9-01..09 for post-sign-off CPU/GPU optimisation, with fixed visual/gameplay requirements, profiling, measurable savings and regression evidence. Linked deferred B6 optimisation tasks to that phase. Documentation only; no optimisation or game changes performed. |
+| 14 October 2026 | Four-area scene implementation `73b02f1`, branch `codex/nsw-scene-completion`, base `5de1629` | SC-01..05 implemented across original sites and camp. 27 final stills, normal-input video, 115 logic/asset tests, build, three-seed world/save/fallback, seven-region normal controls/touch, camp and offline checks. [Evidence, frame costs and visual limits](NSW-ENVIRONMENT-BUILD.md#four-area-scene-pass). SC-06 publication verification follows. B9 remains deferred. |
 
-**Next build task:** V01/V02 remain first: compose the large bank/rock forms and connected reef/granite assemblies at existing sites. The correction improves the kit, debris, plants, foam and cut materials, but still does not meet the reference in any complete rubric dimension. Do not equate wider dressing coverage or more triangles with completed composition. Finish the first-scene art gate before further B5 rollout; then resolve broad ground transitions, reflection/margins and excavation/spoil volume. Hardware results and remaining coverage are in the delivery record.
+**Previous ordering (superseded by SC-01..06 above):** V01/V02 remained first: compose the large bank/rock forms and connected reef/granite assemblies at existing sites. The correction improves the kit, debris, plants, foam and cut materials, but still does not meet the reference in any complete rubric dimension. Do not equate wider dressing coverage or more triangles with completed composition. Finish the first-scene art gate before further B5 rollout; then resolve broad ground transitions, reflection/margins and excavation/spoil volume. Hardware results and remaining coverage are in the delivery record.
+
+
+**Current next step:** review the four-area scene pass against the supplied references using the linked final captures and the live build. Preserve its tested world/input/save contracts. The complete visual gate remains open; B9 starts only after user sign-off, with the recorded CPU/GPU costs as evidence rather than a promise of universal device performance.

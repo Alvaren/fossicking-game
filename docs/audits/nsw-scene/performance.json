@@ -1,0 +1,154 @@
+{
+  "date": "2026-10-14",
+  "method": "1920\u00d71080 Chromium/D3D11, High, real desktop GPU. Scripted camera route (duration recorded below); first 15 seconds warm-up excluded. An ordinary-input clip is optional and is recorded only when NSW_PROFILE_ONLY is unset. Desktop headless results are not phone results.",
+  "walk": {
+    "inputSeconds": 43,
+    "method": "One initial placement, then original normal-URL pointer lock, held WASD and mouse events. Video also contains loading/title time. No photo filters.",
+    "path": [
+      {
+        "x": -0.9511346885929183,
+        "z": 25.46443447561875,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": 5.617201488656023,
+        "halfWidth": 3.991188001967143
+      },
+      {
+        "x": 20.846621574630404,
+        "z": 25.680349141395915,
+        "yaw": 3.141592653589793,
+        "tool": "shovel",
+        "bankOffset": -16.16631120807038,
+        "halfWidth": 3.9978632679580963
+      },
+      {
+        "x": 21.003621140517975,
+        "z": 25.680349141395915,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -16.323251416761345,
+        "halfWidth": 3.9978632679580963
+      },
+      {
+        "x": 28.13570942361907,
+        "z": 4.858245524421077,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -24.556749119061084,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 5.574685838013505,
+        "z": -4.122753175655294,
+        "yaw": 2.811592653589792,
+        "tool": "shovel",
+        "bankOffset": -3.3850708287161915,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 5.427111324531766,
+        "z": -4.173301116336436,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": -3.248420773273166,
+        "halfWidth": 2.7
+      },
+      {
+        "x": 1.4439275952235435,
+        "z": 7.455588073610848,
+        "yaw": 2.8115926535897913,
+        "tool": "shovel",
+        "bankOffset": 2.2406677070472667,
+        "halfWidth": 2.7
+      }
+    ],
+    "errors": []
+  },
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ]
+  },
+  "profile": {
+    "warmupSeconds": 15,
+    "measuredSeconds": 60,
+    "frames": 3531,
+    "frameMs": {
+      "median": 16.69999999999709,
+      "p95": 16.799999999999272
+    },
+    "cpuMs": {
+      "median": 11.699999988079071,
+      "p95": 17.700000047683716
+    },
+    "gpuMs": {
+      "median": 8.945664,
+      "p95": 12.278784,
+      "samples": 118
+    },
+    "fullFrame": {
+      "medianCalls": 969,
+      "medianTriangles": 18831881
+    },
+    "memory": [
+      {
+        "age": 0.01430000001192093,
+        "heap": 149452266,
+        "geometries": 735,
+        "textures": 32
+      },
+      {
+        "age": 10.022,
+        "heap": 149047474,
+        "geometries": 745,
+        "textures": 32
+      },
+      {
+        "age": 20.155100000023843,
+        "heap": 155143459,
+        "geometries": 745,
+        "textures": 33
+      },
+      {
+        "age": 30.15460000002384,
+        "heap": 183106215,
+        "geometries": 745,
+        "textures": 33
+      },
+      {
+        "age": 40.171,
+        "heap": 182480719,
+        "geometries": 747,
+        "textures": 34
+      },
+      {
+        "age": 50.3375,
+        "heap": 199870783,
+        "geometries": 747,
+        "textures": 35
+      },
+      {
+        "age": 60.486400000035765,
+        "heap": 188942705,
+        "geometries": 747,
+        "textures": 35
+      },
+      {
+        "age": 70.48670000004769,
+        "heap": 216659377,
+        "geometries": 747,
+        "textures": 35
+      }
+    ],
+    "errors": []
+  },
+  "implementationCommit": "73b02f10bf5ae827d4a25b116a419e1599bdbac9"
+}

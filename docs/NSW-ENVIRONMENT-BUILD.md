@@ -252,3 +252,47 @@ Next substantial task: connect the reef and bank composition at the existing sit
 ### Continuation publication
 
 Implementation `09029c6` and evidence `4b7059a` were fast-forwarded into clean main and pushed. [Pages run 38424011662](https://github.com/Alvaren/fossicking-game/actions/runs/38424011662) succeeded. Public `index-Uxx-wkVW.js` is byte-identical to the tested local bundle; the 5,832,052-byte public model is also identical (SHA-256 `4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7`). [Publication record](audits/nsw-creek-polish/publication.json), [public High desktop/touch checks](audits/nsw-creek-polish/public-checks.txt). Those public checks passed rendering, original input and desktop dig/save/reload/weather checks with no page/console errors. Main and Claude were clean before promotion, and Claude had no unintegrated commits. A documentation-only follow-up records this result; its matching Pages deployment is verified before final handoff.
+
+
+## Four-area scene pass
+
+14 October 2026. Branch `codex/nsw-scene-completion`, base `5de1629`, implementation `73b02f1`. This pass implements the four areas the user selected: connected rocks/banks, ground and plant transitions, exposed soil/spoil, and the surroundings of camp and existing sites. It does not constitute user sign-off of the entire reference-quality environment or start B9 optimisation.
+
+| Requested area | Result | Review evidence |
+| --- | --- | --- |
+| Connected outcrops and natural bank contacts | Reef, basalt and rhyolite gain shared exposed surfaces where their existing rock footprints overlap, with buried boundaries and continuous reef quartz. Granite contacts are fuller and faceted. Banks have interrupted soil layers/rills meeting existing roots and gravel. | [Reef](audits/nsw-scene/high-reef.jpg), [close reef](audits/nsw-scene/high-reef-close.jpg), [basalt](audits/nsw-scene/high-basalt.jpg), [rhyolite](audits/nsw-scene/high-rhyolite.jpg), [granite](audits/nsw-scene/high-granite.jpg), [upstream](audits/nsw-scene/high-upstream.jpg), [reverse bank](audits/nsw-scene/high-reverse.jpg) |
+| Ground and vegetation transitions | Plant islands and ground colour use the same broad pattern; larger tree-associated clumps, litter/branches and a worn clearing connect the woodland and camp approaches. Open sampling ground remains legible. | [Starter camp approach](audits/nsw-scene/high-camp-approach.jpg), [fossil approach](audits/nsw-scene/high-fossil.jpg), [opal workings](audits/nsw-scene/high-opal.jpg), [mine approach](audits/nsw-scene/high-mine.jpg) |
+| Exposed soil and spoil | Shovel terrain and hand patches shade actual removed depth/topsoil/bedrock. Irregular small spoil lobes, clods and inclusions follow real cuts and avoid unrecovered crystals. The ground rebuilds correctly from saved excavation. | [Shovel cut](audits/nsw-scene/high-dig.jpg), [real held-input trowel cut](audits/nsw-scene/high-hand-dig.jpg) |
+| Camp and between-site consistency | The regional treatment extends through the existing claim, around both starter and fully upgraded camp. The full camp reserve and existing activity/entrance clearances remain open. | [Starter camp](audits/nsw-scene/high-camp.jpg), [upgraded camp approach](audits/nsw-scene/upgraded-camp/high-camp-approach.jpg), all source approaches above |
+
+The connecting surfaces are rendering detail over the existing world. **Every solid source rock retains its model and collider**, including when a nearby excavation removes connecting detail. The original source instance matrices, collision lists, find/deposit IDs, terrain heights and saved data remain authoritative. Cut boundaries close into the ground; open sampled edges are explicitly regression-tested. The separate repaired GLB remains unchanged: 42 assets, 23 closed rock prototypes, 5,832,052 bytes, SHA-256 `4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7`.
+
+### Scene verification and limits
+
+Evidence in `docs/audits/nsw-scene/` is separate from all previous audits. Capture scripts record poses, source/model hashes, quality, renderer counts, errors and shader failures. Stills use direct camera relocation in disposable contexts. The shovel still uses direct terrain edits; the hand-dig still uses the original held mouse action. Starter screenshots use a swag fixture; the populated camp fixture has a shed and all existing facilities. Discovery/tool hints remain uncropped. The upgraded close view is partly occluded by the existing buildings; the wider approach shows the whole arrangement.
+
+The four areas are materially improved, but the supplied references remain the art target. The old granite distribution is still stacked; retained fossil slabs, headframes and camp buildings remain simple models. The creek still has strong reflections and visible streaks, and its underlying bank profile has not been regenerated. Excavation retains the original rounded heightfield profile; the new spoil is small render-only volume, not a deep cross-section or a new soil simulation. These are explicit limits, not reasons to mark the full visual rubric accepted. No other location recipe, controller, save format, dependency or reward calculation was changed.
+
+There are **27 final stills**: 15 principal High views, four Low/touch views, two fully upgraded camp views, two each for seeds 1 and 798887, and two storm/night views. All six metadata reports match the final source/model hashes, with zero recorded page/console errors and zero failed shader programs. The night view continues the storm fixture. [Metadata](audits/nsw-scene/build.json), [quality](audits/nsw-scene/quality/build.json), [upgraded camp](audits/nsw-scene/upgraded-camp/build.json), [seed 1](audits/nsw-scene/seed-1/build.json), [seed 798887](audits/nsw-scene/seed-798887/build.json), [weather](audits/nsw-scene/weather/build.json).
+
+[Normal-input walkthrough](audits/nsw-scene/walkthrough.webm): 43 seconds of actual pointer lock, mouse and WASD input after one initial placement, on the normal URL. It is an additional movement check, not a whole-map playthrough or a complete temporal-art sign-off. No recorded page/console errors. [Final walking view](audits/nsw-scene/high-1080-walk.jpg).
+
+[Final desktop profile](audits/nsw-scene/performance.json): RTX 3090, Chromium 151 / ANGLE D3D11, High, actual 1920×1080 buffer; 60 measured seconds after 15 seconds of warm-up, 3,531 frames, 118 GPU samples and no recorded errors.
+
+| Measurement | Median | 95th percentile |
+| --- | --- | --- |
+| Frame interval | 16.7 ms | 16.8 ms |
+| CPU frame callback | 11.7 ms | 17.7 ms |
+| GPU timer query | 8.95 ms | 12.28 ms |
+
+Median full-frame submission is 969 calls / 18,831,881 triangles, including extra passes. The preceding creek continuation recorded 822 calls / 16,217,385 triangles and GPU 8.42/11.93 ms: the new detail adds rendering work. The lower CPU result in this short run is **not an optimisation claim**. Geometry/texture counts rise from 735/32 to 747/35 as assets appear; heap readings vary from about 149 to 217 MB. This is not a long-session leak, thermal or physical-phone certification. B9 remains deferred and requires repeatable sustained comparisons after visual sign-off.
+
+Final checks:
+
+- **115 logic/asset tests pass** and the 122-module production build passes. Boundary-closure tests prevent sampled rock cuts; spoil tests require real adjacent removed soil, bounded height and crystal clearance. [Logic output](audits/nsw-scene/logic-checks.txt), [build output](audits/nsw-scene/build-checks.txt).
+- Three seeds preserve terrain/source matrices, collisions, find IDs, camp and saved work through art loading and live quality changes. Every original source rock retains a visible solid model. Real held trowel input provides finite actual-depth shading data; original save/reload, missing/corrupt kit fallback and tool use pass. [Final regression data](audits/nsw-scene/regression.json).
+- All seven locations pass actual normal-URL pointer lock, mouse look, wheel/number tool selection, movement while switching, menus, pause/resume and lock-rejection recovery. Original touch toolbar/Use/menu behaviour passes. [Final control and save checks](audits/nsw-scene/final-regression-checks.txt). An earlier run was interrupted by a source-change reload during development; its error is retained in [the interrupted log](audits/nsw-scene/interrupted-control-checks.txt), not counted as a passing run.
+- Desktop/touch shelter progression, cash/capacity, shed/workshop access, facilities, power, specimen displays, kelpie, lapidary, reload and exactly-once results pass. [Camp and regional checks](audits/nsw-scene/game-checks.txt). These ran before the final adjustment that retains the original solid rock models beneath connecting detail; the final world/save/control suite above covers that adjustment.
+- The final production build passes cached-offline New England desktop and Northeast Tasmania touch checks in a separate process. [Offline checks](audits/nsw-scene/offline-checks.txt). Existing Three.js deprecations/ANGLE warnings remain. Physical iPhone/Android tests, sustained ten-minute performance and fully populated user-save visual review are still pending.
+
+Publishing follows these passing checks under the standing user instruction; the matching deployment and public-byte verification are recorded below.
