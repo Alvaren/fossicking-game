@@ -458,6 +458,7 @@ export class Terrain {
     // NSW's surface palette must yield to the existing geological colours as
     // the shovel exposes soil, wash and bedrock. This is render data only.
     if (this.profile.id === 'new-england') geo.setAttribute('aCut', new THREE.BufferAttribute(new Float32Array(count), 1));
+    if (this.profile.id === 'new-england') geo.setAttribute('aSoil', new THREE.BufferAttribute(new Float32Array(count*3), 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     this.geo = geo;
     this.refresh(0, SEG, 0, SEG);
@@ -492,6 +493,7 @@ export class Terrain {
         const local = this.creek.local(x, z, this.tmpL), bank = local.d - local.w;
         const dug = this.orig[i] - h[i];
         if (this.geo.attributes.aCut) this.geo.attributes.aCut.array[i] = smoothstep(.005, .10, dug);
+        if (this.geo.attributes.aSoil) this.geo.attributes.aSoil.setXYZ(i,Math.max(0,dug),this.topsoil[i],Math.max(0,h[i]-this.bedrock[i]));
         this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
         this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
@@ -507,6 +509,7 @@ export class Terrain {
     g.attributes.color.needsUpdate = true;
     g.attributes.aSurface.needsUpdate = true;
     if (g.attributes.aCut) g.attributes.aCut.needsUpdate = true;
+    if (g.attributes.aSoil) g.attributes.aSoil.needsUpdate = true;
   }
 
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,

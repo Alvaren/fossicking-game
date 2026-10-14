@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { environmentWeather } from './environmentmotion.js';
 import { mulberry32 } from './noise.js';
+import { coverShader } from './newengland/groundcover.js';
 
 let atlas;
 // One shared local atlas: soil, gravel, leaf litter and moss. Each tile has
@@ -50,27 +51,30 @@ export function groundMaterial({ forest = false, dampness = 0, newEngland = fals
   material.name = forest ? 'Damp forest floor' : 'Blended claim ground';
   material.userData.environment = 'ground';
   material.userData.waterLevel = waterLevel;
+  if(newEngland)material.userData.nswCamp={value:new THREE.Vector2(10000,10000)};
   material.onBeforeCompile = shader => {
     shader.uniforms.groundAtlas = { value: groundAtlas() };
     shader.uniforms.groundWaterLevel = waterLevel;
     shader.uniforms.groundWet = environmentWeather.wet;
+    if(newEngland)shader.uniforms.nswCamp=material.userData.nswCamp;
     shader.vertexShader = shader.vertexShader.replace('void main() {', `
 attribute vec3 aSurface;
 varying vec3 vGround;
 varying vec3 vSurface;
 varying float vGroundUp;
-${excavation ? 'attribute float aCut; varying float vCut;' : ''}
+${excavation ? 'attribute float aCut; varying float vCut; attribute vec3 aSoil; varying vec3 vSoil;' : ''}
 void main() {`).replace('#include <begin_vertex>', `#include <begin_vertex>
 vGround = position; vSurface = aSurface; vGroundUp = normal.y;
-${excavation ? 'vCut=aCut;' : ''}`);
+${excavation ? 'vCut=aCut;vSoil=aSoil;' : ''}`);
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', `
 uniform sampler2D groundAtlas;
 uniform float groundWaterLevel;
 uniform float groundWet;
+${newEngland ? 'uniform vec2 nswCamp;'+coverShader : ''}
 varying vec3 vGround;
 varying vec3 vSurface;
 varying float vGroundUp;
-${excavation ? 'varying float vCut;' : ''}
+${excavation ? 'varying float vCut; varying vec3 vSoil;' : ''}
 vec3 groundTile(vec2 uv, vec2 tile) {
   vec2 dx = dFdx(uv)*.46875, dy = dFdy(uv)*.46875;
   float footprint = max(length(dx),length(dy))*512.0;
@@ -108,17 +112,29 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   vec3 wash=mix(vec3(.14,.16,.135),vec3(.28,.285,.235),smoothstep(.25,1.08,macro));
   float creekbed=1.0-smoothstep(.03,.8,vSurface.z-groundWaterLevel);
   vec3 regionGround=mix(grus,wash,creekbed*.9);
+  float meadow=smoothstep(.40,.75,nswCover(gp))*(1.0-creekbed);
+  regionGround=mix(regionGround,vec3(.185,.16,.085),meadow*.6);
+  float campGround=1.0-smoothstep(8.0,17.0,length((gp-nswCamp)*vec2(.88,1.12))+soilNoise(gp*.6)*1.8);
+  regionGround=mix(regionGround,vec3(.32,.245,.16),campGround*.72);
   float litterPatch=organic*smoothstep(.25,.7,soilNoise(gp*.28+13.0));
   regionGround=mix(regionGround,vec3(.135,.117,.076),litterPatch*.65);
   // Retain a little of the original geological colour information.
   diffuseColor.rgb=mix(regionGround,diffuseColor.rgb,${excavation ? 'mix(.24,1.0,vCut)' : '.24'});
   // The old gravel tile remains for other regions. Here fine aggregate is
   // subordinate to actual embedded stones and metre-scale material patches.
-  groundColour=mix(vec3(.68),groundColour,.12);
+  groundColour=mix(vec3(.68),groundColour,.22+meadow*.18);
   float face=1.0-smoothstep(.70,.96,vGroundUp);
   float strata=soilNoise(vec2(gp.x*.7+gp.y*.5,vGround.y*9.0));
   diffuseColor.rgb*=1.0-face*(.04+.16*strata);
-  ${excavation ? 'diffuseColor.rgb*=1.0-vCut*.08;' : ''}
+  ${excavation ? `
+  float exposed=smoothstep(.008,.055,vSoil.x);
+  float soilFace=exposed*smoothstep(.02,.08,vSoil.z);
+  float horizon=smoothstep(vSoil.y-.025,vSoil.y+.025,vSoil.x+soilNoise(gp*5.0)*.015);
+  float grain=soilNoise(gp*37.0+vSoil.x*19.0);
+  float layer=sin(vSoil.x*62.0+soilNoise(gp*3.0)*1.8)*.035;
+  diffuseColor.rgb*=1.0-exposed*.05-soilFace*(.10+.12*(1.0-horizon)-layer);
+  groundColour=mix(groundColour,groundColour*(.85+grain*.3),soilFace*detail);
+  ` : ''}
   ` : ''}
   diffuseColor.rgb *= groundColour*1.38;
   diffuseColor.rgb *= 1.0-wetness*.14;
@@ -134,6 +150,6 @@ float gd=dot(gdx,grx);
 normal=normalize(abs(gd)*normal-sign(gd)*(dFdx(groundHeight)*grx+dFdy(groundHeight)*gry)*(1.0-puddle*.97));
 `);
   };
-  material.customProgramCacheKey = () => `ground-layers-v3:${forest}:${dampness}:${newEngland}:${excavation}`;
+  material.customProgramCacheKey = () => `ground-layers-v4:${forest}:${dampness}:${newEngland}:${excavation}`;
   return material;
 }

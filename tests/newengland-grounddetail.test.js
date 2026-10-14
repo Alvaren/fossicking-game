@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import { bankRootGeometry, newEnglandBankRoots } from '../src/newengland/bankroots.js';
-import { newEnglandGroundDetail } from '../src/newengland/grounddetail.js';
+import { newEnglandGroundDetail, spoilRise } from '../src/newengland/grounddetail.js';
 
 test('bank roots follow sloping ground and withdraw when it is excavated', () => {
   let dug=false, reserved=false;
@@ -48,15 +48,31 @@ test('dig details follow the current cut, clear finds, and vanish when the surfa
     creek:{waterY:()=>-2},overlayAt:(x,z)=>Math.hypot(x,z)<1.1?{crystals:[{c:{x:.2,z:.2,collected:false}}]}:null};
   const root=new THREE.Group(),system=newEnglandGroundDetail(root,terrain,{cobble_3:new THREE.IcosahedronGeometry(1,1)});
   system.update({x:0,z:0},false);
-  assert.ok(root.children.every(mesh=>mesh.count===0),'Unworked ground has no excavation decorations');
+  assert.ok(root.children.every(mesh=>mesh.isInstancedMesh?mesh.count===0:!mesh.visible),'Unworked ground has no excavation decorations');
   worked=true;system.update({x:0,z:0},false);
   assert.ok(root.children.some(mesh=>mesh.count>0));
   const m=new THREE.Matrix4();
-  for(const mesh of root.children)for(let i=0;i<mesh.count;i++) {
+  for(const mesh of root.children.filter(m=>m.isInstancedMesh))for(let i=0;i<mesh.count;i++) {
     mesh.getMatrixAt(i,m);
     assert.ok(m.elements.every(Number.isFinite));
     assert.ok(Math.hypot(m.elements[12]-.2,m.elements[14]-.2)>.10,'Collectible remains exposed');
   }
+  const rim=root.getObjectByName('NSW disturbed rim'),rp=rim.geometry.attributes.position;
+  for(let i=0;i<rim.geometry.drawRange.count;i++)assert.ok(Math.hypot(rp.getX(i)-.2,rp.getZ(i)-.2)>.16,'Rim leaves the find exposed');
   worked=false;system.update({x:0,z:0},false);
-  assert.ok(root.children.every(mesh=>mesh.count===0),'Decorations do not persist above a changed surface');
+  assert.ok(root.children.every(mesh=>mesh.isInstancedMesh?mesh.count===0:!mesh.visible),'Decorations do not persist above a changed surface');
+});
+
+test('disturbed rim exists only beside removed soil and stays bounded',()=>{
+  let worked=false;
+  const terrain={orig:[],sampleGrid:()=>0,getHeight:(x,z)=>worked?-Math.max(0,.5*(1-Math.hypot(x,z))):0};
+  assert.equal(spoilRise(terrain,.9,0),0);
+  worked=true;
+  assert.equal(spoilRise(terrain,0,0),0,'No decorative material over the deep working face');
+  assert.equal(spoilRise(terrain,4,4),0,'No invented spoil away from excavation');
+  const rims=[];
+  for(let a=0;a<6.28;a+=.12)rims.push(spoilRise(terrain,Math.cos(a)*1.04,Math.sin(a)*1.04));
+  assert.ok(rims.some(h=>h>.02),'A real cut produces grouped raised material');
+  assert.ok(rims.some(h=>h===0),'The rim is broken into lobes, not a ring');
+  assert.ok(rims.every(h=>h>=0&&h<=.14));
 });

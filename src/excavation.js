@@ -313,6 +313,7 @@ export class Patch {
     if(this.terrain.profile.id==='new-england') {
       geo.setAttribute('aSurface',new THREE.BufferAttribute(new Float32Array(pos.length),3));
       geo.setAttribute('aCut',new THREE.BufferAttribute(new Float32Array(pos.length/3),1));
+      geo.setAttribute('aSoil',new THREE.BufferAttribute(new Float32Array(pos.length),3));
     }
     geo.setIndex(idx);
     this.geo = geo;
@@ -321,6 +322,7 @@ export class Patch {
     const surface=this.terrain.profile.id==='new-england'
       ? groundMaterial({newEngland:true,excavation:true,waterLevel:this.terrain.material.userData.waterLevel})
       : new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,map:this.terrain.material.map});
+    if(surface.userData.nswCamp)surface.userData.nswCamp=this.terrain.material.userData.nswCamp;
     this.mesh = new THREE.Mesh(geo, surface);
     this.mesh.receiveShadow = true;
     this.mesh.castShadow = true;
@@ -364,6 +366,7 @@ export class Patch {
             t.sampleGrid(t.surface,x,z,3,0)*(1-Math.min(1,dug/.08)),
             Math.max(t.sampleGrid(t.surface,x,z,3,1),Math.min(1,dug*2)),y-t.creek.waterY(z));
           this.geo.attributes.aCut.setX(k,bareVein ? 1 : Math.min(1,Math.max(0,dug-.003)/.05));
+          this.geo.attributes.aSoil.setXYZ(k,Math.max(0,t.sampleGrid(t.orig,x,z)-y),t.sampleGrid(t.topsoil,x,z),Math.max(0,y-this.bed[k]));
         }
         if (this.top[k] - y < 0.003 && !bareVein) {
           this.col[k * 3] = this.topCol[k * 3];
@@ -387,6 +390,7 @@ export class Patch {
     this.geo.attributes.color.needsUpdate = true;
     if(this.geo.attributes.aSurface) {
       this.geo.attributes.aSurface.needsUpdate=true;this.geo.attributes.aCut.needsUpdate=true;
+      this.geo.attributes.aSoil.needsUpdate=true;
     }
     this.geo.computeVertexNormals();
   }

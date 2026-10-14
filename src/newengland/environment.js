@@ -8,6 +8,7 @@ import { placementMask } from './placement.js';
 import { composeNewEngland } from './composition.js';
 import { newEnglandGroundDetail } from './grounddetail.js';
 import { newEnglandBankRoots } from './bankroots.js';
+import { buildLandforms } from './landforms.js';
 
 // One regional rendering recipe, layered over the original game world.
 // Never consume the world RNG or modify physical/saved source objects.
@@ -42,7 +43,7 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     surface.material.customProgramCacheKey = () => `nsw-foliage-v2:${surface===plants}`;
   }
   const batches = [], treeBatches = [], grassBatches=[], stats = { status:'loading', assets:0, dressing:0, visible:0, quality:settings.environment || 'high' };
-  let kit, groundDetail, bankRoots, elapsed=0, timer=1;
+  let kit, groundDetail, bankRoots, landforms, elapsed=0, timer=1;
   const geometryCache = new Map();
   function plantGeometry(name, stride=1) {
     const key=`${name}:${stride}`;
@@ -100,20 +101,27 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
       // Geological joints share a local direction. Source transforms stay intact.
       const bearing=reef ? Math.atan2(reef.x-c.cx(reef.z),8) : .4;
       if(atReef) {
-        scale.y*=1.65;
+        scale.y*=1.15;
         rotation.setFromEuler(new THREE.Euler(.08*Math.sin(i*2.3),bearing,.10*Math.cos(i)));
         transform.compose(pos,rotation,scale);
       }
-      rockAnchors.push({x:pos.x,z:pos.z,radius:Math.max(scale.x,scale.z),family,bearing});
+      if(granite) {scale.y*=1.16;transform.compose(pos,rotation,scale);}
+      const radius=Math.max(scale.x,scale.z),site=terrain.sources[family==='host'?'reef':family];
+      const mass=['host','basalt','rhyolite'].includes(family)&&site&&Math.hypot(pos.x-site.x,pos.z-site.z)<12&&radius>.65&&!workingMask.blocked(pos.x,pos.z,radius*.75);
+      rockAnchors.push({x:pos.x,y:pos.y,z:pos.z,radius,height:scale.y,family,bearing,mass});
+      // Keep every solid model paired with its original collider. Connecting
+      // surfaces can withdraw near a dig; that must not reveal invisible rock.
       groups.get(key).entries.push({matrix:transform,water:c.waterY(pos.z)});
     }
     for(const {name,type,entries} of groups.values()) {
+      if(!entries.length)continue;
       const g=kit[name].clone(),setKind=rockKinds(g,entries.length);
-      const material=rockMaterial(type,{mixed:true,authored:true});
+      const material=rockMaterial(type,{mixed:true,authored:true,flat:granite});
       const mesh=new THREE.InstancedMesh(g,material,entries.length);
       mesh.name=`NSW ${name} ${type}`;mesh.castShadow=true;mesh.receiveShadow=true;
       entries.forEach((e,i)=>{mesh.setMatrixAt(i,e.matrix);setKind(i,type,e.water);});
       mesh.computeBoundingSphere();root.add(mesh);
+      stats.solidRocks=(stats.solidRocks||0)+entries.length;
     }
     source.visible=false;source.userData.replacedByNewEngland=true;
   }
@@ -189,6 +197,9 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     });
     replaceRocks(scene.getObjectByName('Geological scenery rocks'));
     replaceRocks(scene.getObjectByName('Granite tors'),true);
+    landforms=buildLandforms(root,terrain,rockAnchors,workingMask);
+    stats.landformPatches=landforms.patches.length;
+    terrain.material.userData.nswCamp?.value.set(terrain.camp.x,terrain.camp.z);
     dressing();groundDetail=newEnglandGroundDetail(root,terrain,kit);
     bankRoots=newEnglandBankRoots(root,terrain,world,mask,workingMask);
     stats.bankRoots=bankRoots.branches.length;quality();stats.status='ready';
@@ -203,6 +214,7 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     const low=stats.quality==='low',medium=stats.quality==='medium';
     groundDetail.update(player,low);
     bankRoots.update(player,low);
+    landforms.update(player);
     const distance=low ? 28 : medium ? 48 : 80,density=low ? .4 : medium ? .7 : 1;
     for(const {entries,mesh,stone} of batches) {
       let n=0;

@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
-const report={date:'2026-10-13',cases:[]};
+const report={date:new Date().toISOString().slice(0,10),cases:[]};
 const hash=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const snapshot=()=>{
   const f=fossick,t=f.terrain;
@@ -37,6 +37,8 @@ try {
     const before=hash(await page.evaluate(snapshot));release();
     await page.evaluate(()=>fossick.newEngland.ready);
     assert.equal(await page.evaluate(()=>fossick.newEngland.stats.status),'ready');
+    const rocks=await page.evaluate(()=>({expected:['Geological scenery rocks','Granite tors'].reduce((n,name)=>n+fossick.scene.getObjectByName(name).count,0),rendered:fossick.newEngland.stats.solidRocks}));
+    assert.equal(rocks.rendered,rocks.expected,'Every physical source rock retains a solid visible model beneath removable connecting detail');
     assert.equal(hash(await page.evaluate(snapshot)),before,'Loading the art preserves terrain, sources, finds, targets, collisions and camp');
     await page.locator('#settings-btn').click();
     const quality=[];
@@ -71,9 +73,9 @@ try {
     await page.waitForFunction(()=>!!fossick.excav.active);
     const descriptor=await page.evaluate(()=>{
       const p=fossick.excav.active;
-      return {name:p.mesh.material.name,surface:p.geo.attributes.aSurface.count,vertices:p.geo.attributes.position.count,cut:p.geo.attributes.aCut.count};
+      return {name:p.mesh.material.name,surface:p.geo.attributes.aSurface.count,vertices:p.geo.attributes.position.count,cut:p.geo.attributes.aCut.count,soil:p.geo.attributes.aSoil.count};
     });
-    assert.equal(descriptor.surface,descriptor.vertices);assert.equal(descriptor.cut,descriptor.vertices);
+    assert.equal(descriptor.surface,descriptor.vertices);assert.equal(descriptor.cut,descriptor.vertices);assert.equal(descriptor.soil,descriptor.vertices);
     await page.keyboard.press('Digit2');
     await page.waitForFunction(()=>fossick.view.current==='trowel'&&fossick.view.swap>.9);
     await page.mouse.down();
@@ -81,6 +83,8 @@ try {
     finally { await page.mouse.up(); }
     const worked=await page.evaluate(()=>Array.from(fossick.excav.active.snapshot().mm));
     assert.ok(worked.some(v=>v>0),'Real held-use trowel input removes soil');
+    const soil=await page.evaluate(()=>Array.from(fossick.excav.active.geo.attributes.aSoil.array));
+    assert.ok(soil.every(Number.isFinite)&&soil.some((v,i)=>i%3===0&&v>.001),'Cut shading receives actual removed depth');
     await page.keyboard.press('Control+s');await page.waitForTimeout(150);
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('fossicking-save-v2')));
     await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);

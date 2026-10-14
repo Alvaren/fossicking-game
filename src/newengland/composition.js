@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { coverAt } from './groundcover.js';
 
 // Render-only groups fitted to the saved ground. Larger stones stay within
 // existing solid footprints; new connecting shelves are low surface dressing.
@@ -24,6 +25,25 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
       put(`${family}_${k % (family === 'sedge' ? 2 : 3)}`, px, pz, .4 + rng() * .5);
     }
   };
+  // Broad, irregular woodland islands share their pattern with the soil.
+  // Retain open corridors and the full camp reserve; never carpet work sites.
+  for(let i=0;i<14500;i++) {
+    const x=-103+rng()*206,z=-103+rng()*206,patch=coverAt(x,z);
+    const p=c.local(x,z,{}),margin=p.d-p.w;
+    if(margin<1.3||patch<.52||rng()>(patch-.42)*1.6)continue;
+    const height=terrain.getHeight(x,z);
+    if(Math.abs(terrain.getHeight(x+.5,z)-height)>.6)continue;
+    put(`grass_${i%3}`,x,z,.58+rng()*.55,{sy:.7+rng()*.3,rank:rng()*.8});
+    if(i%11===0&&patch>.7)put(`shrub_${i%3}`,x+.5,z-.4,.38+rng()*.35,{radius:.5});
+  }
+  // A graduated woodland edge around the beaten camp ground, not a ring of
+  // identical plants. The same clearance covers the largest shelter/facilities.
+  for(let i=0;i<850;i++) {
+    const a=rng()*Math.PI*2,r=17+rng()*11;
+    const x=terrain.camp.x+Math.cos(a)*r,z=terrain.camp.z+Math.sin(a)*r;
+    if(coverAt(x,z)<.48||Math.abs(Math.sin(a*2.3+.7))<.22)continue;
+    clump(x,z,1.2+rng()*1.6,false,7);
+  }
   // Reaches alternate open sampling margins with cobble pockets and sedges.
   for (let reach = -96; reach < 103; reach += 7) {
     const side = Math.sin(reach * .17) > 0 ? 1 : -1;
@@ -72,10 +92,9 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
       batch.source.getMatrixAt(i, m);
       const x = m.elements[12], z = m.elements[14];
       if (!m.elements[0] && !m.elements[2]) continue;
-      if (i % 4 === 0) clump(x + 1.3, z - .8, 2.6, false, 50);
+      if (i % 3 === 0) clump(x + 1.3, z - .8, 3.5, false, 95);
       if (i % 3 === 0) {
         put(`branch_${i % 3}`, x + .9, z + .5, .45 + rng() * .4, { radius: .25, lift: -.05 });
-        put(`root_${i % 2}`, x + .55, z - .3, .55, { radius: .15, lift: -.11 });
       }
     }
   }
