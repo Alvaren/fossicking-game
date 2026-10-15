@@ -28,6 +28,9 @@ export function newEnglandWater(water, creek, settings) {
   leaf.computeVertexNormals();leaf.computeBoundingSphere();
   const oldLeaf=water.leaves.geometry;water.leaves.geometry=leaf;oldLeaf.dispose();
   const material=water.mesh.material;
+  // Keep moving facets readable at walking height, with extra chop in the
+  // existing fast/shallow and boulder foam field. Refraction stays restrained
+  // independently so stronger reflection ripples do not obscure small finds.
   material.fragmentShader=material.fragmentShader.replace('uniform float time;',`
 uniform float sceneWater;
 uniform sampler2D waterReflection;
@@ -46,7 +49,7 @@ float foamNoise(vec2 p) {
   vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
   return mix(mix(foamHash(i),foamHash(i+vec2(1,0)),f.x),mix(foamHash(i+vec2(0,1)),foamHash(i+vec2(1,1)),f.x),f.y);
 }
-uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','float chop = 0.018 + min(spd,1.5) * 0.025 + vFoam * .035;')
+uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','float chop = 0.055 + min(spd,1.5) * 0.12 + vFoam * .09;')
     .replace('float depth = vDepth + level;',`float depth=vDepth+level;
   if(sceneWater>.5) {
     vec2 screen=gl_FragCoord.xy/waterViewport;
@@ -57,15 +60,15 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     float vertical=abs(normalize(cameraPosition-vWorld).y);
     depth=min(depth,max(0.0,gap*vertical));
   }`)
-    .replace('flowSample(vUv, 0.55,', 'flowSample(vUv, 0.18,')
-    .replace('flowSample(vUv * vec2(1.0, 0.6) + 3.1, 0.31,', 'flowSample(vUv * vec2(1.0, 0.8) + 3.1, 0.11,')
-    .replace('n1.xy += fine.xy * .12;', 'n1.xy += fine.xy * .035;')
-    .replace('220.0);','360.0);')
+    .replace('flowSample(vUv, 0.55,', 'flowSample(vUv, 0.28,')
+    .replace('flowSample(vUv * vec2(1.0, 0.6) + 3.1, 0.31,', 'flowSample(vUv * vec2(1.0, 0.8) + 3.1, 0.17,')
+    .replace('n1.xy += fine.xy * .12;', 'n1.xy += fine.xy * .09;')
+    .replace('220.0);','180.0);')
     .replace('float deep = smoothstep', 'fres *= mix(.45,1.0,smoothstep(.18,1.1,depth));\n  float deep = smoothstep')
     .replace('float spec = pow',`
   if(sceneWater>.5) {
     vec4 projected=waterTextureMatrix*vec4(vWorld,1.0);
-    vec2 uv=projected.xy/projected.w+N.xz*.025;
+    vec2 uv=projected.xy/projected.w+N.xz*.055;
     float edge=smoothstep(0.0,.06,min(min(uv.x,uv.y),min(1.0-uv.x,1.0-uv.y)));
     float planeY=waterPlane.y+waterPlane.z*(vWorld.z-waterPlane.x);
     float profileMatch=1.0-smoothstep(.035,.13,abs(vWorld.y+level-planeY));
@@ -86,7 +89,7 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     vec3 below=texture2D(waterTransmission,uv).rgb;
     float absorb=mix(.015,.28,deep)+flood*.60;
     body=mix(below,body,clamp(absorb,0.0,.96));
-    col=mix(body,refl,fres*(1.0-.7*flood))+sunColor*spec*.48*(1.0-flood);
+    col=mix(body,refl,fres*(1.0-.7*flood))+sunColor*spec*.75*(1.0-flood);
     alpha=1.0;
   }`);
   material.fragmentShader=material.fragmentShader

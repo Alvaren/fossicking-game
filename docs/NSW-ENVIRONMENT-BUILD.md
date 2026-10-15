@@ -300,3 +300,22 @@ Final checks:
 Implementation `73b02f1` and evidence `117a5c6` were fast-forwarded into clean main and pushed under the standing user instruction. [Pages run 38500167021](https://github.com/Alvaren/fossicking-game/actions/runs/38500167021) succeeded. The generated public JS/CSS and unchanged environment model are byte-identical to the tested production build; the HTML matches after normalising Windows carriage returns. Both public JS chunks (`index-LAWrUEBJ.js` and `main-Be0DsWP3.js`) were checked. [Six-file publication verification](audits/nsw-scene/publication.json).
 
 Public High desktop and emulated-touch checks pass rendering and original tool input, with desktop dig/save/reload and weather checks, and no page/console errors. [Public checks](audits/nsw-scene/public-checks.txt). Main and Claude were clean before integration, and Claude had no unintegrated commits. SC-06 is complete. The documentation-only follow-up records these verified results; its matching Pages run is checked before final handoff. Full visual acceptance and B9 remain separate.
+
+
+## Surface ripple correction (15 October 2026)
+
+Branch `codex/nsw-water-ripples`, base `3f26caa`. Only `src/newengland/water.js` changes production behavior; remaining paths are the build plan, this record and `docs/audits/nsw-ripples/` evidence.
+
+The user reported that the creek had lost its visible surface ripples. The earlier NSW correction had reduced normal strength, fine detail and reflection distortion together, leaving overly smooth tree reflections. This pass restores readable moving facets in the existing NSW water adapter. It does not replace the shared water system or alter its flow/depth/foam field.
+
+- Raised normal strength in ordinary flow and the existing boulder/riffle foam field; restored an intermediate ripple scale and more fine detail.
+- Increased distortion of reflected banks/trees and broadened sun glints. Kept the smaller underwater-refraction offset and absorption settings so stones and finds remain readable.
+- The same ripple correction runs with both Simple and Full water detail. Full retains the existing two scene passes; no new geometry, texture samples, render targets or passes were added. This is an appearance repair, not the deferred B9 optimisation phase.
+
+[Before](audits/nsw-ripples/before/high-rocks.jpg) · [After](audits/nsw-ripples/after/high-rocks.jpg) · [Upstream](audits/nsw-ripples/after/high-upstream.jpg) · [Bed visibility](audits/nsw-ripples/after/high-bed.jpg) · [Moving surface (6.5 seconds)](audits/nsw-ripples/after/flow.webm) · [Low](audits/nsw-ripples/after/low-upstream.jpg) · [Emulated touch Medium](audits/nsw-ripples/after/touch-upstream.jpg)
+
+The [capture harness](audits/nsw-ripples/capture.mjs) uses isolated browser saves, seed 12345, hour 11, matched standing-height camera poses and water times 20/20.5 seconds. Breeze and drifting leaves remain live, so these are controlled water comparisons rather than pixel-identical entire scenes. The video uses the normal advancing water clock. [Before metadata](audits/nsw-ripples/before/checks.json) and [after metadata](audits/nsw-ripples/after/checks.json) record the source hash, poses and render/shader status.
+
+Validation: 115 existing tests and production build pass. High desktop, Low desktop and emulated-touch Medium pass the three creek views, advancing water clock, live Simple/Full transitions, tool selection and save/reload with no recorded console/page errors or failed shaders. The harness initially used Escape instead of the documented P pause key and read the region from the wrong exposed object; both harness errors were corrected before the complete passing run. No production control/save code changed. The existing normal-control suite also passes all seven locations: actual pointer lock, mouse look, wheel/number keys, held tools, walking while switching, menu isolation, pause/resume and relock recovery; original touch toolbar/Use/menu-close checks pass. See [control results](audits/nsw-ripples/control-checks.txt). Live publication is verified separately.
+
+This closes the reported loss of ripple visibility, subject to the user's visual review. Distant water still uses the existing simplified sky reflection outside the local reflection reach. It does not certify the entire environment against the supplied references or begin optimisation. No physical-phone performance claim is made.

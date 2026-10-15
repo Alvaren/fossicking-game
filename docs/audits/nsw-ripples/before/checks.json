@@ -1,0 +1,71 @@
+{
+  "base": "http://127.0.0.1:5191/",
+  "label": "before",
+  "seed": 12345,
+  "sourceSha256": "f86c260caa57694c634bb87e4485fc4c93b505166260262b8d10382b9122495b",
+  "cases": [
+    {
+      "mode": "high",
+      "shots": [
+        {
+          "view": "upstream",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "clock": 20,
+          "reflection": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "shaderFailures": 0,
+          "tool": "shovel"
+        },
+        {
+          "view": "rocks",
+          "pose": {
+            "x": 1.2260599524239106,
+            "z": 18.424045746237905,
+            "tx": 1.9517402241522603,
+            "tz": 21.924045746237905,
+            "pitch": -0.3
+          },
+          "clock": 20,
+          "reflection": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "shaderFailures": 0,
+          "tool": "shovel"
+        },
+        {
+          "view": "bed",
+          "pose": {
+            "x": 0.7677718814146722,
+            "z": 12,
+            "tx": 7.067771881414672,
+            "tz": 9,
+            "pitch": -0.75
+          },
+          "clock": 20,
+          "reflection": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "shaderFailures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

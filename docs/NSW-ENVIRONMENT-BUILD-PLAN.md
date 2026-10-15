@@ -348,4 +348,14 @@ The first command writes the initial report and 15 screenshots. The supplement a
 **Previous ordering (superseded by SC-01..06 above):** V01/V02 remained first: compose the large bank/rock forms and connected reef/granite assemblies at existing sites. The correction improves the kit, debris, plants, foam and cut materials, but still does not meet the reference in any complete rubric dimension. Do not equate wider dressing coverage or more triangles with completed composition. Finish the first-scene art gate before further B5 rollout; then resolve broad ground transitions, reflection/margins and excavation/spoil volume. Hardware results and remaining coverage are in the delivery record.
 
 
-**Current next step:** review the four-area scene pass against the supplied references using the linked final captures and the live build. Preserve its tested world/input/save contracts. The complete visual gate remains open; B9 starts only after user sign-off, with the recorded CPU/GPU costs as evidence rather than a promise of universal device performance.
+**Current next step:** review the surface-ripple correction and four-area scene pass against the supplied references using the linked final captures and the live build. Preserve its tested world/input/save contracts. The complete visual gate remains open; B9 starts only after user sign-off, with the recorded CPU/GPU costs as evidence rather than a promise of universal device performance.
+
+
+### Reported ripple regression — 15 October 2026
+
+- [x] Restore visible NSW surface movement and reflection breakup using the original flow/foam data.
+- [x] Inspect matched upstream, channel-rock and creek-bed views; retain clarity for submerged finds.
+- [x] Check High/Low/touch, moving water, live water quality settings, save/reload, existing tests and build.
+- [ ] Complete normal-control regression and verify publication of the correction.
+
+[Correction and evidence](NSW-ENVIRONMENT-BUILD.md#surface-ripple-correction-15-october-2026). User visual acceptance remains open; B9 remains deferred until sign-off.
