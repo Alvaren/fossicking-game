@@ -356,6 +356,6 @@ The first command writes the initial report and 15 screenshots. The supplement a
 - [x] Restore visible NSW surface movement and reflection breakup using the original flow/foam data.
 - [x] Inspect matched upstream, channel-rock and creek-bed views; retain clarity for submerged finds.
 - [x] Check High/Low/touch, moving water, live water quality settings, save/reload, existing tests and build.
-- [ ] Complete normal-control regression and verify publication of the correction.
+- [x] Complete normal-control regression and verify publication of the correction — all seven desktop locations and original touch pass; `a8471f2` published via Pages run 38671137886, with exact-asset and public desktop/touch verification.
 
 [Correction and evidence](NSW-ENVIRONMENT-BUILD.md#surface-ripple-correction-15-october-2026). User visual acceptance remains open; B9 remains deferred until sign-off.
