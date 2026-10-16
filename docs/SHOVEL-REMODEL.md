@@ -19,7 +19,7 @@ The head is 24.3 cm wide and 33.4 cm long, with a 3.5 mm steel skin. The complet
 - [x] Inspect final High/Low and desktop/touch/portrait views, plus isolated blade/load views.
 - [x] Check genuine mouse/touch digging, visible load animation and saved parcel persistence against the final build.
 - [x] Complete existing seven-region normal-control and desktop/touch mainland recovery checks.
-- [ ] Publish main and verify the matching Pages run, production bytes and public-game smoke checks.
+- [x] Publish main and verify the matching Pages run, production bytes and public-game smoke checks.
 
 Capture uses disposable saves with seed 12345 and fixed hour 11. Camera placement skips walking; digging uses genuine mouse or touch Use events. Isolated studio shots render the actual runtime model; the loaded studio shot explicitly turns on the same dirt mesh for placement inspection. No user's browser storage is changed. Touch emulation verifies presentation/input, not physical-phone performance. Earlier NSW reference-art gaps are unrelated and remain documented.
 
@@ -32,3 +32,9 @@ The seven-region normal-control suite ran before the final blade-rim normal corr
 ## Next environment recommendation
 
 [Golden Triangle / Ironbark Gully](GOLDEN-TRIANGLE-ART-PLAN.md) is proposed next. The plan fixes current NSW quality as the minimum benchmark, identifies reusable rendering/input/save machinery and separates regional box–ironbark/reef/old-workings art. It contains checkable stages for baseline, shared helpers, first-scene quality, full-route coverage, regression/performance evidence and publication. This run does not implement that environment upgrade.
+
+## Publication and handoff
+
+Implementation cb9c6af338e381cf55dbc4f82c8ab062c8e59f9c was fast-forwarded into clean main and pushed. [Pages run 38887543851](https://github.com/Alvaren/fossicking-game/actions/runs/38887543851) succeeded. [Six-file public verification](audits/shovel/publication.json) matches generated JS/CSS and the existing NSW model byte-for-byte; HTML matches after line-ending normalisation. [Public High desktop and touch checks](audits/shovel/public/checks.json) pass the new shovel model, genuine digging and dirt animation, parcel persistence and reload, with no recorded page/console errors or failed shaders.
+
+Production changes are limited to src/models/shovel.js and the existing src/tools.js builder. The narrow tests/mainland.game.mjs change makes the genuine-input settling check robust to execution timing. Supporting paths are this record, the Golden Triangle proposal, the collaboration guide and docs/audits/shovel/. Other agents' work and the user's browser storage are untouched; no dependencies, gameplay rules, environment models or save fields changed. Main and Claude were clean, with no additional ready commits to integrate. The final documentation/evidence commit and its successful deployment are retained in the shared local coordination handoff.

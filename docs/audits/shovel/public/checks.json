@@ -1,0 +1,76 @@
+{
+  "label": "public",
+  "base": "https://alvaren.github.io/fossicking-game/",
+  "cases": [
+    {
+      "mode": "high",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 3,
+          "movingFrames": 13
+        }
+      },
+      "errors": []
+    },
+    {
+      "mode": "touch",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 3,
+          "movingFrames": 14
+        }
+      },
+      "errors": []
+    }
+  ]
+}
