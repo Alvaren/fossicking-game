@@ -5,6 +5,7 @@ import { makeGemMesh } from './minerals.js';
 import { lumpy } from './world.js';
 import { mulberry32 } from './noise.js';
 import { makeSluiceModel } from './sluice.js';
+import { makeShovelModel } from './models/shovel.js';
 
 // First-person tool models. They live in their own scene and camera and are
 // drawn after the world with a cleared depth buffer, so they never clip into
@@ -121,55 +122,12 @@ export class Viewmodel {
 
   buildShovel() {
     const root = new THREE.Group();
-    const g = new THREE.Group();
-    root.add(g);
-    const wood = new THREE.MeshStandardMaterial({ color: 0x9a6a3e, roughness: 0.7 });
-    const steel = new THREE.MeshStandardMaterial({ color: 0x5f6266, metalness: 0.5, roughness: 0.55 });
-
-    // Handle runs from the grip (near the camera) forward and down to the blade.
-    const gripPos = new THREE.Vector3(0, 0, 0);
-    const end = new THREE.Vector3(-0.12, -0.42, -0.95);
-    const dir = end.clone().sub(gripPos).normalize();
-    const len = end.distanceTo(gripPos);
-    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.018, len, 10), wood);
-    handle.position.copy(gripPos).lerp(end, 0.5);
-    handle.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-    g.add(handle);
-    const grip = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.011, 6, 16), wood);
-    grip.position.copy(gripPos).addScaledVector(dir, -0.04);
-    grip.quaternion.copy(handle.quaternion);
-    grip.rotateX(Math.PI / 2);
-    g.add(grip);
-
-    // Blade carries on along the handle, face tipped up so dirt can sit on it.
-    // Turn the blade's face partly toward the eye (camera sits at -root.position)
-    // so it doesn't read as a thin edge.
-    const bladePos = end.clone().addScaledVector(dir, 0.12);
-    const toEye = new THREE.Vector3(-0.3, 0.16, 0.3).sub(bladePos).normalize();
-    const n = new THREE.Vector3(0, 1, 0).lerp(toEye, 0.65).normalize();
-    const zAxis = dir.clone().addScaledVector(n, -dir.dot(n)).normalize().negate();
-    const xAxis = new THREE.Vector3().crossVectors(n, zAxis).normalize();
-    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.01, 0.26), steel);
-    blade.position.copy(bladePos);
-    blade.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xAxis, n, zAxis));
-    g.add(blade);
-    const socket = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.03, 0.08, 10), steel);
-    socket.position.copy(end).addScaledVector(dir, -0.02);
-    socket.quaternion.copy(handle.quaternion);
-    g.add(socket);
-    const dirt = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(0.08, 0),
-      new THREE.MeshStandardMaterial({ color: 0x7a3e1e, roughness: 1, flatShading: true }),
-    );
-    dirt.scale.set(1, 0.45, 1.2);
-    dirt.position.copy(blade.position).add(new THREE.Vector3(0, 0.03, 0));
-    dirt.visible = false;
-    g.add(dirt);
+    const { group, dirt } = makeShovelModel();
+    root.add(group);
+    this.shovelG = group;
     this.shovelDirt = dirt;
-
     root.position.set(0.3, -0.16, -0.3);
     root.userData.base = root.position.clone();
-    this.shovelG = g;
     return root;
   }
 

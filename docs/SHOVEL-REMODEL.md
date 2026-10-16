@@ -1,0 +1,34 @@
+# Shared shovel remodel — 16 October 2026
+
+Branch: codex/shovel-remodel. Base: 3fe3cb909a93ac6cc2ed7238b90d6652b8ba0804. User request: rebuild the poor shovel head, and recommend the next map to upgrade using the current New England level as the benchmark.
+
+## Delivered model
+
+The original shared shovel was a rectangular box blade with a separate cylindrical socket, straight handle and torus grip. The replacement has a closed, shallow pressed-steel bowl with rounded shoulders, a digging point, a curved neck, rolled foot treads, a tapered wooden shaft, D grip and socket rivets. PBR steel has a restrained brushed finish and lighter cutting-edge wear; the timber has fine longitudinal grain. These generated textures are bundled code with no extra network request.
+
+This is the existing Three.js viewmodel's procedural model path, isolated in src/models/shovel.js. No Blender asset loader or separate tool implementation was needed. src/tools.js calls the builder and keeps the same root position, animation group, load visibility, switching and digging timing. The dirt load is aligned to the new blade face. Digging yields, terrain removal, tool bindings and save data are unchanged. All locations using the shared shovel receive the remodel; no map art was changed.
+
+[Before in game](audits/shovel/before/high-held.jpg) · [After in game](audits/shovel/after/high-held.jpg) · [Complete model](audits/shovel/after/model.jpg) · [Blade close-up](audits/shovel/after/head.jpg) · [Loaded blade](audits/shovel/after/head-loaded.jpg) · [Touch landscape](audits/shovel/after/touch-held.jpg) · [Touch portrait](audits/shovel/after/portrait-held.jpg)
+
+The head is 24.3 cm wide and 33.4 cm long, with a 3.5 mm steel skin. The complete tool uses 3,984 visible triangles, 4,064 with a dirt load, versus the old 284/320. The additional geometry resolves a close-up hero prop; it does not increase environment detail. Matching materials are merged: 3 visible draws / 4 loaded, down from 4 / 5. Geometry occupies 275,992 bytes and the two small textures 131,072 bytes before mipmaps. No new per-frame model work or GPU pass is added. See [geometry budget and topology](audits/shovel/geometry.json).
+
+## Checks
+
+- [x] Lockfile install, production build and 123 existing tests pass.
+- [x] The blade has finite non-degenerate triangles, closed edges and consistent winding, with positive enclosed volume. An initially reversed rim winding was found by the geometry audit and corrected before publication; the audit script is retained.
+- [x] Inspect final High/Low and desktop/touch/portrait views, plus isolated blade/load views.
+- [x] Check genuine mouse/touch digging, visible load animation and saved parcel persistence against the final build.
+- [x] Complete existing seven-region normal-control and desktop/touch mainland recovery checks.
+- [ ] Publish main and verify the matching Pages run, production bytes and public-game smoke checks.
+
+Capture uses disposable saves with seed 12345 and fixed hour 11. Camera placement skips walking; digging uses genuine mouse or touch Use events. Isolated studio shots render the actual runtime model; the loaded studio shot explicitly turns on the same dirt mesh for placement inspection. No user's browser storage is changed. Touch emulation verifies presentation/input, not physical-phone performance. Earlier NSW reference-art gaps are unrelated and remain documented.
+
+## Verification detail
+
+The initial mainland desktop run passed. The initial touch run reached the existing sieve-input assertion before a usable settling sample; its diagnostic state shortly afterwards showed positive stratification and no browser errors. The fixed-count loop and post-release sample were timing-sensitive. The harness now follows the needle for up to 20 seconds and requires an observed settling value above 0.015 during genuine input, rather than testing a later decaying value above 0.005. It still does not write stratification until that input assertion passes. [Initial diagnostic](audits/shovel/mainland-initial.txt). No sieve gameplay code changed. The final touch rerun passes digging/recovery, real jig input/flip, five-location travel, maps, reload and independent saves. [Final mainland checks](audits/shovel/mainland-checks.txt).
+
+The seven-region normal-control suite ran before the final blade-rim normal correction. The exact final build is covered by the geometry audit and High/Low/Medium touch captures with genuine digging, load animation and save/reload. [Capture checks](audits/shovel/after/checks.json), [normal controls](audits/shovel/control-checks.txt), [build](audits/shovel/build-check.txt), [123 tests](audits/shovel/unit-tests.txt).
+
+## Next environment recommendation
+
+[Golden Triangle / Ironbark Gully](GOLDEN-TRIANGLE-ART-PLAN.md) is proposed next. The plan fixes current NSW quality as the minimum benchmark, identifies reusable rendering/input/save machinery and separates regional box–ironbark/reef/old-workings art. It contains checkable stages for baseline, shared helpers, first-scene quality, full-route coverage, regression/performance evidence and publication. This run does not implement that environment upgrade.

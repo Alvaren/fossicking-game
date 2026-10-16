@@ -1,0 +1,146 @@
+{
+  "label": "after",
+  "base": "http://127.0.0.1:5191/",
+  "cases": [
+    {
+      "mode": "high",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 3,
+          "movingFrames": 12
+        }
+      },
+      "errors": []
+    },
+    {
+      "mode": "touch",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 3,
+          "movingFrames": 14
+        }
+      },
+      "errors": []
+    },
+    {
+      "mode": "portrait",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 3,
+          "movingFrames": 14
+        }
+      },
+      "errors": []
+    },
+    {
+      "mode": "low",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0,
+        "dig": {
+          "parcels": 1,
+          "loadedFrames": 1,
+          "movingFrames": 12
+        }
+      },
+      "errors": []
+    }
+  ]
+}

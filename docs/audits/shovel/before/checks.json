@@ -1,0 +1,41 @@
+{
+  "label": "before",
+  "base": "http://127.0.0.1:5191/baseline/",
+  "cases": [
+    {
+      "mode": "high",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "",
+            "triangles": 40,
+            "visible": true
+          },
+          {
+            "name": "",
+            "triangles": 192,
+            "visible": true
+          },
+          {
+            "name": "",
+            "triangles": 12,
+            "visible": true
+          },
+          {
+            "name": "",
+            "triangles": 40,
+            "visible": true
+          },
+          {
+            "name": "",
+            "triangles": 36,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0
+      },
+      "errors": []
+    }
+  ]
+}

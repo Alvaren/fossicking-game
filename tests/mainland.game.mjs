@@ -52,12 +52,16 @@ try {for(const phone of process.env.MAINLAND_TOUCH_ONLY?[true]:[false,true]) {
     await page.evaluate(()=>{const f=fossick,z=10;f.player.pos.set(f.creek.cx(z),f.terrain.getHeight(f.creek.cx(z),z),z);f.player.vel.set(0,0,0);});
     await select('sieve','Digit4');await page.locator('#jig').waitFor({state:'visible'});
     // Follow the real needle with mouse/touch hold-release events.
-    let held=false;
-    for(let i=0;i<100;i++){
-      const j=await page.evaluate(()=>({I:fossick.jig.I,zone:fossick.jigZone(),strat:fossick.jig.strat}));if(j.strat>.015)break;
+    let held=false,settled=0;
+    const jigDeadline=Date.now()+20000;
+    while(Date.now()<jigDeadline){
+      const j=await page.evaluate(()=>({I:fossick.jig.I,zone:fossick.jigZone(),strat:fossick.jig.strat}));
+      settled=Math.max(settled,j.strat);if(settled>.015)break;
       const want=j.I<(j.zone[0]+j.zone[1])/2;if(want!==held){await use(want);held=want;}await page.waitForTimeout(70);
     }
-    if(held)await use(false);assert.ok(await page.evaluate(()=>fossick.jig.strat>.005),'Real jig input must settle material');
+    // Prove settling while real input is applied; it can decay during the CDP
+    // release round trip. Bound by time rather than a machine-specific poll count.
+    if(held)await use(false);assert.ok(settled>.015,'Real jig input must settle material');
     // Accelerate the remaining settling after testing input; keep the actual assay and flip path.
     await page.evaluate(()=>{fossick.jig.strat=1;});const count=await page.evaluate(()=>fossick.state.bucket.length);
     if(phone)await tap('#touch [data-act="flip"]');else await page.mouse.click(600,400,{button:'right'});

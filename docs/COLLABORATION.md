@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Shared shovel and next environment proposal (16 October 2026)
+
+Codex branch codex/shovel-remodel, base 3fe3cb9, rebuilds the shared procedural shovel in src/models/shovel.js and connects it through the existing src/tools.js builder. Grip/pivot, original animation, inputs, digging and saves are preserved. [Model and verification](SHOVEL-REMODEL.md). No region environment changes are included. [Golden Triangle / Ironbark Gully](GOLDEN-TRIANGLE-ART-PLAN.md) is the proposed next fidelity pass, with current NSW quality as the minimum benchmark, explicit reuse boundaries and checkable stages. This is a recommendation and plan, not authorisation to start that full map upgrade. Publication verification follows the completed checks. No other agent was launched or messaged.
+
 ## Current NSW optimisation (16 October 2026)
 
 The user authorised the full B9 pass against published `947414e`, including its restored ripples. Codex branch `codex/nsw-optimisation` owns the narrow rendering/cache changes and verification recorded in [NSW-OPTIMISATION.md](NSW-OPTIMISATION.md). Matched visuals, world/save, all-region controls, touch, resource cycling, offline, camp and panning checks pass; the three repeated High/1080p routes show 22% lower median CPU time, 9% lower median GPU time and 19% lower GPU p95. Implementation `5b5636d` is integrated into main and published; [Pages run 38870781163](https://github.com/Alvaren/fossicking-game/actions/runs/38870781163) succeeded, with matching live assets and passing public desktop/touch smoke checks. No other agent was launched or messaged. High/Ultra visuals and original world/input/recovery contracts remain fixed. This performance phase does not close older reference-art acceptance gaps; physical phone performance remains unmeasured.

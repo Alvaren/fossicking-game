@@ -1,0 +1,15 @@
+Desktop: $0 five-location travel, original digging/detection, nugget collection, partial pan, classified sapphire wash, real jig input/flip, maps, reload and independent saves passed.
+Browser errors: []
+{
+  region: 'qld-gemfields',
+  tool: 'sieve',
+  prompt: 'Hold to jig: keep the needle in the green. Right-click to flip. (4 loads)',
+  jig: {
+    I: 0.4999999999999996,
+    strat: 0.04166666666666667,
+    lost: 0.7500000000000001
+  },
+  bucket: 4
+}
+
+Initial stderr: AssertionError [ERR_ASSERTION]: Real jig input must settle material; tests/mainland.game.mjs:60:37. Desktop passed; touch failed this timing-sensitive assertion.
