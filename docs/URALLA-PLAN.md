@@ -47,3 +47,18 @@ Own isolated worktree and port 5191. Main and Claude checked clean before claimi
 ## Build record
 
 See [URALLA-BUILD.md](URALLA-BUILD.md) for the implementation, actual checks, visual comparison, limitations and publication evidence. The checklist describes this requested location slice; it does not sign off the broader six-image reference quality target.
+
+## River-layout correction — 17 October 2026
+
+The first U03/U07 completion was premature: photographs informed the scenery, but the river course was an invented sinusoid. This correction reopens geographic and hydraulic acceptance on `codex/uralla-river-layout`, base `28460f8`.
+
+Evidence now inspected: NSW Spatial Services [HydroLine layer](https://portal.spatial.nsw.gov.au/server/rest/services/NSW_Water_Theme/MapServer/5), Rocky River feature IDs 1128552, 1128580 and 1128599, and [NSW aerial imagery](https://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Imagery/MapServer) exported around 151.47225 E, 30.6293 S. The vector source declares 20 m planimetric accuracy, so it establishes the connected course, not surveyed boulder positions. Actual imagery shows the hooked bend, broad sandy inside bar, longer open pool to the south, and irregular rocky constrictions/outlet to the northwest. The generic reserve pin is west of the river and was not adequate terrain evidence. Council's management-plan page redirects to a document-library UI; no management-plan map has yet been inspected.
+
+Build: preserve the north-up plan shape at a documented uniform 0.48 horizontal scale; include the hooked bend rather than straightening its returning section to fit x(z). Add an optional mapped course to the existing Creek, with one nearest-channel coordinate shared by terrain, current, deposits, water, wet materials, map and river dressing. Retain the original analytic course/default behaviour elsewhere. Depths, seasonal water, individual rocks and camping facilities remain authored interpretations; this is not measured bathymetry or a cadastral reconstruction.
+
+- [ ] R01: Save reproducible source coordinates/transform and compare course footprint to inspected aerial; replace invented curve and reopen earlier acceptance claims.
+- [ ] R02: One mapped course drives banks, water, inside bars/outside scour, downstream flow, widening/slowing, constriction acceleration and boulder wakes.
+- [ ] R03: Place uneven boulder groups at rocky transitions, keep broad pools/bar open, fit paths/reeds/camp to corrected geography.
+- [ ] R04: Preserve existing save data and unfinished material; exercise an old Uralla snapshot through correction, reload and travel. Document any necessary repositioning.
+- [ ] R05: Build, focused geometry/flow/deposit tests and original-world regression; actual desktop/touch tool checks, pointer lock/wheel, low/high and water/reflections.
+- [ ] R06: Inspect ground-level and overhead screenshots against source shape; record limits and performance, then integrate/push and verify Pages with final hero images.
