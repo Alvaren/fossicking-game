@@ -1,0 +1,19 @@
+{
+  "processor": "AMD Ryzen 9 5950X 16-Core Processor",
+  "logicalProcessors": 32,
+  "gpu": "NVIDIA GeForce RTX 3090 (ANGLE D3D11)",
+  "browser": "Chromium 151 on Windows",
+  "desktopBuffer": [
+    1920,
+    1080
+  ],
+  "preset": "High, unchanged",
+  "concurrency": "One game browser GPU workload at a time; no overlapping rendering tests, video decoding or builds during sustained measurement",
+  "limits": [
+    "Ordinary desktop background activity not eliminated",
+    "No GPU temperature/power/driver VRAM counter recorded",
+    "No physical phone available",
+    "WebGL timer queries measure submitted GL work, not device-wide utilisation"
+  ],
+  "baselineBuild": "947414e0d0a848849c553d7433f7e0f4416a979a"
+}

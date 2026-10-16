@@ -1,0 +1,26 @@
+[
+  {
+    "label": "baseline",
+    "errors": [],
+    "water": {
+      "active": true,
+      "width": 461,
+      "height": 259,
+      "passes": 2
+    },
+    "auto": true,
+    "shaderFailures": 0
+  },
+  {
+    "label": "candidate",
+    "errors": [],
+    "water": {
+      "active": false,
+      "width": 461,
+      "height": 259,
+      "passes": 0
+    },
+    "auto": true,
+    "shaderFailures": 0
+  }
+]

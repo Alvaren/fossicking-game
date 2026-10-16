@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { indexExact } from '../rendering/exactindex.js';
 import { loadNewEnglandKit } from '../assets.js';
 import { mulberry32 } from '../noise.js';
 import { vegetationMaterial } from '../vegetation.js';
@@ -44,11 +45,11 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
   }
   const batches = [], treeBatches = [], grassBatches=[], stats = { status:'loading', assets:0, dressing:0, visible:0, quality:settings.environment || 'high' };
   let kit, groundDetail, bankRoots, landforms, elapsed=0, timer=1;
-  const geometryCache = new Map();
+  const geometryCache = new Map(),normal=new THREE.Vector3(),up=new THREE.Vector3(0,1,0);
   function plantGeometry(name, stride=1) {
     const key=`${name}:${stride}`;
     if (!geometryCache.has(key)) {
-      const g=stride===1 ? kit[name] : foliageLOD(kit[name],stride);
+      const g=stride===1 ? kit[name].clone() : foliageLOD(kit[name],stride);
       if(stride>1) {
         // Preserve projected crown coverage when removing small leaves at distance.
         const p=g.attributes.position,f=g.attributes.aFoliage;
@@ -64,7 +65,7 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
         }
         g.computeBoundingSphere();
       }
-      geometryCache.set(key,g);
+      geometryCache.set(key,indexExact(g));
     }
     return geometryCache.get(key);
   }
@@ -77,6 +78,8 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
       batch.near.computeBoundingSphere();batch.far.computeBoundingSphere();
     }
     for(const batch of grassBatches) {
+      batch.source.userData.neutralInstanceColor=true;
+      for(const mesh of [batch.near,batch.far])if(mesh.instanceColor){mesh.instanceColor.array.fill(1);mesh.instanceColor.needsUpdate=true;}
       batch.near.geometry=plantGeometry('grass_0',low ? 3 : 1);
       batch.far.geometry=plantGeometry('grass_0',low ? 5 : 3);
       batch.near.computeBoundingSphere();batch.far.computeBoundingSphere();
@@ -202,40 +205,54 @@ export function buildNewEnglandEnvironment(scene, { seed, terrain, world, landsc
     terrain.material.userData.nswCamp?.value.set(terrain.camp.x,terrain.camp.z);
     dressing();groundDetail=newEnglandGroundDetail(root,terrain,kit);
     bankRoots=newEnglandBankRoots(root,terrain,world,mask,workingMask);
-    stats.bankRoots=bankRoots.branches.length;quality();stats.status='ready';
+    stats.bankRoots=bankRoots.branches.length;quality();
+    stats.status='ready';
   });
   return {root,stats,ready,mask,quality,update(dt,time,player,wind=1) {
     elapsed=time;plants.update(elapsed,wind);bark.update(elapsed,wind);timer+=dt;
-    for(const batch of grassBatches)for(const mesh of [batch.near,batch.far])if(mesh.instanceColor) {
-      mesh.instanceColor.array.fill(1);mesh.instanceColor.needsUpdate=true;
-    }
     if(!kit||timer<.4)return;
     timer=0;stats.visible=0;activeEquipment=equipment();
     const low=stats.quality==='low',medium=stats.quality==='medium';
     groundDetail.update(player,low);
-    bankRoots.update(player,low);
-    landforms.update(player);
+    const revision=String(terrain.revision)+':'+activeEquipment.map(e=>[e.x,e.z,e.r].join(',')).join(';');
+    bankRoots.update(player,low,revision);
+    landforms.update(player,revision);
     const distance=low ? 28 : medium ? 48 : 80,density=low ? .4 : medium ? .7 : 1;
-    for(const {entries,mesh,stone} of batches) {
-      let n=0;
+    for(const batch of batches) {
+      const {entries,mesh,stone}=batch,last=batch.drawn??=[];
+      let n=0,dirty=false;
       for(const e of entries) {
-        if(e.rank>density||Math.hypot(e.x-player.x,e.z-player.z)>distance)continue;
-        if(Math.abs(terrain.getHeight(e.x,e.z)-e.y)>.065)e.removed=true;
-        if(e.removed||mask.dynamic(e.x,e.z,e.radius))continue;
-        dummy.position.set(e.x,e.y+e.lift,e.z);dummy.rotation.set(0,e.rotation,0);
-        if(e.surface || stone) {
-          const normal=new THREE.Vector3(terrain.getHeight(e.x-.25,e.z)-terrain.getHeight(e.x+.25,e.z),.5,
-            terrain.getHeight(e.x,e.z-.25)-terrain.getHeight(e.x,e.z+.25));
-          dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.normalize());dummy.rotateY(e.rotation);
+        if(e.rank>density||(e.x-player.x)**2+(e.z-player.z)**2>distance*distance)continue;
+        if(e.revision!==revision) {
+          if(Math.abs(terrain.getHeight(e.x,e.z)-e.y)>.065)e.removed=true;
+          e.blocked=mask.dynamic(e.x,e.z,e.radius);e.revision=revision;
         }
-        dummy.scale.set(e.scale*(e.sx??1),e.scale*(e.sy??1),e.scale*(e.sz??1));dummy.updateMatrix();
-        mesh.setMatrixAt(n,dummy.matrix);
-        if(stone)mesh.geometry.attributes.aRockWater.setX(n,c.waterY(e.z));
-        n++;
+        if(e.removed||e.blocked)continue;
+        const changed=e.transformRevision!==terrain.revision;
+        if(changed) {
+          dummy.position.set(e.x,e.y+e.lift,e.z);dummy.rotation.set(0,e.rotation,0);
+          if(e.surface || stone) {
+            normal.set(terrain.getHeight(e.x-.25,e.z)-terrain.getHeight(e.x+.25,e.z),.5,
+              terrain.getHeight(e.x,e.z-.25)-terrain.getHeight(e.x,e.z+.25));
+            dummy.quaternion.setFromUnitVectors(up,normal.normalize());dummy.rotateY(e.rotation);
+          }
+          dummy.scale.set(e.scale*(e.sx??1),e.scale*(e.sy??1),e.scale*(e.sz??1));dummy.updateMatrix();
+          (e.transform??=new THREE.Matrix4()).copy(dummy.matrix);e.transformRevision=terrain.revision;
+        }
+        if(changed||last[n]!==e) {
+          mesh.setMatrixAt(n,e.transform);
+          if(stone)mesh.geometry.attributes.aRockWater.setX(n,c.waterY(e.z));
+          dirty=true;
+        }
+        last[n++]=e;
       }
-      mesh.count=n;mesh.instanceMatrix.needsUpdate=true;
-      if(mesh.geometry.attributes.aRockWater)mesh.geometry.attributes.aRockWater.needsUpdate=true;
-      mesh.computeBoundingSphere();stats.visible+=n;
+      dirty ||= mesh.count!==n;last.length=n;mesh.count=n;
+      if(dirty) {
+        mesh.instanceMatrix.needsUpdate=true;
+        if(mesh.geometry.attributes.aRockWater)mesh.geometry.attributes.aRockWater.needsUpdate=true;
+        mesh.computeBoundingSphere();
+      }
+      stats.visible+=n;
     }
   }};
 }

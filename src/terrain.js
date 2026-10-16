@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { dirtyGridAttributes } from './rendering/dirtygrid.js';
 import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
 import { groundMaterial } from './environmentmaterials.js';
@@ -119,6 +120,7 @@ export class Terrain {
       }
     }
     this.orig = this.heights.slice();
+    this.revision = 0;
     for (const b of this.creek.boulders) b.y = this.getHeight(b.x, b.z);
     this.mesh = this.buildMesh();
   }
@@ -278,6 +280,7 @@ export class Terrain {
     index.needsUpdate = true;
     for (let iz = iz0; iz <= iz1; iz++) for (let ix = ix0; ix <= ix1; ix++) this.locked[iz * N + ix] = 1;
     this.overlays.push(o);
+    this.revision++;
   }
 
   // Grid-aligned square of n cells around (x, z).
@@ -503,13 +506,8 @@ export class Terrain {
         }
       }
     }
-    const g = this.geo;
-    g.attributes.position.needsUpdate = true;
-    g.attributes.normal.needsUpdate = true;
-    g.attributes.color.needsUpdate = true;
-    g.attributes.aSurface.needsUpdate = true;
-    if (g.attributes.aCut) g.attributes.aCut.needsUpdate = true;
-    if (g.attributes.aSoil) g.attributes.aSoil.needsUpdate = true;
+    dirtyGridAttributes(this.geo,N,ix0,ix1,iz0,iz1,['position','normal','color','aSurface','aCut','aSoil']);
+    this.revision++;
   }
 
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,

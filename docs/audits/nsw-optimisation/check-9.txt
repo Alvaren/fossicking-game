@@ -1,0 +1,9 @@
+Running environment.offline.mjs
+new-england-desktop-after offline: renders and original tool input passed; {"environments":["ground","ground","vegetation","vegetation","vegetation","vegetation","water","vegetation","vegetation","vegetation","vegetation"],"calls":259,"triangles":2160149,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+ne-tasmania-touch-after offline: renders and original tool input passed; {"environments":["ground","water","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation","vegetation"],"calls":20,"triangles":180898,"shaders":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}
+Running facilities.game.mjs
+Desktop full facilities: purchases, live power, displays, kelpie, real input, reserved stone, reload and exactly-once crafted result passed.
+Touch full facilities: purchases, live power, displays, kelpie, real input, reserved stone, reload and exactly-once crafted result passed.
+Running panning.game.mjs
+Full game: creek entry, partial bucket load and reload persistence passed.
+Full game: sub-milligram reward credited and saved exactly once, with no extra bucket consumption.

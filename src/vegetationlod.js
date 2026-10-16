@@ -57,7 +57,11 @@ export function vegetationLOD(scene, sources, low = false) {
         if (band === 2) { stats.culled++; continue; }
         const target = band === 0 ? near : far, index = band === 0 ? n++ : f++;
         target.setMatrixAt(index, matrix);
-        if (source.instanceColor) { source.getColorAt(i, color); target.setColorAt(index, color); }
+        if (source.instanceColor) {
+          if(source.userData.neutralInstanceColor)color.setRGB(1,1,1);
+          else source.getColorAt(i,color);
+          target.setColorAt(index,color);
+        }
       }
       near.count = n; far.count = f;
       for (const mesh of [near, far]) {

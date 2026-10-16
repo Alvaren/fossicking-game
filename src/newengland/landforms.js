@@ -140,12 +140,14 @@ export function buildLandforms(root,terrain,anchors,workingMask) {
       return {cover,height:.012+(.020+.012*layer)*(1-rill),colour:[(.255-top*.06)*tone,(.18-top*.035)*tone,(.115-top*.005)*tone]};
     },soil);
   }
-  return {patches,update(player) {
+  return {patches,update(player,revision) {
     for(const p of patches) {
       const centre=p.mesh.geometry.boundingSphere.center;
       if(Math.hypot(player.x-centre.x,player.z-centre.z)>240){p.mesh.visible=false;continue;}
       p.mesh.visible=true;
       if(Math.hypot(player.x-centre.x,player.z-centre.z)>12)continue;
+      if(revision!==undefined&&p.revision===revision)continue;
+      p.revision=revision;
       const pos=p.mesh.geometry.attributes.position;
       // Individual triangles vanish when any of their support is removed.
       // This leaves nearby unworked exposure intact through save/reload.

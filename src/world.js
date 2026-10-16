@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { batchStaticChildren } from './rendering/staticbatch.js';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SIZE, PLAY } from './terrain.js';
 import { mulberry32, smoothstep } from './noise.js';
@@ -267,6 +268,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
     back.rotation.y = Math.PI;
     back.position.z = ring - 0.03;
     g.add(back);
+    batchStaticChildren(g);
     colliders.push({ x: sh.x, z: sh.z, r: ring + 0.2 });
   }
   if (terrain.sources.opal) {
@@ -300,6 +302,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   for (let t = -PLAY; t <= PLAY; t += 14) {
     pegs.push([t, -PLAY], [t, PLAY], [-PLAY, t], [PLAY, t]);
   }
+  const pegGroup=new THREE.Group();pegGroup.name='Claim pegs';scene.add(pegGroup);
   for (const [x, z] of pegs) {
     if (chan(x, z) < 1.5) continue;
     const y = terrain.getHeight(x, z);
@@ -308,11 +311,12 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
     p.position.set(x, y + 0.6, z);
     p.scale.y = corner ? 1.5 : 1;
     p.castShadow = true;
-    scene.add(p);
+    pegGroup.add(p);
     const c = new THREE.Mesh(capGeo, capMat);
     c.position.set(x, y + (corner ? 1.8 : 1.2), z);
-    scene.add(c);
+    pegGroup.add(c);
   }
+  batchStaticChildren(pegGroup);
 
   // ---------- camp ----------
   // Built facing -x; flip it if the creek is on the +x side so the buyer's table faces the water.
@@ -360,6 +364,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   );
   sign.rotation.y = -Math.PI / 2;
   add(new THREE.BoxGeometry(0.04, 0.64, 2.14), wood, 0.5, 2.05, 0, tableG);
+  batchStaticChildren(tableG);
   collide(-3, 0, 1.0);
 
   // CampShelter owns the changing swag/tent/caravan/shed geometry and collisions.

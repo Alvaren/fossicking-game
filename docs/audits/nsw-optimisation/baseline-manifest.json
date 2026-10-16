@@ -1,0 +1,36 @@
+{
+  "commit": "947414e0d0a848849c553d7433f7e0f4416a979a",
+  "authorisation": "User, 16 October 2026: you can do the full optimisation pass now",
+  "files": [
+    {
+      "name": "index.html",
+      "bytes": 13150,
+      "sha256": "51bfdfcca633185ef27da46aa1ba289dd6109bb4cd24829a22b684261985d253"
+    },
+    {
+      "name": "assets/index-RLaQf8IF.js",
+      "bytes": 968727,
+      "sha256": "af3fcff495cda0d38e39e053b99654eb901afbb858f5471a45b704a30fdffd6c"
+    },
+    {
+      "name": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311"
+    },
+    {
+      "name": "assets/main-8tWhxJcp.js",
+      "bytes": 316316,
+      "sha256": "6936ed4d97b339e39ad5fe0c03e1a2dddfa17a178b094747c3c0f03a1d378b48"
+    },
+    {
+      "name": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf"
+    },
+    {
+      "name": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7"
+    }
+  ]
+}

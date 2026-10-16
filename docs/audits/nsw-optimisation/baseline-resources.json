@@ -1,0 +1,1503 @@
+{
+  "label": "baseline",
+  "base": "http://127.0.0.1:5191/baseline/",
+  "loads": [
+    {
+      "kind": "cold",
+      "readyMs": 18922,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 969027,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 6.099999999627471
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 32691,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 4.800000000745058
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 316616,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 2.599999999627471
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 6054,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 2
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 16066.400000000373
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 15852.699999999255
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 20.09999999962747
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 20.399999998509884
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 20
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 21.300000000745058
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 15778
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 15778.699999999255
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 22.90000000037253
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 15778.800000000745
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 23.700000001117587
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 15778.799999998882
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 23.90000000037253
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 15779
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 684,
+        "textures": 23
+      },
+      "programs": 115
+    },
+    {
+      "kind": "cached-reload",
+      "readyMs": 3609,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 0,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 18.09999999962747
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 0,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 7.599999999627471
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 0,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 6.300000000745058
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 0,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 3.899999998509884
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 1028.5999999996275
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 927.4000000003725
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 7.599999999627471
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 17.300000000745058
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 17.299999998882413
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 17.40000000037253
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 909.4000000003725
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 909.7000000011176
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 26
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 909.8000000007451
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 27.100000001490116
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 909.7999999988824
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 26.5
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 910.0999999996275
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 683,
+        "textures": 23
+      },
+      "programs": 115
+    },
+    {
+      "kind": "cached-repeat",
+      "readyMs": 3483,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 0,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 1.599999999627471
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 0,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 1.6000000014901161
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 0,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 1.099999999627471
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 0,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 1.199999999254942
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 989.0999999996275
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 893.0999999996275
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 8.800000000745058
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 9.200000001117587
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 9.699999999254942
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 10.799999998882413
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 873.4000000003725
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 874
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 16.899999998509884
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 874
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 18.699999999254942
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 874.2000000011176
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 21.199999999254942
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 874.1999999992549
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 683,
+        "textures": 23
+      },
+      "programs": 115
+    }
+  ],
+  "cycles": [
+    {
+      "cycle": 0,
+      "heap": 126701400,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 1,
+      "heap": 127085492,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 2,
+      "heap": 127049676,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 3,
+      "heap": 127012676,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 4,
+      "heap": 128021036,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 5,
+      "heap": 127102408,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 6,
+      "heap": 128062076,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 7,
+      "heap": 127209784,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 8,
+      "heap": 126999440,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 9,
+      "heap": 127273924,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 10,
+      "heap": 128221928,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 11,
+      "heap": 127229668,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 12,
+      "heap": 128281532,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 13,
+      "heap": 127218024,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    }
+  ],
+  "newPrograms": [
+    {
+      "cycle": 0,
+      "added": [
+        {
+          "id": 0,
+          "name": "PMREM.Background",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8523778,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 1,
+          "name": "SkyShader",
+          "type": "ShaderMaterial",
+          "cacheKey": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8523776,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8392706,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,false,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8392706,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 4,
+          "name": "SphericalGaussianBlur",
+          "type": "ShaderMaterial",
+          "cacheKey": "2,3,SAMPLES,20,CUBEUV_TEXEL_WIDTH,0.0026041666666666665,CUBEUV_TEXEL_HEIGHT,0.001953125,CUBEUV_MAX_MIP,7.0,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 5,
+          "name": "PMREMGGXConvolution",
+          "type": "ShaderMaterial",
+          "cacheKey": "2,4,GGX_SAMPLES,256,CUBEUV_TEXEL_WIDTH,0.0026041666666666665,CUBEUV_TEXEL_HEIGHT,0.001953125,CUBEUV_MAX_MIP,7.0,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 10,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3200,8388611,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 11,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 12,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3201,8388609,8530944,srgb,vegetation-depth-v1:false"
+        },
+        {
+          "id": 13,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3201,8388608,8530944,srgb,vegetation-depth-v1:false"
+        },
+        {
+          "id": 14,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8520711,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 15,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 16,
+          "name": "SkyShader",
+          "type": "ShaderMaterial",
+          "cacheKey": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388608,8524801,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 17,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8520707,srgb,ground-layers-v4:false:0:true:true"
+        },
+        {
+          "id": 18,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8520707,srgb,ground-layers-v4:false:0:true:false"
+        },
+        {
+          "id": 19,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8522755,srgb,vegetation-v2:false:false"
+        },
+        {
+          "id": 20,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388627,8520711,srgb,geological-rock-v1:slate:true:false:false:true:false"
+        },
+        {
+          "id": 21,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388627,8522755,srgb,vegetation-v2:false:true"
+        },
+        {
+          "id": 22,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388608,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 23,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 24,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 25,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8524803,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 26,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 27,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8520707,srgb,gold-v1"
+        },
+        {
+          "id": 28,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 29,
+          "name": "Rock: quartz",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8520707,srgb,geological-rock-v1:quartz:false:true:false:false:false"
+        },
+        {
+          "id": 30,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388627,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 31,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388627,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 32,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388627,8520711,srgb,geological-rock-v1:slate:true:false:true:true:false"
+        },
+        {
+          "id": 33,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388752,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 34,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.6495"
+        },
+        {
+          "id": 35,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.8298"
+        },
+        {
+          "id": 36,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-15-0-0.136-0.4479"
+        },
+        {
+          "id": 37,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-27-0-0.136-0.6282"
+        },
+        {
+          "id": 38,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-27-0-0.299-0.3709"
+        },
+        {
+          "id": 39,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.9889"
+        },
+        {
+          "id": 40,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.136-0.9119"
+        },
+        {
+          "id": 41,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.218-0.5299"
+        },
+        {
+          "id": 42,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.8906"
+        },
+        {
+          "id": 43,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388625,8522755,srgb,vegetation-v2:false:false"
+        },
+        {
+          "id": 44,
+          "name": "",
+          "type": "SpriteMaterial",
+          "cacheKey": "sprite,highp,srgb,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,0,8389635,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 45,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8389635,srgb,opal-v2-58-0-0.643-0.0102"
+        },
+        {
+          "id": 46,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8389635,srgb,opal-v2-27-0-0.643-0.2675"
+        },
+        {
+          "id": 47,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389008,8389635,srgb,opal-v2-58-0-0.505-0.2888"
+        },
+        {
+          "id": 48,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8389635,srgb,rough-find-v1-0"
+        },
+        {
+          "id": 49,
+          "name": "",
+          "type": "PointsMaterial",
+          "cacheKey": "points,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,1024,8389633,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 50,
+          "name": "",
+          "type": "ShaderMaterial",
+          "cacheKey": "8,9,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,0,8389635,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 51,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,1,0,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8519682,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 52,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 53,
+          "name": "SkyShader",
+          "type": "ShaderMaterial",
+          "cacheKey": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388608,8524801,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 54,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8520707,srgb,ground-layers-v4:false:0:true:true"
+        },
+        {
+          "id": 55,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8520707,srgb,ground-layers-v4:false:0:true:false"
+        },
+        {
+          "id": 56,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8522755,srgb,vegetation-v2:false:false"
+        },
+        {
+          "id": 57,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388627,8520711,srgb,geological-rock-v1:slate:true:false:false:true:false"
+        },
+        {
+          "id": 58,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388627,8522755,srgb,vegetation-v2:false:true"
+        },
+        {
+          "id": 59,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388608,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 60,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 61,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 62,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8524803,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 63,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 64,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 65,
+          "name": "Rock: quartz",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8520707,srgb,geological-rock-v1:quartz:false:true:false:false:false"
+        },
+        {
+          "id": 66,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388627,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 67,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388627,8522755,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 68,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388627,8520711,srgb,geological-rock-v1:slate:true:false:true:true:false"
+        },
+        {
+          "id": 69,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388752,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 70,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.6495"
+        },
+        {
+          "id": 71,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.8298"
+        },
+        {
+          "id": 72,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-15-0-0.136-0.4479"
+        },
+        {
+          "id": 73,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-27-0-0.136-0.6282"
+        },
+        {
+          "id": 74,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-27-0-0.299-0.3709"
+        },
+        {
+          "id": 75,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.9889"
+        },
+        {
+          "id": 76,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.136-0.9119"
+        },
+        {
+          "id": 77,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.218-0.5299"
+        },
+        {
+          "id": 78,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8520707,srgb,opal-v2-58-0-0.299-0.8906"
+        },
+        {
+          "id": 79,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388625,8522755,srgb,vegetation-v2:false:false"
+        },
+        {
+          "id": 80,
+          "name": "",
+          "type": "PointsMaterial",
+          "cacheKey": "points,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1024,8389633,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 81,
+          "name": "",
+          "type": "SpriteMaterial",
+          "cacheKey": "sprite,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,8389635,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 82,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8389635,srgb,rough-find-v1-0"
+        },
+        {
+          "id": 83,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8389635,srgb,opal-v2-27-0-0.643-0.2675"
+        },
+        {
+          "id": 84,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8389635,srgb,opal-v2-58-0-0.505-0.2888"
+        },
+        {
+          "id": 85,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389008,8389635,srgb,opal-v2-58-0-0.643-0.0102"
+        },
+        {
+          "id": 86,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8520711,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 87,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8520707,srgb,gold-v1"
+        },
+        {
+          "id": 88,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,3200,8388611,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 89,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 90,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,false,false,0,,0,1,1,0,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388608,8519682,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 91,
+          "name": "det_black",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,1,0,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8521730,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 92,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8522755,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 93,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389651,8522755,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 94,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8522755,srgb,nsw-foliage-v2:false"
+        },
+        {
+          "id": 95,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:granite:true:false:false:false:true"
+        },
+        {
+          "id": 96,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:ironstone:true:false:false:false:true"
+        },
+        {
+          "id": 97,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:basalt:true:false:false:false:true"
+        },
+        {
+          "id": 98,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:quartz:true:false:false:false:true"
+        },
+        {
+          "id": 99,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:slate:true:false:false:false:true"
+        },
+        {
+          "id": 100,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389649,8520707,srgb,geological-rock-v1:rhyolite:true:false:false:false:true"
+        },
+        {
+          "id": 101,
+          "name": "Rock: slate",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8520707,srgb,nsw-connected-quartz-v2"
+        },
+        {
+          "id": 102,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 103,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388625,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 104,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,3201,8388609,8530944,srgb,vegetation-depth-v1:false"
+        },
+        {
+          "id": 105,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,3200,8388609,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 106,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,3201,8388609,8530944,srgb,vegetation-depth-v1:true"
+        },
+        {
+          "id": 107,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8522755,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 108,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389651,8522755,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 109,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8522755,srgb,nsw-foliage-v2:false"
+        },
+        {
+          "id": 110,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:granite:true:false:false:false:true"
+        },
+        {
+          "id": 111,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:ironstone:true:false:false:false:true"
+        },
+        {
+          "id": 112,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:basalt:true:false:false:false:true"
+        },
+        {
+          "id": 113,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:quartz:true:false:false:false:true"
+        },
+        {
+          "id": 114,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:slate:true:false:false:false:true"
+        },
+        {
+          "id": 115,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389649,8520707,srgb,geological-rock-v1:rhyolite:true:false:false:false:true"
+        },
+        {
+          "id": 116,
+          "name": "Rock: slate",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8520707,srgb,nsw-connected-quartz-v2"
+        },
+        {
+          "id": 117,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 118,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388625,8520707,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 119,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388609,8393731,srgb,e=>{e.vertexShader=e.vertexShader.replace(`void main() {`,`attribute float aFade; varying float vFade; void main() { vFade=aFade;`),e.fragmentShader=e.fragmentShader.replace(`void main() {`,`varying float vFade; void main() {`).replace(`#include <color_fragment>`,`#include <color_fragment>\ndiffuseColor.a *= vFade;`)}"
+        },
+        {
+          "id": 120,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388609,8389635,srgb,e=>{e.vertexShader=e.vertexShader.replace(`void main() {`,`attribute float aFade; varying float vFade; void main() { vFade=aFade;`),e.fragmentShader=e.fragmentShader.replace(`void main() {`,`varying float vFade; void main() {`).replace(`#include <color_fragment>`,`#include <color_fragment>\ndiffuseColor.a *= vFade;`)}"
+        },
+        {
+          "id": 121,
+          "name": "",
+          "type": "PointsMaterial",
+          "cacheKey": "points,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,8389635,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 122,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388609,8393731,srgb,e=>{e.vertexShader=e.vertexShader.replace(`void main() {`,`attribute float aFade; varying float vFade; void main() { vFade=aFade;`),e.fragmentShader=e.fragmentShader.replace(`void main() {`,`varying float vFade; void main() {`).replace(`#include <color_fragment>`,`#include <color_fragment>\ndiffuseColor.a *= vFade;`)}"
+        },
+        {
+          "id": 123,
+          "name": "",
+          "type": "MeshBasicMaterial",
+          "cacheKey": "basic,highp,srgb,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388609,8389635,srgb,e=>{e.vertexShader=e.vertexShader.replace(`void main() {`,`attribute float aFade; varying float vFade; void main() { vFade=aFade;`),e.fragmentShader=e.fragmentShader.replace(`void main() {`,`varying float vFade; void main() {`).replace(`#include <color_fragment>`,`#include <color_fragment>\ndiffuseColor.a *= vFade;`)}"
+        },
+        {
+          "id": 124,
+          "name": "",
+          "type": "PointsMaterial",
+          "cacheKey": "points,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,0,8389635,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 125,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8388624,8522755,srgb,nsw-landmark-foliage-v2"
+        },
+        {
+          "id": 126,
+          "name": "Rock: slate",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb-linear,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,0,0,0,0,8389648,8520707,srgb,geological-rock-v1:slate:false:false:false:false:true"
+        },
+        {
+          "id": 127,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8388624,8522755,srgb,nsw-landmark-foliage-v2"
+        },
+        {
+          "id": 128,
+          "name": "Rock: slate",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,1,0,0,0,0,1,4,0,0,0,8389648,8520707,srgb,geological-rock-v1:slate:false:false:false:false:true"
+        },
+        {
+          "id": 129,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8519687,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 130,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8519683,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 131,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389648,8519683,srgb,ground-layers-v4:false:0:true:true"
+        },
+        {
+          "id": 132,
+          "name": "Blended claim ground",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389648,8519683,srgb,ground-layers-v4:false:0:true:false"
+        },
+        {
+          "id": 133,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388627,8521731,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 134,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8519683,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 135,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388627,8519683,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 136,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388627,8519687,srgb,geological-rock-v1:slate:true:false:true:true:false"
+        },
+        {
+          "id": 137,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8521731,srgb,nsw-landmark-foliage-v2"
+        },
+        {
+          "id": 138,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8521731,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 139,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389651,8521731,srgb,nsw-foliage-v2:true"
+        },
+        {
+          "id": 140,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8521731,srgb,nsw-foliage-v2:false"
+        },
+        {
+          "id": 141,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8519683,srgb,geological-rock-v1:ironstone:true:false:false:false:true"
+        },
+        {
+          "id": 142,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8519683,srgb,geological-rock-v1:basalt:true:false:false:false:true"
+        },
+        {
+          "id": 143,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8519683,srgb,geological-rock-v1:quartz:true:false:false:false:true"
+        },
+        {
+          "id": 144,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8519683,srgb,geological-rock-v1:slate:true:false:false:false:true"
+        },
+        {
+          "id": 145,
+          "name": "Rock: mixed geology",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389649,8519683,srgb,geological-rock-v1:rhyolite:true:false:false:false:true"
+        },
+        {
+          "id": 146,
+          "name": "Rock: slate",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389648,8519683,srgb,geological-rock-v1:slate:false:false:false:false:true"
+        },
+        {
+          "id": 147,
+          "name": "",
+          "type": "MeshStandardMaterial",
+          "cacheKey": "physical,STANDARD,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8389648,8519683,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 148,
+          "name": "",
+          "type": "MeshPhysicalMaterial",
+          "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,srgb,306,512,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,8388624,8388611,srgb,rough-find-v1-0"
+        },
+        {
+          "id": 149,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,0,0,0,3200,8388611,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 150,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile(){}"
+        },
+        {
+          "id": 151,
+          "name": "",
+          "type": "MeshDepthMaterial",
+          "cacheKey": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,0,0,0,3200,8388609,8532992,srgb,onBeforeCompile(){}"
+        }
+      ]
+    },
+    {
+      "cycle": 1,
+      "added": []
+    },
+    {
+      "cycle": 2,
+      "added": []
+    },
+    {
+      "cycle": 3,
+      "added": []
+    },
+    {
+      "cycle": 4,
+      "added": [
+        {
+          "id": 152,
+          "name": "",
+          "type": "SpriteMaterial",
+          "cacheKey": "sprite,highp,srgb,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,0,1,2,2,0,1,0,0,0,0,0,0,0,1,4,0,0,0,0,8388611,srgb,onBeforeCompile(){}"
+        }
+      ]
+    },
+    {
+      "cycle": 5,
+      "added": []
+    },
+    {
+      "cycle": 6,
+      "added": []
+    },
+    {
+      "cycle": 7,
+      "added": []
+    },
+    {
+      "cycle": 8,
+      "added": []
+    },
+    {
+      "cycle": 9,
+      "added": []
+    },
+    {
+      "cycle": 10,
+      "added": []
+    },
+    {
+      "cycle": 11,
+      "added": []
+    },
+    {
+      "cycle": 12,
+      "added": []
+    },
+    {
+      "cycle": 13,
+      "added": []
+    }
+  ],
+  "errors": []
+}

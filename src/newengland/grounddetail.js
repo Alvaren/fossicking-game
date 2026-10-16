@@ -39,10 +39,15 @@ export function newEnglandGroundDetail(root, terrain, kit) {
   const d=new THREE.Object3D(), up=new THREE.Vector3(0,1,0), direction=new THREE.Vector3();
   const random=(x,z)=>{const n=Math.sin(x*127.1+z*311.7)*43758.5453;return n-Math.floor(n);};
   const cut=(x,z)=>terrain.sampleGrid(terrain.orig,x,z)-terrain.getHeight(x,z);
+  let lastKey;
   return { update(player, low) {
     let ns=0,nc=0,nr=0;
     const step=low ? .24 : .16, radius=low ? 3 : 5;
     const x0=Math.floor((player.x-radius)/step),z0=Math.floor((player.z-radius)/step);
+    const crystals=(terrain.overlays||[]).map(o=>(o.crystals||[]).map(e=>Number(!!e.c.collected)).join('')).join(';');
+    const key=[x0,z0,low,terrain.revision,crystals].join(':');
+    if(terrain.revision!==undefined&&key===lastKey)return;
+    lastKey=key;
     const count=Math.ceil(radius*2/step);
     let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
     for(let j=0;j<count;j++)for(let i=0;i<count;i++) {

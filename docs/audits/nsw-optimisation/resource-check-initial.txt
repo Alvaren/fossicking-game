@@ -1,0 +1,72 @@
+baseline resource cycle 0 {
+  cycle: 0,
+  heap: 127668509,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 148
+}
+baseline resource cycle 1 {
+  cycle: 1,
+  heap: 127035561,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 148
+}
+baseline resource cycle 2 {
+  cycle: 2,
+  heap: 126884821,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 148
+}
+baseline resource cycle 3 {
+  cycle: 3,
+  heap: 127127613,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 148
+}
+baseline resource cycle 4 {
+  cycle: 4,
+  heap: 126908033,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 149
+}
+baseline resource cycle 5 {
+  cycle: 5,
+  heap: 127059401,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 149
+}
+baseline resource cycle 6 {
+  cycle: 6,
+  heap: 126959041,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 149
+}
+baseline resource cycle 7 {
+  cycle: 7,
+  heap: 127180845,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 149
+}
+baseline resource cycle 8 {
+  cycle: 8,
+  heap: 127001601,
+  renderer: { geometries: 756, textures: 32 },
+  programs: 149
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Preset cycling reuses compiled shader programs
+
+149 !== 148
+
+    at file:///C:/Users/codex-dev/.codex/worktrees/fossicking-codex/Fossicking%20-%20Prospecting%20Game/docs/audits/nsw-optimisation/resources.mjs:46:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 149,
+  expected: 148,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.16.0

@@ -1,0 +1,36 @@
+{
+  "base": "947414e0d0a848849c553d7433f7e0f4416a979a",
+  "frozenAt": "2026-10-16T07:23:16.544Z",
+  "files": [
+    {
+      "name": "index.html",
+      "bytes": 13150,
+      "sha256": "0bd104f114a885ffaa98210515968e78a30f0758532726921cf54c24d2ee1a2b"
+    },
+    {
+      "name": "assets/index-gz00_VKv.js",
+      "bytes": 970164,
+      "sha256": "f439528351ac85ca6fad2256b3b6c1d1cdb287bdcac081f508c455a209d4035b"
+    },
+    {
+      "name": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311"
+    },
+    {
+      "name": "assets/main-CHUq-nNx.js",
+      "bytes": 318906,
+      "sha256": "b9e1ac4bcee5ab6b41e119cda84a1c1f1b3ed6d9f776cc320a63e46481a95790"
+    },
+    {
+      "name": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf"
+    },
+    {
+      "name": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7"
+    }
+  ]
+}

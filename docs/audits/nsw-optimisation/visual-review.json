@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-16T07:20:43.607Z",
+  "baseline": "947414e",
+  "high": [
+    "creek",
+    "bank",
+    "woodland",
+    "reef",
+    "granite",
+    "camp",
+    "dig",
+    "downstream"
+  ],
+  "otherPresets": {
+    "low": [
+      "creek",
+      "reef",
+      "dig"
+    ],
+    "ultra": [
+      "creek",
+      "reef",
+      "dig"
+    ],
+    "mediumTouch": [
+      "creek",
+      "reef",
+      "dig"
+    ]
+  },
+  "result": "Inspected full matched stills: geometry, materials, plant coverage, shadows, water and tool/HUD layout preserved. Animation phases of drifting leaves, tools and wildlife differ slightly.",
+  "ripples": "Visible surface/reflection change between candidate high-creek and high-creek-next at shader times 20 and 20.5; restored ripple treatment retained.",
+  "motion": "Normal-input walking, mouse turns and wheel switching recorded for both builds. Seven paired decoded samples at 0.5, 2, 4, 6, 8, 10 and 12 seconds inspected: preserved water, crowns, shadows and near detail; small pose/animation timing differences. This is sampled-frame review, not a physical-device playthrough or proof that every temporal artifact is absent.",
+  "limits": "Preservation audit of published baseline, not new reference-art acceptance or a physical phone test.",
+  "edges": "Night and photo paired images inspected after allowing environment refresh to settle; flood draws and off-screen water capture checks pass. No shader errors; scene auto-update and photo pixel ratio restored."
+}

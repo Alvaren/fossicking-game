@@ -1,0 +1,111 @@
+{
+  "started": "2026-10-16T07:08:57.481Z",
+  "checks": [
+    {
+      "file": "resources.mjs",
+      "args": [
+        "baseline"
+      ],
+      "env": {},
+      "started": "2026-10-16T07:08:57.482Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:10:13.038Z"
+    },
+    {
+      "file": "resources.mjs",
+      "args": [
+        "candidate"
+      ],
+      "env": {},
+      "started": "2026-10-16T07:10:13.040Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:11:29.384Z"
+    },
+    {
+      "file": "capture.mjs",
+      "args": [
+        "baseline"
+      ],
+      "env": {
+        "OPT_MODES": "low,ultra,touch"
+      },
+      "started": "2026-10-16T07:11:29.385Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:12:35.767Z"
+    },
+    {
+      "file": "capture.mjs",
+      "args": [
+        "candidate"
+      ],
+      "env": {
+        "OPT_MODES": "low,ultra,touch"
+      },
+      "started": "2026-10-16T07:12:35.768Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:13:45.042Z"
+    },
+    {
+      "file": "motion.mjs",
+      "args": [
+        "baseline"
+      ],
+      "env": {},
+      "started": "2026-10-16T07:13:45.043Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:14:22.956Z"
+    },
+    {
+      "file": "motion.mjs",
+      "args": [
+        "candidate"
+      ],
+      "env": {},
+      "started": "2026-10-16T07:14:22.957Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:15:01.540Z"
+    },
+    {
+      "file": "profile.mjs",
+      "args": [
+        "baseline-passes"
+      ],
+      "env": {
+        "OPT_SECONDS": "48",
+        "OPT_RUNS": "1",
+        "OPT_DIAG": "1",
+        "OPT_PASS_GPU": "1"
+      },
+      "started": "2026-10-16T07:15:01.543Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:16:36.896Z"
+    },
+    {
+      "file": "profile.mjs",
+      "args": [
+        "candidate-passes"
+      ],
+      "env": {
+        "OPT_SECONDS": "48",
+        "OPT_RUNS": "1",
+        "OPT_DIAG": "1",
+        "OPT_PASS_GPU": "1"
+      },
+      "started": "2026-10-16T07:16:36.897Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:18:13.772Z"
+    },
+    {
+      "file": "../../../tests/newengland-suite.mjs",
+      "args": [
+        "environment.offline.mjs",
+        "facilities.game.mjs",
+        "panning.game.mjs"
+      ],
+      "env": {},
+      "started": "2026-10-16T07:18:13.774Z",
+      "exit": 0,
+      "finished": "2026-10-16T07:19:34.051Z"
+    }
+  ]
+}

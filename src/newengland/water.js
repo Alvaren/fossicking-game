@@ -1,10 +1,12 @@
 import * as THREE from 'three';
+import { waterVisibility } from '../rendering/waterbounds.js';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 
 // Local tangent reflection, bounded by the error against the real creek profile.
 // Refraction samples the actual opaque scene/depth; neither changes hydrology.
 export function newEnglandWater(water, creek, settings) {
-  const u=water.uniforms;
+  const u=water.uniforms,grid=water.mesh.geometry.userData.grid;
+  const visibleFrom=waterVisibility(water.mesh,grid.columns,grid.rows);
   const reflector=new Reflector(new THREE.PlaneGeometry(1,1),{textureWidth:640,textureHeight:360,multisample:0,clipBias:.001});
   const transmission=new THREE.WebGLRenderTarget(640,360,{type:THREE.HalfFloatType});
   transmission.depthTexture=new THREE.DepthTexture(640,360);
@@ -109,7 +111,9 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     if(!primed||scene.children.some(o=>o.isDirectionalLight&&o.castShadow&&!o.shadow.map)) {
       primed=true;u.sceneWater.value=0;return;
     }
-    const active=!disposed&&settings.water==='scene'&&underground<.1&&camera.position.y>creek.surfaceY(camera.position.z)+.05;
+    if(scene.matrixWorldAutoUpdate)scene.updateMatrixWorld();
+    camera.updateMatrixWorld();
+    const active=visibleFrom(camera)&&!disposed&&settings.water==='scene'&&underground<.1&&camera.position.y>creek.surfaceY(camera.position.z)+.05;
     stats.active=active;u.sceneWater.value=active ? 1 : 0;stats.passes=0;
     if(!active)return;
     renderer.getDrawingBufferSize(size);u.waterViewport.value.copy(size);
@@ -124,7 +128,7 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     const target=renderer.getRenderTarget(),shadows=renderer.shadowMap.autoUpdate;
     const visible=water.mesh.visible,leaves=water.leaves.visible;
     water.mesh.visible=false;water.leaves.visible=false;
-    scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+
     try {
       reflector.onBeforeRender(renderer,scene,camera);
       inverse.copy(reflector.matrixWorld).invert();

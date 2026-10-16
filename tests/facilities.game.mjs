@@ -1,5 +1,6 @@
 import {createRequire} from 'node:module';
 import assert from 'node:assert/strict';
+import {stepLapidary,lapTarget} from '../src/lapidary.js';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const origin=process.env.PANNING_TEST_ORIGIN||'http://127.0.0.1:5191';
 const browser=await chromium.launch({headless:true});
@@ -50,7 +51,10 @@ try{
   await click('#lap-close');await page.reload({waitUntil:'networkidle'});if(touch)await page.setViewportSize({width:844,height:390});await enter();await bench();
   assert.equal(await page.evaluate(()=>fossick.state.gems.length),0);assert.equal(await page.evaluate(()=>fossick.state.camp.lapidarySession.rough.uid),'test-stone');
   await click('#camp-cut-start');
-  await page.evaluate(async()=>{const {stepLapidary,lapTarget}=await import('/src/lapidary.js');const c=fossick.state.camp;for(let i=0;i<30000&&!c.lapidarySession.finished;i++)stepLapidary(c,{working:true,aim:lapTarget(c.lapidarySession),pressure:.4,water:true},1/60);fossick.lapidaryUI.refresh();});
+  // Finish the same simulation fixture without requiring Vite-only source URLs.
+  const completion=await page.evaluate(()=>fossick.state.camp);
+  for(let i=0;i<30000&&!completion.lapidarySession.finished;i++)stepLapidary(completion,{working:true,aim:lapTarget(completion.lapidarySession),pressure:.4,water:true},1/60);
+  await page.evaluate(({water,lapidarySession})=>{Object.assign(fossick.state.camp,{water,lapidarySession});fossick.lapidaryUI.refresh();},completion);
   await page.locator('#lap-collect').evaluate(b=>{b.click();b.click();});
   assert.equal(await page.evaluate(()=>fossick.state.gems.length),1);assert.ok(await page.evaluate(()=>fossick.state.gems[0].cut));assert.equal(await page.evaluate(()=>fossick.state.gems[0].keep),true);
   assert.equal(await page.evaluate(()=>fossick.state.camp.cutsCompleted),1);assert.equal(await page.evaluate(()=>fossick.state.camp.lapidarySession),null);

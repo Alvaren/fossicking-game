@@ -61,8 +61,13 @@ export function newEnglandBankRoots(root,terrain,world,mask,workingMask) {
       branches.push({mesh,centres:shape.centres,x,z});
     }
   }
-  return {branches,update(player,low) {
-    for(const b of branches)b.mesh.visible=Math.hypot(player.x-b.x,player.z-b.z)<(low?24:64)&&b.centres.every(p=>
-      Math.abs(terrain.getHeight(p.x,p.z)-p.ground)<.015&&!workingMask.dynamic(p.x,p.z,.06));
+  return {branches,update(player,low,revision) {
+    for(const b of branches) {
+      if(revision===undefined||b.revision!==revision) {
+        b.supported=b.centres.every(p=>Math.abs(terrain.getHeight(p.x,p.z)-p.ground)<.015&&!workingMask.dynamic(p.x,p.z,.06));
+        b.revision=revision;
+      }
+      b.mesh.visible=Math.hypot(player.x-b.x,player.z-b.z)<(low?24:64)&&b.supported;
+    }
   }};
 }

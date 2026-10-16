@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Current NSW optimisation (16 October 2026)
+
+The user authorised the full B9 pass against published `947414e`, including its restored ripples. Codex branch `codex/nsw-optimisation` owns the narrow rendering/cache changes and verification recorded in [NSW-OPTIMISATION.md](NSW-OPTIMISATION.md). Matched visuals, world/save, all-region controls, touch, resource cycling, offline, camp and panning checks pass; the three repeated High/1080p routes show 22% lower median CPU time, 9% lower median GPU time and 19% lower GPU p95. Publication is pending. No other agent was launched or messaged. High/Ultra visuals and original world/input/recovery contracts remain fixed. This performance phase does not close older reference-art acceptance gaps; physical phone performance remains unmeasured.
+
 ## Current build: New England environment (13 October 2026)
 
 **Current correction branch:** `codex/nsw-environment-fix`, base `aedeba5`, code `6ba554e`, evidence `9f24854`. [Pages run 38407938169](https://github.com/Alvaren/fossicking-game/actions/runs/38407938169) succeeded; public High desktop/touch checks and the live GLB hash pass. The [correction record](NSW-ENVIRONMENT-BUILD.md#correction-pass-after-the-reference-audit) records changes across V01–V08: revised jointed kit, grouped low dressing, quieter materials, corrected legacy plant shading, broken advected foam, lighting adjustments, and dig-surface inclusions/colour. The original terrain, sources, saved work and inputs are preserved. All eight visual dimensions are still below the supplied reference target; do not mark the whole upgrade complete. Large connected exposures and bank composition remain the next art gate. Exact validation, evidence, deployment and outstanding work live in that record and the shared coordination handoff.

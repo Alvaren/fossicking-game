@@ -2,6 +2,7 @@ import { createPointerLock, bindToolWheel, TOOL_ORDER as TOOLS, toolForKey } fro
 import { readClaim, saveClaim, claimProfile } from './claimregions.js';
 import { TRAVEL_FEE } from './regions.js';
 import * as THREE from 'three';
+import { withSceneTransforms } from './rendering/frame.js';
 import { RegionUI } from './regionui.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { Terrain, PLAY } from './terrain.js';
@@ -2451,10 +2452,12 @@ function frame() {
   sun.position.copy(player.pos).addScaledVector(daynight.lightDir, 80);
   sun.target.position.copy(player.pos);
 
-  creekRendering?.capture(renderer,scene,camera,under);
-  renderer.clear();
-  renderer.render(scene, camera);
-  if (photo.active) photo.capture(() => { creekRendering?.capture(renderer,scene,camera,under); renderer.clear(); renderer.render(scene, camera); });
+  withSceneTransforms(scene,camera,() => {
+    creekRendering?.capture(renderer,scene,camera,under);
+    renderer.clear();
+    renderer.render(scene, camera);
+    if (photo.active) photo.capture(() => { creekRendering?.capture(renderer,scene,camera,under); renderer.clear(); renderer.render(scene, camera); });
+  });
   renderer.clearDepth();
   if (!driving && !photo.active) renderer.render(view.scene, view.camera);
   requestAnimationFrame(frame);

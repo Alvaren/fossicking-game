@@ -1,0 +1,186 @@
+{
+  "renderTargets": {
+    "768x432": {
+      "count": 6892,
+      "ms": 27856.299999993294
+    },
+    "screen": {
+      "count": 6892,
+      "ms": 21632.30000001937
+    },
+    "384x512": {
+      "count": 1376,
+      "ms": 16.200000002980232
+    }
+  },
+  "top": [
+    {
+      "name": "(idle)",
+      "line": -1,
+      "column": -1,
+      "url": "",
+      "ms": 13554.466
+    },
+    {
+      "name": "h",
+      "line": 4169,
+      "column": 2274,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 2662.826
+    },
+    {
+      "name": "h",
+      "line": 4169,
+      "column": 2274,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 2601.673
+    },
+    {
+      "name": "getProgramInfoLog",
+      "line": -1,
+      "column": -1,
+      "url": "",
+      "ms": 1561.685
+    },
+    {
+      "name": "getProgramInfoLog",
+      "line": -1,
+      "column": -1,
+      "url": "",
+      "ms": 1542.707
+    },
+    {
+      "name": "(program)",
+      "line": -1,
+      "column": -1,
+      "url": "",
+      "ms": 1525.335
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 860.45
+    },
+    {
+      "name": "vt",
+      "line": 4220,
+      "column": 38294,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 845.107
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 835.784
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 815.264
+    },
+    {
+      "name": "vt",
+      "line": 4220,
+      "column": 38294,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 807.706
+    },
+    {
+      "name": "St",
+      "line": 4220,
+      "column": 41279,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 754.349
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 734.692
+    },
+    {
+      "name": "St",
+      "line": 4220,
+      "column": 41279,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 618.52
+    },
+    {
+      "name": "St",
+      "line": 4220,
+      "column": 41279,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 601.586
+    },
+    {
+      "name": "pt",
+      "line": 4220,
+      "column": 34635,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 589.472
+    },
+    {
+      "name": "pt",
+      "line": 4220,
+      "column": 34635,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 581.484
+    },
+    {
+      "name": "b",
+      "line": 4196,
+      "column": 5836,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 539.862
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 457.473
+    },
+    {
+      "name": "g",
+      "line": 4169,
+      "column": 8891,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 456.082
+    },
+    {
+      "name": "Xf.renderBufferDirect",
+      "line": 4220,
+      "column": 29370,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 444.197
+    },
+    {
+      "name": "updateMatrixWorld",
+      "line": 1,
+      "column": 78133,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 431.345
+    },
+    {
+      "name": "g",
+      "line": 4169,
+      "column": 8891,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 430.314
+    },
+    {
+      "name": "Xf.renderBufferDirect",
+      "line": 4220,
+      "column": 29370,
+      "url": "http://127.0.0.1:5191/baseline/assets/index-RLaQf8IF.js",
+      "ms": 429.706
+    }
+  ]
+}

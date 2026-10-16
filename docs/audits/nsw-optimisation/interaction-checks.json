@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-16T07:03:20.032Z",
+  "tests": 123,
+  "buildModules": 127,
+  "worldSeeds": [
+    1,
+    12345,
+    798887
+  ],
+  "sourceWorldAndTrowelSaveReload": "passed",
+  "optionalKitFailures": [
+    "missing",
+    "corrupt"
+  ],
+  "normalPointerLockRegions": [
+    "new-england",
+    "golden-triangle",
+    "qld-gemfields",
+    "wa-goldfields",
+    "coober-pedy",
+    "tasmania-west",
+    "ne-tasmania"
+  ],
+  "controls": [
+    "mouse look",
+    "walk while switching tools",
+    "mouse wheel",
+    "number keys",
+    "menu isolation",
+    "pause/resume",
+    "rejected lock recovery",
+    "tool close"
+  ],
+  "originalTouchControls": "passed",
+  "travel": "desktop and portrait touch: map, selection/cancel, zero-dollar round trip, topo overlays, unchanged wallet, no guides"
+}

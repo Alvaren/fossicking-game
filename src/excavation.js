@@ -351,6 +351,7 @@ export class Patch {
   }
 
   refresh(i0, i1, j0, j1) {
+    this.terrain.revision = (this.terrain.revision || 0) + 1;
     i0 = Math.max(0, i0); j0 = Math.max(0, j0);
     i1 = Math.min(CELLS, i1); j1 = Math.min(CELLS, j1);
     for (let j = j0; j <= j1; j++) {

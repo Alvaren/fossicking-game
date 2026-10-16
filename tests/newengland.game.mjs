@@ -97,7 +97,9 @@ try {
     await context.close();
   }
   for(const failure of ['missing','corrupt']) {
-    const context=await browser.newContext();
+    // Fault injection must reach page.route; production service workers can
+    // otherwise satisfy the kit from their own fetch/cache. Offline has its own suite.
+    const context=await browser.newContext({serviceWorkers:'block'});
     await context.addInitScript(()=>{
       localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:'new-england'}));
       localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.75,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));

@@ -1,0 +1,504 @@
+{
+  "label": "baseline",
+  "base": "http://127.0.0.1:5191/baseline/",
+  "loads": [
+    {
+      "kind": "cold",
+      "readyMs": 18251,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 969027,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 5.900000000372529
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 32691,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 4.599999999627471
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 316616,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 22.199999999254942
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 6054,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 2.400000000372529
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 15451.5
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 15278
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 7.5
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 17.799999998882413
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 18.199999999254942
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 18.59999999962747
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 15211.10000000149
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 15211.699999999255
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 19.799999998882413
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 15211.900000000373
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 20
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 15212.099999999627
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 20.199999999254942
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 15212.299999998882
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 684,
+        "textures": 23
+      },
+      "programs": 115
+    },
+    {
+      "kind": "cached-reload",
+      "readyMs": 3464,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 0,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 18
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 0,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 7.800000000745058
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 0,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 6
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 0,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 3.699999999254942
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 1029.2999999988824
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 931.3999999985099
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 7.599999999627471
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 17.40000000037253
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 17.199999999254942
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 17
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 909.7000000011176
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 910
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 20.40000000037253
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 909.9000000003725
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 20.299999998882413
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 910.0999999996275
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 20.59999999962747
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 910.3000000007451
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 683,
+        "textures": 23
+      },
+      "programs": 115
+    },
+    {
+      "kind": "cached-repeat",
+      "readyMs": 3475,
+      "resources": [
+        {
+          "name": "/baseline/assets/index-RLaQf8IF.js",
+          "transfer": 0,
+          "encoded": 968727,
+          "decoded": 968727,
+          "ms": 1.599999999627471
+        },
+        {
+          "name": "/baseline/assets/index-R_XlLHnA.css",
+          "transfer": 0,
+          "encoded": 32391,
+          "decoded": 32391,
+          "ms": 1.800000000745058
+        },
+        {
+          "name": "/baseline/assets/main-8tWhxJcp.js",
+          "transfer": 0,
+          "encoded": 316316,
+          "decoded": 316316,
+          "ms": 0.8999999985098839
+        },
+        {
+          "name": "/baseline/assets/main-sQn9NTkG.css",
+          "transfer": 0,
+          "encoded": 5754,
+          "decoded": 5754,
+          "ms": 1.199999999254942
+        },
+        {
+          "name": "/baseline/models/newengland/environment.glb",
+          "transfer": 0,
+          "encoded": 5832052,
+          "decoded": 5832052,
+          "ms": 1027
+        },
+        {
+          "name": "/baseline/models/finds.glb",
+          "transfer": 0,
+          "encoded": 200048,
+          "decoded": 200048,
+          "ms": 934.1999999992549
+        },
+        {
+          "name": "/baseline/models/crystals.glb",
+          "transfer": 0,
+          "encoded": 22296,
+          "decoded": 22296,
+          "ms": 8.200000001117587
+        },
+        {
+          "name": "/baseline/models/rock_pick.glb",
+          "transfer": 0,
+          "encoded": 8084,
+          "decoded": 8084,
+          "ms": 8.5
+        },
+        {
+          "name": "/baseline/models/trowel.glb",
+          "transfer": 0,
+          "encoded": 10596,
+          "decoded": 10596,
+          "ms": 9.5
+        },
+        {
+          "name": "/baseline/models/brush.glb",
+          "transfer": 0,
+          "encoded": 12108,
+          "decoded": 12108,
+          "ms": 8.5
+        },
+        {
+          "name": "/baseline/models/glove.glb",
+          "transfer": 0,
+          "encoded": 115476,
+          "decoded": 115476,
+          "ms": 914
+        },
+        {
+          "name": "/baseline/models/detector.glb",
+          "transfer": 0,
+          "encoded": 186528,
+          "decoded": 186528,
+          "ms": 914.6999999992549
+        },
+        {
+          "name": "/baseline/models/gold_pan.glb",
+          "transfer": 0,
+          "encoded": 33232,
+          "decoded": 33232,
+          "ms": 17.90000000037253
+        },
+        {
+          "name": "/baseline/models/gem_sieve.glb",
+          "transfer": 0,
+          "encoded": 94816,
+          "decoded": 94816,
+          "ms": 913.9000000003725
+        },
+        {
+          "name": "/baseline/models/sluice.glb",
+          "transfer": 0,
+          "encoded": 21940,
+          "decoded": 21940,
+          "ms": 20.300000000745058
+        },
+        {
+          "name": "/baseline/models/ute.glb",
+          "transfer": 0,
+          "encoded": 84316,
+          "decoded": 84316,
+          "ms": 914.5999999996275
+        },
+        {
+          "name": "/baseline/models/tent.glb",
+          "transfer": 0,
+          "encoded": 11144,
+          "decoded": 11144,
+          "ms": 20.5
+        },
+        {
+          "name": "/baseline/models/kangaroo.glb",
+          "transfer": 0,
+          "encoded": 71812,
+          "decoded": 71812,
+          "ms": 914.5
+        }
+      ],
+      "sw": true,
+      "renderer": {
+        "geometries": 683,
+        "textures": 23
+      },
+      "programs": 115
+    }
+  ],
+  "cycles": [
+    {
+      "cycle": 0,
+      "heap": 127668509,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 1,
+      "heap": 127035561,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 2,
+      "heap": 126884821,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 3,
+      "heap": 127127613,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 148
+    },
+    {
+      "cycle": 4,
+      "heap": 126908033,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 5,
+      "heap": 127059401,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 6,
+      "heap": 126959041,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 7,
+      "heap": 127180845,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    },
+    {
+      "cycle": 8,
+      "heap": 127001601,
+      "renderer": {
+        "geometries": 756,
+        "textures": 32
+      },
+      "programs": 149
+    }
+  ],
+  "errors": []
+}

@@ -191,6 +191,7 @@ export class Water {
     geo.setAttribute('aDepth', new THREE.BufferAttribute(depth, 1));
     geo.setAttribute('aFoam', new THREE.BufferAttribute(foam, 1));
     geo.computeBoundingSphere();
+    geo.userData.grid = { columns:M, rows:rows-1 };
 
     const surface = riverWaterMaterial(sunDir);
     this.uniforms = surface.uniforms;

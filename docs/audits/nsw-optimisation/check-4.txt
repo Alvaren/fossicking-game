@@ -1,0 +1,9 @@
+candidate low creek
+candidate low reef
+candidate low dig
+candidate ultra creek
+candidate ultra reef
+candidate ultra dig
+candidate touch creek
+candidate touch reef
+candidate touch dig

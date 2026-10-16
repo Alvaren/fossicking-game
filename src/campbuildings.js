@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { batchStaticChildren } from './rendering/staticbatch.js';
 import { Cabinet } from './cabinet.js';
 import { powered } from './campfacilities.js';
 import { signTexture } from './world.js';
@@ -50,6 +51,7 @@ export class CampBuildings {
       const g=this.parts.lights;this.box(g,.065,3.1,.065,x,1.55,z,'metal');this.box(g,.65,.16,.2,x,3.1,z,'dark');
       const light=new THREE.PointLight(0xffe2ac,0,13,2);light.position.set(x,2.9,z);g.add(light);this.lights.push(light);
     }
+    for(const group of Object.values(this.parts))batchStaticChildren(group);
     this.sync(camp);
   }
   box(g,w,h,d,x,y,z,mat='wood'){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),this.m[mat]);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}

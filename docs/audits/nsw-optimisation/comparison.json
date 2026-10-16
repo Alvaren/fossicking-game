@@ -1,0 +1,4913 @@
+{
+  "date": "2026-10-16T07:54:58.439Z",
+  "runs": {
+    "baseline": [
+      {
+        "label": "baseline",
+        "run": 1,
+        "url": "http://127.0.0.1:5191/baseline/",
+        "seed": 12345,
+        "diagnostic": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 22036,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "Ql": 32248
+        },
+        "frames": 31405,
+        "frameMs": {
+          "median": 16.69999999999709,
+          "p95": 33.399999999965075,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 13.5,
+          "p95": 28.59999999962747,
+          "p99": 33
+        },
+        "calls": {
+          "median": 1100,
+          "p95": 2714,
+          "p99": 3044
+        },
+        "triangles": {
+          "median": 17816636,
+          "p95": 18820857,
+          "p99": 18826237
+        },
+        "over33ms": 46,
+        "over50ms": 10,
+        "gpuMs": {
+          "median": 10.011648,
+          "p95": 22.162432,
+          "p99": 24.873984
+        },
+        "gpuSamples": 1046,
+        "memory": [
+          {
+            "age": 0.025399999999441206,
+            "heap": 134209098,
+            "geometries": 845,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 15.1025,
+            "heap": 139999548,
+            "geometries": 954,
+            "textures": 49,
+            "programs": 145
+          },
+          {
+            "age": 25.975,
+            "heap": 149375820,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 35.974899999999444,
+            "heap": 147708376,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 45.974599999999626,
+            "heap": 127392392,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 55.9745,
+            "heap": 141044764,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 65.97369999999925,
+            "heap": 144457812,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 75.97339999999944,
+            "heap": 131679336,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 85.97259999999963,
+            "heap": 144190612,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 96.00589999999944,
+            "heap": 132705428,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 106.00509999999963,
+            "heap": 140713039,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 116.00489999999944,
+            "heap": 127841532,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 126.00469999999926,
+            "heap": 132286940,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 136.00469999999925,
+            "heap": 135435436,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 146.02139999999943,
+            "heap": 132560884,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 156.02059999999963,
+            "heap": 128731588,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 166.02039999999946,
+            "heap": 147751892,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 176.01889999999943,
+            "heap": 146474216,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 186.01909999999964,
+            "heap": 147825973,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 196.0195,
+            "heap": 151732725,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 206.0182999999998,
+            "heap": 147953367,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 216.15139999999946,
+            "heap": 143880507,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 226.15089999999944,
+            "heap": 146023318,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 236.15,
+            "heap": 135205918,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 246.5857999999998,
+            "heap": 136576102,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 258.1927999999998,
+            "heap": 147742566,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 268.3540999999996,
+            "heap": 153944634,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 278.499,
+            "heap": 150197133,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 289.699,
+            "heap": 130318866,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 303.1007999999998,
+            "heap": 130728814,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 315.8472999999998,
+            "heap": 151078562,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 326.34609999999964,
+            "heap": 147220250,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 336.3462999999998,
+            "heap": 150165014,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 346.346,
+            "heap": 134502026,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 356.3625,
+            "heap": 156282966,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 366.36259999999965,
+            "heap": 130128458,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 376.36089999999945,
+            "heap": 157788722,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 386.3618999999994,
+            "heap": 132994298,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 397.3655,
+            "heap": 153802010,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 414.53079999999983,
+            "heap": 144867606,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 431.55229999999983,
+            "heap": 141371846,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 448.89639999999946,
+            "heap": 137328434,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 466.16289999999947,
+            "heap": 160943750,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 483.6238999999994,
+            "heap": 135574846,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 501.39489999999944,
+            "heap": 159727482,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 518.4427999999998,
+            "heap": 133039182,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 534.6506999999992,
+            "heap": 137468022,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 548.8608999999994,
+            "heap": 153933174,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 559.8450999999997,
+            "heap": 159272178,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 570.2293999999995,
+            "heap": 142217534,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 581.0663999999995,
+            "heap": 144738294,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 591.344,
+            "heap": 147099334,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 601.8985999999996,
+            "heap": 141646266,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 612.2898999999994,
+            "heap": 131050094,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 4497,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 16.79999999998836,
+              "p99": 16.80000000000291
+            },
+            "cpuMs": {
+              "median": 11.599999999627471,
+              "p95": 16.40000000037253,
+              "p99": 19.700000000186265
+            },
+            "calls": {
+              "median": 1001,
+              "p95": 1139,
+              "p99": 1143
+            },
+            "triangles": {
+              "median": 18816495,
+              "p95": 18826263,
+              "p99": 18827637
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.355392,
+              "p95": 10.5472,
+              "p99": 11.865088
+            }
+          },
+          "bank": {
+            "frames": 4499,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 11.900000000372529,
+              "p95": 16.399999999441206,
+              "p99": 19
+            },
+            "calls": {
+              "median": 1098,
+              "p95": 1128,
+              "p99": 1141
+            },
+            "triangles": {
+              "median": 18580606,
+              "p95": 18626478,
+              "p99": 18627221
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 9.919488,
+              "p95": 11.913216,
+              "p99": 12.377088
+            }
+          },
+          "woodland": {
+            "frames": 4492,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 10.5,
+              "p95": 15.5,
+              "p99": 19.799999999813735
+            },
+            "calls": {
+              "median": 760,
+              "p95": 804,
+              "p99": 806
+            },
+            "triangles": {
+              "median": 17807439,
+              "p95": 17826946,
+              "p99": 17828394
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.663168,
+              "p95": 9.281536,
+              "p99": 10.732544
+            }
+          },
+          "reef": {
+            "frames": 3888,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 33.399999999965075,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 18.299999999813735,
+              "p95": 24.700000000186265,
+              "p99": 28.300000000745058
+            },
+            "calls": {
+              "median": 1638,
+              "p95": 1893,
+              "p99": 1894
+            },
+            "triangles": {
+              "median": 17422803,
+              "p95": 17472215,
+              "p99": 17472217
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 12.736512,
+              "p95": 17.01376,
+              "p99": 19.895296
+            }
+          },
+          "granite": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000046566
+            },
+            "cpuMs": {
+              "median": 12.099999999627471,
+              "p95": 14.899999999441206,
+              "p99": 16.90000000037253
+            },
+            "calls": {
+              "median": 746,
+              "p95": 763,
+              "p99": 776
+            },
+            "triangles": {
+              "median": 15987638,
+              "p95": 15994543,
+              "p99": 15997867
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.612416,
+              "p95": 10.402816,
+              "p99": 10.903552
+            }
+          },
+          "camp": {
+            "frames": 2614,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 27.59999999962747,
+              "p95": 32.799999999813735,
+              "p99": 36.09999999962747
+            },
+            "calls": {
+              "median": 2686,
+              "p95": 2728,
+              "p99": 2735
+            },
+            "triangles": {
+              "median": 17742312,
+              "p95": 18028547,
+              "p99": 18029549
+            },
+            "over33ms": 16,
+            "over50ms": 4,
+            "gpuMs": {
+              "median": 20.818944,
+              "p95": 24.946688,
+              "p99": 26.677248
+            }
+          },
+          "dig": {
+            "frames": 2651,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 49.90000000002328
+            },
+            "cpuMs": {
+              "median": 27.200000000186265,
+              "p95": 33.89999999944121,
+              "p99": 38.700000000186265
+            },
+            "calls": {
+              "median": 2497,
+              "p95": 3061,
+              "p99": 3065
+            },
+            "triangles": {
+              "median": 17565352,
+              "p95": 17760284,
+              "p99": 17764312
+            },
+            "over33ms": 30,
+            "over50ms": 6,
+            "gpuMs": {
+              "median": 20.494336,
+              "p95": 24.914944,
+              "p99": 29.248512
+            }
+          },
+          "downstream": {
+            "frames": 4264,
+            "frameMs": {
+              "median": 16.699999999953434,
+              "p95": 33.29999999993015,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 16.5,
+              "p95": 21.59999999962747,
+              "p99": 24.5
+            },
+            "calls": {
+              "median": 1565,
+              "p95": 1664,
+              "p99": 1666
+            },
+            "triangles": {
+              "median": 18743270,
+              "p95": 18756692,
+              "p99": 18761714
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 11.829248,
+              "p95": 15.133696,
+              "p99": 17.083392
+            }
+          }
+        }
+      },
+      {
+        "label": "baseline",
+        "run": 2,
+        "url": "http://127.0.0.1:5191/baseline/",
+        "seed": 12345,
+        "diagnostic": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 3403,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "Ql": 33055
+        },
+        "frames": 32008,
+        "frameMs": {
+          "median": 16.69999999999709,
+          "p95": 33.300000000046566,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 12.399999999441206,
+          "p95": 28.5,
+          "p99": 33.700000000186265
+        },
+        "calls": {
+          "median": 1099,
+          "p95": 2711,
+          "p99": 3042
+        },
+        "triangles": {
+          "median": 17812350,
+          "p95": 18820713,
+          "p99": 18825445
+        },
+        "over33ms": 76,
+        "over50ms": 13,
+        "gpuMs": {
+          "median": 9.69216,
+          "p95": 21.721088,
+          "p99": 26.001408
+        },
+        "gpuSamples": 1067,
+        "memory": [
+          {
+            "age": 0.0225,
+            "heap": 123653936,
+            "geometries": 845,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 10.430799999999813,
+            "heap": 151677245,
+            "geometries": 954,
+            "textures": 48,
+            "programs": 143
+          },
+          {
+            "age": 22.5625,
+            "heap": 162460676,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 32.57870000000019,
+            "heap": 160162212,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 42.577700000000185,
+            "heap": 179703864,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 52.59559999999963,
+            "heap": 168325764,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 62.59770000000019,
+            "heap": 181165257,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 72.61179999999982,
+            "heap": 204137189,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 82.64420000000018,
+            "heap": 198172017,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 92.71909999999963,
+            "heap": 188386333,
+            "geometries": 954,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 102.86009999999963,
+            "heap": 214464637,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 112.96059999999963,
+            "heap": 127908782,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 123.05820000000018,
+            "heap": 132464735,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 133.17489999999944,
+            "heap": 136018834,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 143.1737999999998,
+            "heap": 136267790,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 153.1745,
+            "heap": 137394330,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 163.1732999999998,
+            "heap": 128964806,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 173.17289999999943,
+            "heap": 146998358,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 183.172,
+            "heap": 146095162,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 193.17289999999943,
+            "heap": 146352541,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 203.1715,
+            "heap": 152309773,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 213.17159999999961,
+            "heap": 152540605,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 223.17070000000018,
+            "heap": 126937841,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 233.17059999999964,
+            "heap": 128193265,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 243.16970000000018,
+            "heap": 143477565,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 253.17039999999943,
+            "heap": 128857233,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 263.18589999999944,
+            "heap": 150767497,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 273.1865999999996,
+            "heap": 152387985,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 283.18539999999945,
+            "heap": 148713465,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 293.2407000000002,
+            "heap": 136027673,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 303.4260999999996,
+            "heap": 137315134,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 314.258,
+            "heap": 147884444,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 324.41689999999943,
+            "heap": 154317276,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 334.4172000000002,
+            "heap": 148542928,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 344.4162000000002,
+            "heap": 149954560,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 354.416,
+            "heap": 135211972,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 364.41539999999947,
+            "heap": 146078276,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 374.4148999999994,
+            "heap": 153920056,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 384.415,
+            "heap": 132385380,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 394.41420000000016,
+            "heap": 155127284,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 408.89139999999946,
+            "heap": 128188380,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 424.3412000000002,
+            "heap": 136321044,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 439.4218999999994,
+            "heap": 150313064,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 453.8575,
+            "heap": 127460152,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 471.2032999999998,
+            "heap": 151346964,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 490.68929999999983,
+            "heap": 129659252,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 508.6622999999998,
+            "heap": 155452596,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 525.0857999999998,
+            "heap": 147632836,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 540.196,
+            "heap": 138559212,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 551.5075999999997,
+            "heap": 133578284,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 562.9665999999996,
+            "heap": 126784164,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 574.3813999999994,
+            "heap": 152197552,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 585.6528999999995,
+            "heap": 144834896,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 596.6705999999996,
+            "heap": 132051800,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 607.633,
+            "heap": 149133432,
+            "geometries": 1002,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 619.0687000000001,
+            "heap": 143325308,
+            "geometries": 1050,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 4490,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 16.79999999998836,
+              "p99": 16.80000000000291
+            },
+            "cpuMs": {
+              "median": 11.299999999813735,
+              "p95": 16.799999999813735,
+              "p99": 20.40000000037253
+            },
+            "calls": {
+              "median": 1000,
+              "p95": 1010,
+              "p99": 1078
+            },
+            "triangles": {
+              "median": 18818437,
+              "p95": 18825771,
+              "p99": 18826565
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.425024,
+              "p95": 11.319296,
+              "p99": 14.328832
+            }
+          },
+          "bank": {
+            "frames": 4473,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 10.900000000372529,
+              "p95": 17.59999999962747,
+              "p99": 22.5
+            },
+            "calls": {
+              "median": 1097,
+              "p95": 1124,
+              "p99": 1134
+            },
+            "triangles": {
+              "median": 18573178,
+              "p95": 18625415,
+              "p99": 18626933
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 9.201664,
+              "p95": 12.058624,
+              "p99": 15.782912
+            }
+          },
+          "woodland": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 7.7999999998137355,
+              "p95": 10.400000000372529,
+              "p99": 14
+            },
+            "calls": {
+              "median": 760,
+              "p95": 806,
+              "p99": 808
+            },
+            "triangles": {
+              "median": 17807439,
+              "p95": 17829366,
+              "p99": 17830826
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 5.659648,
+              "p95": 7.21408,
+              "p99": 8.803328
+            }
+          },
+          "reef": {
+            "frames": 4425,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 33.29999999998836
+            },
+            "cpuMs": {
+              "median": 14.700000000186265,
+              "p95": 18.899999999441206,
+              "p99": 21.799999999813735
+            },
+            "calls": {
+              "median": 1656,
+              "p95": 1897,
+              "p99": 1898
+            },
+            "triangles": {
+              "median": 17432479,
+              "p95": 17477055,
+              "p99": 17477979
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 11.538432,
+              "p95": 14.231552,
+              "p99": 16.557056
+            }
+          },
+          "granite": {
+            "frames": 4501,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.70000000001164,
+              "p99": 16.79999999998836
+            },
+            "cpuMs": {
+              "median": 9.900000000372529,
+              "p95": 13.099999999627471,
+              "p99": 14.700000000186265
+            },
+            "calls": {
+              "median": 749,
+              "p95": 767,
+              "p99": 779
+            },
+            "triangles": {
+              "median": 15994019,
+              "p95": 15999155,
+              "p99": 16005127
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.618112,
+              "p95": 9.3184,
+              "p99": 10.473472
+            }
+          },
+          "camp": {
+            "frames": 2926,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 24.200000000186265,
+              "p95": 31.90000000037253,
+              "p99": 36.299999999813735
+            },
+            "calls": {
+              "median": 2689,
+              "p95": 2724,
+              "p99": 2737
+            },
+            "triangles": {
+              "median": 17747344,
+              "p95": 18023707,
+              "p99": 18024447
+            },
+            "over33ms": 16,
+            "over50ms": 4,
+            "gpuMs": {
+              "median": 18.772992,
+              "p95": 25.197568,
+              "p99": 29.83424
+            }
+          },
+          "dig": {
+            "frames": 2649,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 50
+            },
+            "cpuMs": {
+              "median": 27.40000000037253,
+              "p95": 35.39999999944121,
+              "p99": 40
+            },
+            "calls": {
+              "median": 2482,
+              "p95": 3067,
+              "p99": 3071
+            },
+            "triangles": {
+              "median": 17556574,
+              "p95": 17767390,
+              "p99": 17772196
+            },
+            "over33ms": 59,
+            "over50ms": 8,
+            "gpuMs": {
+              "median": 21.679104,
+              "p95": 26.200064,
+              "p99": 27.666432
+            }
+          },
+          "downstream": {
+            "frames": 4044,
+            "frameMs": {
+              "median": 16.699999999953434,
+              "p95": 33.300000000046566,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 17.600000000558794,
+              "p95": 22.5,
+              "p99": 25.5
+            },
+            "calls": {
+              "median": 1566,
+              "p95": 1664,
+              "p99": 1709
+            },
+            "triangles": {
+              "median": 18741552,
+              "p95": 18752214,
+              "p99": 18754498
+            },
+            "over33ms": 1,
+            "over50ms": 1,
+            "gpuMs": {
+              "median": 12.916736,
+              "p95": 16.08192,
+              "p99": 18.159616
+            }
+          }
+        }
+      },
+      {
+        "label": "baseline",
+        "run": 3,
+        "url": "http://127.0.0.1:5191/baseline/",
+        "seed": 12345,
+        "diagnostic": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 3275,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "Ql": 29308
+        },
+        "frames": 28700,
+        "frameMs": {
+          "median": 16.700000000004366,
+          "p95": 33.40000000002328,
+          "p99": 50
+        },
+        "cpuMs": {
+          "median": 15.299999999813735,
+          "p95": 37.799999999813735,
+          "p99": 44.59999999962747
+        },
+        "calls": {
+          "median": 1099,
+          "p95": 2685,
+          "p99": 3022
+        },
+        "triangles": {
+          "median": 17814204,
+          "p95": 18817943,
+          "p99": 18823579
+        },
+        "over33ms": 1095,
+        "over50ms": 242,
+        "gpuMs": {
+          "median": 10.811392,
+          "p95": 25.99936,
+          "p99": 30.01344
+        },
+        "gpuSamples": 956,
+        "memory": [
+          {
+            "age": 0.025099999999627472,
+            "heap": 122886344,
+            "geometries": 844,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 19.46740000000037,
+            "heap": 147462991,
+            "geometries": 953,
+            "textures": 49,
+            "programs": 145
+          },
+          {
+            "age": 38.740799999999815,
+            "heap": 153037560,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 50.64659999999963,
+            "heap": 147896908,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 60.6465,
+            "heap": 151892251,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 70.73059999999963,
+            "heap": 167494887,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 81.0455,
+            "heap": 167544479,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 91.14509999999963,
+            "heap": 179988223,
+            "geometries": 953,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 101.56070000000018,
+            "heap": 124355254,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 111.62820000000019,
+            "heap": 128803986,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 121.74420000000019,
+            "heap": 128700594,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 131.7877000000002,
+            "heap": 136769570,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 141.8937000000002,
+            "heap": 136736746,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 151.9095,
+            "heap": 137120602,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 161.926,
+            "heap": 146479946,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 171.94209999999964,
+            "heap": 135695398,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 181.942,
+            "heap": 131575817,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 191.94079999999983,
+            "heap": 141251825,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 201.9405,
+            "heap": 134513321,
+            "geometries": 1001,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 211.9407000000002,
+            "heap": 157201781,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 221.9392999999998,
+            "heap": 135631157,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 231.93979999999982,
+            "heap": 125295053,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 241.9555,
+            "heap": 154627172,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 252.49140000000037,
+            "heap": 139699521,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 262.7729000000004,
+            "heap": 161009521,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 273.2502000000002,
+            "heap": 143316369,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 284.6654000000004,
+            "heap": 156844833,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 299.0307000000002,
+            "heap": 143350165,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 313.85979999999984,
+            "heap": 129130276,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 325.5735999999996,
+            "heap": 142597700,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 335.602,
+            "heap": 136496688,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 345.6185,
+            "heap": 140435160,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 355.6675,
+            "heap": 126741368,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 365.6674000000004,
+            "heap": 125498204,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 375.66759999999965,
+            "heap": 150336988,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 385.94490000000036,
+            "heap": 133895860,
+            "geometries": 1049,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 397.7222000000002,
+            "heap": 146891660,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 421.2845,
+            "heap": 162210358,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 444.80059999999963,
+            "heap": 132478564,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 467.9117999999998,
+            "heap": 157926872,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 490.87459999999965,
+            "heap": 132633048,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 509.1905999999996,
+            "heap": 145641052,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 525.0757999999998,
+            "heap": 137637484,
+            "geometries": 1085,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 541.5442999999998,
+            "heap": 162014950,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 556.5020999999996,
+            "heap": 149679668,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 570.4314000000004,
+            "heap": 139217516,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 583.9172999999998,
+            "heap": 135163052,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 597.2057000000002,
+            "heap": 155826628,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 609.4697000000002,
+            "heap": 161327828,
+            "geometries": 1133,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 3823,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 33.400000000001455,
+              "p99": 66.70000000000073
+            },
+            "cpuMs": {
+              "median": 13.699999999254942,
+              "p95": 38,
+              "p99": 61.80000000074506
+            },
+            "calls": {
+              "median": 998,
+              "p95": 1009,
+              "p99": 1045
+            },
+            "triangles": {
+              "median": 18813133,
+              "p95": 18824143,
+              "p99": 18826237
+            },
+            "over33ms": 187,
+            "over50ms": 98,
+            "gpuMs": {
+              "median": 9.049088,
+              "p95": 14.209024,
+              "p99": 21.91872
+            }
+          },
+          "bank": {
+            "frames": 4453,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 33.29999999998836
+            },
+            "cpuMs": {
+              "median": 13.700000000186265,
+              "p95": 19.09999999962747,
+              "p99": 22.59999999962747
+            },
+            "calls": {
+              "median": 1102,
+              "p95": 1134,
+              "p99": 1151
+            },
+            "triangles": {
+              "median": 18581218,
+              "p95": 18634495,
+              "p99": 18636011
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 10.949632,
+              "p95": 13.146112,
+              "p99": 13.963264
+            }
+          },
+          "woodland": {
+            "frames": 4499,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 9.599999999627471,
+              "p95": 14.099999999627471,
+              "p99": 17.09999999962747
+            },
+            "calls": {
+              "median": 763,
+              "p95": 928,
+              "p99": 937
+            },
+            "triangles": {
+              "median": 17811147,
+              "p95": 17831865,
+              "p99": 17835615
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.511616,
+              "p95": 9.08288,
+              "p99": 11.60192
+            }
+          },
+          "reef": {
+            "frames": 3684,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 18.899999999441206,
+              "p95": 27.200000000186265,
+              "p99": 31.5
+            },
+            "calls": {
+              "median": 1583,
+              "p95": 1885,
+              "p99": 1890
+            },
+            "triangles": {
+              "median": 17399061,
+              "p95": 17464803,
+              "p99": 17469495
+            },
+            "over33ms": 7,
+            "over50ms": 1,
+            "gpuMs": {
+              "median": 12.849152,
+              "p95": 20.263936,
+              "p99": 22.829056
+            }
+          },
+          "granite": {
+            "frames": 4464,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.79999999998836,
+              "p99": 16.800000000046566
+            },
+            "cpuMs": {
+              "median": 13.200000000186265,
+              "p95": 18,
+              "p99": 22.09999999962747
+            },
+            "calls": {
+              "median": 754,
+              "p95": 773,
+              "p99": 784
+            },
+            "triangles": {
+              "median": 15995608,
+              "p95": 16005498,
+              "p99": 16008647
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 8.802304,
+              "p95": 11.109376,
+              "p99": 11.853824
+            }
+          },
+          "camp": {
+            "frames": 1923,
+            "frameMs": {
+              "median": 33.399999999965075,
+              "p95": 50.09999999997672,
+              "p99": 50.100000000034925
+            },
+            "cpuMs": {
+              "median": 37.60000000055879,
+              "p95": 44.5,
+              "p99": 48.799999999813735
+            },
+            "calls": {
+              "median": 2674,
+              "p95": 2711,
+              "p99": 2725
+            },
+            "triangles": {
+              "median": 17724643,
+              "p95": 18006975,
+              "p99": 18007917
+            },
+            "over33ms": 651,
+            "over50ms": 105,
+            "gpuMs": {
+              "median": 25.788416,
+              "p95": 30.98112,
+              "p99": 34.04288
+            }
+          },
+          "dig": {
+            "frames": 2444,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 50,
+              "p99": 50.09999999997672
+            },
+            "cpuMs": {
+              "median": 27.199999999254942,
+              "p95": 40.40000000037253,
+              "p99": 44.799999999813735
+            },
+            "calls": {
+              "median": 2500,
+              "p95": 3047,
+              "p99": 3053
+            },
+            "triangles": {
+              "median": 17524798,
+              "p95": 17749702,
+              "p99": 17752288
+            },
+            "over33ms": 248,
+            "over50ms": 37,
+            "gpuMs": {
+              "median": 22.05696,
+              "p95": 29.54752,
+              "p99": 33.969152
+            }
+          },
+          "downstream": {
+            "frames": 3410,
+            "frameMs": {
+              "median": 16.70000000006985,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 21.09999999962747,
+              "p95": 26.299999999813735,
+              "p99": 29.59999999962747
+            },
+            "calls": {
+              "median": 1551,
+              "p95": 1652,
+              "p99": 1652
+            },
+            "triangles": {
+              "median": 18729908,
+              "p95": 18744496,
+              "p99": 18747352
+            },
+            "over33ms": 2,
+            "over50ms": 1,
+            "gpuMs": {
+              "median": 14.57152,
+              "p95": 19.198976,
+              "p99": 20.694016
+            }
+          }
+        }
+      }
+    ],
+    "candidate": [
+      {
+        "label": "candidate",
+        "run": 1,
+        "url": "http://127.0.0.1:5191/",
+        "seed": 12345,
+        "diagnostic": false,
+        "disable": "",
+        "passGpu": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 21969,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "foliage": [
+            {
+              "name": "gum_0",
+              "before": 45612,
+              "after": 34978,
+              "bytes": 1630256,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9144,
+              "bytes": 429840,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_1",
+              "before": 45612,
+              "after": 34603,
+              "bytes": 1613756,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9116,
+              "bytes": 428608,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_2",
+              "before": 45612,
+              "after": 34895,
+              "bytes": 1626604,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9185,
+              "bytes": 431644,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_3",
+              "before": 45612,
+              "after": 34763,
+              "bytes": 1620796,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9168,
+              "bytes": 430896,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "grass_0",
+              "before": 792,
+              "after": 498,
+              "bytes": 23496,
+              "beforeBytes": 34848
+            },
+            {
+              "name": "",
+              "before": 264,
+              "after": 173,
+              "bytes": 8140,
+              "beforeBytes": 11616
+            },
+            {
+              "name": "shrub_1",
+              "before": 7722,
+              "after": 5665,
+              "bytes": 264704,
+              "beforeBytes": 339768
+            },
+            {
+              "name": "",
+              "before": 2454,
+              "after": 1721,
+              "bytes": 80632,
+              "beforeBytes": 107976
+            }
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "iu": 34303
+        },
+        "frames": 33409,
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 33.29999999998836,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 10.5,
+          "p95": 24,
+          "p99": 31.600000001490116
+        },
+        "calls": {
+          "median": 980,
+          "p95": 2081,
+          "p99": 2560
+        },
+        "triangles": {
+          "median": 17814868,
+          "p95": 18820041,
+          "p99": 18823783
+        },
+        "over33ms": 11,
+        "over50ms": 1,
+        "gpuMs": {
+          "median": 9.1648,
+          "p95": 18.00192,
+          "p99": 22.429696
+        },
+        "gpuSamples": 1114,
+        "memory": [
+          {
+            "age": 0.018400000000372528,
+            "heap": 185489999,
+            "geometries": 697,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 13.975,
+            "heap": 216278405,
+            "geometries": 806,
+            "textures": 49,
+            "programs": 145
+          },
+          {
+            "age": 25.125,
+            "heap": 212571078,
+            "geometries": 806,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 35.15740000000037,
+            "heap": 216558474,
+            "geometries": 806,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 45.157300000000745,
+            "heap": 239440908,
+            "geometries": 806,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 55.156700000001116,
+            "heap": 225027104,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 65.157,
+            "heap": 244692336,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 75.15680000000074,
+            "heap": 142725256,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 85.15530000000075,
+            "heap": 143441036,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 95.15660000000149,
+            "heap": 151253308,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 105.1545,
+            "heap": 162601688,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 115.17130000000074,
+            "heap": 142190076,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 125.17140000000038,
+            "heap": 162051528,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 135.1705,
+            "heap": 139926212,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 145.17020000000113,
+            "heap": 156469404,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 155.16930000000073,
+            "heap": 139442368,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 165.16880000000074,
+            "heap": 148641704,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 175.1691000000015,
+            "heap": 157610096,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 185.1681000000015,
+            "heap": 151410901,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 195.16980000000075,
+            "heap": 152035281,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 205.16710000000148,
+            "heap": 154819141,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 215.16680000000073,
+            "heap": 148949709,
+            "geometries": 854,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 225.16720000000112,
+            "heap": 150929874,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 235.167,
+            "heap": 148576281,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 245.1656000000015,
+            "heap": 156703825,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 255.16570000000112,
+            "heap": 150078457,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 265.1655,
+            "heap": 168745438,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 275.1811000000015,
+            "heap": 154784570,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 285.2146000000015,
+            "heap": 158576334,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 295.547,
+            "heap": 160998622,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 305.9532000000011,
+            "heap": 166495114,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 316.4744000000004,
+            "heap": 158790254,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 326.4972000000011,
+            "heap": 148283722,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 336.4962000000011,
+            "heap": 139378958,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 346.4953000000007,
+            "heap": 160932026,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 356.4947000000011,
+            "heap": 143958026,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 366.4947000000011,
+            "heap": 150871106,
+            "geometries": 902,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 376.4944000000004,
+            "heap": 139427750,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 386.49380000000076,
+            "heap": 142735402,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 397.0995,
+            "heap": 137543662,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 411.2902000000011,
+            "heap": 150151894,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 425.05880000000076,
+            "heap": 145794238,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 438.8527000000011,
+            "heap": 163847762,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 452.30840000000035,
+            "heap": 139631710,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 465.61730000000074,
+            "heap": 144675190,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 479.1984000000004,
+            "heap": 152089846,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 493.23010000000147,
+            "heap": 164353406,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 509.158,
+            "heap": 144241366,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 522.1354000000003,
+            "heap": 152721506,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 534.8378000000007,
+            "heap": 163287758,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 548.2541000000015,
+            "heap": 159814602,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 558.306,
+            "heap": 136261066,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 568.3698000000007,
+            "heap": 143239382,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 578.4199000000003,
+            "heap": 156639194,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 588.4186000000014,
+            "heap": 139695466,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 598.4514000000004,
+            "heap": 148016622,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 608.4515,
+            "heap": 159900434,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 618.4512000000011,
+            "heap": 139548566,
+            "geometries": 950,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 4497,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 16.70000000001164,
+              "p99": 16.80000000000291
+            },
+            "cpuMs": {
+              "median": 8.599999999627471,
+              "p95": 12.5,
+              "p99": 14.099999999627471
+            },
+            "calls": {
+              "median": 863,
+              "p95": 1018,
+              "p99": 1023
+            },
+            "triangles": {
+              "median": 18817637,
+              "p95": 18830969,
+              "p99": 18832545
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.5008,
+              "p95": 10.550272,
+              "p99": 11.70944
+            }
+          },
+          "bank": {
+            "frames": 4499,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 9,
+              "p95": 12.599999999627471,
+              "p99": 14.099999999627471
+            },
+            "calls": {
+              "median": 971,
+              "p95": 990,
+              "p99": 1007
+            },
+            "triangles": {
+              "median": 18582036,
+              "p95": 18631043,
+              "p99": 18632849
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 8.241152,
+              "p95": 10.804224,
+              "p99": 12.184576
+            }
+          },
+          "woodland": {
+            "frames": 4501,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 6.799999998882413,
+              "p95": 9.400000000372529,
+              "p99": 10.5
+            },
+            "calls": {
+              "median": 638,
+              "p95": 825,
+              "p99": 829
+            },
+            "triangles": {
+              "median": 17812063,
+              "p95": 17840606,
+              "p99": 17842058
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 5.743616,
+              "p95": 8.223744,
+              "p99": 9.827328
+            }
+          },
+          "reef": {
+            "frames": 4420,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.79999999998836,
+              "p99": 33.29999999998836
+            },
+            "cpuMs": {
+              "median": 12.899999998509884,
+              "p95": 19.59999999962747,
+              "p99": 22.5
+            },
+            "calls": {
+              "median": 1201,
+              "p95": 1434,
+              "p99": 1435
+            },
+            "triangles": {
+              "median": 17418811,
+              "p95": 17457395,
+              "p99": 17458687
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 10.350592,
+              "p95": 13.630464,
+              "p99": 15.37024
+            }
+          },
+          "granite": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.70000000001164,
+              "p99": 16.79999999998836
+            },
+            "cpuMs": {
+              "median": 8.699999999254942,
+              "p95": 12.300000000745058,
+              "p99": 13.599999999627471
+            },
+            "calls": {
+              "median": 674,
+              "p95": 793,
+              "p99": 801
+            },
+            "triangles": {
+              "median": 15992943,
+              "p95": 16002371,
+              "p99": 16003163
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.07584,
+              "p95": 10.556416,
+              "p99": 12.867584
+            }
+          },
+          "camp": {
+            "frames": 3290,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 22,
+              "p95": 31.300000000745058,
+              "p99": 33.40000000037253
+            },
+            "calls": {
+              "median": 2052,
+              "p95": 2091,
+              "p99": 2098
+            },
+            "triangles": {
+              "median": 17729536,
+              "p95": 18013547,
+              "p99": 18014341
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 16.011264,
+              "p95": 20.40832,
+              "p99": 23.543808
+            }
+          },
+          "dig": {
+            "frames": 3205,
+            "frameMs": {
+              "median": 16.70000000006985,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 21.40000000037253,
+              "p95": 32.100000001490116,
+              "p99": 35.19999999925494
+            },
+            "calls": {
+              "median": 2000,
+              "p95": 2574,
+              "p99": 2576
+            },
+            "triangles": {
+              "median": 17559260,
+              "p95": 17763198,
+              "p99": 17765190
+            },
+            "over33ms": 11,
+            "over50ms": 1,
+            "gpuMs": {
+              "median": 15.65184,
+              "p95": 24.343552,
+              "p99": 26.01984
+            }
+          },
+          "downstream": {
+            "frames": 4497,
+            "frameMs": {
+              "median": 16.699999999953434,
+              "p95": 16.70000000006985,
+              "p99": 16.800000000046566
+            },
+            "cpuMs": {
+              "median": 12.400000000372529,
+              "p95": 17.5,
+              "p99": 19.300000000745058
+            },
+            "calls": {
+              "median": 1205,
+              "p95": 1219,
+              "p99": 1231
+            },
+            "triangles": {
+              "median": 18727170,
+              "p95": 18737114,
+              "p99": 18739542
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 11.034624,
+              "p95": 13.2096,
+              "p99": 13.974528
+            }
+          }
+        }
+      },
+      {
+        "label": "candidate",
+        "run": 2,
+        "url": "http://127.0.0.1:5191/",
+        "seed": 12345,
+        "diagnostic": false,
+        "disable": "",
+        "passGpu": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 3612,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "foliage": [
+            {
+              "name": "gum_0",
+              "before": 45612,
+              "after": 34978,
+              "bytes": 1630256,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9144,
+              "bytes": 429840,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_1",
+              "before": 45612,
+              "after": 34603,
+              "bytes": 1613756,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9116,
+              "bytes": 428608,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_2",
+              "before": 45612,
+              "after": 34895,
+              "bytes": 1626604,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9185,
+              "bytes": 431644,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_3",
+              "before": 45612,
+              "after": 34763,
+              "bytes": 1620796,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9168,
+              "bytes": 430896,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "grass_0",
+              "before": 792,
+              "after": 498,
+              "bytes": 23496,
+              "beforeBytes": 34848
+            },
+            {
+              "name": "",
+              "before": 264,
+              "after": 173,
+              "bytes": 8140,
+              "beforeBytes": 11616
+            },
+            {
+              "name": "shrub_1",
+              "before": 7722,
+              "after": 5665,
+              "bytes": 264704,
+              "beforeBytes": 339768
+            },
+            {
+              "name": "",
+              "before": 2454,
+              "after": 1721,
+              "bytes": 80632,
+              "beforeBytes": 107976
+            }
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "iu": 34882
+        },
+        "frames": 33758,
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 33.29999999998836,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 10.5,
+          "p95": 23.300000000745058,
+          "p99": 26.600000001490116
+        },
+        "calls": {
+          "median": 976,
+          "p95": 2092,
+          "p99": 2577
+        },
+        "triangles": {
+          "median": 17813756,
+          "p95": 18822141,
+          "p99": 18827549
+        },
+        "over33ms": 4,
+        "over50ms": 1,
+        "gpuMs": {
+          "median": 9.104384,
+          "p95": 17.828864,
+          "p99": 21.029888
+        },
+        "gpuSamples": 1125,
+        "memory": [
+          {
+            "age": 0.0205,
+            "heap": 188571679,
+            "geometries": 696,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 10.2825,
+            "heap": 203766839,
+            "geometries": 805,
+            "textures": 48,
+            "programs": 143
+          },
+          {
+            "age": 21.282,
+            "heap": 216456050,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 31.28140000000037,
+            "heap": 220162766,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 41.280799999998884,
+            "heap": 218504158,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 51.281099999999626,
+            "heap": 221145630,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 61.281,
+            "heap": 233361163,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 71.27969999999925,
+            "heap": 137672754,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 81.2795,
+            "heap": 152258710,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 91.279,
+            "heap": 145869922,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 101.27909999999963,
+            "heap": 141435202,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 111.27769999999926,
+            "heap": 158026142,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 121.27779999999888,
+            "heap": 162527108,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 131.27759999999964,
+            "heap": 147120294,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 141.294,
+            "heap": 139958014,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 151.31069999999926,
+            "heap": 150673794,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 161.3097999999989,
+            "heap": 136800442,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 171.30919999999927,
+            "heap": 164368162,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 181.30909999999963,
+            "heap": 155494551,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 191.3085,
+            "heap": 158859215,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 201.30859999999961,
+            "heap": 135622391,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 211.308,
+            "heap": 143694687,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 221.3075,
+            "heap": 139290011,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 231.30740000000037,
+            "heap": 152478191,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 241.306,
+            "heap": 138668063,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 251.30590000000038,
+            "heap": 151761591,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 261.30569999999926,
+            "heap": 159401396,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 271.30469999999923,
+            "heap": 164121200,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 281.3385,
+            "heap": 145534364,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 291.5205999999996,
+            "heap": 147856428,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 301.923,
+            "heap": 135588696,
+            "geometries": 843,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 312.3959000000004,
+            "heap": 157165372,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 322.486,
+            "heap": 141392960,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 332.48590000000036,
+            "heap": 149321688,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 342.48540000000037,
+            "heap": 149565156,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 352.48559999999964,
+            "heap": 146115836,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 362.48559999999964,
+            "heap": 145726324,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 372.485,
+            "heap": 143764800,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 382.4842999999989,
+            "heap": 156329668,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 392.48390000000035,
+            "heap": 145735044,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 405.47390000000036,
+            "heap": 146792140,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 419.46079999999887,
+            "heap": 135717204,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 433.294,
+            "heap": 147908880,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 446.49090000000035,
+            "heap": 164951564,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 459.5741999999993,
+            "heap": 136408472,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 473.4301999999993,
+            "heap": 151520012,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 487.7297999999989,
+            "heap": 149548032,
+            "geometries": 891,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 501.82209999999964,
+            "heap": 160288348,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 513.608,
+            "heap": 166674292,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 525.8890999999996,
+            "heap": 154660656,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 537.9817999999989,
+            "heap": 163262765,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 548.8279000000003,
+            "heap": 162833060,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 558.8279000000003,
+            "heap": 157763376,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 568.8277999999989,
+            "heap": 138516824,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 578.8265,
+            "heap": 167678532,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 588.8254000000004,
+            "heap": 152454536,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 598.8257999999989,
+            "heap": 139295755,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 608.8254000000004,
+            "heap": 141517312,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 618.8241999999992,
+            "heap": 158809688,
+            "geometries": 939,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 16.79999999998836,
+              "p99": 16.80000000000291
+            },
+            "cpuMs": {
+              "median": 8.5,
+              "p95": 11.400000000372529,
+              "p99": 13.299999998882413
+            },
+            "calls": {
+              "median": 865,
+              "p95": 877,
+              "p99": 911
+            },
+            "triangles": {
+              "median": 18817499,
+              "p95": 18827757,
+              "p99": 18828621
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.00416,
+              "p95": 9.796608,
+              "p99": 10.22464
+            }
+          },
+          "bank": {
+            "frames": 4498,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 9.900000000372529,
+              "p95": 13.799999998882413,
+              "p99": 15.800000000745058
+            },
+            "calls": {
+              "median": 971,
+              "p95": 984,
+              "p99": 1008
+            },
+            "triangles": {
+              "median": 18589410,
+              "p95": 18630125,
+              "p99": 18635173
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 8.99072,
+              "p95": 12.079104,
+              "p99": 13.343744
+            }
+          },
+          "woodland": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 6.799999998882413,
+              "p95": 9.300000000745058,
+              "p99": 10.400000000372529
+            },
+            "calls": {
+              "median": 642,
+              "p95": 683,
+              "p99": 685
+            },
+            "triangles": {
+              "median": 17812063,
+              "p95": 17833986,
+              "p99": 17836226
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 5.496832,
+              "p95": 7.824384,
+              "p99": 8.630272
+            }
+          },
+          "reef": {
+            "frames": 4429,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 33.29999999998836
+            },
+            "cpuMs": {
+              "median": 13,
+              "p95": 19.09999999962747,
+              "p99": 23.100000001490116
+            },
+            "calls": {
+              "median": 1211,
+              "p95": 1590,
+              "p99": 1594
+            },
+            "triangles": {
+              "median": 17431035,
+              "p95": 17486211,
+              "p99": 17489211
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 10.044416,
+              "p95": 14.669824,
+              "p99": 16.075776
+            }
+          },
+          "granite": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000046566
+            },
+            "cpuMs": {
+              "median": 8.599999999627471,
+              "p95": 11.599999999627471,
+              "p99": 13.100000001490116
+            },
+            "calls": {
+              "median": 677,
+              "p95": 694,
+              "p99": 708
+            },
+            "triangles": {
+              "median": 16000985,
+              "p95": 16015549,
+              "p99": 16020575
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.21056,
+              "p95": 9.511936,
+              "p99": 9.89696
+            }
+          },
+          "camp": {
+            "frames": 3295,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 22,
+              "p95": 26.899999998509884,
+              "p99": 32.40000000037253
+            },
+            "calls": {
+              "median": 2060,
+              "p95": 2097,
+              "p99": 2104
+            },
+            "triangles": {
+              "median": 17739216,
+              "p95": 18020807,
+              "p99": 18021599
+            },
+            "over33ms": 3,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 16.201728,
+              "p95": 21.029888,
+              "p99": 21.938176
+            }
+          },
+          "dig": {
+            "frames": 3525,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 33.40000000002328,
+              "p99": 33.40000000002328
+            },
+            "cpuMs": {
+              "median": 20.299999998882413,
+              "p95": 26.300000000745058,
+              "p99": 30.300000000745058
+            },
+            "calls": {
+              "median": 2000,
+              "p95": 2601,
+              "p99": 2622
+            },
+            "triangles": {
+              "median": 17559392,
+              "p95": 17764424,
+              "p99": 17766518
+            },
+            "over33ms": 1,
+            "over50ms": 1,
+            "gpuMs": {
+              "median": 15.172608,
+              "p95": 21.188608,
+              "p99": 21.79072
+            }
+          },
+          "downstream": {
+            "frames": 4511,
+            "frameMs": {
+              "median": 16.699999999953434,
+              "p95": 16.70000000006985,
+              "p99": 16.800000000046566
+            },
+            "cpuMs": {
+              "median": 11.399999998509884,
+              "p95": 13.300000000745058,
+              "p99": 15.200000001117587
+            },
+            "calls": {
+              "median": 1208,
+              "p95": 1224,
+              "p99": 1232
+            },
+            "triangles": {
+              "median": 18732080,
+              "p95": 18743548,
+              "p99": 18746782
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 10.409984,
+              "p95": 12.44672,
+              "p99": 13.182976
+            }
+          }
+        }
+      },
+      {
+        "label": "candidate",
+        "run": 3,
+        "url": "http://127.0.0.1:5191/",
+        "seed": 12345,
+        "diagnostic": false,
+        "disable": "",
+        "passGpu": false,
+        "measuredSeconds": 600,
+        "warmupSeconds": 20,
+        "loadMs": 3353,
+        "hardware": {
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+          "cores": 32,
+          "foliage": [
+            {
+              "name": "gum_0",
+              "before": 45612,
+              "after": 34978,
+              "bytes": 1630256,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9144,
+              "bytes": 429840,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_1",
+              "before": 45612,
+              "after": 34603,
+              "bytes": 1613756,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9116,
+              "bytes": 428608,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_2",
+              "before": 45612,
+              "after": 34895,
+              "bytes": 1626604,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9185,
+              "bytes": 431644,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "gum_3",
+              "before": 45612,
+              "after": 34763,
+              "bytes": 1620796,
+              "beforeBytes": 2006928
+            },
+            {
+              "name": "",
+              "before": 13752,
+              "after": 9168,
+              "bytes": 430896,
+              "beforeBytes": 605088
+            },
+            {
+              "name": "grass_0",
+              "before": 792,
+              "after": 498,
+              "bytes": 23496,
+              "beforeBytes": 34848
+            },
+            {
+              "name": "",
+              "before": 264,
+              "after": 173,
+              "bytes": 8140,
+              "beforeBytes": 11616
+            },
+            {
+              "name": "shrub_1",
+              "before": 7722,
+              "after": 5665,
+              "bytes": 264704,
+              "beforeBytes": 339768
+            },
+            {
+              "name": "",
+              "before": 2454,
+              "after": 1721,
+              "bytes": 80632,
+              "beforeBytes": 107976
+            }
+          ],
+          "viewport": [
+            1920,
+            1080
+          ],
+          "buffer": [
+            1920,
+            1080
+          ]
+        },
+        "callbacks": {
+          "iu": 33584
+        },
+        "frames": 32459,
+        "frameMs": {
+          "median": 16.69999999999709,
+          "p95": 33.300000000046566,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 10,
+          "p95": 28,
+          "p99": 33.5
+        },
+        "calls": {
+          "median": 985,
+          "p95": 2076,
+          "p99": 2556
+        },
+        "triangles": {
+          "median": 17822180,
+          "p95": 18822045,
+          "p99": 18825129
+        },
+        "over33ms": 70,
+        "over50ms": 14,
+        "gpuMs": {
+          "median": 8.766464,
+          "p95": 20.257792,
+          "p99": 23.743488
+        },
+        "gpuSamples": 1082,
+        "memory": [
+          {
+            "age": 0.01990000000037253,
+            "heap": 189026567,
+            "geometries": 696,
+            "textures": 32,
+            "programs": 125
+          },
+          {
+            "age": 10.228900000000372,
+            "heap": 210990042,
+            "geometries": 805,
+            "textures": 48,
+            "programs": 143
+          },
+          {
+            "age": 21.261,
+            "heap": 229952507,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 31.261,
+            "heap": 235298263,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 41.26059999999963,
+            "heap": 235918215,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 51.260900000000376,
+            "heap": 238695035,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 61.261199999999256,
+            "heap": 253919418,
+            "geometries": 805,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 71.26059999999963,
+            "heap": 260056142,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 81.25979999999888,
+            "heap": 162319334,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 91.25829999999888,
+            "heap": 144011918,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 101.25890000000037,
+            "heap": 155300458,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 111.25859999999963,
+            "heap": 146633066,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 121.257,
+            "heap": 134021682,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 131.25729999999888,
+            "heap": 146260242,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 141.257,
+            "heap": 140068174,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 151.25719999999924,
+            "heap": 151078158,
+            "geometries": 853,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 161.25640000000038,
+            "heap": 140402658,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 171.25509999999963,
+            "heap": 135175186,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 181.25490000000036,
+            "heap": 139499538,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 191.25440000000037,
+            "heap": 150236983,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 201.25409999999962,
+            "heap": 156703783,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 211.25419999999926,
+            "heap": 140546443,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 221.2542999999989,
+            "heap": 150434771,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 231.25359999999964,
+            "heap": 156409899,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 241.25229999999888,
+            "heap": 132867199,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 251.28529999999887,
+            "heap": 140107455,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 261.30259999999964,
+            "heap": 136905508,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 271.3019000000004,
+            "heap": 141018644,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 281.3014000000004,
+            "heap": 152337832,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 291.5032999999989,
+            "heap": 172735756,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 301.86419999999924,
+            "heap": 146422964,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 312.12509999999963,
+            "heap": 156390780,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 322.133,
+            "heap": 165243548,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 332.1325,
+            "heap": 146696772,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 342.13269999999926,
+            "heap": 158219032,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 352.1315,
+            "heap": 147489964,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 362.13159999999965,
+            "heap": 140072438,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 372.131,
+            "heap": 142234968,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 382.1305999999996,
+            "heap": 138556604,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 392.1309000000004,
+            "heap": 142156996,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 405.71359999999964,
+            "heap": 144768904,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 423.13929999999885,
+            "heap": 162358164,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 439.18009999999964,
+            "heap": 167614908,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 454.5109000000004,
+            "heap": 150455464,
+            "geometries": 901,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 468.73119999999926,
+            "heap": 153163156,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 485.2945999999996,
+            "heap": 138694412,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 503.7595,
+            "heap": 159776284,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 519.7594000000004,
+            "heap": 154393348,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 535.6051999999993,
+            "heap": 157036504,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 549.1907999999988,
+            "heap": 148865104,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 559.4754000000004,
+            "heap": 169889476,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 569.6735,
+            "heap": 139679520,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 579.739,
+            "heap": 148204752,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 589.8222999999989,
+            "heap": 168799828,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 600.0765,
+            "heap": 136043960,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          },
+          {
+            "age": 610.2615,
+            "heap": 149300168,
+            "geometries": 949,
+            "textures": 50,
+            "programs": 145
+          }
+        ],
+        "errors": [],
+        "sites": {
+          "creek": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.69999999999709,
+              "p95": 16.70000000001164,
+              "p99": 16.80000000000291
+            },
+            "cpuMs": {
+              "median": 7.5,
+              "p95": 9.799999998882413,
+              "p99": 11.199999999254942
+            },
+            "calls": {
+              "median": 866,
+              "p95": 1006,
+              "p99": 1007
+            },
+            "triangles": {
+              "median": 18818961,
+              "p95": 18825407,
+              "p99": 18826201
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.834176,
+              "p95": 9.31328,
+              "p99": 10.103808
+            }
+          },
+          "bank": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 8.200000001117587,
+              "p95": 10.199999999254942,
+              "p99": 11.800000000745058
+            },
+            "calls": {
+              "median": 976,
+              "p95": 1014,
+              "p99": 1023
+            },
+            "triangles": {
+              "median": 18588114,
+              "p95": 18635883,
+              "p99": 18641929
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 7.721984,
+              "p95": 10.411008,
+              "p99": 11.133952
+            }
+          },
+          "woodland": {
+            "frames": 4500,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.70000000001164,
+              "p99": 16.800000000017462
+            },
+            "cpuMs": {
+              "median": 7.199999999254942,
+              "p95": 10.099999999627471,
+              "p99": 11.700000001117587
+            },
+            "calls": {
+              "median": 643,
+              "p95": 687,
+              "p99": 689
+            },
+            "triangles": {
+              "median": 17816496,
+              "p95": 17838826,
+              "p99": 17840274
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 5.569536,
+              "p95": 8.2688,
+              "p99": 9.13408
+            }
+          },
+          "reef": {
+            "frames": 4447,
+            "frameMs": {
+              "median": 16.699999999982538,
+              "p95": 16.79999999998836,
+              "p99": 33.29999999998836
+            },
+            "cpuMs": {
+              "median": 13.699999999254942,
+              "p95": 18.300000000745058,
+              "p99": 21.300000000745058
+            },
+            "calls": {
+              "median": 1202,
+              "p95": 1423,
+              "p99": 1424
+            },
+            "triangles": {
+              "median": 17412087,
+              "p95": 17444571,
+              "p99": 17449395
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 10.868736,
+              "p95": 13.739008,
+              "p99": 15.899648
+            }
+          },
+          "granite": {
+            "frames": 4501,
+            "frameMs": {
+              "median": 16.70000000001164,
+              "p95": 16.70000000001164,
+              "p99": 16.79999999998836
+            },
+            "cpuMs": {
+              "median": 9.299999998882413,
+              "p95": 12.200000001117587,
+              "p99": 14.099999999627471
+            },
+            "calls": {
+              "median": 672,
+              "p95": 686,
+              "p99": 704
+            },
+            "triangles": {
+              "median": 15994666,
+              "p95": 16005155,
+              "p99": 16006111
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 6.875136,
+              "p95": 9.773056,
+              "p99": 11.29472
+            }
+          },
+          "camp": {
+            "frames": 2876,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 33.5
+            },
+            "cpuMs": {
+              "median": 25,
+              "p95": 33.40000000037253,
+              "p99": 37.5
+            },
+            "calls": {
+              "median": 2051,
+              "p95": 2087,
+              "p99": 2197
+            },
+            "triangles": {
+              "median": 17728744,
+              "p95": 18008385,
+              "p99": 18009199
+            },
+            "over33ms": 28,
+            "over50ms": 4,
+            "gpuMs": {
+              "median": 17.298432,
+              "p95": 22.817792,
+              "p99": 25.101312
+            }
+          },
+          "dig": {
+            "frames": 2709,
+            "frameMs": {
+              "median": 33.29999999998836,
+              "p95": 33.40000000002328,
+              "p99": 50
+            },
+            "cpuMs": {
+              "median": 26.40000000037253,
+              "p95": 34.69999999925494,
+              "p99": 39.09999999962747
+            },
+            "calls": {
+              "median": 2006,
+              "p95": 2574,
+              "p99": 2578
+            },
+            "triangles": {
+              "median": 17563936,
+              "p95": 17764740,
+              "p99": 17766846
+            },
+            "over33ms": 42,
+            "over50ms": 10,
+            "gpuMs": {
+              "median": 19.6864,
+              "p95": 24.044544,
+              "p99": 32.288768
+            }
+          },
+          "downstream": {
+            "frames": 4426,
+            "frameMs": {
+              "median": 16.699999999953434,
+              "p95": 16.800000000046566,
+              "p99": 33.300000000046566
+            },
+            "cpuMs": {
+              "median": 14.699999999254942,
+              "p95": 19.5,
+              "p99": 21.90000000037253
+            },
+            "calls": {
+              "median": 1215,
+              "p95": 1228,
+              "p99": 1363
+            },
+            "triangles": {
+              "median": 18738682,
+              "p95": 18746640,
+              "p99": 18749222
+            },
+            "over33ms": 0,
+            "over50ms": 0,
+            "gpuMs": {
+              "median": 12.059648,
+              "p95": 14.292992,
+              "p99": 15.136768
+            }
+          }
+        }
+      }
+    ]
+  },
+  "typical": {
+    "baseline": {
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 33.399999999965075,
+        "p99": 33.40000000002328
+      },
+      "cpuMs": {
+        "median": 13.5,
+        "p95": 28.59999999962747,
+        "p99": 33.700000000186265
+      },
+      "gpuMs": {
+        "median": 10.011648,
+        "p95": 22.162432,
+        "p99": 26.001408
+      },
+      "calls": {
+        "median": 1099,
+        "p95": 2711,
+        "p99": 3042
+      },
+      "triangles": {
+        "median": 17814204,
+        "p95": 18820713,
+        "p99": 18825445
+      }
+    },
+    "candidate": {
+      "frameMs": {
+        "median": 16.699999999982538,
+        "p95": 33.29999999998836,
+        "p99": 33.40000000002328
+      },
+      "cpuMs": {
+        "median": 10.5,
+        "p95": 24,
+        "p99": 31.600000001490116
+      },
+      "gpuMs": {
+        "median": 9.104384,
+        "p95": 18.00192,
+        "p99": 22.429696
+      },
+      "calls": {
+        "median": 980,
+        "p95": 2081,
+        "p99": 2560
+      },
+      "triangles": {
+        "median": 17814868,
+        "p95": 18822045,
+        "p99": 18825129
+      }
+    }
+  },
+  "sites": {
+    "baseline": {
+      "creek": {
+        "frameMs": {
+          "median": 16.69999999999709,
+          "p95": 16.79999999998836,
+          "p99": 16.80000000000291
+        },
+        "cpuMs": {
+          "median": 11.599999999627471,
+          "p95": 16.799999999813735,
+          "p99": 20.40000000037253
+        },
+        "gpuMs": {
+          "median": 7.425024,
+          "p95": 11.319296,
+          "p99": 14.328832
+        },
+        "calls": {
+          "median": 1000,
+          "p95": 1010,
+          "p99": 1078
+        },
+        "triangles": {
+          "median": 18816495,
+          "p95": 18825771,
+          "p99": 18826565
+        }
+      },
+      "bank": {
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 16.79999999998836,
+          "p99": 16.800000000017462
+        },
+        "cpuMs": {
+          "median": 11.900000000372529,
+          "p95": 17.59999999962747,
+          "p99": 22.5
+        },
+        "gpuMs": {
+          "median": 9.919488,
+          "p95": 12.058624,
+          "p99": 13.963264
+        },
+        "calls": {
+          "median": 1098,
+          "p95": 1128,
+          "p99": 1141
+        },
+        "triangles": {
+          "median": 18580606,
+          "p95": 18626478,
+          "p99": 18627221
+        }
+      },
+      "woodland": {
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 16.70000000001164,
+          "p99": 16.800000000017462
+        },
+        "cpuMs": {
+          "median": 9.599999999627471,
+          "p95": 14.099999999627471,
+          "p99": 17.09999999962747
+        },
+        "gpuMs": {
+          "median": 6.511616,
+          "p95": 9.08288,
+          "p99": 10.732544
+        },
+        "calls": {
+          "median": 760,
+          "p95": 806,
+          "p99": 808
+        },
+        "triangles": {
+          "median": 17807439,
+          "p95": 17829366,
+          "p99": 17830826
+        }
+      },
+      "reef": {
+        "frameMs": {
+          "median": 16.70000000001164,
+          "p95": 33.399999999965075,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 18.299999999813735,
+          "p95": 24.700000000186265,
+          "p99": 28.300000000745058
+        },
+        "gpuMs": {
+          "median": 12.736512,
+          "p95": 17.01376,
+          "p99": 19.895296
+        },
+        "calls": {
+          "median": 1638,
+          "p95": 1893,
+          "p99": 1894
+        },
+        "triangles": {
+          "median": 17422803,
+          "p95": 17472215,
+          "p99": 17472217
+        }
+      },
+      "granite": {
+        "frameMs": {
+          "median": 16.70000000001164,
+          "p95": 16.70000000001164,
+          "p99": 16.800000000046566
+        },
+        "cpuMs": {
+          "median": 12.099999999627471,
+          "p95": 14.899999999441206,
+          "p99": 16.90000000037253
+        },
+        "gpuMs": {
+          "median": 7.612416,
+          "p95": 10.402816,
+          "p99": 10.903552
+        },
+        "calls": {
+          "median": 749,
+          "p95": 767,
+          "p99": 779
+        },
+        "triangles": {
+          "median": 15994019,
+          "p95": 15999155,
+          "p99": 16005127
+        }
+      },
+      "camp": {
+        "frameMs": {
+          "median": 33.29999999998836,
+          "p95": 33.40000000002328,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 27.59999999962747,
+          "p95": 32.799999999813735,
+          "p99": 36.299999999813735
+        },
+        "gpuMs": {
+          "median": 20.818944,
+          "p95": 25.197568,
+          "p99": 29.83424
+        },
+        "calls": {
+          "median": 2686,
+          "p95": 2724,
+          "p99": 2735
+        },
+        "triangles": {
+          "median": 17742312,
+          "p95": 18023707,
+          "p99": 18024447
+        }
+      },
+      "dig": {
+        "frameMs": {
+          "median": 33.29999999998836,
+          "p95": 33.40000000002328,
+          "p99": 50
+        },
+        "cpuMs": {
+          "median": 27.200000000186265,
+          "p95": 35.39999999944121,
+          "p99": 40
+        },
+        "gpuMs": {
+          "median": 21.679104,
+          "p95": 26.200064,
+          "p99": 29.248512
+        },
+        "calls": {
+          "median": 2497,
+          "p95": 3061,
+          "p99": 3065
+        },
+        "triangles": {
+          "median": 17556574,
+          "p95": 17760284,
+          "p99": 17764312
+        }
+      },
+      "downstream": {
+        "frameMs": {
+          "median": 16.699999999953434,
+          "p95": 33.300000000046566,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 17.600000000558794,
+          "p95": 22.5,
+          "p99": 25.5
+        },
+        "gpuMs": {
+          "median": 12.916736,
+          "p95": 16.08192,
+          "p99": 18.159616
+        },
+        "calls": {
+          "median": 1565,
+          "p95": 1664,
+          "p99": 1666
+        },
+        "triangles": {
+          "median": 18741552,
+          "p95": 18752214,
+          "p99": 18754498
+        }
+      }
+    },
+    "candidate": {
+      "creek": {
+        "frameMs": {
+          "median": 16.69999999999709,
+          "p95": 16.70000000001164,
+          "p99": 16.80000000000291
+        },
+        "cpuMs": {
+          "median": 8.5,
+          "p95": 11.400000000372529,
+          "p99": 13.299999998882413
+        },
+        "gpuMs": {
+          "median": 7.00416,
+          "p95": 9.796608,
+          "p99": 10.22464
+        },
+        "calls": {
+          "median": 865,
+          "p95": 1006,
+          "p99": 1007
+        },
+        "triangles": {
+          "median": 18817637,
+          "p95": 18827757,
+          "p99": 18828621
+        }
+      },
+      "bank": {
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 16.70000000001164,
+          "p99": 16.800000000017462
+        },
+        "cpuMs": {
+          "median": 9,
+          "p95": 12.599999999627471,
+          "p99": 14.099999999627471
+        },
+        "gpuMs": {
+          "median": 8.241152,
+          "p95": 10.804224,
+          "p99": 12.184576
+        },
+        "calls": {
+          "median": 971,
+          "p95": 990,
+          "p99": 1008
+        },
+        "triangles": {
+          "median": 18588114,
+          "p95": 18631043,
+          "p99": 18635173
+        }
+      },
+      "woodland": {
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 16.70000000001164,
+          "p99": 16.800000000017462
+        },
+        "cpuMs": {
+          "median": 6.799999998882413,
+          "p95": 9.400000000372529,
+          "p99": 10.5
+        },
+        "gpuMs": {
+          "median": 5.569536,
+          "p95": 8.223744,
+          "p99": 9.13408
+        },
+        "calls": {
+          "median": 642,
+          "p95": 687,
+          "p99": 689
+        },
+        "triangles": {
+          "median": 17812063,
+          "p95": 17838826,
+          "p99": 17840274
+        }
+      },
+      "reef": {
+        "frameMs": {
+          "median": 16.699999999982538,
+          "p95": 16.79999999998836,
+          "p99": 33.29999999998836
+        },
+        "cpuMs": {
+          "median": 13,
+          "p95": 19.09999999962747,
+          "p99": 22.5
+        },
+        "gpuMs": {
+          "median": 10.350592,
+          "p95": 13.739008,
+          "p99": 15.899648
+        },
+        "calls": {
+          "median": 1202,
+          "p95": 1434,
+          "p99": 1435
+        },
+        "triangles": {
+          "median": 17418811,
+          "p95": 17457395,
+          "p99": 17458687
+        }
+      },
+      "granite": {
+        "frameMs": {
+          "median": 16.70000000001164,
+          "p95": 16.70000000001164,
+          "p99": 16.79999999998836
+        },
+        "cpuMs": {
+          "median": 8.699999999254942,
+          "p95": 12.200000001117587,
+          "p99": 13.599999999627471
+        },
+        "gpuMs": {
+          "median": 6.875136,
+          "p95": 9.773056,
+          "p99": 11.29472
+        },
+        "calls": {
+          "median": 674,
+          "p95": 694,
+          "p99": 708
+        },
+        "triangles": {
+          "median": 15994666,
+          "p95": 16005155,
+          "p99": 16006111
+        }
+      },
+      "camp": {
+        "frameMs": {
+          "median": 16.70000000001164,
+          "p95": 33.40000000002328,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 22,
+          "p95": 31.300000000745058,
+          "p99": 33.40000000037253
+        },
+        "gpuMs": {
+          "median": 16.201728,
+          "p95": 21.029888,
+          "p99": 23.543808
+        },
+        "calls": {
+          "median": 2052,
+          "p95": 2091,
+          "p99": 2104
+        },
+        "triangles": {
+          "median": 17729536,
+          "p95": 18013547,
+          "p99": 18014341
+        }
+      },
+      "dig": {
+        "frameMs": {
+          "median": 16.70000000006985,
+          "p95": 33.40000000002328,
+          "p99": 33.40000000002328
+        },
+        "cpuMs": {
+          "median": 21.40000000037253,
+          "p95": 32.100000001490116,
+          "p99": 35.19999999925494
+        },
+        "gpuMs": {
+          "median": 15.65184,
+          "p95": 24.044544,
+          "p99": 26.01984
+        },
+        "calls": {
+          "median": 2000,
+          "p95": 2574,
+          "p99": 2578
+        },
+        "triangles": {
+          "median": 17559392,
+          "p95": 17764424,
+          "p99": 17766518
+        }
+      },
+      "downstream": {
+        "frameMs": {
+          "median": 16.699999999953434,
+          "p95": 16.70000000006985,
+          "p99": 16.800000000046566
+        },
+        "cpuMs": {
+          "median": 12.400000000372529,
+          "p95": 17.5,
+          "p99": 19.300000000745058
+        },
+        "gpuMs": {
+          "median": 11.034624,
+          "p95": 13.2096,
+          "p99": 13.974528
+        },
+        "calls": {
+          "median": 1208,
+          "p95": 1224,
+          "p99": 1232
+        },
+        "triangles": {
+          "median": 18732080,
+          "p95": 18743548,
+          "p99": 18746782
+        }
+      }
+    }
+  },
+  "reductions": {
+    "cpuMs": {
+      "median": 22.22222222222222,
+      "p95": 16.083916082823034,
+      "p99": 6.231454002031278
+    },
+    "gpuMs": {
+      "median": 9.062084483993038,
+      "p95": 18.77281338076977,
+      "p99": 13.736609955891621
+    },
+    "calls": {
+      "median": 10.828025477707005,
+      "p95": 23.238657322021396,
+      "p99": 15.844838921761994
+    },
+    "triangles": {
+      "median": -0.003727362726957395,
+      "p95": -0.007077308920222514,
+      "p99": 0.0016785791783435755
+    }
+  }
+}
