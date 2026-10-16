@@ -1,0 +1,44 @@
+[
+  {
+    "phone": false,
+    "centres": [
+      {
+        "id": "uralla",
+        "lon": 151.47018071493963,
+        "lat": -30.628017300823377,
+        "x": 502.3477545537771,
+        "y": 282.8985229827206
+      },
+      {
+        "id": "graves-hill",
+        "lon": 147.684,
+        "lat": -23.486,
+        "x": 454.15999999999997,
+        "y": 184.95085714285716
+      }
+    ],
+    "checks": "Exact geographic pin centres; adjacent mouse/touch dots; separated number labels; desktop keyboard focus; unavailable/cancel; $0 Uralla round trip and retained home progress",
+    "errors": []
+  },
+  {
+    "phone": true,
+    "centres": [
+      {
+        "id": "uralla",
+        "lon": 151.47018071493963,
+        "lat": -30.628017300823377,
+        "x": 502.3477545537771,
+        "y": 282.8985229827206
+      },
+      {
+        "id": "graves-hill",
+        "lon": 147.684,
+        "lat": -23.486,
+        "x": 454.15999999999997,
+        "y": 184.95085714285716
+      }
+    ],
+    "checks": "Exact geographic pin centres; adjacent mouse/touch dots; separated number labels; desktop keyboard focus; unavailable/cancel; $0 Uralla round trip and retained home progress",
+    "errors": []
+  }
+]

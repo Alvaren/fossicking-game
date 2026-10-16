@@ -98,3 +98,14 @@ Implementation `ee346cf` and benchmark record `227ba39` were fast-forwarded into
 [Public desktop/touch gameplay checks](audits/uralla-river/public-game/checks.json) pass: real map travel, collision, digging/classification, mouse panning / Easy animation, partly worked pan persistence, wet sieve input/flip and independent home state. Main and Claude were clean before integration, Claude had no unmerged commits, and only the isolated Codex 5191 server was listening. No user game was restarted and no other agent's files or dependencies were altered.
 
 The final evidence commit adds only documentation, verification output and the audit script; the tested gameplay and asset bytes remain unchanged.
+
+
+## Travel-map pin correction — 17 October 2026
+
+Branch `codex/travel-map-pins`, base `fa61e75`. The country map incorrectly applied a display offset to Uralla's actual dot, moving it offshore; Graves Hill used the same mechanism. Geographic marker centres now stay on the same longitude/latitude projection as the Australia outline. Only number labels can be offset and connected by a leader line. Uralla uses the [council reserve coordinates](https://www.uralla.nsw.gov.au/Your-Community/Things-to-do-places-to-go/Parks-and-reserves/Wooldridge-Recreation-and-Fossicking-Reserve): 151.47018071493963 E, 30.628017300823377 S.
+
+Overlapping mouse/touch hit areas select the nearest geographic dot. Separated number labels and the destination list explicitly select their own destination; keyboard selection retains focus when the selected dot is brought to the front. No local terrain, save data or fees change.
+
+The production build and [desktop/touch travel checks](audits/uralla-map/local/checks.json) pass: actual rendered pin centres, adjacent dots, separated labels, keyboard focus, cancel/unavailable states and a $0 Uralla round trip with home funds/camp/material retained. Both travel-map screenshots were inspected. The first fixture incorrectly assumed cancelling/reopening retained the destination; it now explicitly reselects Uralla, matching the existing menu behavior. No production workaround was added.
+
+![Corrected travel map](audits/uralla-map/local/desktop-travel.jpg)

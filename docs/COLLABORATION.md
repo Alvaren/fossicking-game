@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Current travel-map pin correction (17 October 2026)
+
+Codex branch `codex/travel-map-pins`, base `fa61e75`, corrects the display offsets that moved Uralla and Graves Hill away from their geographic coordinates. Keep dots on the shared country projection; separate only labels. Own `src/regionmap.js`, `src/region.css`, focused browser checks and Uralla plan/build/audit records. Main and Claude were clean before ownership; no other agent launched or messaged. Local terrain and saves are unchanged. [Current scope and delivery](URALLA-BUILD.md#travel-map-pin-correction--17-october-2026).
+
 ## Current Uralla river correction (17 October 2026)
 
 Codex branch `codex/uralla-river-layout`, base `28460f8`, plan commit `91ab59e`. The first Uralla build used an invented sinusoid; geographic acceptance was reopened. NSW hydrography and inspected aerial imagery now establish the north-up hooked course at uniform 0.48 scale. [Plan](URALLA-PLAN.md#river-layout-correction--17-october-2026) and [current delivery record](URALLA-BUILD.md#river-layout-correction--17-october-2026) contain reproducible source coordinates, implementation, save handling, checks, screenshots and limits.

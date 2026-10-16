@@ -1,6 +1,6 @@
 import {AUSTRALIA} from './australia-outline.js';
 export const LOCATIONS = [
-  {id:'uralla',name:'Uralla · Wooldridge',state:'NSW',coord:[151.4693,-30.6305],available:true,mapOffset:[22,13]},
+  {id:'uralla',name:'Uralla · Wooldridge',state:'NSW',coord:[151.47018071493963,-30.628017300823377],available:true,labelOffset:[12,16]},
   {id:'new-england',name:'New England',state:'NSW',coord:[151.112,-29.780],available:true},
   {id:'tasmania-west',name:'Western Tasmania',state:'TAS',coord:[145.5,-42],available:true},
   {id:'golden-triangle',name:'Golden Triangle',state:'VIC',coord:[143.734,-36.860],available:true},
@@ -8,21 +8,48 @@ export const LOCATIONS = [
   {id:'lightning-ridge',name:'Lightning Ridge',state:'NSW',coord:[147.97,-29.43]},
   {id:'ne-tasmania',name:'Northeast Tasmania',state:'TAS',coord:[147.875,-41.130],available:true},
   {id:'wa-goldfields',name:'WA Goldfields',state:'WA',coord:[121.17,-30.95],available:true},
-  {id:'graves-hill',name:'Graves Hill',state:'QLD',coord:[147.684,-23.486],available:true,mapOffset:[29,-18]},
+  {id:'graves-hill',name:'Graves Hill',state:'QLD',coord:[147.684,-23.486],available:true,labelOffset:[-30,23]},
   {id:'qld-gemfields',name:'Billystone Wash',state:'QLD',coord:[147.698,-23.419],available:true},
   {id:'agate-creek',name:'Agate Creek',state:'QLD',coord:[143.5603,-19.0045]},
   {id:'harts-range',name:'Harts Range',state:'NT',coord:[134.5,-23.0167]},
 ];
+// Geographic dots always use this same projection as the country outline.
+// labelOffset only separates numbers; it must never move the destination.
 const point=([lon,lat])=>[(lon-112)/44*560,(-10-lat)/35*480];
 export class RegionMap {
   constructor(parent,onSelect){
     this.root=document.createElement('div');this.root.className='region-map';
     const polygons=AUSTRALIA.type==='Polygon'?[AUSTRALIA.coordinates]:AUSTRALIA.coordinates;
     const outline=polygons.map(poly=>poly.map(ring=>ring.map((p,i)=>(i?'L':'M')+point(p).map(v=>v.toFixed(2)).join(',')).join(' ')+'Z').join(' ')).join(' ');
-    this.root.innerHTML=`<svg viewBox="0 0 560 490" aria-label="Australia destination map" role="group"><path d="${outline}" fill="#c3ac7f" stroke="#786342" stroke-width="1.5"/>${LOCATIONS.map((l,i)=>{const[gx,gy]=point(l.coord),[dx,dy]=l.mapOffset||[0,0],x=gx+dx,y=gy+dy;return `<g class="region-blip" data-location="${l.id}" tabindex="0" role="button" aria-label="${l.name}, ${l.available?'available':'not yet available'}">${l.mapOffset?`<path d="M${gx},${gy}L${x},${y}" stroke="#786342" stroke-width="1"/>`:''}<circle cx="${x}" cy="${y}" r="14" fill="transparent"/><circle class="region-dot" cx="${x}" cy="${y}" r="7"/><text x="${x+11}" y="${y-8}">${i+1}</text></g>`;}).join('')}</svg><div class="region-location-list">${LOCATIONS.map((l,i)=>`<button data-location="${l.id}">${i+1}. ${l.name}<small>${l.state} · ${l.available?'Available':'Not yet available'}</small></button>`).join('')}</div>`;
+    this.root.innerHTML=`<svg viewBox="0 0 560 490" aria-label="Australia destination map" role="group"><path d="${outline}" fill="#c3ac7f" stroke="#786342" stroke-width="1.5"/>${LOCATIONS.map((l,i)=>{const[x,y]=point(l.coord),[dx,dy]=l.labelOffset||[0,0],tx=x+11+dx,ty=y-8+dy;return `<g class="region-blip" data-location="${l.id}" tabindex="0" role="button" aria-label="${l.name}, ${l.available?'available':'not yet available'}">${l.labelOffset?`<path d="M${x},${y}L${tx+4},${ty-5}" stroke="#786342" stroke-width="1" pointer-events="none"/>`:''}<circle cx="${x}" cy="${y}" r="14" fill="transparent"/><circle class="region-dot" cx="${x}" cy="${y}" r="7"/><text x="${tx}" y="${ty}">${i+1}</text></g>`;}).join('')}</svg><div class="region-location-list">${LOCATIONS.map((l,i)=>`<button data-location="${l.id}">${i+1}. ${l.name}<small>${l.state} · ${l.available?'Available':'Not yet available'}</small></button>`).join('')}</div>`;
     parent.append(this.root);
-    this.root.addEventListener('click',e=>{const target=e.target.closest('[data-location]');if(target)onSelect(target.dataset.location);});
+    this.root.addEventListener('click',e=>{
+      const target=e.target.closest('[data-location]');if(!target)return;
+      let id=target.dataset.location;
+      if(e.target.closest('circle')) {
+        // Large touch targets overlap near neighbouring towns. Pick the
+        // closest geographic dot, regardless of SVG paint order. Number
+        // labels and the destination list retain their explicit selection.
+        const svg=this.root.querySelector('svg'),p=new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+        let distance=Infinity;
+        for(const l of LOCATIONS){const[x,y]=point(l.coord),d=(p.x-x)**2+(p.y-y)**2;if(d<distance){distance=d;id=l.id;}}
+      }
+      onSelect(id);
+    });
     this.root.querySelector('svg').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const target=e.target.closest('[data-location]');if(target){e.preventDefault();onSelect(target.dataset.location);}}});
   }
-  select(id,current){for(const el of this.root.querySelectorAll('[data-location]')){el.classList.toggle('selected',el.dataset.location===id);el.setAttribute('aria-pressed',String(el.dataset.location===id));const l=LOCATIONS.find(l=>l.id===el.dataset.location);const small=el.querySelector('small');if(small)small.textContent=`${l.state} · ${l.id===current?'Current location':l.available?'Available':'Not yet available'}`;}}
+  select(id,current){
+    for(const el of this.root.querySelectorAll('[data-location]')) {
+      el.classList.toggle('selected',el.dataset.location===id);
+      el.setAttribute('aria-pressed',String(el.dataset.location===id));
+      const l=LOCATIONS.find(l=>l.id===el.dataset.location),small=el.querySelector('small');
+      if(small)small.textContent=`${l.state} · ${l.id===current?'Current location':l.available?'Available':'Not yet available'}`;
+    }
+    const selected=this.root.querySelector(`svg [data-location="${id}"]`);
+    if(selected&&selected!==selected.parentNode.lastElementChild) {
+      const focused=document.activeElement===selected;
+      selected.parentNode.append(selected);
+      if(focused)selected.focus({preventScroll:true});
+    }
+  }
 }

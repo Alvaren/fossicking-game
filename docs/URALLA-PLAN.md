@@ -64,3 +64,11 @@ Build: preserve the north-up plan shape at a documented uniform 0.48 horizontal 
 - [x] R06: Inspect ground-level and overhead screenshots against source shape; record limits and performance, then integrate/push and verify Pages with final hero images.
 
 Correction delivered: implementation `ee346cf`, first corrected Pages deployment `38931378650`; 140 tests, final game/save/controls/quality checks, visual audit, desktop performance and public desktop/touch gameplay passed. Exact evidence and limits are in the current build record.
+
+
+## Travel-pin correction — 17 October 2026
+
+The travel map stored near-correct geographic coordinates but moved the visible Uralla dot by `mapOffset:[22,13]` to separate nearby destinations. That placed the pin offshore. Graves Hill used the same faulty treatment. Use the council's reserve coordinates, [151.47018071493963, -30.628017300823377](https://www.uralla.nsw.gov.au/Your-Community/Things-to-do-places-to-go/Parks-and-reserves/Wooldridge-Recreation-and-Fossicking-Reserve), and keep every geographic dot on the shared map projection. Separate only number labels, with leader lines; preserve mouse/touch/keyboard selection of close destinations.
+
+- [x] M01: Correct the pin/label distinction and confirm Uralla and Graves Hill marker centres remain at their coordinates.
+- [ ] M02: Inspect desktop/touch travel-map screenshots, exercise close-marker and label selection, build and publish the correction.
