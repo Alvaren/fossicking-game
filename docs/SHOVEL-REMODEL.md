@@ -2,6 +2,29 @@
 
 Branch: codex/shovel-remodel. Base: 3fe3cb909a93ac6cc2ed7238b90d6652b8ba0804. User request: rebuild the poor shovel head, and recommend the next map to upgrade using the current New England level as the benchmark.
 
+
+## Socket correction — user review, 16 October 2026
+
+Branch: codex/shovel-socket. Base: 0c0c12e. The user approved the handle and shaft but rejected their connection to the head. The former capped cylinder and overlapping bent tube looked like separate fittings sitting on the blade. This correction supersedes that junction; the first delivery below remains a historical record.
+
+The socket and blade now form one connected steel pressing. A 39 mm bore with a 2 mm wall surrounds the existing shaft, whose end seats 110 mm into the socket. The neck narrows and flattens into the blade shoulders, with one small transverse rivet. The head has an 18-degree rake; its centre moves 60 mm farther along the unchanged shaft axis to put the wooden end inside the socket, above the blade heel. The attached dirt load follows the head frame. Handle, shaft, D-grip fittings, root pivot, tool controls, animations and gameplay are preserved. Hash comparisons prove the approved wood positions/normals/UVs, wood texture and 2,496 grip-fitting vertices are identical to the base version.
+
+Construction reference: [Cyclone Digging & Shifting Shovel](https://cyclone.com.au/products/digging-shifting-shovel), including its front and side photographs showing a socket flowing into a pressed round-mouth blade. This is a generic game model, not a dimensional reproduction of that product. Dimensions above describe the implementation.
+
+- [x] Inspect real construction and diagnose the overlapping geometry.
+- [x] Replace the junction while preserving the approved handle and shaft.
+- [x] Verify a single connected, closed head with consistent winding, positive volume and finite, non-degenerate triangles.
+- [x] Production build and all 123 existing tests pass.
+- [x] High/Low desktop and Medium touch landscape/portrait: select shovel, dig with genuine input, see movement and dirt load, release, save and reload collected parcels. No recorded console/page errors or shader failures.
+- [x] Inspect front, back, side, held and loaded views of the actual runtime model.
+- [ ] Publish main, verify matching deployment/files and run public desktop/touch checks.
+
+[Former junction](audits/shovel-socket/before/head.jpg) · [New junction](audits/shovel-socket/after/junction.jpg) · [Profile](audits/shovel-socket/after/profile.jpg) · [Rear](audits/shovel-socket/after/back.jpg) · [In game](audits/shovel-socket/after/high-held.jpg) · [Input/save checks](audits/shovel-socket/after/checks.json) · [Geometry and preservation hashes](audits/shovel-socket/geometry.json).
+
+Budget: 7,136 visible triangles / 7,216 loaded; 314,200 geometry bytes, 131,072 texture bytes before mipmaps. Still 3 draws / 4 loaded, with no extra textures, downloads, rendering passes or per-frame model work. These are geometry/resource counts, not a fresh GPU benchmark. Studio inspection adds neutral fill lighting to reveal both faces; held screenshots retain normal game lighting. Phone checks use emulation. The prior all-region controls and offline checks were not rerun for this model-only correction.
+
+Only src/models/shovel.js changes production code. Supporting changes are this record, docs/COLLABORATION.md, the reusable capture script's optional output/detail views and docs/audits/shovel-socket/. The Golden Triangle proposal and every environment remain unchanged.
+
 ## Delivered model
 
 The original shared shovel was a rectangular box blade with a separate cylindrical socket, straight handle and torus grip. The replacement has a closed, shallow pressed-steel bowl with rounded shoulders, a digging point, a curved neck, rolled foot treads, a tapered wooden shaft, D grip and socket rivets. PBR steel has a restrained brushed finish and lighter cutting-edge wear; the timber has fine longitudinal grain. These generated textures are bundled code with no extra network request.

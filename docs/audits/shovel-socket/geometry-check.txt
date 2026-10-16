@@ -1,0 +1,48 @@
+{
+  "triangles": 7216,
+  "vertices": 7730,
+  "geometryBytes": 314200,
+  "visibleDraws": 3,
+  "loadedDraws": 4,
+  "blade": {
+    "connectedComponents": 1,
+    "triangles": 5568,
+    "vertices": 2786,
+    "closedEdges": 8352,
+    "minTriangleArea": 8.391689896037229e-7,
+    "volumeM3": 0.0002700606636811592,
+    "bounds": {
+      "min": [
+        -0.12255555391311646,
+        -0.01682407408952713,
+        -0.18799999356269836
+      ],
+      "max": [
+        0.12255555391311646,
+        0.12242332100868225,
+        0.3204925060272217
+      ]
+    }
+  },
+  "modelBounds": {
+    "min": [
+      -0.2872108168637877,
+      -0.5276609752079602,
+      -1.3265284277488243
+    ],
+    "max": [
+      0.06449782848358154,
+      0.013889629393815994,
+      0.020296767354011536
+    ]
+  },
+  "textureBytesWithoutMipmaps": 131072,
+  "dirtInitiallyHidden": true,
+  "preserved": {
+    "wood_position": "602293476c9857c325dc65c6b33d88168e440009538b3933ef5c28243eb0c245",
+    "wood_normal": "54c5cb02fda0aa7c4ce615ac83b06297adb34e39ba981f42d1880dd4c540d42d",
+    "wood_uv": "2b3b40ce025247820508fbecae58960c2d1cd6550ec4a78e8ffa14eb136f8d37",
+    "woodTexture": "a07239f8c8a8da17c45387209997cd5915fe5b1c97c29b17de5ebef63da51a79",
+    "gripFittingsVertices": 2496
+  }
+}

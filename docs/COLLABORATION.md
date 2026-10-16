@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Shovel socket correction (16 October 2026)
+
+Codex branch codex/shovel-socket, base 0c0c12e, owns the user-requested correction to the shaft/head join in src/models/shovel.js. The approved handle, shaft and D-grip geometry are hash-identical; the head/socket is now one connected pressing. Original tool controls, animation, saves and all environments are unchanged. [Correction and checks](SHOVEL-REMODEL.md#socket-correction--user-review-16-october-2026). No other agent was launched or messaged. Publication is pending the final integration check.
+
 ## Shared shovel and next environment proposal (16 October 2026)
 
 Codex branch codex/shovel-remodel, base 3fe3cb9, rebuilds the shared procedural shovel in src/models/shovel.js and connects it through the existing src/tools.js builder. Grip/pivot, original animation, inputs, digging and saves are preserved. [Model and verification](SHOVEL-REMODEL.md). No region environment changes are included. [Golden Triangle / Ironbark Gully](GOLDEN-TRIANGLE-ART-PLAN.md) is the proposed next fidelity pass, with current NSW quality as the minimum benchmark, explicit reuse boundaries and checkable stages. This is a recommendation and plan, not authorisation to start that full map upgrade. Implementation cb9c6af is published via [Pages run 38887543851](https://github.com/Alvaren/fossicking-game/actions/runs/38887543851); matching live files and public desktop/touch digging/save checks pass. The delivery record retains the original sieve-test timing failure and the successful corrected touch rerun. No other agent was launched or messaged.

@@ -1,0 +1,36 @@
+{
+  "label": "before",
+  "base": "http://127.0.0.1:5191/baseline/",
+  "cases": [
+    {
+      "mode": "high",
+      "model": {
+        "tool": "shovel",
+        "parts": [
+          {
+            "name": "Pressed steel blade",
+            "triangles": 1680,
+            "visible": true
+          },
+          {
+            "name": "Handle and grip",
+            "triangles": 384,
+            "visible": true
+          },
+          {
+            "name": "Socket and fittings",
+            "triangles": 1920,
+            "visible": true
+          },
+          {
+            "name": "Shovel load",
+            "triangles": 80,
+            "visible": false
+          }
+        ],
+        "shaderFailures": 0
+      },
+      "errors": []
+    }
+  ]
+}

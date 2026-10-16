@@ -3,7 +3,7 @@ import {createRequire} from 'node:module';
 import {mkdir,writeFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const label=process.argv[2]||'after',base=process.env.SHOVEL_URL||'http://127.0.0.1:5191/';
-const out='docs/audits/shovel/'+label;await mkdir(out,{recursive:true});
+const out=(process.env.SHOVEL_OUT||'docs/audits/shovel')+'/'+label;await mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--ignore-gpu-blocklist']});
 const report={label,base,cases:[]};
 try {for(const mode of (process.env.SHOVEL_MODES||'high,touch,portrait,low').split(',')) {
@@ -73,6 +73,26 @@ try {for(const mode of (process.env.SHOVEL_MODES||'high,touch,portrait,low').spl
     await page.waitForTimeout(250);await page.locator('#game').screenshot({path:out+'/model.jpg',quality:96});
     await page.evaluate(()=>{shovelStudio.camera.position.set(.21,.06,-.46);shovelStudio.camera.lookAt(-.134,-.45,-1.06);shovelStudio.camera.updateMatrixWorld(true);});
     await page.waitForTimeout(250);await page.locator('#game').screenshot({path:out+'/head.jpg',quality:96});
+    if(process.env.SHOVEL_VIEWS==='socket') {
+      // Additional neutral studio views make the connection visible from both
+      // faces and in profile. This changes inspection lights, never game lights.
+      await page.evaluate(()=>{
+        const {scene}=shovelStudio,v=fossick.view;
+        scene.add(new v.vmHemi.constructor(0xffffff,0xb6bdc4,1.5));
+        const key=v.vmSun.clone();key.intensity=3;key.position.set(1,1,-.2);key.target.position.set(-.13,-.43,-1.03);scene.add(key,key.target);
+        const fill=v.vmSun.clone();fill.intensity=2;fill.position.set(-1,-1.8,-1.1);fill.target.position.set(-.13,-.43,-1.03);scene.add(fill,fill.target);
+      });
+      for(const [name,position,target] of [
+        ['junction',[.17,.01,-.48],[-.13,-.43,-1.04]],
+        ['profile',[.55,-.43,-1.03],[-.13,-.43,-1.03]],
+        ['back',[.05,-1.3,-1.07],[-.13,-.43,-1.03]],
+        ['front',[-.04,.25,-1.0],[-.13,-.43,-1.03]],
+      ]) {
+        await page.evaluate(({position,target})=>{const c=shovelStudio.camera;c.position.set(...position);c.lookAt(...target);c.updateMatrixWorld(true);},{position,target});
+        await page.waitForTimeout(180);await page.locator('#game').screenshot({path:out+'/'+name+'.jpg',quality:96});
+      }
+      await page.evaluate(()=>{const c=shovelStudio.camera;c.position.set(.21,.06,-.46);c.lookAt(-.134,-.45,-1.06);c.updateMatrixWorld(true);});
+    }
     if(label!=='before') {
       await page.evaluate(()=>{shovelStudio.tool.getObjectByName('Shovel load').visible=true;});
       await page.waitForTimeout(250);await page.locator('#game').screenshot({path:out+'/head-loaded.jpg',quality:96});
