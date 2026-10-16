@@ -17,6 +17,7 @@ export class Creek {
     this.lam2 = 21 + r() * 8;
     this.ph1 = r() * TAU;
     this.ph2 = r() * TAU;
+    for(const key of ['phase','lam1','lam2','ph1','ph2'])if(profile[key]!==undefined)this[key]=profile[key];
     this.G = profile.slope ?? 0.009; // mean water-surface gradient
     this.tmp = {};
     this.level = 0; // flood rise above normal water level, metres
@@ -74,8 +75,9 @@ export class Creek {
   riffle(z) {
     return smoothstep(1.15, 1.7, this.slope(z) / this.G);
   }
-  halfWidth(z) { return (2.7 + 1.3 * this.riffle(z)) * (this.profile.width ?? 1); }
-  depth(z) { return (0.95 - 0.6 * this.riffle(z)) * (this.profile.depth ?? 1); }
+  halfWidth(z) { return (2.7 + 1.3 * this.riffle(z)) * (this.profile.width ?? 1) + this.poolExtra(z,'width'); }
+  poolExtra(z,key) { return (this.profile.pools||[]).reduce((sum,p)=>sum+(p[key]||0)*Math.exp(-(((z-p.z)/p.length)**2)),0); }
+  depth(z) { return (0.95 - 0.6 * this.riffle(z)) * (this.profile.depth ?? 1) + this.poolExtra(z,'depth'); }
   baseSpeed(z) { return 0.22 + 1.05 * this.riffle(z); }
   // Where the current slows going downstream (riffle running into a pool).
   decel(z) {
@@ -129,7 +131,8 @@ export class Creek {
     const px = -L.tz, pz = L.tx;
     for (const b of this.boulders) {
       const rx = x - b.x, rz = z - b.z;
-      if (Math.abs(rz) > 8 || Math.abs(rx) > 8) continue;
+      const reach=Math.max(8,b.r*5);
+      if (Math.abs(rz) > reach || Math.abs(rx) > reach) continue;
       const s = rx * L.tx + rz * L.tz;   // downstream of the boulder
       const lat = rx * px + rz * pz;
       const R = b.r;
@@ -155,7 +158,8 @@ export class Creek {
     let best = 0;
     for (const b of this.boulders) {
       const rx = x - b.x, rz = z - b.z;
-      if (Math.abs(rz) > 8 || Math.abs(rx) > 8) continue;
+      const reach=Math.max(8,b.r*5);
+      if (Math.abs(rz) > reach || Math.abs(rx) > reach) continue;
       const s = rx * L.tx + rz * L.tz;
       if (s < 0) continue;
       const lat = rx * -L.tz + rz * L.tx;

@@ -32,7 +32,7 @@ try {
     page.on('pageerror',e=>errors.push(e.message));
     page.on('console',m=>{if(m.type()==='error'||/GL_INVALID|too many errors/.test(m.text()))errors.push(m.text());});
     let release;const gate=new Promise(r=>release=r);
-    await page.route('**/models/'+(region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',async route=>{await gate;await route.continue();});
+    await page.route('**/models/'+(region==='uralla'?'uralla':region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',async route=>{await gate;await route.continue();});
     await page.goto('http://127.0.0.1:5191/?test',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.fossick);
     const before=hash(await page.evaluate(snapshot));release();
@@ -106,7 +106,7 @@ try {
       localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.75,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));
     },region);
     const page=await context.newPage();page.setDefaultTimeout(90000);
-    await page.route('**/models/'+(region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',r=>failure==='missing'?r.abort():r.fulfill({status:200,contentType:'model/gltf-binary',body:'invalid environment data'}));
+    await page.route('**/models/'+(region==='uralla'?'uralla':region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',r=>failure==='missing'?r.abort():r.fulfill({status:200,contentType:'model/gltf-binary',body:'invalid environment data'}));
     await page.goto('http://127.0.0.1:5191/?test',{waitUntil:'networkidle'});
     await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).ready);
     const fallback=await page.evaluate(()=>({status:(fossick.regionalEnvironment||fossick.newEngland).stats.status,rocks:fossick.scene.getObjectByName('Geological scenery rocks').visible,

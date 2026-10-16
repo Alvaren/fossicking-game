@@ -12,6 +12,9 @@ Requested 17 October 2026. Branch `codex/uralla`, base `dc1fc3d`. Build a separa
 - [Council fossicking brochure](https://www.uralla.com/files/assets/urallacom/v/1/vic-info-pdfs/wooldridge-fossicking-reserve.pdf): indexed text describes very fine yellow gold and quartz in present/old creek gravel. The PDF itself returned HTTP 403 to the research reader; do not claim its map was inspected. Visitor listings also report garnets and sapphires. Rare diamonds are outside the existing find types and are not being added in this slice.
 - [NSW Resources, 11 May 2026](https://www.resources.nsw.gov.au/news-articles/resources-regulator-investigating-illegal-fossicking): distinguishes approved hand fossicking from prohibited powered pumps/mechanised sluices in the Rocky River area. Keep the carried highbanker upgrade owned, but use the unpowered sluice here; no new powered mining attractions.
 
+- [NSW Government reserve entry](https://www.nsw.gov.au/visiting-and-exploring-nsw/locations-and-attractions/wooldridge-recreation-and-fossicking-reserve): confirms the access roads, wooded camp/picnic area and river fossicking. Its linked visitor activity page returned an access error; the page title alone is not evidence of a measured gem grade.
+- [GeoNames-derived reserve location](https://mapcarta.com/28670050): latitude -30.6305, longitude 151.4693, used for the national travel pin only. It does not supply the game terrain.
+
 ## Visual and gameplay contract
 
 A recognisable boulder-lined river reserve: a large granite choke reach, open sandy sampling margins, slower reed-fringed pools, grassy wooded banks and a modest treed camp with an access track. Boulder groups must feel embedded and massive at eye height, with rounded edges, coherent pale granite grain, lichen and wet lower surfaces. Maintain open walking routes and real colliders. Preserve visible moving surface ripples and reflection detail, and do not fill every pool with foam.
@@ -21,12 +24,12 @@ Use a compact interpreted river course and descriptive names such as Boulder Rea
 ## Execution checklist
 
 - [x] U01: Inspect local photos and official descriptions; record observed features and uncertainty before changing the game.
-- [ ] U02: Add independent `uralla` travel/save profile, $0 fee, field notes and always-on topographic map with descriptive river reaches/access route.
-- [ ] U03: Build pools/shallow runs and grouped large granite boulders; preserve shared physical terrain/water/deposit agreement, collisions and walkable sampling margins.
-- [ ] U04: Reuse NSW high-fidelity lighting, ground, vegetation LOD and rippled water. Add only the local art/composition needed for pale rounded boulders, reed beds, sandy access and tall varied gums.
-- [ ] U05: Implement fine-gold alluvial sampling and supported gem mix; keep original panning difficulty, classify/sieve controls, camp and save contracts. No fabricated source attractions.
-- [ ] U06: Validate build, terrain/deposit/save logic, original-world regressions, desktop mouse lock/wheel/menus, touch layout/actions, panning/recovery, low/high graphics and optional-model fallback/offline reload.
-- [ ] U07: Inspect actual game captures at boulder reach, pool, camp and work surface against the photos; correct visible defects. Record performance evidence and remaining limitations honestly.
+- [x] U02: Add independent `uralla` travel/save profile, $0 fee, field notes and always-on topographic map with descriptive river reaches/access route.
+- [x] U03: Build pools/shallow runs and grouped large granite boulders; preserve shared physical terrain/water/deposit agreement, collisions and walkable sampling margins.
+- [x] U04: Reuse NSW high-fidelity lighting, ground, vegetation LOD and rippled water. Add only the local art/composition needed for pale rounded boulders, reed beds, sandy access and tall varied gums.
+- [x] U05: Implement fine-gold alluvial sampling and supported gem mix; keep original panning difficulty, classify/sieve controls, camp and save contracts. No fabricated source attractions.
+- [x] U06: Validate build, terrain/deposit/save logic, original-world regressions, desktop mouse lock/wheel/menus, touch layout/actions, panning/recovery, low/high graphics and optional-model fallback/offline reload.
+- [x] U07: Inspect actual game captures at boulder reach, pool, camp and work surface against the photos; correct visible defects. Record performance evidence and remaining limitations honestly.
 - [ ] U08: Commit completed work, inspect main/Claude, integrate, push main, verify Pages deployment and live files; deliver screenshots and update this checklist.
 
 ## Reuse / ownership
@@ -40,3 +43,7 @@ Own isolated worktree and port 5191. Main and Claude checked clean before claimi
 - Colliders match the large visible boulders, trails remain usable, and quality changes do not alter deposits/saved ground.
 - Exact old New England terrain remains unchanged; travel/reload preserves independent unfinished pans and worked soil.
 - High-fidelity desktop is the art target; Low reduces foliage/detail/reflections. Emulated phone tests are not physical phone performance measurements.
+
+## Build record
+
+See [URALLA-BUILD.md](URALLA-BUILD.md) for the implementation, actual checks, visual comparison, limitations and publication evidence. The checklist describes this requested location slice; it does not sign off the broader six-image reference quality target.

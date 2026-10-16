@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { urallaGround } from './uralla/ground.js';
+import { routeDistance, riverPath, reserveSites, reserveBoulders, reserveHeight, reserveColour } from './uralla/locality.js';
 import { dirtyGridAttributes } from './rendering/dirtygrid.js';
 import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
@@ -26,11 +28,12 @@ const srgb = (v) => Math.pow(v, 2.2);
 export class Terrain {
   constructor(seed, profile = {}) {
     this.profile = profile;
-    this.detailedGround = ['new-england','golden-triangle','graves-hill'].includes(profile.id);
+    this.detailedGround = ['new-england','golden-triangle','graves-hill','uralla'].includes(profile.id);
     this.noise = makeNoise(seed);
     this.n2 = this.noise.noise2;
     const rand = this.noise.rand;
     this.creek = new Creek(this.noise, profile.creek);
+    if(profile.id==='uralla')this.creek.reservePath=riverPath(this.creek);
     this.benchSide = rand() < 0.5 ? 1 : -1;
     this.tmpL = {};
     this.worldHalf = HALF;
@@ -90,6 +93,7 @@ export class Terrain {
       if (!this.sources.opal) { this.heaps = []; this.shafts = []; }
     }
     if (profile.id === 'graves-hill') { this.sources=structuredClone(SITES); this.creek.boulders=[]; }
+    if (profile.id === 'uralla') { this.sources=reserveSites(this.creek); this.creek.boulders=reserveBoulders(this.creek,seed); }
     this.workings = profile.id === 'graves-hill' ? localityWorkings(seed) : [];
     if (profile.id === 'wa-goldfields') this.goldPatches = goldfieldPatches(seed, this.sources.reef, this.creek);
     if (profile.id === 'golden-triangle' || profile.id === 'wa-goldfields') {
@@ -177,6 +181,7 @@ export class Terrain {
   }
 
   rawHeight(x, z) {
+    if(this.profile.id==='uralla')return reserveHeight(x,z,this.n2,this.creek);
     if (this.profile.id === 'graves-hill') return localityHeight(x,z,this.n2);
     if (this.profile.id === 'coober-pedy') return cooberHeight(x,z,this.n2);
     const L = this.creek.local(x, z, this.tmpL);
@@ -479,7 +484,7 @@ export class Terrain {
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = this.profile.id === 'graves-hill' ? gravesGround({excavation:true}) : this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',goldenTriangle:this.profile.id === 'golden-triangle',workings:this.workings,excavation:this.detailedGround});
+    this.material = this.profile.id === 'uralla' ? urallaGround({excavation:true}) : this.profile.id === 'graves-hill' ? gravesGround({excavation:true}) : this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:['new-england','uralla'].includes(this.profile.id),goldenTriangle:this.profile.id === 'golden-triangle',workings:this.workings,excavation:this.detailedGround});
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -511,6 +516,7 @@ export class Terrain {
         this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
         this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
+        if(this.profile.id==='uralla')this.surface[i*3] *= smoothstep(.8,2.2,routeDistance(x,z,this.creek));
         if (this.profile.id === 'coober-pedy') {
           this.surface[i * 3] = 0;
           this.surface[i * 3 + 1] = .45;
@@ -524,6 +530,7 @@ export class Terrain {
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,
   // pinkish rhyolite, grey creek gravel, slate where bedrock shows.
   surfaceColor(x, z, h, ny, orig, bedrock, topsoil) {
+    if(this.profile.id==='uralla')return reserveColour(x,z,h,orig,topsoil,this.n2,this.creek);
     if (this.profile.id === 'graves-hill') return localityColour(x,z,h,orig,topsoil,this.n2,this.workings);
     if (this.profile.id === 'coober-pedy') {
       const tone=this.n2(x*.035,z*.035)*.045,heap=smoothstep(.02,.25,this.heapHeight(x,z));
@@ -610,7 +617,7 @@ export class Terrain {
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     if(surface)geo.setAttribute('aSurface',new THREE.BufferAttribute(surface,3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo,this.profile.id==='graves-hill' ? gravesGround() : surface ? groundMaterial({newEngland:this.profile.id==='new-england',goldenTriangle:this.profile.id==='golden-triangle',workings:this.workings,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+    const mesh = new THREE.Mesh(geo,this.profile.id==='uralla' ? urallaGround({waterLevel:this.material.userData.waterLevel}) : this.profile.id==='graves-hill' ? gravesGround() : surface ? groundMaterial({newEngland:['new-england','uralla'].includes(this.profile.id),goldenTriangle:this.profile.id==='golden-triangle',workings:this.workings,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
     mesh.receiveShadow = false;
     return mesh;
   }

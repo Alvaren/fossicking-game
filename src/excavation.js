@@ -1,3 +1,4 @@
+import { urallaGround } from './uralla/ground.js';
 import { gravesGround } from './graveshill/ground.js';
 import * as THREE from 'three';
 import { makeCrystalMesh, crystalLOD } from './crystals.js';
@@ -321,7 +322,7 @@ export class Patch {
     this.pos = pos; this.col = col;
     this.refresh(0, CELLS, 0, CELLS);
     const surface=this.terrain.detailedGround
-      ? (this.terrain.profile.id==='graves-hill'?gravesGround({excavation:true,waterLevel:this.terrain.material.userData.waterLevel}):groundMaterial({newEngland:this.terrain.profile.id==='new-england',goldenTriangle:this.terrain.profile.id==='golden-triangle',workings:this.terrain.workings,excavation:true,waterLevel:this.terrain.material.userData.waterLevel}))
+      ? (this.terrain.profile.id==='uralla'?urallaGround({excavation:true,waterLevel:this.terrain.material.userData.waterLevel}):this.terrain.profile.id==='graves-hill'?gravesGround({excavation:true,waterLevel:this.terrain.material.userData.waterLevel}):groundMaterial({newEngland:this.terrain.profile.id==='new-england',goldenTriangle:this.terrain.profile.id==='golden-triangle',workings:this.terrain.workings,excavation:true,waterLevel:this.terrain.material.userData.waterLevel}))
       : new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,map:this.terrain.material.map});
     if(surface.userData.nswCamp)surface.userData.nswCamp=this.terrain.material.userData.nswCamp;
     this.mesh = new THREE.Mesh(geo, surface);

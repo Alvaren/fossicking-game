@@ -99,7 +99,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
       const reef=terrain.sources.reef;
       const atReef=type==='quartz' && reef && Math.hypot(pos.x-reef.x,pos.z-reef.z)<12;
       const bank=c.local(pos.x,pos.z,{});
-      const family=granite ? 'granite' : atReef ? 'host' : bank.d<bank.w+1.5 ? 'cobble' : ['basalt','rhyolite','granite'].includes(type) ? type : 'slab';
+      const family=recipe.rockFamily?.({type,x:pos.x,z:pos.z,radius:matrix.getMaxScaleOnAxis()}) ?? (granite ? 'granite' : atReef ? 'host' : bank.d<bank.w+1.5 ? 'cobble' : ['basalt','rhyolite','granite'].includes(type) ? type : 'slab');
       const variants={host:4,cobble:6,granite:4,basalt:3,rhyolite:3,slab:3}[family];
       const name=`${family}_${i%variants}`,key=`${name}:${type}`;
       if(!groups.has(key))groups.set(key,{name,type,entries:[]});
@@ -124,7 +124,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
       if(!entries.length)continue;
       const g=kit[name].clone(),setKind=rockKinds(g,entries.length);
       recipe.rockGeometry?.(g,type);
-      const material=rockMaterial(type,{mixed:true,authored:true,flat:granite});
+      const material=(recipe.rockSurface||rockMaterial)(type,{mixed:true,authored:true,flat:granite});
       const mesh=new THREE.InstancedMesh(g,material,entries.length);
       mesh.name=`${prefix} ${name} ${type}`;mesh.castShadow=true;mesh.receiveShadow=true;
       entries.forEach((e,i)=>{mesh.setMatrixAt(i,e.matrix);setKind(i,type,e.water);});
@@ -152,7 +152,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
         const color=new THREE.Color(0xc6c1ac),colours=g.attributes.color,kind=g.attributes.aAuthoredRockKind;
         for(let i=0;i<colours.count;i++) {colours.setXYZ(i,color.r,color.g,color.b);kind.setX(i,ROCK_ID.quartz);}
       }
-      const material=stone ? rockMaterial('slate',{mixed:true,authored:true}) : wood ? bark.material : plants.material;
+      const material=stone ? (recipe.rockSurface||rockMaterial)('slate',{mixed:true,authored:true}) : wood ? bark.material : plants.material;
       if(stone) { const setKind=rockKinds(g,batch.entries.length);batch.entries.forEach((e,i)=>setKind(i,'slate',c.waterY(e.z))); }
       batch.mesh=new THREE.InstancedMesh(g,material,batch.entries.length);
       batch.mesh.name=`${prefix} scenery ${batch.name}`;

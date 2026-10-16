@@ -1,0 +1,198 @@
+{
+  "region": "uralla",
+  "date": "2026-10-16",
+  "cases": [
+    {
+      "seed": 1,
+      "worldHash": "400fa352832ef40035fbe37ef2af70bb43dc14c5b329983c91c8cd2abb329384",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13872,
+          "visible": 1101,
+          "quality": "low",
+          "solidRocks": 568,
+          "landformPatches": 0,
+          "bankRoots": 12,
+          "triangles": 1004008
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13872,
+          "visible": 3948,
+          "quality": "medium",
+          "solidRocks": 568,
+          "landformPatches": 0,
+          "bankRoots": 12,
+          "triangles": 1454100
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13872,
+          "visible": 9998,
+          "quality": "high",
+          "solidRocks": 568,
+          "landformPatches": 0,
+          "bankRoots": 12,
+          "triangles": 2055900
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13872,
+          "visible": 1101,
+          "quality": "low",
+          "solidRocks": 568,
+          "landformPatches": 0,
+          "bankRoots": 12,
+          "triangles": 1004008
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641,
+        "soil": 16641
+      },
+      "errors": []
+    },
+    {
+      "seed": 12345,
+      "worldHash": "7c54212976b2ba03787e5da32a67331d6c84bb0a451e49a0bfcaa9ee0e1a8be6",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 14197,
+          "visible": 1169,
+          "quality": "low",
+          "solidRocks": 564,
+          "landformPatches": 0,
+          "bankRoots": 11,
+          "triangles": 1011668
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 14197,
+          "visible": 3788,
+          "quality": "medium",
+          "solidRocks": 564,
+          "landformPatches": 0,
+          "bankRoots": 11,
+          "triangles": 1441368
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 14197,
+          "visible": 9921,
+          "quality": "high",
+          "solidRocks": 564,
+          "landformPatches": 0,
+          "bankRoots": 11,
+          "triangles": 1978268
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 14197,
+          "visible": 1169,
+          "quality": "low",
+          "solidRocks": 564,
+          "landformPatches": 0,
+          "bankRoots": 11,
+          "triangles": 1011668
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641,
+        "soil": 16641
+      },
+      "errors": []
+    },
+    {
+      "seed": 798887,
+      "worldHash": "e425df6ecc05f3a6622fc1790038c0f0745fea3d2c54e259c72d484220fd7e5b",
+      "quality": [
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13953,
+          "visible": 1196,
+          "quality": "low",
+          "solidRocks": 570,
+          "landformPatches": 0,
+          "bankRoots": 2,
+          "triangles": 965652
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13953,
+          "visible": 3947,
+          "quality": "medium",
+          "solidRocks": 570,
+          "landformPatches": 0,
+          "bankRoots": 2,
+          "triangles": 1390276
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13953,
+          "visible": 9720,
+          "quality": "high",
+          "solidRocks": 570,
+          "landformPatches": 0,
+          "bankRoots": 2,
+          "triangles": 1938976
+        },
+        {
+          "status": "ready",
+          "assets": 42,
+          "dressing": 13953,
+          "visible": 1196,
+          "quality": "low",
+          "solidRocks": 570,
+          "landformPatches": 0,
+          "bankRoots": 2,
+          "triangles": 965652
+        }
+      ],
+      "patch": {
+        "name": "Blended claim ground",
+        "surface": 16641,
+        "vertices": 16641,
+        "cut": 16641,
+        "soil": 16641
+      },
+      "errors": []
+    },
+    {
+      "failure": "missing",
+      "fallback": {
+        "status": "fallback",
+        "rocks": true,
+        "tors": true,
+        "trees": true
+      }
+    },
+    {
+      "failure": "corrupt",
+      "fallback": {
+        "status": "fallback",
+        "rocks": true,
+        "tors": true,
+        "trees": true
+      }
+    }
+  ]
+}

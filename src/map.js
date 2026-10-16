@@ -1,3 +1,4 @@
+import { drawUrallaMap } from './uralla/map.js';
 import { drawLocalityMap } from './graveshill/map.js';
 import { topographyCanvas } from './topography.js';
 import { PLAY } from './terrain.js';
@@ -64,6 +65,7 @@ export class ClaimMap {
     const ctx = cv.getContext('2d');
     cv.width = cv.height = PX;
     ctx.drawImage(this.base, 0, 0);
+    if(this.terrain.profile.id==='uralla')drawUrallaMap(ctx,(x,z)=>this.toPx(x,z),this.terrain.creek);
     if(this.terrain.profile.id==='graves-hill')drawLocalityMap(ctx,(x,z)=>this.toPx(x,z));
     // Claim pegs.
     const [bx0, by0] = this.toPx(-PLAY, -PLAY), [bx1, by1] = this.toPx(PLAY, PLAY);

@@ -1,0 +1,487 @@
+{
+  "label": "final-performance",
+  "run": 1,
+  "url": "http://127.0.0.1:5191/",
+  "region": "uralla",
+  "seed": 12345,
+  "diagnostic": false,
+  "disable": "",
+  "passGpu": false,
+  "measuredSeconds": 120,
+  "warmupSeconds": 20,
+  "loadMs": 10739,
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "foliage": [
+      {
+        "name": "gum_0",
+        "before": 45612,
+        "after": 34978,
+        "bytes": 1630256,
+        "beforeBytes": 2006928
+      },
+      {
+        "name": "",
+        "before": 13752,
+        "after": 9144,
+        "bytes": 429840,
+        "beforeBytes": 605088
+      },
+      {
+        "name": "gum_1",
+        "before": 45612,
+        "after": 34603,
+        "bytes": 1613756,
+        "beforeBytes": 2006928
+      },
+      {
+        "name": "",
+        "before": 13752,
+        "after": 9116,
+        "bytes": 428608,
+        "beforeBytes": 605088
+      },
+      {
+        "name": "gum_2",
+        "before": 45612,
+        "after": 34895,
+        "bytes": 1626604,
+        "beforeBytes": 2006928
+      },
+      {
+        "name": "",
+        "before": 13752,
+        "after": 9185,
+        "bytes": 431644,
+        "beforeBytes": 605088
+      },
+      {
+        "name": "gum_3",
+        "before": 45612,
+        "after": 34763,
+        "bytes": 1620796,
+        "beforeBytes": 2006928
+      },
+      {
+        "name": "",
+        "before": 13752,
+        "after": 9168,
+        "bytes": 430896,
+        "beforeBytes": 605088
+      },
+      {
+        "name": "grass_0",
+        "before": 792,
+        "after": 498,
+        "bytes": 23496,
+        "beforeBytes": 34848
+      },
+      {
+        "name": "",
+        "before": 264,
+        "after": 173,
+        "bytes": 8140,
+        "beforeBytes": 11616
+      },
+      {
+        "name": "shrub_1",
+        "before": 7722,
+        "after": 5665,
+        "bytes": 264704,
+        "beforeBytes": 339768
+      },
+      {
+        "name": "",
+        "before": 2454,
+        "after": 1721,
+        "bytes": 80632,
+        "beforeBytes": 107976
+      }
+    ],
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ]
+  },
+  "callbacks": {
+    "Bu": 8281
+  },
+  "frames": 7203,
+  "frameMs": {
+    "median": 16.69999999999709,
+    "p95": 16.70000000001164,
+    "p99": 16.80000000000291
+  },
+  "cpuMs": {
+    "median": 4.199999995529652,
+    "p95": 9.800000004470348,
+    "p99": 11.799999997019768
+  },
+  "calls": {
+    "median": 355,
+    "p95": 836,
+    "p99": 837
+  },
+  "triangles": {
+    "median": 23494512,
+    "p95": 24127028,
+    "p99": 24133182
+  },
+  "over33ms": 0,
+  "over50ms": 0,
+  "gpuMs": {
+    "median": 6.070272,
+    "p95": 10.19392,
+    "p99": 11.393024
+  },
+  "gpuSamples": 240,
+  "memory": [
+    {
+      "age": 0.017,
+      "heap": 116266086,
+      "geometries": 248,
+      "textures": 16,
+      "programs": 69
+    },
+    {
+      "age": 12.04990000000596,
+      "heap": 133919597,
+      "geometries": 268,
+      "textures": 22,
+      "programs": 86
+    },
+    {
+      "age": 22.04970000000298,
+      "heap": 137472402,
+      "geometries": 269,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 32.04860000000149,
+      "heap": 124778714,
+      "geometries": 269,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 42.04820000000298,
+      "heap": 135799922,
+      "geometries": 269,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 52.04730000000447,
+      "heap": 136944626,
+      "geometries": 269,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 62.04720000000298,
+      "heap": 138060594,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 72.04820000000298,
+      "heap": 143227794,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 82.04690000000596,
+      "heap": 144391738,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 92.04690000000596,
+      "heap": 145261358,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 102.04640000000596,
+      "heap": 140173570,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 112.04580000000448,
+      "heap": 133128738,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 122.0445,
+      "heap": 116929942,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    },
+    {
+      "age": 132.044700000003,
+      "heap": 133317782,
+      "geometries": 317,
+      "textures": 23,
+      "programs": 88
+    }
+  ],
+  "errors": [],
+  "sites": {
+    "creek": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.799999999995634,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 2.7999999970197678,
+        "p95": 4.399999998509884,
+        "p99": 5.799999997019768
+      },
+      "calls": {
+        "median": 201,
+        "p95": 204,
+        "p99": 249
+      },
+      "triangles": {
+        "median": 24125616,
+        "p95": 24133182,
+        "p99": 24133502
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 6.98368,
+        "p95": 7.320576,
+        "p99": 7.328768
+      }
+    },
+    "bank": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 3.1999999955296516,
+        "p95": 5.100000001490116,
+        "p99": 6.4000000059604645
+      },
+      "calls": {
+        "median": 243,
+        "p95": 248,
+        "p99": 286
+      },
+      "triangles": {
+        "median": 24095240,
+        "p95": 24103488,
+        "p99": 24255480
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 6.04672,
+        "p95": 6.441984,
+        "p99": 6.672384
+      }
+    },
+    "woodland": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 3.7999999970197678,
+        "p95": 6,
+        "p99": 7.699999995529652
+      },
+      "calls": {
+        "median": 369,
+        "p95": 497,
+        "p99": 499
+      },
+      "triangles": {
+        "median": 23944044,
+        "p95": 23953450,
+        "p99": 23954490
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 5.711872,
+        "p95": 7.545856,
+        "p99": 10.957824
+      }
+    },
+    "boulderReach": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 8.100000001490116,
+        "p95": 12.100000001490116,
+        "p99": 13.399999998509884
+      },
+      "calls": {
+        "median": 736,
+        "p95": 740,
+        "p99": 774
+      },
+      "triangles": {
+        "median": 22064706,
+        "p95": 22104126,
+        "p99": 24407392
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 9.544704,
+        "p95": 11.451392,
+        "p99": 12.507136
+      }
+    },
+    "reedPool": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 3.399999998509884,
+        "p95": 5.200000002980232,
+        "p99": 6.5
+      },
+      "calls": {
+        "median": 349,
+        "p95": 441,
+        "p99": 443
+      },
+      "triangles": {
+        "median": 23026626,
+        "p95": 23033138,
+        "p99": 23034230
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 5.397504,
+        "p95": 6.073344,
+        "p99": 6.098944
+      }
+    },
+    "camp": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 7.799999997019768,
+        "p95": 11.300000004470348,
+        "p99": 12.5
+      },
+      "calls": {
+        "median": 835,
+        "p95": 837,
+        "p99": 881
+      },
+      "triangles": {
+        "median": 23283276,
+        "p95": 23299416,
+        "p99": 23299416
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 8.359936,
+        "p95": 10.451968,
+        "p99": 10.73664
+      }
+    },
+    "dig": {
+      "frames": 900,
+      "frameMs": {
+        "median": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 4.800000004470348,
+        "p95": 7.399999998509884,
+        "p99": 9
+      },
+      "calls": {
+        "median": 544,
+        "p95": 551,
+        "p99": 590
+      },
+      "triangles": {
+        "median": 23871768,
+        "p95": 23882352,
+        "p99": 23882352
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 5.541888,
+        "p95": 7.794688,
+        "p99": 9.009152
+      }
+    },
+    "downstream": {
+      "frames": 903,
+      "frameMs": {
+        "median": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "p99": 16.800000000017462
+      },
+      "cpuMs": {
+        "median": 3.100000001490116,
+        "p95": 5,
+        "p99": 6
+      },
+      "calls": {
+        "median": 336,
+        "p95": 347,
+        "p99": 370
+      },
+      "triangles": {
+        "median": 23167770,
+        "p95": 23175676,
+        "p99": 23175676
+      },
+      "over33ms": 0,
+      "over50ms": 0,
+      "gpuMs": {
+        "median": 5.448704,
+        "p95": 5.900288,
+        "p99": 6.175744
+      }
+    }
+  }
+}

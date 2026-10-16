@@ -1,3 +1,5 @@
+import { pathDistance } from '../paths.js';
+export { pathDistance } from '../paths.js';
 import { coverAt } from '../newengland/groundcover.js';
 import { smoothstep, mulberry32 } from '../noise.js';
 
@@ -11,15 +13,6 @@ export const SITES = {
   granite:{x:5,z:-63,label:'Granite outcrop',known:true,colour:'#b5a992'},
   graves:{x:93,z:-43,label:'Graves Hill',known:true,colour:'#92754a'},
 };
-export function pathDistance(x,z,path) {
-  let best=Infinity;
-  for(let i=1;i<path.length;i++) {
-    const [ax,az]=path[i-1],[bx,bz]=path[i],dx=bx-ax,dz=bz-az;
-    const t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));
-    best=Math.min(best,Math.hypot(x-ax-dx*t,z-az-dz*t));
-  }
-  return best;
-}
 const mound=(x,z,cx,cz,rx,rz)=>Math.exp(-(((x-cx)/rx)**2+((z-cz)/rz)**2));
 export function localityHeight(x,z,n2) {
   const hills=2.5*mound(x,z,12,56,52,44)+3.2*mound(x,z,33,-33,38,31)+6.4*mound(x,z,99,-47,38,45);

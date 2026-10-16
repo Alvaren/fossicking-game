@@ -1,0 +1,39 @@
+[
+  {
+    "mode": "high",
+    "site": "boulder-water",
+    "pose": {
+      "x": 17.311369744404082,
+      "z": 38,
+      "tx": 16.1490855018203,
+      "tz": 56,
+      "pitch": -0.08
+    },
+    "photoLift": 2.4,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 9022,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 16
+    }
+  }
+]

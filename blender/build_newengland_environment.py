@@ -6,6 +6,7 @@ import bpy, bmesh, math, random, sys, os, json
 from mathutils import Vector
 
 OUT = os.path.abspath(sys.argv[sys.argv.index('--') + 1])
+URALLA = 'uralla' in sys.argv[sys.argv.index('--') + 2:]
 GEMFIELD = 'graves-hill' in sys.argv[sys.argv.index('--') + 2:]
 GOLDFIELD = 'golden-triangle' in sys.argv[sys.argv.index('--') + 2:]
 os.makedirs(OUT, exist_ok=True)
@@ -34,6 +35,9 @@ M = {k: material(k, v) for k, v in {
     'granite':'9b9181','cobble':'817e70','basalt':'535753',
     'rhyolite':'968579','slab':'79776d',
 }.items()}
+
+if URALLA:
+    M['granite']=material('granite_uralla','8c897e');M['cobble']=material('granite_uralla_cobble','898477')
 
 if GOLDFIELD:
     for name, colour in {'bark':'514a3d','bark_dark':'3e3930','bark_light':'766c56','leaf':'65704a','leaf_light':'85905f','leaf_dark':'526344'}.items():
@@ -268,7 +272,14 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bpy.ops.object.modifier_apply(modifier=soften.name)
         decimate=o.modifiers.new('broad rock planes','DECIMATE');decimate.ratio=.24
         bpy.ops.object.modifier_apply(modifier=decimate.name)
-    elif role in ['cobble','granite']: bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3 if role=='granite' else 2,radius=1)
+    elif URALLA and role=='granite':
+        bpy.ops.mesh.primitive_cube_add(size=2)
+        o=bpy.context.object
+        bevel=o.modifiers.new('rounded granite joints','BEVEL');bevel.width=.39+rng.random()*.15;bevel.segments=5
+        bpy.ops.object.modifier_apply(modifier=bevel.name)
+        sub=o.modifiers.new('shallow weathering support','SUBSURF');sub.subdivision_type='SIMPLE';sub.levels=2
+        bpy.ops.object.modifier_apply(modifier=sub.name)
+    elif role in ['cobble','granite']: bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=(4 if URALLA else 3) if role=='granite' else 2,radius=1)
     elif role in ['basalt','rhyolite','slab']:
         points=[]
         for height,radius in [(-.95,.83),(-.18,1),(.85,.74)]:
@@ -284,9 +295,9 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
     for v in o.data.vertices:
         x,y,z=v.co
         if role=='granite':
-            p=.64
+            p=1 if URALLA else .64
             x=math.copysign(abs(x)**p,x);y=math.copysign(abs(y)**p,y);z=math.copysign(abs(z)**p,z)
-            erosion=1+.06*math.sin(x*4+y*2)+.035*math.sin(z*7-y*3)
+            erosion=1+(.023 if URALLA else .06)*math.sin(x*4+y*2)+(.015 if URALLA else .035)*math.sin(z*7-y*3)
             v.co=(x*scale[0]*erosion+z*.08,y*scale[1]*erosion,z*scale[2]*(1+.07*math.sin(x*3+y*2)))
         elif role=='cobble':
             shape=1+.07*math.sin(x*5+y*3)+.06*math.sin(y*4-z*2)
@@ -299,7 +310,7 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bevel=o.modifiers.new('weathered edges','BEVEL');bevel.width=.30 if rounded else .13;bevel.segments=3 if rounded else 1
         bpy.ops.object.modifier_apply(modifier=bevel.name)
     bm=bmesh.new();bm.from_mesh(o.data)
-    for j in range(0 if rounded else 2 if role=='host' else 8):
+    for j in range(3 if URALLA and role=='granite' else 0 if rounded else 2 if role=='host' else 8):
         n=Vector((rng.uniform(-1,1),rng.uniform(-1,1),rng.uniform(-1,1))).normalized()
         result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=.00001,plane_co=n*(.73+rng.random()*.35),plane_no=n,clear_outer=True)
         edges=[e for e in result['geom_cut'] if isinstance(e,bmesh.types.BMEdge) and e.is_boundary]
@@ -342,7 +353,12 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bm.to_mesh(o.data);bm.free()
     return group
 
-if GEMFIELD:
+if URALLA:
+    for kind,count in [('granite',4),('cobble',6)]:
+        for i in range(count):
+            rng=random.Random(17031+i*71);g=parent(f'{kind}_{i}')
+            block(kind,rng,g,kind,(.86+rng.random()*.1,.82+rng.random()*.12,.65+rng.random()*.16),True)
+elif GEMFIELD:
     for i in range(4):gemfield_tree(i)
     for i in range(3):shrub(i);billy(i,'slab')
     for i in range(6):billy(i,'cobble')
@@ -375,5 +391,5 @@ for g in [o for o in bpy.data.objects if o.type=='EMPTY']:
         coords.extend([v.co[:] for v in o.data.vertices])
     manifest[g.name]={'triangles':tris,'blenderBounds':[[min(v[k] for v in coords) for k in range(3)],[max(v[k] for v in coords) for k in range(3)]]}
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT,'environment.glb'),export_format='GLB',export_yup=True,export_apply=True,export_extras=True)
-with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'graves-hill' if GEMFIELD else 'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
+with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'uralla' if URALLA else 'graves-hill' if GEMFIELD else 'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
 print('NEW_ENGLAND_KIT',len(manifest),'assets',sum(v['triangles'] for v in manifest.values()),'triangles')

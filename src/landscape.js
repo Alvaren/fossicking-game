@@ -6,6 +6,7 @@ import { rockMaterial } from './rockmaterials.js';
 import { vegetationLOD } from './vegetationlod.js';
 
 const profiles = {
+  uralla:{leaf:0x758558,bark:0xaaa18a,rock:'granite',names:[],forms:[],z:[],density:180},
   'graves-hill': {leaf:0x7c865c,bark:0x71685a,rock:'sandstone',names:[],forms:[],z:[],density:65},
   'coober-pedy': { leaf:0x9a9679, bark:0x9f8c71, rock:'sandstone', names:[], forms:[], z:[], scrub:true, density:18 },
   'new-england': { leaf:0x718154, bark:0xb7ae96, rock:'granite', names:['Split gum bend','Granite shoulder'], forms:['roots','tor'], z:[28,-56] },

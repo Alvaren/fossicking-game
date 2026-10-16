@@ -1,6 +1,16 @@
 // Mainland destinations extend the original claim engine. New England keeps
 // its default generator and its legacy top-level world snapshot.
 export const CLAIM_PROFILES = {
+  uralla: {
+    id:'uralla',name:'Uralla',title:'Wooldridge Reserve',salt:0x57a11a,startTool:'shovel',
+    description:'Follow the Rocky River through Wooldridge Reserve near Uralla. Massive granite boulders, quiet reed-lined pools and sandy shallows offer different places to sample for fine gold.',
+    sources:[],crystalPockets:false,soil:[.50,.46,.35],treeCount:430,treeBank:.65,treeHill:.13,treeTint:0xffffff,tufts:4200,clay:.035,
+    creek:{phase:.65,meander:.38,offset:6,width:1.12,depth:.73,slope:.006,lam1:58,lam2:27,ph1:.3,ph2:1.1,pools:[{z:-27,length:20,width:4.5,depth:.48}]},
+    camp:{x:-28,z:0},poweredSluice:false,
+    minerals:{gold:.7,sapphire:.3,zircon:0,spinel:0,garnet:.65,topaz:0,agate:0},
+    how:['Follow the footpath from camp to the Rocky River. Sandy Shallows is an open place to load and work a pan.', 'At Boulder Reach, compare small pockets of gravel downstream of the large granite blocks with loose sand beside them.', 'Fine gold is easily lost. Classify the oversize, settle the heavies and wash thin layers over the pan’s riffles.', 'Reed Pool has quieter water for washing. Keep the banks and roots intact; work small samples of loose gravel.', 'Use hand tools here. Your powered highbanker stays packed; tool 5 uses the unpowered sluice box.', 'Press M for the topographic map, river reaches and access path.'],
+    notes:'The Rocky River carried fine gold into the Uralla diggings. Heavy grains can collect beneath gravel, in cracks and in slack water behind boulders; the biggest rock is not automatically the richest spot. Compare modest test pans and keep track of where each load came from. Break clay and classify coarse stones, then stratify, wash a thin layer and settle again. Black sand is a useful concentrate to inspect, not proof of gold. Garnets and occasional sapphires may also turn up in the wash. Keep the reeds and bank roots intact and return oversize to your worked patch.',
+  },
   'graves-hill': {
     id:'graves-hill',name:'Sapphire Gemfields',title:'Graves Hill',salt:0x6a42e,startTool:'shovel',
     description:'Graves Hill, near Sapphire: red dirt tracks, open woodland and shallow sapphire wash around Mount Clifford and Millionaires Hill. Carry gravel back to your camp tub to wash and sort.',

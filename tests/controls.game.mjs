@@ -5,8 +5,8 @@ import {createPan} from '../src/panning.js';
 import {travelTo} from '../src/regions.js';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
-try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:process.env.CONTROLS_REGION?[process.env.CONTROLS_REGION]:['graves-hill','new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy','tasmania-west','ne-tasmania']){
-  const home=['graves-hill','new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy'].includes(region),context=await browser.newContext({viewport:{width:1280,height:860}});
+try{for(const region of process.env.CONTROLS_TOUCH_ONLY?[]:process.env.CONTROLS_REGION?[process.env.CONTROLS_REGION]:['uralla','graves-hill','new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy','tasmania-west','ne-tasmania']){
+  const home=['uralla','graves-hill','new-england','golden-triangle','qld-gemfields','wa-goldfields','coober-pedy'].includes(region),context=await browser.newContext({viewport:{width:1280,height:860}});
   const base={seed:12345,cash:500,gold:.2,difficulty:'realistic',up:{pan:2,sieve:1},camp:{shelter:'tent'}};
   const seed=region==='new-england'?base:travelTo(base,region,['bucket','classifier']);
   await context.addInitScript(value=>{

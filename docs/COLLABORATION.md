@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Current Uralla build (17 October 2026)
+
+Codex branch `codex/uralla`, base `dc1fc3d`, builds the requested Wooldridge Reserve destination from inspected official/visitor photographs. The [source-led plan](URALLA-PLAN.md) was committed before implementation; [delivery and evidence](URALLA-BUILD.md) track the separate save/travel profile, large granite reaches, reed pool and reused original controls/rendering. Only Uralla receives new terrain and local rock assets. Main and Claude were clean at setup and pre-integration inspection; Claude's committed work is already in main. No other agent was launched or messaged. Local build, 132 tests, 11 local-kit mesh checks, shared controls, actual desktop/touch panning/sieving, save/travel, offline/fallback and final visual checks pass. The final High/1080p RTX 3090 sample has 16.7 ms median/p95 frame intervals. Ready for main integration and Pages verification; see the delivery record for limits.
+
 ## Shovel socket correction (16 October 2026)
 
 Codex branch codex/shovel-socket, base 0c0c12e, owns the user-requested correction to the shaft/head join in src/models/shovel.js. The approved handle, shaft and D-grip geometry are hash-identical; the head/socket is now one connected pressing. Original tool controls, animation, saves and all environments are unchanged. [Correction and checks](SHOVEL-REMODEL.md#socket-correction--user-review-16-october-2026). No other agent was launched or messaged. Implementation 5b0d125 is published by successful [Pages run 38889890557](https://github.com/Alvaren/fossicking-game/actions/runs/38889890557). Live files match the tested build; published desktop/touch digging, load and save/reload checks pass.

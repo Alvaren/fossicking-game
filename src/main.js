@@ -12,6 +12,9 @@ import { buildLandscape } from './landscape.js';
 import { buildNewEnglandEnvironment } from './newengland/environment.js';
 import { newEnglandWater } from './newengland/water.js';
 import { newEnglandLight } from './newengland/lighting.js';
+import { urallaLight } from './uralla/materials.js';
+import { buildUrallaEnvironment } from './uralla/environment.js';
+import { routeDistance as urallaRoute } from './uralla/locality.js';
 import { buildGravesHillEnvironment, gravesHillLight } from './graveshill/environment.js';
 import { pathDistance, ROAD } from './graveshill/locality.js';
 import { buildGoldenTriangleEnvironment, goldenTriangleLight } from './goldentriangle/environment.js';
@@ -338,12 +341,12 @@ const landscape = buildLandscape(scene, {
   region, seed:state.seed, height:(x,z)=>terrain.getHeight(x,z), riverX:z=>creek.cx(z), riverWidth:z=>creek.halfWidth(z),
   placementHeight:(x,z)=>terrain.getOrigHeight(x,z),obstacles:[...world.sceneryColliders,...boulders.list.map(b=>({x:b.x,z:b.z,r:b.r}))],
   bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w;}, colliders:world.colliders, low:settings.shadows==='off',
-  blocked:(x,z)=>(region==='graves-hill'&&pathDistance(x,z,ROAD)<3.5)||terrain.dugoutAt(x,z)||Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
+  blocked:(x,z)=>(region==='uralla'&&urallaRoute(x,z,creek)<2)||(region==='graves-hill'&&pathDistance(x,z,ROAD)<3.5)||terrain.dugoutAt(x,z)||Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
     ||field.sites.some(s=>Math.hypot(x-s.x,z-s.z)<5)||finds.items.some(s=>s.id<100000&&Math.hypot(x-s.x,z-s.z)<2)
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
 const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
-const environmentBuilder = region === 'graves-hill' ? buildGravesHillEnvironment : region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
+const environmentBuilder = region === 'uralla' ? buildUrallaEnvironment : region === 'graves-hill' ? buildGravesHillEnvironment : region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
 const regionalEnvironment = environmentBuilder ? environmentBuilder(scene, {
   seed:state.seed,terrain,world,landscape,field,finds,targets,boulders,settings,
   equipment:()=>[
@@ -2066,7 +2069,7 @@ function updateTools(dt, motion) {
 
   let sluiceNoise = 0;
   sluice.showGhost(null);
-  if ((state.up.sluice || 0) >= 2 && sluice.kind !== 'highbanker') {
+  if (profile.poweredSluice!==false && (state.up.sluice || 0) >= 2 && sluice.kind !== 'highbanker') {
     if (sluice.placed) hint('hbswap', 'Lift your sluice out (right-click with tool 5) and you can set up the highbanker instead.', 120);
     else if (sluice.setKind('highbanker')) {
       document.querySelector('.slot[data-tool="sluice"]').innerHTML = '<kbd>5</kbd>Highbanker';
@@ -2397,7 +2400,8 @@ function frame() {
   view.externalDetector = detShown;
   updateHud();
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
-  if(region==='graves-hill')gravesHillLight(daynight);
+  if(region==='uralla')urallaLight(daynight);
+  else if(region==='graves-hill')gravesHillLight(daynight);
   else if(goldenTriangle)goldenTriangleLight(daynight);
   else if(newEngland)newEnglandLight(daynight);
   weather.daylight = daynight.daylight;

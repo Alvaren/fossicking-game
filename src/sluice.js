@@ -193,6 +193,7 @@ export class Sluice {
 
   // Upgrading: the sluice becomes a highbanker (once it's out of the water).
   setKind(kind) {
+    if(kind==='highbanker'&&this.terrain.profile?.poweredSluice===false)return false;
     if (kind === this.kind || this.placed) return false;
     this.kind = kind;
     this.stranded = null;

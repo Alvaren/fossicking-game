@@ -1,5 +1,6 @@
 import {AUSTRALIA} from './australia-outline.js';
 export const LOCATIONS = [
+  {id:'uralla',name:'Uralla · Wooldridge',state:'NSW',coord:[151.4693,-30.6305],available:true,mapOffset:[22,13]},
   {id:'new-england',name:'New England',state:'NSW',coord:[151.112,-29.780],available:true},
   {id:'tasmania-west',name:'Western Tasmania',state:'TAS',coord:[145.5,-42],available:true},
   {id:'golden-triangle',name:'Golden Triangle',state:'VIC',coord:[143.734,-36.860],available:true},

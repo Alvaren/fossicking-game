@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { routeDistance } from './uralla/locality.js';
 import { pathDistance, ROAD, localityRock } from './graveshill/locality.js';
 import { batchStaticChildren } from './rendering/staticbatch.js';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -29,7 +30,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const campRoom = (x,z,r=0) => [[9,7],[0,10]].some(([cx,cz]) => Math.abs((x-camp.x)*campFlip-cx)<2.5+r && Math.abs((z-camp.z)*campFlip-cz)<3.2+r);
   const nearCamp = (x, z, r) => Math.hypot(x - camp.x, z - camp.z) < r;
   const fossil = terrain.sources.fossil;
-  const blocked = (x, z, r) => (profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.6+r) || avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
+  const blocked = (x, z, r) => (profile.id==='uralla' && routeDistance(x,z,creek)<1.3+r) || (profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.6+r) || avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
     || terrain.dugoutAt(x,z,r)
     || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < r + 7); // keep the shale bed clear
   const m4 = new THREE.Matrix4();
@@ -93,18 +94,23 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   rocks.name = 'Geological scenery rocks';
   const setRockKind = rockKinds(rockGeo, rockCount);
   let ri = 0;
-  const putRock = (x, z, s, sink, collide) => {
+  const putRock = (x, z, s, sink, collide, shape) => {
+    if(profile.id==='uralla') { rockKind='granite'; col.setHex(0xb5b0a2); }
     if (profile.id === 'graves-hill') { rockKind=localityRock(x,z,(Math.sin(x*31+z*17)+1)/2); col.setHex(rockKind==='quartz'?0xc9c1aa:rockKind==='granite'?0x9e9685:0x9c8d71); }
     if (terrain.profile.id === 'coober-pedy') { rockKind = 'sandstone'; col.setRGB(.65,.53,.4,THREE.SRGBColorSpace); }
     q.setFromEuler(new THREE.Euler(rand() * 3, rand() * 3, rand() * 3));
     const y = terrain.getHeight(x, z) - s * sink;
     m4.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(s, s * (0.55 + rand() * 0.4), s * (0.8 + rand() * 0.4)));
+    if(shape) {
+      q.setFromEuler(new THREE.Euler(.06,shape.bearing,.04));
+      m4.compose(new THREE.Vector3(x,y,z),q,new THREE.Vector3(s,s*shape.sy,s*.92));
+    }
     if (campRoom(x,z,s)) m4.scale(new THREE.Vector3(0,0,0));
     rocks.setMatrixAt(ri, m4);
     rocks.setColorAt(ri, col);
     setRockKind(ri, rockKind, creek.waterY(z));
     ri++;
-    if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * 0.85 });
+    if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * (shape ? 1.1 : 0.85) });
   };
   for (let i = 0; i < scatter; i++) {
     let x, z;
@@ -113,7 +119,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
       z = (rand() * 2 - 1) * (half - 4);
     } while (nearCamp(x, z, 9) || blocked(x, z, 2));
     const inCreek = chan(x, z) < 1;
-    const s = profile.id === 'coober-pedy' ? .045 + Math.pow(rand(),2)*.28 : inCreek ? 0.12 + rand() * 0.4 : 0.15 + Math.pow(rand(), 2.5) * 1.5;
+    const s = profile.id === 'coober-pedy' ? .045 + Math.pow(rand(),2)*.28 : inCreek ? 0.12 + rand() * 0.4 : 0.15 + Math.pow(rand(), 2.5) * (profile.id==='uralla'?.65:1.5);
     if (inCreek) { rockKind = sourceRockKind(S, x, z); col.setRGB(0.45 + rand() * 0.15, 0.42 + rand() * 0.13, 0.38 + rand() * 0.12, THREE.SRGBColorSpace); }
     else geoTint(x, z, rand());
     putRock(x, z, s, 0.35, s > 0.6);
@@ -135,7 +141,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   for (const b of boulders) {
     rockKind = sourceRockKind(S, b.x, b.z);
     col.setRGB(0.42 + rand() * 0.12, 0.40 + rand() * 0.1, 0.37 + rand() * 0.1, THREE.SRGBColorSpace);
-    putRock(b.x, b.z, b.r * 1.15, 0.1, true);
+    putRock(b.x, b.z, b.r * 1.15, 0.1, true, profile.id==='uralla'?b:null);
   }
   rocks.count = ri;
 
@@ -186,7 +192,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   for (let tries = 0; tries < 60000 && placed < tuftCount; tries++) {
     const x = (rand() * 2 - 1) * (half - 3);
     const z = (rand() * 2 - 1) * (half - 3);
-    if ((profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.4) || chan(x, z) < 2 || nearCamp(x, z, 6) || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < 6)) continue;
+    if ((profile.id==='uralla' && routeDistance(x,z,creek)<1.5) || (profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.4) || chan(x, z) < 2 || nearCamp(x, z, 6) || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < 6)) continue;
     const patch = terrain.n2(x * 0.05 + 100, z * 0.05) * 0.5 + 0.5;
     if (rand() > 0.15 + patch * 0.6) continue;
     const sc = 0.3 + rand() * 0.45;

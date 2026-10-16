@@ -1,0 +1,890 @@
+[
+  {
+    "mode": "high",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8945,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8684,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "shallows",
+    "pose": {
+      "x": 9.833726114207636,
+      "z": 3,
+      "tx": 16.34137606388628,
+      "tz": 10,
+      "pitch": -0.2
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 9578,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "camp",
+    "pose": {
+      "x": -42,
+      "z": 15,
+      "tx": -26,
+      "tz": -2,
+      "pitch": -0.06
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8016,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 189,
+      "textures": 19
+    }
+  },
+  {
+    "mode": "low",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 909,
+      "quality": "low",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 94,
+      "textures": 11
+    }
+  },
+  {
+    "mode": "low",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 1326,
+      "quality": "low",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 94,
+      "textures": 11
+    }
+  },
+  {
+    "mode": "low",
+    "site": "shallows",
+    "pose": {
+      "x": 9.833726114207636,
+      "z": 3,
+      "tx": 16.34137606388628,
+      "tz": 10,
+      "pitch": -0.2
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 1238,
+      "quality": "low",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 94,
+      "textures": 11
+    }
+  },
+  {
+    "mode": "low",
+    "site": "camp",
+    "pose": {
+      "x": -42,
+      "z": 15,
+      "tx": -26,
+      "tz": -2,
+      "pitch": -0.06
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 225,
+      "quality": "low",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 166,
+      "textures": 14
+    }
+  },
+  {
+    "mode": "medium",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 3563,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "medium",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 3989,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "medium",
+    "site": "shallows",
+    "pose": {
+      "x": 9.833726114207636,
+      "z": 3,
+      "tx": 16.34137606388628,
+      "tz": 10,
+      "pitch": -0.2
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 4206,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "medium",
+    "site": "camp",
+    "pose": {
+      "x": -42,
+      "z": 15,
+      "tx": -26,
+      "tz": -2,
+      "pitch": -0.06
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 1174,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 189,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "ultra",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8945,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "ultra",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8684,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "ultra",
+    "site": "shallows",
+    "pose": {
+      "x": 9.833726114207636,
+      "z": 3,
+      "tx": 16.34137606388628,
+      "tz": 10,
+      "pitch": -0.2
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 9578,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "ultra",
+    "site": "camp",
+    "pose": {
+      "x": -42,
+      "z": 15,
+      "tx": -26,
+      "tz": -2,
+      "pitch": -0.06
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8016,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 189,
+      "textures": 19
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 3563,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 3989,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "shallows",
+    "pose": {
+      "x": 9.833726114207636,
+      "z": 3,
+      "tx": 16.34137606388628,
+      "tz": 10,
+      "pitch": -0.2
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 4206,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "camp",
+    "pose": {
+      "x": -42,
+      "z": 15,
+      "tx": -26,
+      "tz": -2,
+      "pitch": -0.06
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 1174,
+      "quality": "medium",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 189,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "night",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8945,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 21,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 175,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "night",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8684,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 21,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "rain",
+    "site": "boulders",
+    "pose": {
+      "x": 4.649488089849299,
+      "z": 42,
+      "tx": 18.41073049622232,
+      "tz": 53,
+      "pitch": -0.18
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8945,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0.8218133333333332,
+      "wet": 0.9551347371547283
+    },
+    "memory": {
+      "geometries": 176,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "rain",
+    "site": "pool",
+    "pose": {
+      "x": 0.9221186249490478,
+      "z": -34,
+      "tx": 14.482661581513115,
+      "tz": -23,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 14197,
+      "visible": 8684,
+      "quality": "high",
+      "solidRocks": 564,
+      "landformPatches": 0,
+      "bankRoots": 11
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0.7139942222225666,
+      "wet": 1
+    },
+    "memory": {
+      "geometries": 178,
+      "textures": 16
+    }
+  }
+]
