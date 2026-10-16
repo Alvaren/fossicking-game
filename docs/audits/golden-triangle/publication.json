@@ -1,0 +1,57 @@
+{
+  "publishedHead": "3d3c799b40146d8f0b16c5ad633cd144a5b24d17",
+  "verifiedAt": "2026-10-16T12:27:25.075Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38900407944",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "9ac13de76c35b9c4fe365b37952cc6c075de08ea0b7f285718cfbd2d577af9ec",
+      "localSha256": "d20bbcf33f0c8346e538a11efcd516bdae3d8e9101e67ca87ab3f0567465328a",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-DYONpIzh.js",
+      "bytes": 975108,
+      "sha256": "bd72ceb94f5e91702c3a74c7f3f3a1e56d8e9f67d778e3e3581bc710c5b0de59",
+      "localSha256": "bd72ceb94f5e91702c3a74c7f3f3a1e56d8e9f67d778e3e3581bc710c5b0de59",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "localSha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-CE6fAbAf.js",
+      "bytes": 323981,
+      "sha256": "7a98adb93bbe1b4cb3b3f8ec6d88c5229b2751bfcac54bc0f83847145fdb5869",
+      "localSha256": "7a98adb93bbe1b4cb3b3f8ec6d88c5229b2751bfcac54bc0f83847145fdb5869",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/goldentriangle/environment.glb",
+      "bytes": 4965848,
+      "sha256": "24d68bf7c443b45c10db6c24339dc0f6e0390c6ffc178993b791feccea7ab0e9",
+      "localSha256": "24d68bf7c443b45c10db6c24339dc0f6e0390c6ffc178993b791feccea7ab0e9",
+      "comparison": "byte-identical"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Golden Triangle — fidelity build plan
 
-Status: authorised for execution on 16 October 2026. Branch codex/golden-triangle-fidelity, base dd0450963a39762f8049b3fd5ea1a8aefe0f923c. The user selected the next map after approving the shovel, then requested taller trees and wider tree-height variation in both New England and Golden Triangle. Preserve all tree anchors and collision footprints; change render geometry only.
+Status: implemented, technically verified and published on 16 October 2026; user visual sign-off remains separate. Branch codex/golden-triangle-fidelity, base dd0450963a39762f8049b3fd5ea1a8aefe0f923c. The user selected the next map after approving the shovel, then requested taller trees and wider tree-height variation in both New England and Golden Triangle. Preserve all tree anchors and collision footprints; change render geometry only.
 
 ## Benchmark and identity
 
@@ -33,10 +33,10 @@ Reusable rendering code should be shared only where its input contract really ma
 - [x] GT-05 — Extend the same finish through camp and connecting routes. Keep equipment and entrances clear, preserve small-find visibility, and show believable exposed layers/spoil when the original shovel and hand tools remove ground.
 - [x] GT-06 — Inspect matched stills and actual movement on High/Ultra, plus Low/Medium and touch layout. Check day/night, rain/flood, water motion and reflections, photo mode, LOD popping, digging feedback and scenery invalidation. The current NSW level is the minimum whole-route benchmark, not just one attractive screenshot.
 - [x] GT-07 — Run relevant seeded world/save/fallback, seven-region controls, travel, camp, prospecting and offline checks. Measure repeated comparable routes at fixed resolution/hardware; retain rendering optimisations and document any added asset cost. Physical-phone limits remain explicit.
-- [ ] GT-08 — Record before/after evidence and remaining issues, integrate only completed work, publish main under the standing instruction and verify exact public assets plus desktop/touch gameplay. User visual review remains distinct from build/test success.
+- [x] GT-08 — Record before/after evidence and remaining issues, integrate only completed work, publish main under the standing instruction and verify exact public assets plus desktop/touch gameplay. User visual review remains distinct from build/test success.
 
 Do not start unrelated map expansion or replace controllers during this pass. This plan is the current authorised execution scope. User visual acceptance remains a separate gate.
 
 ## Execution record
 
-Implementation and evidence are in [GOLDEN-TRIANGLE-BUILD.md](GOLDEN-TRIANGLE-BUILD.md). Three-seed baselines and candidates are recorded for both maps; the recorded performance, interaction and offline checks pass. Publication is the remaining box. The user's taller-tree request is included in both recipes without changing source transforms or collision footprints. Trial thin soil overlays were rejected in Golden Triangle because they visibly intersected the terrain; bank and old-workings colour now follows the actual ground shader. Technical completion does not substitute for the user's visual sign-off.
+Implementation and evidence are in [GOLDEN-TRIANGLE-BUILD.md](GOLDEN-TRIANGLE-BUILD.md). Three-seed baselines and candidates are recorded for both maps; the recorded performance, interaction and offline checks pass. Implementation 3d3c799 is published; matching public assets and desktop/touch checks pass. The user's taller-tree request is included in both recipes without changing source transforms or collision footprints. Trial thin soil overlays were rejected in Golden Triangle because they visibly intersected the terrain; bank and old-workings colour now follows the actual ground shader. Technical completion does not substitute for the user's visual sign-off.
