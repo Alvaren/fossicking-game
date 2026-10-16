@@ -109,3 +109,7 @@ Overlapping mouse/touch hit areas select the nearest geographic dot. Separated n
 The production build and [desktop/touch travel checks](audits/uralla-map/local/checks.json) pass: actual rendered pin centres, adjacent dots, separated labels, keyboard focus, cancel/unavailable states and a $0 Uralla round trip with home funds/camp/material retained. Both travel-map screenshots were inspected. The first fixture incorrectly assumed cancelling/reopening retained the destination; it now explicitly reselects Uralla, matching the existing menu behavior. No production workaround was added.
 
 ![Corrected travel map](audits/uralla-map/local/desktop-travel.jpg)
+
+Implementation `c4a6c75` was fast-forwarded into main and pushed. [Pages run 38935435942](https://github.com/Alvaren/fossicking-game/actions/runs/38935435942) succeeded. [Seven-file verification](audits/uralla-map/public.json) confirms the deployed JavaScript, CSS and both environment GLBs match the tested production build byte-for-byte; HTML matches after Windows line-ending normalisation. [Public desktop/touch checks](audits/uralla-map/public/checks.json) pass the same geographic positioning, adjacent-marker selection and $0 round-trip checks with home progress retained. Both published screenshots were inspected.
+
+Main and Claude were clean before integration; there was no other ready work to merge. No user game was restarted. The final evidence commit changes only documentation and verification output.
