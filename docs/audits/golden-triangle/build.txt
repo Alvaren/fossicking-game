@@ -1,0 +1,16 @@
+
+> fossicking@0.1.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 132 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  13.15 kB │ gzip:   3.55 kB
+dist/assets/main-sQn9NTkG.css     5.75 kB │ gzip:   1.83 kB
+dist/assets/index-R_XlLHnA.css   32.39 kB │ gzip:   7.78 kB
+dist/assets/main-CE6fAbAf.js    323.98 kB │ gzip: 121.14 kB
+dist/assets/index-DYONpIzh.js   975.10 kB │ gzip: 285.73 kB
+
+✓ built in 281ms

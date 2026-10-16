@@ -12,6 +12,7 @@ import { buildLandscape } from './landscape.js';
 import { buildNewEnglandEnvironment } from './newengland/environment.js';
 import { newEnglandWater } from './newengland/water.js';
 import { newEnglandLight } from './newengland/lighting.js';
+import { buildGoldenTriangleEnvironment, goldenTriangleLight } from './goldentriangle/environment.js';
 import { SurfaceEffects, surfaceUnderfoot, environmentWeather, updateEnvironmentWeather } from './environmentmotion.js';
 import { Targets } from './targets.js';
 import { Deposits } from './deposits.js';
@@ -340,7 +341,8 @@ const landscape = buildLandscape(scene, {
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
 const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
-const newEngland = region === 'new-england' ? buildNewEnglandEnvironment(scene, {
+const environmentBuilder = region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
+const regionalEnvironment = environmentBuilder ? environmentBuilder(scene, {
   seed:state.seed,terrain,world,landscape,field,finds,targets,boulders,settings,
   equipment:()=>[
     ...(sluice.placed ? [{x:sluice.model.position.x,z:sluice.model.position.z,r:2.5}] : []),
@@ -348,7 +350,9 @@ const newEngland = region === 'new-england' ? buildNewEnglandEnvironment(scene, 
     ...finds.items.filter(p=>p.id>=100000).map(p=>({x:p.x,z:p.z,r:.65})),
   ],
 }) : null;
-const creekRendering = newEngland ? newEnglandWater(water,creek,settings) : null;
+const newEngland = region === 'new-england' ? regionalEnvironment : null;
+const goldenTriangle = region === 'golden-triangle' ? regionalEnvironment : null;
+const creekRendering = regionalEnvironment ? newEnglandWater(water,creek,settings) : null;
 let driving = false;
 // The detector is held out in the world, its coil riding just above the ground.
 const worldDet = new WorldDetector(scene);
@@ -814,7 +818,7 @@ function applyGraphics() {
     sun.shadow.map = null;
   }
   fpsEl.classList.toggle('hidden', !settings.fps);
-  newEngland?.quality();
+  regionalEnvironment?.quality();
   envTimer = 0;
   envHour = -99;
 }
@@ -2387,13 +2391,14 @@ function frame() {
   view.externalDetector = detShown;
   updateHud();
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
-  if(newEngland)newEnglandLight(daynight);
+  if(goldenTriangle)goldenTriangleLight(daynight);
+  else if(newEngland)newEnglandLight(daynight);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;
   world.update(dt, night, 1 + weather.storm * 1.5, player.pos);
   landscape.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   environmentDetail.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
-  newEngland?.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
+  regionalEnvironment?.update(dt, elapsed, player.pos, 1 + weather.storm * 1.5);
   campShelter.update(night);
   campBuildings.update(dt, state, player.pos, night);
   kelpie.update(dt, state, player.pos, driving || mine.inside || !!mine.climb);
@@ -2489,7 +2494,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Handy for poking at the game from the console.
 window.fossick = { region, profile,
-  landscape, surfaceEffects, environmentWeather, world, newEngland, creekRendering,
+  landscape, surfaceEffects, environmentWeather, world, newEngland, goldenTriangle, regionalEnvironment, creekRendering,
   regionUI, campUI, campStation, campShelter, campBuildings, kelpie, lapidaryUI, sleepAtCamp, panUI,
   inventory, daynight, map, wildlife, worldDet, oversize, bedload, photo, enterPhoto, exitPhoto, gemshow, stall, fossils, devils, boulders, cabinet, mine, works, award, newDay, shop, scene, renderer, ute, enterUte, exitUte, weather, sluice, jig, jigZone, field, excav, kneelDown, standUp, setKneelTool, view, flood: (fast = true) => weather.trigger(fast),
   state, terrain, creek, deposits, targets, finds, player, keys, selectTool, interact, GEMS,

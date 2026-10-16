@@ -69,7 +69,7 @@ export function surfaceGeometry(terrain, bounds, step, sample, allowed=()=>true,
   return {geometry,support};
 }
 
-export function buildLandforms(root,terrain,anchors,workingMask) {
+export function buildLandforms(root,terrain,anchors,workingMask,{banks=true}={}) {
   const patches=[],creek=terrain.creek;
   const rock=rockMaterial('slate',{authored:true});
   const hostRock=rock.clone(),compile=rock.onBeforeCompile;
@@ -127,7 +127,7 @@ export function buildLandforms(root,terrain,anchors,workingMask) {
   }
   // Layered cut-bank reaches: interrupted upper lip, rills and an embedded
   // gravel foot all follow the actual bank rather than a manufactured cliff.
-  for(let z=-96;z<103;z+=5)for(const side of [-1,1]) {
+  if(banks)for(let z=-96;z<103;z+=5)for(const side of [-1,1]) {
     const bx=creek.cx(z)+side*(creek.halfWidth(z)+.7)*Math.sqrt(1+creek.dcx(z)**2);
     add('NSW layered creek bank',{x0:bx-4,x1:bx+4,z0:z,z1:z+5},.16,(x,pz,h)=>{
       const p=creek.local(x,pz,{}),margin=p.d-p.w,above=h-creek.waterY(pz);

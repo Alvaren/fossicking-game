@@ -6,7 +6,7 @@ const [head,run]=process.argv.slice(2);
 assert.match(head||'',/^[a-f0-9]{40}$/);assert.match(run||'',/^\d+$/);
 const base='https://alvaren.github.io/fossicking-game/';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
-const files=['index.html',...(await readdir('dist/assets')).filter(n=>/\.(js|css)$/.test(n)).map(n=>'assets/'+n),'models/newengland/environment.glb'];
+const files=['index.html',...(await readdir('dist/assets')).filter(n=>/\.(js|css)$/.test(n)).map(n=>'assets/'+n),'models/newengland/environment.glb',...(process.env.OPT_EXTRA_ASSETS||'').split(',').filter(Boolean)];
 const assets=[];
 for(const path of files) {
   const local=await readFile('dist/'+path),response=await fetch(base+path+'?nsw-optimisation='+head);

@@ -1,0 +1,221 @@
+{
+  "hardware": "RTX 3090 / Windows Chromium 151 / ANGLE D3D11",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "pixelRatio": 1.5,
+  "settings": "High, full water, high shadows, live reflections",
+  "runs": [
+    {
+      "label": "baseline-golden-triangle-performance",
+      "run": 1,
+      "region": "golden-triangle",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 6051,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 2.600000001490116,
+        "p95": 4.199999999254942,
+        "p99": 5
+      },
+      "gpuMs": {
+        "median": 4.811776,
+        "p95": 6.692864,
+        "p99": 8.39168
+      },
+      "gpuSamples": 120,
+      "calls": {
+        "median": 257,
+        "p95": 412,
+        "p99": 584
+      },
+      "triangles": {
+        "median": 1647183,
+        "p95": 1671460,
+        "p99": 1677729
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-golden-triangle-performance",
+      "run": 2,
+      "region": "golden-triangle",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 1484,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 2.5,
+        "p95": 4.300000000745058,
+        "p99": 5.300000000745058
+      },
+      "gpuMs": {
+        "median": 4.502528,
+        "p95": 6.325248,
+        "p99": 7.735296
+      },
+      "gpuSamples": 120,
+      "calls": {
+        "median": 253,
+        "p95": 413,
+        "p99": 586
+      },
+      "triangles": {
+        "median": 1644511,
+        "p95": 1674604,
+        "p99": 1679791
+      },
+      "errors": []
+    },
+    {
+      "label": "candidate-golden-triangle-performance",
+      "run": 1,
+      "region": "golden-triangle",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 10625,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 6,
+        "p95": 12.300000000745058,
+        "p99": 15.099999997764826
+      },
+      "gpuMs": {
+        "median": 6.23104,
+        "p95": 11.164672,
+        "p99": 12.292096
+      },
+      "gpuSamples": 120,
+      "calls": {
+        "median": 631,
+        "p95": 1059,
+        "p99": 1507
+      },
+      "triangles": {
+        "median": 18728659,
+        "p95": 19003100,
+        "p99": 19044402
+      },
+      "errors": []
+    },
+    {
+      "label": "candidate-golden-triangle-performance",
+      "run": 2,
+      "region": "golden-triangle",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 2183,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuMs": {
+        "median": 7.100000001490116,
+        "p95": 14.199999999254942,
+        "p99": 16.300000000745058
+      },
+      "gpuMs": {
+        "median": 6.299648,
+        "p95": 12.234752,
+        "p99": 13.216768
+      },
+      "gpuSamples": 120,
+      "calls": {
+        "median": 637,
+        "p95": 1005,
+        "p99": 1453
+      },
+      "triangles": {
+        "median": 18738127,
+        "p95": 18997848,
+        "p99": 19042246
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-new-england-performance",
+      "run": 1,
+      "region": "new-england",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 21279,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 33.40000000000873,
+        "p99": 50
+      },
+      "cpuMs": {
+        "median": 12.100000001490116,
+        "p95": 35.80000000074506,
+        "p99": 45.80000000074506
+      },
+      "gpuMs": {
+        "median": 9.064448,
+        "p95": 25.51296,
+        "p99": 47.376384
+      },
+      "gpuSamples": 99,
+      "calls": {
+        "median": 972,
+        "p95": 2191,
+        "p99": 2587
+      },
+      "triangles": {
+        "median": 17840522,
+        "p95": 18831733,
+        "p99": 18835151
+      },
+      "errors": []
+    },
+    {
+      "label": "candidate-new-england-performance",
+      "run": 1,
+      "region": "new-england",
+      "measuredSeconds": 60,
+      "warmupSeconds": 20,
+      "loadMs": 24130,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 33.39999999999418,
+        "p99": 33.40000000000873
+      },
+      "cpuMs": {
+        "median": 13.600000001490116,
+        "p95": 29.099999997764826,
+        "p99": 34.600000001490116
+      },
+      "gpuMs": {
+        "median": 9.985024,
+        "p95": 21.206016,
+        "p99": 23.399424
+      },
+      "gpuSamples": 105,
+      "calls": {
+        "median": 969,
+        "p95": 2202,
+        "p99": 2616
+      },
+      "triangles": {
+        "median": 17835157,
+        "p95": 18828815,
+        "p99": 18831399
+      },
+      "errors": []
+    }
+  ]
+}

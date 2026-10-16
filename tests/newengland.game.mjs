@@ -6,7 +6,8 @@ import { createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const browser=await chromium.launch({headless:true});
-const report={date:new Date().toISOString().slice(0,10),cases:[]};
+const region=process.env.ART_REGION||'new-england';
+const report={region,date:new Date().toISOString().slice(0,10),cases:[]};
 const hash=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const snapshot=()=>{
   const f=fossick,t=f.terrain;
@@ -20,24 +21,24 @@ const snapshot=()=>{
 try {
   for(const seed of [1,12345,798887]) {
     const context=await browser.newContext({viewport:{width:1280,height:720}});
-    await context.addInitScript(seed=>{
+    await context.addInitScript(({seed,region})=>{
       if(!sessionStorage.getItem('nsw-fixture')) {
-        localStorage.setItem('fossicking-save-v2',JSON.stringify({seed,activeRegion:'new-england',hour:11,cash:2600,difficulty:'realistic',camp:{shelter:'shed'}}));
+        localStorage.setItem('fossicking-save-v2',JSON.stringify({seed,activeRegion:region,hour:11,cash:2600,difficulty:'realistic',camp:{shelter:'shed'},claims:region==='new-england'?{}:{[region]:{seed,camp:{shelter:'shed'}}}}));
         localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.75,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));
         sessionStorage.setItem('nsw-fixture','1');
       }
-    },seed);
+    },{seed,region});
     const page=await context.newPage(),errors=[];page.setDefaultTimeout(90000);
     page.on('pageerror',e=>errors.push(e.message));
     page.on('console',m=>{if(m.type()==='error'||/GL_INVALID|too many errors/.test(m.text()))errors.push(m.text());});
     let release;const gate=new Promise(r=>release=r);
-    await page.route('**/models/newengland/environment.glb',async route=>{await gate;await route.continue();});
+    await page.route('**/models/'+(region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',async route=>{await gate;await route.continue();});
     await page.goto('http://127.0.0.1:5191/?test',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.fossick);
     const before=hash(await page.evaluate(snapshot));release();
-    await page.evaluate(()=>fossick.newEngland.ready);
-    assert.equal(await page.evaluate(()=>fossick.newEngland.stats.status),'ready');
-    const rocks=await page.evaluate(()=>({expected:['Geological scenery rocks','Granite tors'].reduce((n,name)=>n+fossick.scene.getObjectByName(name).count,0),rendered:fossick.newEngland.stats.solidRocks}));
+    await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).ready);
+    assert.equal(await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).stats.status),'ready');
+    const rocks=await page.evaluate(()=>({expected:['Geological scenery rocks','Granite tors'].reduce((n,name)=>n+fossick.scene.getObjectByName(name).count,0),rendered:(fossick.regionalEnvironment||fossick.newEngland).stats.solidRocks}));
     assert.equal(rocks.rendered,rocks.expected,'Every physical source rock retains a solid visible model beneath removable connecting detail');
     assert.equal(hash(await page.evaluate(snapshot)),before,'Loading the art preserves terrain, sources, finds, targets, collisions and camp');
     await page.locator('#settings-btn').click();
@@ -47,8 +48,8 @@ try {
       const stats=await page.evaluate(()=>{
         const f=fossick,z=24,x=f.creek.cx(z)-f.creek.halfWidth(z)-2;
         f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);
-        f.world.lod.update(1,f.player.pos,true);f.newEngland.update(1,0,f.player.pos);
-        return {...f.newEngland.stats,triangles:f.world.lod.stats.drawnTriangles};
+        f.world.lod.update(1,f.player.pos,true);(f.regionalEnvironment||f.newEngland).update(1,0,f.player.pos);
+        return {...(f.regionalEnvironment||f.newEngland).stats,triangles:f.world.lod.stats.drawnTriangles};
       });
       assert.equal(hash(await page.evaluate(snapshot)),before,'Live quality never changes physical/saved data');
       quality.push(stats);
@@ -87,7 +88,7 @@ try {
     assert.ok(soil.every(Number.isFinite)&&soil.some((v,i)=>i%3===0&&v>.001),'Cut shading receives actual removed depth');
     await page.keyboard.press('Control+s');await page.waitForTimeout(150);
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('fossicking-save-v2')));
-    await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);
+    await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).ready);
     const restored=await page.evaluate(()=>fossick.excav.patches.map(p=>Array.from(p.snapshot().mm)));
     assert.ok(restored.some(mm=>JSON.stringify(mm)===JSON.stringify(worked)),'Worked patch survives the existing save/reload path');
     assert.equal(await page.evaluate(()=>fossick.state.cash),saved.cash);
@@ -100,15 +101,15 @@ try {
     // Fault injection must reach page.route; production service workers can
     // otherwise satisfy the kit from their own fetch/cache. Offline has its own suite.
     const context=await browser.newContext({serviceWorkers:'block'});
-    await context.addInitScript(()=>{
-      localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:'new-england'}));
+    await context.addInitScript(region=>{
+      localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:region,claims:region==='new-england'?{}:{[region]:{seed:12345}}}));
       localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'low',res:.75,shadows:'off',aa:false,gems:'simple',reflections:'static',warned:true}));
-    });
+    },region);
     const page=await context.newPage();page.setDefaultTimeout(90000);
-    await page.route('**/models/newengland/environment.glb',r=>failure==='missing'?r.abort():r.fulfill({status:200,contentType:'model/gltf-binary',body:'invalid environment data'}));
+    await page.route('**/models/'+(region==='golden-triangle'?'goldentriangle':'newengland')+'/environment.glb',r=>failure==='missing'?r.abort():r.fulfill({status:200,contentType:'model/gltf-binary',body:'invalid environment data'}));
     await page.goto('http://127.0.0.1:5191/?test',{waitUntil:'networkidle'});
-    await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);
-    const fallback=await page.evaluate(()=>({status:fossick.newEngland.stats.status,rocks:fossick.scene.getObjectByName('Geological scenery rocks').visible,
+    await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).ready);
+    const fallback=await page.evaluate(()=>({status:(fossick.regionalEnvironment||fossick.newEngland).stats.status,rocks:fossick.scene.getObjectByName('Geological scenery rocks').visible,
       tors:fossick.scene.getObjectByName('Granite tors').visible,trees:fossick.world.lod.batches.filter(b=>b.source.userData.tree).every(b=>b.near.geometry===b.source.geometry)}));
     assert.deepEqual(fallback,{status:'fallback',rocks:true,tors:true,trees:true});
     await page.locator('#play').click();await page.keyboard.press('Digit3');

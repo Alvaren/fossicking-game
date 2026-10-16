@@ -7,7 +7,8 @@ import {gzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const label=process.argv[2]||'baseline',diagnostic=process.env.OPT_DIAG==='1';
-const root='docs/audits/nsw-optimisation/'+label;await mkdir(root,{recursive:true});
+const region=process.env.OPT_REGION||'new-england';
+const root=(process.env.OPT_OUT||'docs/audits/nsw-optimisation')+'/'+label;await mkdir(root,{recursive:true});
 const url=process.env.OPT_URL||('http://127.0.0.1:5191/'+(label.startsWith('baseline')?'baseline/':''));
 const seconds=Number(process.env.OPT_SECONDS||600),runs=Number(process.env.OPT_RUNS||3),disable=process.env.OPT_DISABLE||'',passGpu=process.env.OPT_PASS_GPU==='1';
 const q=(a,p)=>{a=[...a].sort((x,y)=>x-y);return a[Math.min(a.length-1,Math.floor(a.length*p))];};
@@ -15,14 +16,15 @@ const distribution=a=>({median:q(a,.5),p95:q(a,.95),p99:q(a,.99)});
 const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--ignore-gpu-blocklist','--enable-precise-memory-info']});
 try{for(let run=1;run<=runs;run++){
   const context=await browser.newContext({viewport:{width:1920,height:1080},deviceScaleFactor:1});
-  await context.addInitScript(()=>{
+  await context.addInitScript(region=>{
     let rng=23981;Math.random=()=>{rng=(Math.imul(rng,1664525)+1013904223)|0;return (rng>>>0)/4294967296;};
-    localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:'new-england',hour:11,difficulty:'realistic',cash:400,gold:.1,camp:{shelter:'shed',built:{rack:true,kit:true,tub:true,water:true,generator:true,lights:true,lapidary:true,display:true,kelpie:true},water:80,generatorFuel:2,generatorOn:true}}));
+    const camp={shelter:'shed',built:{rack:true,kit:true,tub:true,water:true,generator:true,lights:true,lapidary:true,display:true,kelpie:true},water:80,generatorFuel:2,generatorOn:true};
+    localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:region,hour:11,difficulty:'realistic',cash:400,gold:.1,camp,claims:region==='new-england'?{}:{[region]:{seed:12345,camp}}}));
     localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'high',res:1.5,shadows:'high',aa:true,gems:'full',reflections:'live',environment:'high',water:'scene',warned:true}));
-  });
+  },region);
   const page=await context.newPage(),errors=[];page.setDefaultTimeout(90000);
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'||/GL_INVALID|too many errors/.test(m.text()))errors.push(m.text());});
-  const start=Date.now();await page.goto(url+'?test',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);
+  const start=Date.now();await page.goto(url+'?test',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland)?.ready);
   if(disable)await page.evaluate(disable=>{
     const f=fossick;
     if(disable.split(',').includes('instances'))for(const lod of [f.world.lod,f.landscape.lod])for(const b of lod.batches){
@@ -41,7 +43,7 @@ try{for(let run=1;run<=runs;run++){
   await page.evaluate(({diagnostic,seconds,passGpu})=>{
     const f=fossick,r=f.renderer,gl=r.getContext(),timer=gl.getExtension('EXT_disjoint_timer_query_webgl2');
     const original=requestAnimationFrame.bind(window),start=performance.now(),pending=[];let last=0,n=0;
-    const sites=['creek','bank','woodland','reef','granite','camp','dig','downstream'];
+    const sites=['creek','bank','woodland','reef',f.terrain.profile.id==='golden-triangle'?'workings':'granite','camp','dig','downstream'];
     window.opt={frames:[],gpu:[],memory:[],callbacks:{},costs:{},renders:[],start,sites,hasGpuTimer:!!timer};
     const dx=f.terrain.camp.x+22,dz=f.terrain.camp.z+20;
     for(let i=0;i<6;i++)f.terrain.dig(dx,dz,1.1,.18);
@@ -71,6 +73,7 @@ try{for(let run=1;run<=runs;run++){
       if(site==='bank'){z=12;x=f.creek.cx(z)-f.creek.halfWidth(z)-.6;tx=f.creek.cx(z)+3;tz=z-3;pitch=-.65;}
       if(site==='woodland'){x=f.terrain.camp.x+20;z=22;tx=x+14;tz=z+20;pitch=-.08;}
       if(site==='reef'||site==='granite'){const s=f.terrain.sources[site];x=s.x+7;z=s.z+8;tx=s.x;tz=s.z;pitch=-.16;}
+      if(site==='workings'){const s=f.terrain.workings[3];x=s.x+5;z=s.z+6;tx=s.x;tz=s.z;pitch=-.48;}
       if(site==='camp'){x=f.terrain.camp.x+12;z=f.terrain.camp.z+12;tx=f.terrain.camp.x;tz=f.terrain.camp.z;pitch=-.12;}
       if(site==='dig'){x=dx+1.8;z=dz+1.8;tx=dx;tz=dz;pitch=-.65;}
       if(site==='downstream'){z=-18;x=f.creek.cx(z)+f.creek.halfWidth(z)+2;tx=f.creek.cx(z);tz=z-14;}
@@ -91,7 +94,7 @@ try{for(let run=1;run<=runs;run++){
   if(diagnostic){const profile=await cdp.send('Profiler.stop');await writeFile(root+'/cpu-'+run+'.cpuprofile.gz',gzipSync(JSON.stringify(profile)));}
   const data=await page.evaluate(()=>opt);assert.deepEqual(errors,[]);
   const summarise=frames=>({frames:frames.length,frameMs:distribution(frames.map(f=>f.dt)),cpuMs:distribution(frames.map(f=>f.cpu)),calls:distribution(frames.map(f=>f.calls)),triangles:distribution(frames.map(f=>f.triangles)),over33ms:frames.filter(f=>f.dt>33.5).length,over50ms:frames.filter(f=>f.dt>50).length});
-  const result={label,run,url,seed:12345,diagnostic,disable,passGpu,measuredSeconds:seconds,warmupSeconds:20,loadMs,hardware,callbacks:data.callbacks,...summarise(data.frames),gpuMs:data.gpu.length?distribution(data.gpu.map(g=>g.ms)):null,gpuSamples:data.gpu.length,memory:data.memory,errors,sites:{}};
+  const result={label,run,url,region,seed:12345,diagnostic,disable,passGpu,measuredSeconds:seconds,warmupSeconds:20,loadMs,hardware,callbacks:data.callbacks,...summarise(data.frames),gpuMs:data.gpu.length?distribution(data.gpu.map(g=>g.ms)):null,gpuSamples:data.gpu.length,memory:data.memory,errors,sites:{}};
   for(const site of data.sites){const frames=data.frames.filter(f=>f.site===site),gpu=data.gpu.filter(f=>f.site===site);result.sites[site]={...summarise(frames),gpuMs:distribution(gpu.map(g=>g.ms))};}
   if(passGpu){result.passGpu={};for(const pass of new Set(data.gpu.map(g=>g.pass)))result.passGpu[pass]=distribution(data.gpu.filter(g=>g.pass===pass).map(g=>g.ms));}
   if(diagnostic){result.updateCosts=Object.entries(data.costs).map(([name,values])=>({name,total:values.reduce((a,b)=>a+b,0),samples:values.length,...distribution(values)})).sort((a,b)=>b.total-a.total);result.renderCosts=Object.fromEntries([...new Set(data.renders.map(r=>r.pass))].map(pass=>{const a=data.renders.filter(r=>r.pass===pass);return [pass,{samples:a.length,total:a.reduce((n,r)=>n+r.ms,0),...distribution(a.map(r=>r.ms))}];}));await writeFile(root+'/render-costs-'+run+'.json.gz',gzipSync(JSON.stringify(data.renders)));}

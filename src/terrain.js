@@ -24,6 +24,7 @@ const srgb = (v) => Math.pow(v, 2.2);
 export class Terrain {
   constructor(seed, profile = {}) {
     this.profile = profile;
+    this.detailedGround = ['new-england','golden-triangle'].includes(profile.id);
     this.noise = makeNoise(seed);
     this.n2 = this.noise.noise2;
     const rand = this.noise.rand;
@@ -460,15 +461,15 @@ export class Terrain {
     geo.setAttribute('aSurface', new THREE.BufferAttribute(this.surface, 3));
     // NSW's surface palette must yield to the existing geological colours as
     // the shovel exposes soil, wash and bedrock. This is render data only.
-    if (this.profile.id === 'new-england') geo.setAttribute('aCut', new THREE.BufferAttribute(new Float32Array(count), 1));
-    if (this.profile.id === 'new-england') geo.setAttribute('aSoil', new THREE.BufferAttribute(new Float32Array(count*3), 3));
+    if (this.detailedGround) geo.setAttribute('aCut', new THREE.BufferAttribute(new Float32Array(count), 1));
+    if (this.detailedGround) geo.setAttribute('aSoil', new THREE.BufferAttribute(new Float32Array(count*3), 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     this.geo = geo;
     this.refresh(0, SEG, 0, SEG);
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',excavation:this.profile.id === 'new-england'});
+    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',goldenTriangle:this.profile.id === 'golden-triangle',workings:this.workings,excavation:this.detailedGround});
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -574,7 +575,7 @@ export class Terrain {
     const FS = 1500, FSEG = 150, FN = FSEG + 1, fc = FS / FSEG;
     const pos = new Float32Array(FN * FN * 3);
     const col = new Float32Array(FN * FN * 3);
-    const surface=this.profile.id==='new-england' ? new Float32Array(FN*FN*3) : null;
+    const surface=this.detailedGround ? new Float32Array(FN*FN*3) : null;
     for (let iz = 0; iz < FN; iz++) {
       for (let ix = 0; ix < FN; ix++) {
         const x = -FS / 2 + ix * fc, z = -FS / 2 + iz * fc;
@@ -598,7 +599,7 @@ export class Terrain {
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     if(surface)geo.setAttribute('aSurface',new THREE.BufferAttribute(surface,3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo,surface ? groundMaterial({newEngland:true,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+    const mesh = new THREE.Mesh(geo,surface ? groundMaterial({newEngland:this.profile.id==='new-england',goldenTriangle:this.profile.id==='golden-triangle',workings:this.workings,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
     mesh.receiveShadow = false;
     return mesh;
   }

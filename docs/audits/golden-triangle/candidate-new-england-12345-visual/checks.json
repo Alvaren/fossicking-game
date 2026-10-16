@@ -1,0 +1,498 @@
+{
+  "label": "candidate-new-england-12345",
+  "base": "http://127.0.0.1:5191/",
+  "region": "new-england",
+  "seed": 12345,
+  "cases": [
+    {
+      "mode": "high",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 706,
+            "textures": 34
+          },
+          "programs": 127,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "bank",
+          "pose": {
+            "x": 0.7677718814146722,
+            "z": 12,
+            "tx": 7.067771881414672,
+            "tz": 9,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 744,
+            "textures": 49
+          },
+          "programs": 135,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "woodland",
+          "pose": {
+            "x": 36.44609667815398,
+            "z": 22,
+            "tx": 50.44609667815398,
+            "tz": 42,
+            "pitch": -0.08
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 745,
+            "textures": 49
+          },
+          "programs": 135,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "tx": -41.15242070679212,
+            "tz": 36.61508871242404,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 770,
+            "textures": 50
+          },
+          "programs": 144,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "granite",
+          "pose": {
+            "x": 9.288709362249755,
+            "z": -78.65572614083067,
+            "tx": 2.2887093622497545,
+            "tz": -86.65572614083067,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 805,
+            "textures": 50
+          },
+          "programs": 145,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "camp",
+          "pose": {
+            "x": 28.44609667815398,
+            "z": 12,
+            "tx": 16.44609667815398,
+            "tz": 0,
+            "pitch": -0.12
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 805,
+            "textures": 51
+          },
+          "programs": 147,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "tx": 38.44609667815398,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 805,
+            "textures": 51
+          },
+          "programs": 147,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "downstream",
+          "pose": {
+            "x": 4.730813491231865,
+            "z": -18,
+            "tx": -1.1481566651681394,
+            "tz": -32,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 805,
+            "textures": 51
+          },
+          "programs": 147,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "mode": "low",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 472,
+            "textures": 28
+          },
+          "programs": 65,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "tx": -41.15242070679212,
+            "tz": 36.61508871242404,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 504,
+            "textures": 29
+          },
+          "programs": 70,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "tx": 38.44609667815398,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 753,
+            "textures": 41
+          },
+          "programs": 74,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "mode": "medium",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 704,
+            "textures": 30
+          },
+          "programs": 74,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "tx": -41.15242070679212,
+            "tz": 36.61508871242404,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 729,
+            "textures": 31
+          },
+          "programs": 79,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "tx": 38.44609667815398,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 784,
+            "textures": 43
+          },
+          "programs": 83,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "mode": "ultra",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 705,
+            "textures": 34
+          },
+          "programs": 127,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "tx": -41.15242070679212,
+            "tz": 36.61508871242404,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 730,
+            "textures": 36
+          },
+          "programs": 138,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "tx": 38.44609667815398,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 802,
+            "textures": 48
+          },
+          "programs": 146,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "mode": "touch",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -0.9832096445145313,
+            "z": 24,
+            "tx": 4.626146069522042,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 705,
+            "textures": 32
+          },
+          "programs": 75,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": -34.15242070679212,
+            "z": 44.61508871242404,
+            "tx": -41.15242070679212,
+            "tz": 36.61508871242404,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 742,
+            "textures": 33
+          },
+          "programs": 80,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 40.246096678153975,
+            "z": 21.8,
+            "tx": 38.44609667815398,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "renderer": {
+            "geometries": 785,
+            "textures": 45
+          },
+          "programs": 83,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

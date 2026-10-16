@@ -1,0 +1,198 @@
+{
+  "label": "candidate-new-england-1",
+  "base": "http://127.0.0.1:5191/",
+  "region": "new-england",
+  "seed": 1,
+  "cases": [
+    {
+      "mode": "high",
+      "shots": [
+        {
+          "site": "creek",
+          "pose": {
+            "x": -4.47923552497189,
+            "z": 24,
+            "tx": 1.3207644750281098,
+            "tz": 38,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 572,
+            "textures": 33
+          },
+          "programs": 138,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "bank",
+          "pose": {
+            "x": -9.216073830343754,
+            "z": 12,
+            "tx": -2.9160738303437537,
+            "tz": 9,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 724,
+            "textures": 45
+          },
+          "programs": 147,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "woodland",
+          "pose": {
+            "x": 22.45858771939329,
+            "z": 22,
+            "tx": 36.45858771939329,
+            "tz": 42,
+            "pitch": -0.08
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 732,
+            "textures": 46
+          },
+          "programs": 147,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "reef",
+          "pose": {
+            "x": 54.58682950893399,
+            "z": 47.380468567833304,
+            "tx": 47.58682950893399,
+            "tz": 39.380468567833304,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 814,
+            "textures": 47
+          },
+          "programs": 152,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "granite",
+          "pose": {
+            "x": -57.795954329036235,
+            "z": -76.82401601690799,
+            "tx": -64.79595432903623,
+            "tz": -84.82401601690799,
+            "pitch": -0.16
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 826,
+            "textures": 47
+          },
+          "programs": 152,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "camp",
+          "pose": {
+            "x": 14.45858771939329,
+            "z": 12,
+            "tx": 2.4585877193932895,
+            "tz": 0,
+            "pitch": -0.12
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 826,
+            "textures": 47
+          },
+          "programs": 153,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "dig",
+          "pose": {
+            "x": 26.25858771939329,
+            "z": 21.8,
+            "tx": 24.45858771939329,
+            "tz": 20,
+            "pitch": -0.65
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 826,
+            "textures": 47
+          },
+          "programs": 153,
+          "failures": 0,
+          "tool": "shovel"
+        },
+        {
+          "site": "downstream",
+          "pose": {
+            "x": -18.429925108695734,
+            "z": -18,
+            "tx": -23.17683670659021,
+            "tz": -32,
+            "pitch": -0.15
+          },
+          "water": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "renderer": {
+            "geometries": 826,
+            "textures": 47
+          },
+          "programs": 153,
+          "failures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

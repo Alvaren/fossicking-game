@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {mkdir,writeFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const root='docs/audits/nsw-optimisation/',report=[];
+const root=(process.env.OPT_OUT||'docs/audits/nsw-optimisation')+'/',report=[],region=process.env.OPT_REGION||'new-england';
+await mkdir(root,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--ignore-gpu-blocklist']});
-try{for(const label of ['baseline','candidate']){
+try{for(const label of (process.env.OPT_LABELS||'baseline,candidate').split(',')){
  const context=await browser.newContext({viewport:{width:1280,height:720},acceptDownloads:true}),errors=[];
- await context.addInitScript(()=>{localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:'new-england',hour:11,difficulty:'realistic'}));localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'high',warned:true}));});
+ await context.addInitScript(region=>{localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:region,claims:region==='new-england'?{}:{[region]:{seed:12345}},hour:11,difficulty:'realistic'}));localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset:'high',warned:true}));},region);
  const page=await context.newPage();page.setDefaultTimeout(90000);page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'||/GL_INVALID/.test(m.text()))errors.push(m.text());});
- await page.goto('http://127.0.0.1:5191/'+(label==='baseline'?'baseline/':'')+'?test',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);await page.locator('#play').click();
+ await page.goto('http://127.0.0.1:5191/'+(label==='baseline'?'baseline/':'')+'?test',{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland).ready);await page.locator('#play').click();
  await page.evaluate(()=>{const f=fossick,z=24,x=f.creek.cx(z)-f.creek.halfWidth(z)-3;f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);f.player.yaw=Math.atan2(-(f.creek.cx(z)-x),-14);f.player.pitch=-.15;});
  await page.waitForTimeout(1200);await page.waitForFunction(()=>fossick.creekRendering.stats.active);
  await page.evaluate(()=>{window.auditHour=11;const update=fossick.daynight.update.bind(fossick.daynight);fossick.daynight.update=(_,p)=>{fossick.daynight.hour=auditHour;update(0,p);};});

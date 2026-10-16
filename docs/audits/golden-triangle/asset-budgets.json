@@ -1,0 +1,65 @@
+{
+  "baseline": "dd0450963a39762f8049b3fd5ea1a8aefe0f923c",
+  "regionalAssets": [
+    {
+      "name": "newengland",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "assets": 42,
+      "triangles": 95672
+    },
+    {
+      "name": "goldentriangle",
+      "bytes": 4965848,
+      "sha256": "24d68bf7c443b45c10db6c24339dc0f6e0390c6ffc178993b791feccea7ab0e9",
+      "assets": 7,
+      "triangles": 81134
+    }
+  ],
+  "bundles": {
+    "before": [
+      {
+        "name": "index-CLCK7vTF.js",
+        "bytes": 973694,
+        "gzipBytes": 280756
+      },
+      {
+        "name": "index-R_XlLHnA.css",
+        "bytes": 32391,
+        "gzipBytes": 7691
+      },
+      {
+        "name": "main-DfO-iDvW.js",
+        "bytes": 318906,
+        "gzipBytes": 117529
+      },
+      {
+        "name": "main-sQn9NTkG.css",
+        "bytes": 5754,
+        "gzipBytes": 1819
+      }
+    ],
+    "after": [
+      {
+        "name": "index-DYONpIzh.js",
+        "bytes": 975108,
+        "gzipBytes": 281272
+      },
+      {
+        "name": "index-R_XlLHnA.css",
+        "bytes": 32391,
+        "gzipBytes": 7691
+      },
+      {
+        "name": "main-CE6fAbAf.js",
+        "bytes": 323981,
+        "gzipBytes": 119476
+      },
+      {
+        "name": "main-sQn9NTkG.css",
+        "bytes": 5754,
+        "gzipBytes": 1819
+      }
+    ]
+  }
+}

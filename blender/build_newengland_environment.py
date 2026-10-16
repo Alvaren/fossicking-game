@@ -6,6 +6,7 @@ import bpy, bmesh, math, random, sys, os, json
 from mathutils import Vector
 
 OUT = os.path.abspath(sys.argv[sys.argv.index('--') + 1])
+GOLDFIELD = 'golden-triangle' in sys.argv[sys.argv.index('--') + 2:]
 os.makedirs(OUT, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 
@@ -32,6 +33,10 @@ M = {k: material(k, v) for k, v in {
     'granite':'9b9181','cobble':'817e70','basalt':'535753',
     'rhyolite':'968579','slab':'79776d',
 }.items()}
+
+if GOLDFIELD:
+    for name, colour in {'bark':'514a3d','bark_dark':'3e3930','bark_light':'766c56','leaf':'65704a','leaf_light':'85905f','leaf_dark':'526344'}.items():
+        M[name]=material(name,colour)
 
 def parent(name):
     o = bpy.data.objects.new(name, None)
@@ -124,6 +129,40 @@ def tree(index, young=False):
     for j in range(5):
         a=j*math.tau/5+.2
         tube('bark_root',[(0,0,.3),(math.cos(a)*.30,math.sin(a)*.30,.065),(math.cos(a)*.55,math.sin(a)*.55,-.06)],[.11,.065,.006],'bark_dark',g,6)
+
+def goldfield_tree(index):
+    """Box / ironbark silhouettes: tall irregular forks, dark persistent bark."""
+    rng=random.Random(46170+index*97)
+    g=parent('gum_'+str(index)); h=[9.4,19.0,12.5,16.8][index]
+    lean=Vector((rng.uniform(-.6,.6),rng.uniform(-.5,.5),0))
+    trunk=[Vector((0,0,-.04)),Vector((.04,0,.5)),lean*.25+Vector((0,0,h*.23)),lean*.6+Vector((0,0,h*.45)),lean+Vector((0,0,h*.70))]
+    tree=tube('bark_ironbark_trunk',trunk,[.29,.26,.22,.14,.035],'bark' if index%2 else 'bark_light',g,32)
+    # Raised longitudinal ridges, genuinely in the silhouette; no split faces.
+    for v in tree.data.vertices:
+        ring=v.index//32; a=v.index%32*math.tau/32
+        centre=trunk[ring]
+        relief=1+.10*math.cos(a*12+.08*ring)+.035*math.sin(a*5+ring*.5)
+        v.co.x=centre.x+(v.co.x-centre.x)*relief
+        v.co.y=centre.y+(v.co.y-centre.y)*relief
+    centres=[]
+    for j in range(9):
+        a=j*2.399+rng.uniform(-.65,.65)
+        start=trunk[2].lerp(trunk[-1],.08+j*.10)
+        spread=(2.3+rng.random()*1.65)*(1.12 if index==1 else .95 if index==3 else 1)
+        tip=Vector((start.x+math.cos(a)*spread,start.y+math.sin(a)*spread,h*(.52+j*.046)+rng.uniform(-.9,.75)))
+        elbow=start.lerp(tip,.5)+Vector((.15,-.10,.45))
+        tube('bark_box_limb',[start,elbow,tip],[.12*(1-j*.055),.06,.013],'bark_light' if index%2==0 and j>4 else 'bark',g,10)
+        for k in range(4):
+            angle=a+(k-1.5)*.6
+            end=tip+Vector((math.cos(angle)*rng.uniform(.4,1.25),math.sin(angle)*rng.uniform(.4,1.25),rng.uniform(-.7,1.15)))
+            tube('bark_crown_twigs',[elbow.lerp(tip,.62),end],[.023,.0035],'bark_dark',g,5)
+            centres.append((end,.7+rng.random()*.42,95+rng.randrange(35)))
+    centres.append((trunk[-1]+Vector((.3,-.15,h*.20)),1.15,190))
+    leaves('leaf_box_ironbark',centres,rng,g)
+    for j in range(6):
+        a=j*math.tau/6+.4
+        tube('bark_basal_flare',[(0,0,.36),(math.cos(a)*.30,math.sin(a)*.30,.09),(math.cos(a)*.58,math.sin(a)*.58,-.08)],[.12,.065,.006],'bark_dark',g,7)
+
 
 def shrub(index):
     rng=random.Random(600+index);g=parent('shrub_'+str(index)); centres=[]
@@ -252,21 +291,25 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bm.to_mesh(o.data);bm.free()
     return group
 
-for i in range(4):tree(i)
-for i in range(2):tree(i,True)
-for i in range(3):shrub(i);grass(i)
-for i in range(2):grass(i,True)
-for kind,count in [('host',4),('granite',4),('cobble',6),('basalt',3),('rhyolite',3),('slab',3)]:
-    for i in range(count):
-        rng=random.Random(7000+sum(map(ord,kind))+i*59);g=parent(f'{kind}_{i}')
-        sc=(.85+rng.random()*.12,.7+rng.random()*.22,.3 if kind=='slab' else .65+rng.random()*.2)
-        block(kind,rng,g,kind,sc,kind in ['granite','cobble'],kind=='host')
-for kind,count in [('root',2),('branch',3)]:
-    for i in range(count):
-        rng=random.Random(900+i);g=parent(f'{kind}_{i}')
-        for j in range(3 if kind=='root' else 1):
-            a=j*2.2;end=Vector((math.cos(a)*(1.1+i*.2),math.sin(a)*.6,-.04))
-            tube('bark_detail',[Vector((0,0,.25)),end*.45+Vector((0,0,.12)),end],[.12,.065,.009],'bark_dark',g,7)
+if GOLDFIELD:
+    for i in range(4):goldfield_tree(i)
+    for i in range(3):shrub(i)
+else:
+    for i in range(4):tree(i)
+    for i in range(2):tree(i,True)
+    for i in range(3):shrub(i);grass(i)
+    for i in range(2):grass(i,True)
+    for kind,count in [('host',4),('granite',4),('cobble',6),('basalt',3),('rhyolite',3),('slab',3)]:
+        for i in range(count):
+            rng=random.Random(7000+sum(map(ord,kind))+i*59);g=parent(f'{kind}_{i}')
+            sc=(.85+rng.random()*.12,.7+rng.random()*.22,.3 if kind=='slab' else .65+rng.random()*.2)
+            block(kind,rng,g,kind,sc,kind in ['granite','cobble'],kind=='host')
+    for kind,count in [('root',2),('branch',3)]:
+        for i in range(count):
+            rng=random.Random(900+i);g=parent(f'{kind}_{i}')
+            for j in range(3 if kind=='root' else 1):
+                a=j*2.2;end=Vector((math.cos(a)*(1.1+i*.2),math.sin(a)*.6,-.04))
+                tube('bark_detail',[Vector((0,0,.25)),end*.45+Vector((0,0,.12)),end],[.12,.065,.009],'bark_dark',g,7)
 
 manifest={}
 for g in [o for o in bpy.data.objects if o.type=='EMPTY']:
@@ -277,5 +320,5 @@ for g in [o for o in bpy.data.objects if o.type=='EMPTY']:
         coords.extend([v.co[:] for v in o.data.vertices])
     manifest[g.name]={'triangles':tris,'blenderBounds':[[min(v[k] for v in coords) for k in range(3)],[max(v[k] for v in coords) for k in range(3)]]}
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT,'environment.glb'),export_format='GLB',export_yup=True,export_apply=True,export_extras=True)
-with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
+with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
 print('NEW_ENGLAND_KIT',len(manifest),'assets',sum(v['triangles'] for v in manifest.values()),'triangles')

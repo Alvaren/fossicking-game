@@ -8,11 +8,10 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 export const assets = { crystals: null, finds: null, tools: {}, models: {} };
 
 // Independent optional kit. A bad environment download cannot discard tools.
-export async function loadNewEnglandKit() {
-  const required = { gum:4, young:2, shrub:3, grass:3, sedge:2, host:4, granite:4, cobble:6, basalt:3, rhyolite:3, slab:3, root:2, branch:3 };
+export async function loadEnvironmentKit(path, required) {
   const geometries = {};
   try {
-    const gltf = await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}models/newengland/environment.glb`);
+    const gltf = await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}${path}`);
     gltf.scene.updateMatrixWorld(true);
     for (const [kind, count] of Object.entries(required)) for (let i = 0; i < count; i++) {
       const name = `${kind}_${i}`, group = gltf.scene.getObjectByName(name), pieces = [];
@@ -45,9 +44,13 @@ export async function loadNewEnglandKit() {
     return geometries;
   } catch (error) {
     Object.values(geometries).forEach(g => g.dispose());
-    console.warn('New England scenery kit unavailable; retaining the original scenery.', error);
+    console.warn(`${path} unavailable; retaining the original scenery.`, error);
     return null;
   }
+}
+
+export function loadNewEnglandKit() {
+  return loadEnvironmentKit('models/newengland/environment.glb', { gum:4, young:2, shrub:3, grass:3, sedge:2, host:4, granite:4, cobble:6, basalt:3, rhyolite:3, slab:3, root:2, branch:3 });
 }
 
 export function loadAssets() {

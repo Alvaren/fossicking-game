@@ -1,0 +1,14 @@
+[
+  {
+    "label": "candidate",
+    "errors": [],
+    "water": {
+      "active": false,
+      "width": 461,
+      "height": 259,
+      "passes": 0
+    },
+    "auto": true,
+    "shaderFailures": 0
+  }
+]

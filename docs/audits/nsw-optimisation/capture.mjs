@@ -4,22 +4,24 @@ import {createRequire} from 'node:module';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const label=process.argv[2]||'candidate',base=process.env.OPT_URL||('http://127.0.0.1:5191/'+(label==='baseline'?'baseline/':''));
-const out='docs/audits/nsw-optimisation/'+label+'-visual';await mkdir(out,{recursive:true});
+const out=(process.env.OPT_OUT||'docs/audits/nsw-optimisation')+'/'+label+'-visual';await mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--ignore-gpu-blocklist']});
+const region=process.env.OPT_REGION||'new-england',seed=Number(process.env.OPT_SEED||12345);
 const modes=(process.env.OPT_MODES||'high,low,ultra,touch').split(',');
-const report={label,base,cases:[]};
+const report={label,base,region,seed,cases:[]};
 try{report.cases=JSON.parse(await readFile(out+'/checks.json','utf8')).cases.filter(c=>!modes.includes(c.mode));}catch{}
 try{for(const mode of modes){
   const touch=mode==='touch',preset=touch?'medium':mode;
   const context=await browser.newContext({viewport:touch?{width:844,height:390}:{width:1280,height:720},deviceScaleFactor:1,hasTouch:touch,isMobile:touch});
-  await context.addInitScript(preset=>{
+  await context.addInitScript(({preset,region,seed})=>{
     let rng=23981;Math.random=()=>{rng=(Math.imul(rng,1664525)+1013904223)|0;return (rng>>>0)/4294967296;};
-    localStorage.setItem('fossicking-save-v2',JSON.stringify({seed:12345,activeRegion:'new-england',hour:11,difficulty:'realistic',cash:400,gold:.1,camp:{shelter:'shed',built:{rack:true,kit:true,tub:true,water:true,generator:true,lights:true,lapidary:true,display:true,kelpie:true},water:80,generatorFuel:2,generatorOn:true}}));
+    const camp={shelter:'shed',built:{rack:true,kit:true,tub:true,water:true,generator:true,lights:true,lapidary:true,display:true,kelpie:true},water:80,generatorFuel:2,generatorOn:true};
+    localStorage.setItem('fossicking-save-v2',JSON.stringify({seed,activeRegion:region,hour:11,difficulty:'realistic',cash:400,gold:.1,camp,claims:region==='new-england'?{}:{[region]:{seed,camp}}}));
     localStorage.setItem('fossicking-settings-v1',JSON.stringify({preset,warned:true}));
-  },preset);
+  },{preset,region,seed});
   const page=await context.newPage(),errors=[];page.setDefaultTimeout(90000);
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'||/GL_INVALID|too many errors/.test(m.text()))errors.push(m.text());});
-  await page.goto(base+'?test'+(touch?'&touch':''),{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>fossick.newEngland.ready);
+  await page.goto(base+'?test'+(touch?'&touch':''),{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await page.evaluate(()=>(fossick.regionalEnvironment||fossick.newEngland)?.ready);
   await (touch?page.locator('#play').tap():page.locator('#play').click());
   if(touch)await page.locator('.slot[data-tool="shovel"]').tap();else await page.keyboard.press('Digit2');
   await page.evaluate(()=>{
@@ -33,7 +35,7 @@ try{for(const mode of modes){
     window.digPoint={x:f.terrain.camp.x+22,z:f.terrain.camp.z+20};
     for(let i=0;i<6;i++)f.terrain.dig(digPoint.x,digPoint.z,1.1,.18);
   });
-  const views=mode==='high'?['creek','bank','woodland','reef','granite','camp','dig','downstream']:['creek','reef','dig'];
+  const views=mode==='high'?['creek','bank','woodland','reef',region==='golden-triangle'?'workings':'granite','camp','dig','downstream']:['creek','reef','dig'];
   const shots=[];
   for(const site of views){
     const pose=await page.evaluate(site=>{
@@ -41,6 +43,7 @@ try{for(const mode of modes){
       if(site==='bank'){z=12;x=f.creek.cx(z)-f.creek.halfWidth(z)-.6;tx=f.creek.cx(z)+3;tz=z-3;pitch=-.65;}
       if(site==='woodland'){x=f.terrain.camp.x+20;z=22;tx=x+14;tz=z+20;pitch=-.08;}
       if(site==='reef'||site==='granite'){const s=f.terrain.sources[site];x=s.x+7;z=s.z+8;tx=s.x;tz=s.z;pitch=-.16;}
+      if(site==='workings'){const s=f.terrain.workings[3];x=s.x+5;z=s.z+6;tx=s.x;tz=s.z;pitch=-.48;}
       if(site==='camp'){x=f.terrain.camp.x+12;z=f.terrain.camp.z+12;tx=f.terrain.camp.x;tz=f.terrain.camp.z;pitch=-.12;}
       if(site==='dig'){x=digPoint.x+1.8;z=digPoint.z+1.8;tx=digPoint.x;tz=digPoint.z;pitch=-.65;}
       if(site==='downstream'){z=-18;x=f.creek.cx(z)+f.creek.halfWidth(z)+2;tx=f.creek.cx(z);tz=z-14;}
@@ -49,7 +52,7 @@ try{for(const mode of modes){
     },site);
     await page.waitForTimeout(1500);await page.waitForFunction(()=>document.querySelector('#toasts').children.length===0);
     await page.screenshot({path:out+'/'+mode+'-'+site+'.jpg',quality:94});
-    const state=await page.evaluate(()=>({water:{...fossick.creekRendering.stats},renderer:{...fossick.renderer.info.memory},programs:fossick.renderer.info.programs.length,failures:fossick.renderer.info.programs.filter(p=>p.diagnostics?.runnable===false).length,tool:fossick.state.tool}));
+    const state=await page.evaluate(()=>({water:{...fossick.creekRendering?.stats},renderer:{...fossick.renderer.info.memory},programs:fossick.renderer.info.programs.length,failures:fossick.renderer.info.programs.filter(p=>p.diagnostics?.runnable===false).length,tool:fossick.state.tool}));
     assert.equal(state.failures,0);assert.equal(state.tool,'shovel');shots.push({site,pose,...state});console.log(label,mode,site);
     if(site==='creek'&&mode==='high'){
       await page.evaluate(()=>{window.motionTime=20.5;});await page.waitForTimeout(100);await page.screenshot({path:out+'/high-creek-next.jpg',quality:94});await page.evaluate(()=>{window.motionTime=20;});

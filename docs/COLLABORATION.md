@@ -180,3 +180,12 @@ Owned paths: `src/newengland/{landforms,groundcover,composition,environment,grou
 Retain the solid source models beneath removable connecting detail: hiding those models with an excavation would leave invisible original colliders. Hand patches must share the terrain's camp-colour uniform. Only completed, tested work is promoted under the standing publishing instruction; the delivery record contains the exact matching Pages result.
 
 Published implementation `73b02f1` and evidence `117a5c6`: Pages run 38500167021 succeeded, both JS/CSS chunks and the model match the tested build, and public High desktop/touch checks pass. SC-01..06 are implemented/verified; the complete reference-art acceptance and post-sign-off B9 phase remain open.
+
+
+## Golden Triangle fidelity and taller trees - 16 October 2026
+
+Codex branch `codex/golden-triangle-fidelity`, base `dd0450963a39762f8049b3fd5ea1a8aefe0f923c`. The user approved the next map, then requested taller and more varied trees in both Golden Triangle and the original New England map. Scope and completion gates are in [GOLDEN-TRIANGLE-ART-PLAN.md](GOLDEN-TRIANGLE-ART-PLAN.md); the exact assets, checks, measurements, limits and publication evidence are in [GOLDEN-TRIANGLE-BUILD.md](GOLDEN-TRIANGLE-BUILD.md).
+
+The shared rendering adapter moved from `src/newengland/environment.js` to `src/rendering/regionalenvironment.js`; the NSW entry is now a thin recipe. Golden Triangle supplies its foliage kit, ground/dressing recipe and ironstone material adaptation while reusing water, rocks, LOD, excavation detail and all original input/gameplay systems. New England's only intended art change is tree stature. No simulation/save format, dependency, tool model or other region's gameplay was replaced.
+
+Owned work includes `src/goldentriangle/`, the shared adapter/tree-height utility, the small integration hooks in main/terrain/excavation/assets/environmentmaterials, a default-preserving bank-overlay option in the shared landforms module, the additive Blender recipe and regional GLB, existing audit scripts extended with region parameters, focused tree tests, and the build/audit documentation. Main and Claude were clean at inspection, and all Claude commits were already in main. No other agent was launched or messaged. Only Codex's 5191 preview was used. The standing instruction to publish completed work remains active; use the linked build record for the exact deployment outcome. User visual acceptance and physical-phone performance testing remain separate from browser checks.

@@ -310,7 +310,7 @@ export class Patch {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-    if(this.terrain.profile.id==='new-england') {
+    if(this.terrain.detailedGround) {
       geo.setAttribute('aSurface',new THREE.BufferAttribute(new Float32Array(pos.length),3));
       geo.setAttribute('aCut',new THREE.BufferAttribute(new Float32Array(pos.length/3),1));
       geo.setAttribute('aSoil',new THREE.BufferAttribute(new Float32Array(pos.length),3));
@@ -319,8 +319,8 @@ export class Patch {
     this.geo = geo;
     this.pos = pos; this.col = col;
     this.refresh(0, CELLS, 0, CELLS);
-    const surface=this.terrain.profile.id==='new-england'
-      ? groundMaterial({newEngland:true,excavation:true,waterLevel:this.terrain.material.userData.waterLevel})
+    const surface=this.terrain.detailedGround
+      ? groundMaterial({newEngland:this.terrain.profile.id==='new-england',goldenTriangle:this.terrain.profile.id==='golden-triangle',workings:this.terrain.workings,excavation:true,waterLevel:this.terrain.material.userData.waterLevel})
       : new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,map:this.terrain.material.map});
     if(surface.userData.nswCamp)surface.userData.nswCamp=this.terrain.material.userData.nswCamp;
     this.mesh = new THREE.Mesh(geo, surface);

@@ -46,17 +46,19 @@ function groundAtlas() {
   return atlas;
 }
 
-export function groundMaterial({ forest = false, dampness = 0, newEngland = false, excavation = false, waterLevel = { value:0 } } = {}) {
+export function groundMaterial({ forest = false, dampness = 0, newEngland = false, goldenTriangle = false, workings = [], excavation = false, waterLevel = { value:0 } } = {}) {
+  const detailed = newEngland || goldenTriangle;
   const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .96 });
   material.name = forest ? 'Damp forest floor' : 'Blended claim ground';
   material.userData.environment = 'ground';
   material.userData.waterLevel = waterLevel;
-  if(newEngland)material.userData.nswCamp={value:new THREE.Vector2(10000,10000)};
+  if(detailed)material.userData.nswCamp={value:new THREE.Vector2(10000,10000)};
   material.onBeforeCompile = shader => {
     shader.uniforms.groundAtlas = { value: groundAtlas() };
     shader.uniforms.groundWaterLevel = waterLevel;
     shader.uniforms.groundWet = environmentWeather.wet;
-    if(newEngland)shader.uniforms.nswCamp=material.userData.nswCamp;
+    if(detailed)shader.uniforms.nswCamp=material.userData.nswCamp;
+    if(goldenTriangle)shader.uniforms.goldfieldWorkings={value:Array.from({length:7},(_,i)=>{const p=workings[i];return p?new THREE.Vector4(p.x,p.z,p.r,p.side):new THREE.Vector4(10000,10000,1,1);})};
     shader.vertexShader = shader.vertexShader.replace('void main() {', `
 attribute vec3 aSurface;
 varying vec3 vGround;
@@ -70,7 +72,8 @@ ${excavation ? 'vCut=aCut;vSoil=aSoil;' : ''}`);
 uniform sampler2D groundAtlas;
 uniform float groundWaterLevel;
 uniform float groundWet;
-${newEngland ? 'uniform vec2 nswCamp;'+coverShader : ''}
+${detailed ? 'uniform vec2 nswCamp;'+coverShader : ''}
+${goldenTriangle ? 'uniform vec4 goldfieldWorkings[7];' : ''}
 varying vec3 vGround;
 varying vec3 vSurface;
 varying float vGroundUp;
@@ -106,18 +109,34 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   float groundPixel = max(length(dFdx(gp)),length(dFdy(gp)));
   float detail = 1.0-smoothstep(.025,.2,groundPixel);
   groundColour = mix(vec3(.65),groundColour,detail);
-  ${newEngland ? `
+  ${detailed ? `
   float macro=soilNoise(gp*.12)+soilNoise(gp*.43)*.35;
-  vec3 grus=mix(vec3(.20,.143,.080),vec3(.36,.28,.17),smoothstep(.30,1.0,macro));
-  vec3 wash=mix(vec3(.14,.16,.135),vec3(.28,.285,.235),smoothstep(.25,1.08,macro));
+  vec3 grus=mix(vec3(${goldenTriangle ? '.20,.135,.075' : '.20,.143,.080'}),vec3(${goldenTriangle ? '.39,.295,.18' : '.36,.28,.17'}),smoothstep(.30,1.0,macro));
+  vec3 wash=mix(vec3(${goldenTriangle ? '.17,.155,.12' : '.14,.16,.135'}),vec3(${goldenTriangle ? '.29,.285,.22' : '.28,.285,.235'}),smoothstep(.25,1.08,macro));
   float creekbed=1.0-smoothstep(.03,.8,vSurface.z-groundWaterLevel);
   vec3 regionGround=mix(grus,wash,creekbed*.9);
   float meadow=smoothstep(.40,.75,nswCover(gp))*(1.0-creekbed);
-  regionGround=mix(regionGround,vec3(.185,.16,.085),meadow*.6);
+  regionGround=mix(regionGround,vec3(${goldenTriangle ? '.12,.105,.055' : '.185,.16,.085'}),meadow*.6);
   float campGround=1.0-smoothstep(8.0,17.0,length((gp-nswCamp)*vec2(.88,1.12))+soilNoise(gp*.6)*1.8);
-  regionGround=mix(regionGround,vec3(.32,.245,.16),campGround*.72);
+  regionGround=mix(regionGround,vec3(${goldenTriangle ? '.34,.26,.17' : '.32,.245,.16'}),campGround*.72);
   float litterPatch=organic*smoothstep(.25,.7,soilNoise(gp*.28+13.0));
-  regionGround=mix(regionGround,vec3(.135,.117,.076),litterPatch*.65);
+  regionGround=mix(regionGround,vec3(${goldenTriangle ? '.085,.062,.035' : '.135,.117,.076'}),litterPatch*.65);
+  ${goldenTriangle ? `
+  // These layers colour the real ground: no extra surface or altered height.
+  float bankFace=(1.0-smoothstep(.78,.97,vGroundUp))*(1.0-smoothstep(.7,1.7,vSurface.z-groundWaterLevel));
+  float bankLayer=.88+.12*sin(vGround.y*13.0+soilNoise(gp*2.0));
+  regionGround=mix(regionGround,vec3(.25,.17,.105)*bankLayer,bankFace*.65);
+  for(int i=0;i<7;i++) {
+    vec4 pit=goldfieldWorkings[i];
+    float d=length(gp-pit.xy)/pit.z;
+    float spoil=length(gp-pit.xy-vec2(pit.w*pit.z*1.65,0.0))/pit.z;
+    float edge=soilNoise(gp*3.5)*.12;
+    float disturbed=1.0-smoothstep(.45,1.5+edge,min(d,spoil));
+    float bowl=1.0-smoothstep(.15,1.1,d);
+    vec3 subsoil=mix(vec3(.32,.23,.14),vec3(.19,.12,.065),bowl);
+    regionGround=mix(regionGround,subsoil*(.91+.14*soilNoise(gp*9.0)),disturbed*.8);
+  }
+  ` : ''}
   // Retain a little of the original geological colour information.
   diffuseColor.rgb=mix(regionGround,diffuseColor.rgb,${excavation ? 'mix(.24,1.0,vCut)' : '.24'});
   // The old gravel tile remains for other regions. Here fine aggregate is
@@ -139,7 +158,7 @@ void main() {`).replace('#include <color_fragment>', `#include <color_fragment>
   diffuseColor.rgb *= groundColour*1.38;
   diffuseColor.rgb *= 1.0-wetness*.14;
   diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.13,.17,.16),puddle*.35);
-  float groundHeight = dot(groundColour,vec3(.3,.5,.2))*${newEngland ? '.005' : '.013'}*detail;
+  float groundHeight = dot(groundColour,vec3(.3,.5,.2))*${detailed ? '.005' : '.013'}*detail;
 `).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
 roughnessFactor = mix(.96,.68,wetness);
 roughnessFactor = mix(roughnessFactor,.24,puddle);
@@ -150,6 +169,6 @@ float gd=dot(gdx,grx);
 normal=normalize(abs(gd)*normal-sign(gd)*(dFdx(groundHeight)*grx+dFdy(groundHeight)*gry)*(1.0-puddle*.97));
 `);
   };
-  material.customProgramCacheKey = () => `ground-layers-v4:${forest}:${dampness}:${newEngland}:${excavation}`;
+  material.customProgramCacheKey = () => `ground-layers-v4:${forest}:${dampness}:${newEngland}:${excavation}:${goldenTriangle}`;
   return material;
 }
