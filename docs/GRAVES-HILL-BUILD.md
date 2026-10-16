@@ -28,7 +28,7 @@ Rendering uses the shared regional adapter, instancing, foliage LOD, ground atla
 - `tests/graveshill.game.mjs`: actual mouse/phone shovel input and classification; dry-ground sieve rejection; manual over-jig loss then controlled settling on Realistic; Easy assistance through held touch Use; actual flip consumes one sample; topo map; $0 travel; save/reload and Graves Hill/Billystone/NSW return. Remaining settling is accelerated only after actual input has been verified; this is not a claim that the test plays every full wash.
 - `tests/controls.game.mjs` with `CONTROLS_REGION=graves-hill`: genuine browser pointer lock without the test bypass, mouse look, wheel/number keys, movement while switching, map/pause/resume isolation, rejected-lock recovery; original touch pan/menu regression also passed.
 - `tests/graveshill.resilience.mjs`: cached production offline reload and map; missing/corrupt local GLB fallback keeps original scenery, identical physical world, targets, finds and working tools. Disposable browser saves only; no user browser storage was cleared.
-- `docs/audits/graves-hill/capture.mjs`: player-height views of track, both workings, granite, Ruby Creek, camp and tub on High; Low, Medium, Ultra and landscape touch. Console/shader errors checked. Night and rain captures supplement the daylight route. Initial thin crowns, uniform ground, unsupported sign and clipped map label were corrected after inspection.
+- `docs/audits/graves-hill/capture.mjs`: player-height views of track, both workings, granite, Ruby Creek, camp and tub on High; Low, Medium, Ultra and landscape touch. Console/shader errors checked. Night and approaching-rain captures supplement the daylight route. Initial thin crowns, uniform ground, unsupported sign and clipped map label were corrected after inspection.
 
 [Gameplay checks](audits/graves-hill/game/checks.json) · [offline/fallback checks](audits/graves-hill/resilience.json) · [visual checks](audits/graves-hill/candidate/checks.json).
 
@@ -51,4 +51,6 @@ This is a short desktop route, not a full optimisation certification or physical
 
 ## Publication
 
-Implementation checks complete. Main/Claude were clean and origin/main remained at the base before integration. Standing user authorisation covers commit, integration, push and Pages verification. Matching commit/deployment and public verification will be recorded after promotion.
+Implementation **`00c2454f9d6254a8ea82c71515eb1d8129d5d10f`** integrated by fast-forward into clean main and pushed. [Pages run 38911465080](https://github.com/Alvaren/fossicking-game/actions/runs/38911465080) succeeded. Seven published files match the tested production build: both JS chunks, both CSS chunks, NSW and local GLBs byte-for-byte; HTML matches after CRLF/LF normalisation. [Publication evidence](audits/graves-hill/publication.json).
+
+Public High desktop and Medium touch views loaded the local kit successfully with zero console/shader failures. [Public visual checks](audits/graves-hill/public/checks.json) and [public track screenshot](audits/graves-hill/public/high-track.jpg). Visit [the published game](https://alvaren.github.io/fossicking-game/) and choose **Map → Locations & travel → Graves Hill**; travel is $0. Existing worlds remain available. Final documentation/evidence is a follow-up commit with identical gameplay/assets.

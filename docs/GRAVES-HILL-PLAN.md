@@ -1,6 +1,6 @@
 # Graves Hill - locality and build plan
 
-Status: implemented; final publication verification pending. Owner Codex, branch `codex/graves-hill`, base `11ced10`.
+Status: implemented, published and verified. Owner Codex, branch `codex/graves-hill`, base `11ced10`.
 
 The user explicitly selected authenticity over a generic regional reskin and authorised choosing a real Central Queensland locality. Selected: **Graves Hill fossicking area, near Sapphire**, centred on Mount Clifford and Millionaires Hill. Implement a compact playable interpretation of its documented relationships, not a surveyed replica. Do not silently alter NSW/Uralla or other destinations in this slice. Every future locality must have a real reference audit before its landscape recipe is chosen.
 
@@ -27,7 +27,7 @@ Reuse regional rendering adapter, instancing/LOD, materials, shared stone/plant 
 - [x] GH-04 Connect carried-water camp sieving to original controls/recovery; practical field directions and topo labels; no developer text/world helper rings.
 - [x] GH-05 Inspect player-height scenes around track, both digging areas, granite, dry Ruby Creek and camp on High; Low/Medium/Ultra and touch checks. Correct clipping, repeated cut rocks, floating scenery and unreadable finds.
 - [x] GH-06 Validate deterministic geology, independent old/new saves, digging/sieving/recovery, controls/travel and optional-model fallback. Build and offline checks; record actual performance and limits.
-- [ ] GH-07 Commit, integrate ready work into main, push and verify Pages and public desktop/touch smoke under standing publication authorisation.
+- [x] GH-07 Commit, integrate ready work into main, push and verify Pages and public desktop/touch smoke under standing publication authorisation.
 
 User visual acceptance remains separate from technical success. Physical phone performance is not certified by browser emulation. Modern phone settings scale detail; the reference art and established NSW finish set the quality target.
 

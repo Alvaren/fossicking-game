@@ -1,0 +1,299 @@
+[
+  {
+    "mode": "high",
+    "site": "track",
+    "pose": {
+      "x": -51,
+      "z": 58,
+      "tx": -15,
+      "tz": 43,
+      "pitch": -0.1
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 6761,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 176,
+      "textures": 12
+    }
+  },
+  {
+    "mode": "high",
+    "site": "clifford",
+    "pose": {
+      "x": 22.48911042570018,
+      "z": 54.460862387933815,
+      "tx": 19.48911042570018,
+      "tz": 51.460862387933815,
+      "pitch": -0.5
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 8163,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "millionaires",
+    "pose": {
+      "x": 20.754834035962283,
+      "z": -36.19313629373256,
+      "tx": 17.754834035962283,
+      "tz": -40.19313629373256,
+      "pitch": -0.38
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 8920,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "granite",
+    "pose": {
+      "x": 14,
+      "z": -54,
+      "tx": 5,
+      "tz": -63,
+      "pitch": -0.14
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 8099,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "ruby",
+    "pose": {
+      "x": -48,
+      "z": -18,
+      "tx": -60,
+      "tz": -26,
+      "pitch": -0.22
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 7777,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "camp",
+    "pose": {
+      "x": -58,
+      "z": 39,
+      "tx": -46,
+      "tz": 28,
+      "pitch": -0.12
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 6779,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "tub",
+    "pose": {
+      "x": -43,
+      "z": 26,
+      "tx": -43,
+      "tz": 24,
+      "pitch": -0.5
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 8438,
+      "quality": "high",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "clifford",
+    "pose": {
+      "x": 22.48911042570018,
+      "z": 54.460862387933815,
+      "tx": 19.48911042570018,
+      "tz": 51.460862387933815,
+      "pitch": -0.5
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 2774,
+      "quality": "medium",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "track",
+    "pose": {
+      "x": -51,
+      "z": 58,
+      "tx": -15,
+      "tz": 43,
+      "pitch": -0.1
+    },
+    "region": "graves-hill",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 20236,
+      "visible": 1806,
+      "quality": "medium",
+      "solidRocks": 536,
+      "landformPatches": 0,
+      "bankRoots": 0
+    },
+    "failures": 0,
+    "water": false,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 200,
+      "textures": 16
+    }
+  }
+]

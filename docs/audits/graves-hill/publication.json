@@ -1,0 +1,57 @@
+{
+  "publishedHead": "00c2454f9d6254a8ea82c71515eb1d8129d5d10f",
+  "verifiedAt": "2026-10-16T13:55:29.933Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38911465080",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "f46f2e7bf6e21acd69b6770c017b0cbccd1485abdfcde9afd8d0ee7dac71c659",
+      "localSha256": "63bac1c4da0b6a388719a2d0a3856782afba0acab80945eeade48c456730bbae",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-CUj4g8Xx.js",
+      "bytes": 981984,
+      "sha256": "f3aefda304191bb9388a1a7ee14bb71e200cd1579e390fb2b6dd62f4261425c2",
+      "localSha256": "f3aefda304191bb9388a1a7ee14bb71e200cd1579e390fb2b6dd62f4261425c2",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "localSha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-CP0OZr4g.js",
+      "bytes": 329510,
+      "sha256": "222ceae3608f54d0133411e58df7fbef1cc61351cfec2d32d1ec09da60ea425a",
+      "localSha256": "222ceae3608f54d0133411e58df7fbef1cc61351cfec2d32d1ec09da60ea425a",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/graveshill/environment.glb",
+      "bytes": 5505004,
+      "sha256": "4d8789c0a891265bad397275982dac25154ebf5ab42d4efed3e95f38471f2c84",
+      "localSha256": "4d8789c0a891265bad397275982dac25154ebf5ab42d4efed3e95f38471f2c84",
+      "comparison": "byte-identical"
+    }
+  ]
+}
