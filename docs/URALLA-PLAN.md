@@ -30,7 +30,7 @@ Use a compact interpreted river course and descriptive names such as Boulder Rea
 - [x] U05: Implement fine-gold alluvial sampling and supported gem mix; keep original panning difficulty, classify/sieve controls, camp and save contracts. No fabricated source attractions.
 - [x] U06: Validate build, terrain/deposit/save logic, original-world regressions, desktop mouse lock/wheel/menus, touch layout/actions, panning/recovery, low/high graphics and optional-model fallback/offline reload.
 - [x] U07: Inspect actual game captures at boulder reach, pool, camp and work surface against the photos; correct visible defects. Record performance evidence and remaining limitations honestly.
-- [ ] U08: Commit completed work, inspect main/Claude, integrate, push main, verify Pages deployment and live files; deliver screenshots and update this checklist.
+- [x] U08: Commit completed work, inspect main/Claude, integrate, push main, verify Pages deployment and live files; deliver screenshots and update this checklist.
 
 ## Reuse / ownership
 

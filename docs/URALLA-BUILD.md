@@ -51,4 +51,8 @@ Hero photographs use the existing photo mode's Natural filter with HUD/grid/stam
 
 ## Integration
 
-Local implementation and checks complete. Main and Claude were rechecked clean; Claude has no commits missing from main. Only Codex port 5191 is listening. Ready for fast-forward integration and Pages publication; live verification is recorded below after deployment.
+Implementation `81ec2c9` was fast-forwarded into main and published by successful [Pages run 38920322805](https://github.com/Alvaren/fossicking-game/actions/runs/38920322805). All seven live files match the tested production build, including the Uralla GLB and shared NSW GLB (HTML line endings normalised): [byte verification](audits/uralla/public.json). The complete disposable desktop/touch travel, collision, loaded granite roles, digging/classification, pan, sieve and save/return checks pass on the public URL: [public gameplay results](audits/uralla/public-game/checks.json).
+
+Main and Claude were clean before integration. Claude has no commits missing from main; only Codex port 5191 was listening. No other checkout's gameplay files were edited directly, no dependencies changed and no user storage was cleared. This final evidence commit changes documentation/results only; the implementation and asset bytes stay fixed.
+
+Touched code: `src/uralla/*`, shared claim/creek/terrain/world/deposit/map/sluice/rendering hooks, and a generic path-distance helper extracted unchanged from Graves Hill. Assets: only `public/models/uralla/*`, with its headless generator branch. Tests: new Uralla logic/asset/game/resilience checks, region entries in the existing control/art suites, and a Uralla route in the existing performance harness. Source references and caveats remain in documentation rather than player screens.

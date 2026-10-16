@@ -1,0 +1,57 @@
+{
+  "publishedHead": "81ec2c9efbf795fc7ee5552ef53b89cd0f185466",
+  "verifiedAt": "2026-10-16T15:01:18.536Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38920322805",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "95e615763f5cb9efc1bcb1c1fff872ab18922e39f1136df3b44208481e9e036c",
+      "localSha256": "3a5051320460e7f7e46822018dc98dae2aa973b56d8e7eaba77cba330116c94c",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "localSha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-STDQIoRe.js",
+      "bytes": 987822,
+      "sha256": "a30ff697e923a407bb3e427ebd5bee0c39cb68786c4d1dfff94a32d54b0696cb",
+      "localSha256": "a30ff697e923a407bb3e427ebd5bee0c39cb68786c4d1dfff94a32d54b0696cb",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-DxmvXj6d.js",
+      "bytes": 332814,
+      "sha256": "db77c9ce0f4e74317fcc323d2e75010e05fff214c2fd6f19cf939404ebf1b22c",
+      "localSha256": "db77c9ce0f4e74317fcc323d2e75010e05fff214c2fd6f19cf939404ebf1b22c",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/uralla/environment.glb",
+      "bytes": 520232,
+      "sha256": "42a6c10bc51276558c48f4fde577e2c8824b10989e601156a98467baaf02d2f8",
+      "localSha256": "42a6c10bc51276558c48f4fde577e2c8824b10989e601156a98467baaf02d2f8",
+      "comparison": "byte-identical"
+    }
+  ]
+}
