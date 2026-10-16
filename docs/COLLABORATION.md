@@ -2,7 +2,7 @@
 
 ## Shovel socket correction (16 October 2026)
 
-Codex branch codex/shovel-socket, base 0c0c12e, owns the user-requested correction to the shaft/head join in src/models/shovel.js. The approved handle, shaft and D-grip geometry are hash-identical; the head/socket is now one connected pressing. Original tool controls, animation, saves and all environments are unchanged. [Correction and checks](SHOVEL-REMODEL.md#socket-correction--user-review-16-october-2026). No other agent was launched or messaged. Publication is pending the final integration check.
+Codex branch codex/shovel-socket, base 0c0c12e, owns the user-requested correction to the shaft/head join in src/models/shovel.js. The approved handle, shaft and D-grip geometry are hash-identical; the head/socket is now one connected pressing. Original tool controls, animation, saves and all environments are unchanged. [Correction and checks](SHOVEL-REMODEL.md#socket-correction--user-review-16-october-2026). No other agent was launched or messaged. Implementation 5b0d125 is published by successful [Pages run 38889890557](https://github.com/Alvaren/fossicking-game/actions/runs/38889890557). Live files match the tested build; published desktop/touch digging, load and save/reload checks pass.
 
 ## Shared shovel and next environment proposal (16 October 2026)
 

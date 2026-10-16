@@ -17,11 +17,13 @@ Construction reference: [Cyclone Digging & Shifting Shovel](https://cyclone.com.
 - [x] Production build and all 123 existing tests pass.
 - [x] High/Low desktop and Medium touch landscape/portrait: select shovel, dig with genuine input, see movement and dirt load, release, save and reload collected parcels. No recorded console/page errors or shader failures.
 - [x] Inspect front, back, side, held and loaded views of the actual runtime model.
-- [ ] Publish main, verify matching deployment/files and run public desktop/touch checks.
+- [x] Publish main, verify matching deployment/files and run public desktop/touch checks.
 
 [Former junction](audits/shovel-socket/before/head.jpg) · [New junction](audits/shovel-socket/after/junction.jpg) · [Profile](audits/shovel-socket/after/profile.jpg) · [Rear](audits/shovel-socket/after/back.jpg) · [In game](audits/shovel-socket/after/high-held.jpg) · [Input/save checks](audits/shovel-socket/after/checks.json) · [Geometry and preservation hashes](audits/shovel-socket/geometry.json).
 
 Budget: 7,136 visible triangles / 7,216 loaded; 314,200 geometry bytes, 131,072 texture bytes before mipmaps. Still 3 draws / 4 loaded, with no extra textures, downloads, rendering passes or per-frame model work. These are geometry/resource counts, not a fresh GPU benchmark. Studio inspection adds neutral fill lighting to reveal both faces; held screenshots retain normal game lighting. Phone checks use emulation. The prior all-region controls and offline checks were not rerun for this model-only correction.
+
+Implementation 5b0d12547f5380d8dfc8af9a6937fe8b7eb1fc8f was fast-forwarded into clean main and pushed. [Pages run 38889890557](https://github.com/Alvaren/fossicking-game/actions/runs/38889890557) succeeded. [Public files](audits/shovel-socket/publication.json) match the tested build; [live High desktop and touch](audits/shovel-socket/public/checks.json) pass actual digging, load visibility and save/reload without recorded errors. [Published junction](audits/shovel-socket/public/junction.jpg), [side](audits/shovel-socket/public/profile.jpg) and [rear](audits/shovel-socket/public/back.jpg) were inspected. These public detail views and the baseline detail views use the same added neutral inspection lights; the earlier local detail captures had less fill. Main and Claude were clean and no other ready commits were pending. Only Codex's 5191 preview was listening. Final evidence commit/deployment are recorded in the shared coordination handoff.
 
 Only src/models/shovel.js changes production code. Supporting changes are this record, docs/COLLABORATION.md, the reusable capture script's optional output/detail views and docs/audits/shovel-socket/. The Golden Triangle proposal and every environment remain unchanged.
 

@@ -1,0 +1,50 @@
+{
+  "publishedHead": "5b0d12547f5380d8dfc8af9a6937fe8b7eb1fc8f",
+  "verifiedAt": "2026-10-16T10:51:41.590Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38889890557",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "7e8fe6804f5fe836bf164bf96d829a64cd7c9e3af13c95f07d5180b01336a2bd",
+      "localSha256": "2d129236d52314e9381ca18f45880f17193db64b15dcd7ca7b6a0d01071941c6",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-CLCK7vTF.js",
+      "bytes": 973694,
+      "sha256": "eaeb059f3493f2055df4fa635bc8e5f9679fc67492cbf1f16d66c4efcc61ab44",
+      "localSha256": "eaeb059f3493f2055df4fa635bc8e5f9679fc67492cbf1f16d66c4efcc61ab44",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-R_XlLHnA.css",
+      "bytes": 32391,
+      "sha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "localSha256": "670470f84a05f2af48bc04f80e145ae7d8bc916fda961c3456b6afeea2b75311",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-DfO-iDvW.js",
+      "bytes": 318906,
+      "sha256": "960af39fb5ec89bcdc71ac6476d5662ab9aba30ed063cd7b6ae762536d1d6600",
+      "localSha256": "960af39fb5ec89bcdc71ac6476d5662ab9aba30ed063cd7b6ae762536d1d6600",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    }
+  ]
+}
