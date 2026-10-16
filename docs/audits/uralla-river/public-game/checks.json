@@ -1,0 +1,12 @@
+[
+  {
+    "phone": false,
+    "checks": "$0 travel, desktop boulder collision, actual dig/classify, real mouse pan / Easy animation, partial pan persistence, actual wet sieve jig/flip, topo, old NSW save, upgraded gear retained",
+    "errors": []
+  },
+  {
+    "phone": true,
+    "checks": "$0 travel, desktop boulder collision, actual dig/classify, real mouse pan / Easy animation, partial pan persistence, actual wet sieve jig/flip, topo, old NSW save, upgraded gear retained",
+    "errors": []
+  }
+]

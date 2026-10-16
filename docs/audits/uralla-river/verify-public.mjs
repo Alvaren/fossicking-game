@@ -10,9 +10,9 @@ const hash=b=>createHash('sha256').update(b).digest('hex'),assets=[];
 for(const path of files) {
   const local=await readFile('dist/'+path),response=await fetch(url+path+'?verify='+head);
   assert.equal(response.status,200,path);
-  const publicBytes=Buffer.from(await response.arrayBuffer()),normalise=b=>path.endsWith('.html')?Buffer.from(b.toString('utf8').replace(/\r\n/g,'\n')):b;
+  const publicBytes=Buffer.from(await response.arrayBuffer()),normalise=b=>path.endsWith('.html')?Buffer.from(b.toString('utf8').replace(/\r+\n/g,'\n')):b;
   assert.deepEqual(normalise(publicBytes),normalise(local),'Live file differs: '+path);
   assets.push({path,bytes:publicBytes.length,sha256:hash(publicBytes),localSha256:hash(local),comparison:path.endsWith('.html')?'CRLF/LF normalised':'byte-identical'});
 }
-await writeFile('docs/audits/uralla-river/public.json',JSON.stringify({publishedHead:head,verifiedAt:new Date().toISOString(),url,pagesRun:'https://github.com/Alvaren/fossicking-game/actions/runs/'+run,assets},null,2)+'\n');
+await writeFile(process.env.URALLA_VERIFY_OUT||'docs/audits/uralla-river/public.json',JSON.stringify({publishedHead:head,verifiedAt:new Date().toISOString(),url,pagesRun:'https://github.com/Alvaren/fossicking-game/actions/runs/'+run,assets},null,2)+'\n');
 console.log(files.length+' deployed files match the tested production build');

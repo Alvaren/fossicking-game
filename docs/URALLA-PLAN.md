@@ -61,4 +61,6 @@ Build: preserve the north-up plan shape at a documented uniform 0.48 horizontal 
 - [x] R03: Place uneven boulder groups at rocky transitions, keep broad pools/bar open, fit paths/reeds/camp to corrected geography.
 - [x] R04: Preserve existing save data and unfinished material; exercise an old Uralla snapshot through correction, reload and travel. Document any necessary repositioning.
 - [x] R05: Build, focused geometry/flow/deposit tests and original-world regression; actual desktop/touch tool checks, pointer lock/wheel, low/high and water/reflections.
-- [ ] R06: Inspect ground-level and overhead screenshots against source shape; record limits and performance, then integrate/push and verify Pages with final hero images.
+- [x] R06: Inspect ground-level and overhead screenshots against source shape; record limits and performance, then integrate/push and verify Pages with final hero images.
+
+Correction delivered: implementation `ee346cf`, first corrected Pages deployment `38931378650`; 140 tests, final game/save/controls/quality checks, visual audit, desktop performance and public desktop/touch gameplay passed. Exact evidence and limits are in the current build record.

@@ -6,7 +6,7 @@ Codex branch `codex/uralla-river-layout`, base `28460f8`, plan commit `91ab59e`.
 
 Ownership: optional `src/rivercourse.js`, `src/uralla/{course,save,locality,scenery,map}.js`, shared Creek/world-space water hooks in terrain/deposits/rendering/bedload/sluice/map/main, affected tests and audit scripts, and these records. Original controllers, tools, recovery systems, assets and dependencies are reused. Existing Uralla cuts remain at their original grid coordinates; player/ute are safely moved to the new camp once and placed sluice contents are retained. Other maps retain their old geometry and saves. Codex uses only its own worktree and port 5191. Main and Claude are clean; Claude has no unmerged commits. No agent was launched or messaged.
 
-140 logic/asset checks, the production build, final browser/gameplay/save/fallback checks and visual inspection pass. The final High/1080p route holds 16.7 ms median/p95 frame intervals, with 5.1 ms median CPU and 5.30 ms median GPU time. Ready for the standing-authorised main push. Use the delivery record for the exact publication outcome.
+140 logic/asset checks, the production build, final browser/gameplay/save/fallback checks and visual inspection pass. The final High/1080p route holds 16.7 ms median/p95 frame intervals, with 5.1 ms median CPU and 5.30 ms median GPU time. Implementation `ee346cf` and benchmark record `227ba39` are on main; Pages run `38931378650` succeeded and seven deployed files match the tested build. Public desktop/touch gameplay checks also pass. Use the delivery record for the exact publication outcome.
 
 ## Initial Uralla build (17 October 2026)
 
