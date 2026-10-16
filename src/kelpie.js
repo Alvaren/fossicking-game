@@ -19,7 +19,7 @@ export class Kelpie {
     const dx=target.x-this.group.position.x,dz=target.z-this.group.position.z,d=Math.hypot(dx,dz),speed=d>.35?Math.min(d,2.8)*dt:0;
     const nx=this.group.position.x+(d?dx/d*speed:0),nz=this.group.position.z+(d?dz/d*speed:0);
     // Companion stays out of deep water and waits safely at camp during mine/ute use.
-    const clear=(x,z)=>this.terrain.getHeight(x,z)>this.terrain.creek.surfaceY(z)-.2&&this.colliders.every(c=>Math.hypot(x-c.x,z-c.z)>c.r+.17);
+    const clear=(x,z)=>this.terrain.getHeight(x,z)>this.terrain.creek.surfaceY(z,x)-.2&&this.colliders.every(c=>Math.hypot(x-c.x,z-c.z)>c.r+.17);
     if(clear(nx,nz)){this.group.position.x=nx;this.group.position.z=nz;}
     else if(speed>0){
       const a=Math.atan2(dx,dz);

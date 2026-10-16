@@ -44,11 +44,12 @@ export function newEnglandBankRoots(root,terrain,world,mask,workingMask) {
     if(!matrix.elements[0]&&!matrix.elements[2])continue;
     const x=matrix.elements[12],z=matrix.elements[14],local=creek.local(x,z,{}),margin=local.d-local.w;
     if(Math.abs(z)>104||margin<.6||margin>3.4||workingMask.blocked(x,z,.2))continue;
-    const h=terrain.getHeight(x,z),wy=creek.surfaceY(z);
+    const h=terrain.getHeight(x,z),wy=creek.surfaceY(z,x);
     if(h-wy<.3||h-wy>2.5||branches.length>=90)continue;
-    const side=Math.sign(x-creek.cx(z));
+    const side=creek.course?Math.sign(local.n):Math.sign(x-creek.cx(z));
     for(let k=0;k<3;k++) {
-      const ez=z+(k-1)*(.55+margin*.3),ex=creek.cx(ez)+side*(creek.halfWidth(ez)+.18)*Math.sqrt(1+creek.dcx(ez)**2);
+      const station=(local.s??z)+(k-1)*(.55+margin*.3);
+      const {x:ex,z:ez}=creek.course?creek.point(station,side*(creek.halfWidth(station)+.18)):{x:creek.cx(station)+side*(creek.halfWidth(station)+.18)*Math.sqrt(1+creek.dcx(station)**2),z:station};
       const start={x,z},end={x:ex,z:ez};
       if(Math.hypot(ex-x,ez-z)<.35)continue;
       const shape=bankRootGeometry(terrain,start,end,k===1?.075:.045,k+x);

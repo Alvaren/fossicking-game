@@ -19,4 +19,4 @@ try{for(const failure of ['', 'missing','corrupt']){
   assert.deepEqual(await snapshot(),world);await page.locator('#play').click();await page.keyboard.press('KeyM');await page.locator('#map').waitFor({state:'visible'});
  }
  assert.deepEqual(errors,[]);report.push({failure:failure||'offline cached reload',unchangedWorld:true,errors});console.log('Uralla resilience:',failure||'offline');await ctx.close();
-}}finally{await browser.close();await writeFile('docs/audits/uralla/resilience.json',JSON.stringify(report,null,2));}
+}}finally{await browser.close();await writeFile(process.env.URALLA_RESILIENCE_OUT||'docs/audits/uralla/resilience.json',JSON.stringify(report,null,2));}

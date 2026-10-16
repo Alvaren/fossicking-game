@@ -1,5 +1,7 @@
 # Uralla / Wooldridge Reserve delivery
 
+The initial delivery below did not reproduce the real river course. The [river correction record](#river-layout-correction--17-october-2026) supersedes its geographic acceptance and screenshots.
+
 17 October 2026. Branch `codex/uralla`, base `dc1fc3d`; research/plan committed first as `369765d`. The [plan and sources](URALLA-PLAN.md) record actual photographs inspected before implementation. No other agent was launched or messaged. Main and Claude were clean at setup; their work is preserved.
 
 ## What is built
@@ -56,3 +58,39 @@ Implementation `81ec2c9` was fast-forwarded into main and published by successfu
 Main and Claude were clean before integration. Claude has no commits missing from main; only Codex port 5191 was listening. No other checkout's gameplay files were edited directly, no dependencies changed and no user storage was cleared. This final evidence commit changes documentation/results only; the implementation and asset bytes stay fixed.
 
 Touched code: `src/uralla/*`, shared claim/creek/terrain/world/deposit/map/sluice/rendering hooks, and a generic path-distance helper extracted unchanged from Graves Hill. Assets: only `public/models/uralla/*`, with its headless generator branch. Tests: new Uralla logic/asset/game/resilience checks, region entries in the existing control/art suites, and a Uralla route in the existing performance harness. Source references and caveats remain in documentation rather than player screens.
+
+
+## River-layout correction — 17 October 2026
+
+Branch `codex/uralla-river-layout`, base `28460f8`; correction plan committed first as `91ab59e`. The earlier photographic art references did not justify the invented sinusoidal river. This pass inspected actual NSW aerial pixels and the connected Rocky River HydroLine features 1128552, 1128580 and 1128599 before laying out the replacement. [Source coordinates, metadata, aerial export URL and transform](audits/uralla-river/source.json) make the footprint reproducible. No imagery was redistributed as a game texture.
+
+The north-up course retains the real hooked bend and returning arm, the long southern pool, sandy inside bar and northwest rocky outlet at a uniform 0.48 horizontal scale. Twenty selected source controls are interpolated through the shared Creek. Terrain, map, current, water rendering, wet surfaces, deposits, floating leaves, mobile bedload and flood-stranded sluices use the same along-river coordinate. Current can travel south on the map while still travelling downstream around the hook. Inside bars rise and retain heavier wash; outside banks deepen. Wider/deeper sections slow the nominal current, shallower constrictions accelerate it, and the same solid boulders produce shelter and wakes. These are the existing gameplay relationships applied to the corrected geometry, not a new recovery system.
+
+The bank path follows the returning reach; a separate footpath connects the southwest camp/access track. Uneven boulder clusters occupy rocky transitions, leaving the pool and sandy bar open. Reeds follow the southern pool. The first audit caught radial ridges caused by extending nearest-channel properties into surrounding land. Even nearest-distance height left creases between the two river arms. Surrounding relief now uses continuous world-space terrain, with a local bank transition; a numerical regression checks that the seams do not return.
+
+### Limits and save handling
+
+The vector source declares 20 m planimetric accuracy. Its connected plan shape is evidence; water depths, widths, seasonal levels, individual boulders, terrace heights and camp facilities are authored interpretations checked against the aerial and ground photographs. The slope/discharge/cross-section calculation is a simplified current model, not measured local hydraulics or a full fluid solver. Game reach names are descriptive labels. The game remains stylised and the user's broader art sign-off remains separate.
+
+Uralla layout version 2 preserves cash, gold, camp upgrades, carried parcels, unfinished pan, sluice loads/concentrate, collected IDs and packed ground cuts/patches. Existing excavations stay at their original absolute grid coordinates; their depths are preserved, but the surrounding river terrain changes. The player and ute return to the relocated camp once. An already placed sluice moves onto the new course with its contents intact. Original positions are archived in the save's `layoutMigration`; subsequent reloads do not relocate the player again. Other destinations' saves and terrain remain unchanged.
+
+### Verification
+
+The production build and all 140 logic/asset tests pass without dependency or asset changes. Focused tests check source-coordinate fidelity, the returning downstream direction, inside/outside bank and deposit behavior, pool/constriction speed, common boulder/wake records, path clearance, old-save migration, continuous terraces and downstream sluice stranding.
+
+Actual original desktop/touch handlers exercise map travel, boulder collision, digging/classification, mouse panning / visible Easy technique, partly worked pan reload, wet sieve agitation/flip and independent camp/bucket state. Real desktop pointer lock, look, wheel/number keys, menu isolation and pause/resume pass. Three seeds exercise art loading, quality changes, real kneeling trowel excavation and save/reload. Cached offline reload plus missing/corrupt local GLB fallback pass. Evidence is in [game checks](audits/uralla-river/game/checks.json), [quality/ground checks](audits/uralla-river/regression.json), [controls log](audits/uralla-river/browser-checks.txt), and [resilience results](audits/uralla-river/resilience.json).
+
+A disposable save made by the pre-correction public build preserves worked ground, partial recovery, camp and funds through migration. New England and Golden Triangle terrain, geology, source records, rocks, colliders, mobile bedload and finds match the pre-correction public build exactly. [Comparison and migration results](audits/uralla-river/regression-migration.json). Browser fixtures use isolated storage; the user's saves were not cleared. Test relocation skips walking only; it does not replace the shared tool input.
+
+### Corrected screenshots and performance
+
+[Capture report](audits/uralla-river/final/checks.json). These are actual production-build captures using the existing photo mode's Natural filter without HUD/grid/stamp. The boulder-water camera is lifted 2.4 metres. The overhead audit alone moves beyond the normal photo range to inspect plan geometry; it is not a player viewpoint. The topographic map is captured through its normal UI.
+
+![Corrected Boulder Reach](audits/uralla-river/final/hero-boulder-water.jpg)
+![Southern pool](audits/uralla-river/final/hero-pool.jpg)
+![Hooked bend and inside bar](audits/uralla-river/final/hero-shallows.jpg)
+![Corrected topographic map](audits/uralla-river/final/map.jpg)
+
+Final performance sample: one 120-second eight-view route after 20 seconds of warm-up, with a built camp and worked ground. High, 1920×1080 viewport, 1.5 render scale, Windows Chromium / RTX 3090. Frame median/p95/p99: 16.7/16.7/16.8 ms; CPU median/p95: 5.1/10.1 ms; GPU timer median/p95: 5.30/8.19 ms. No measured frames exceeded 50 ms and no JavaScript/WebGL errors were reported. [Measurements and hardware](audits/uralla-river/performance/run-1.json). This is a short desktop sample, not a physical-phone or thermal-soak measurement. Low/touch and rain views are recorded separately in [condition captures](audits/uralla-river/conditions/checks.json).
+
+The corrected implementation is ready for the standing-authorised main integration. Publication evidence follows once Pages and public gameplay are verified.

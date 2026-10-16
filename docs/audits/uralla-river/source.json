@@ -1,0 +1,370 @@
+{
+  "source": "https://portal.spatial.nsw.gov.au/server/rest/services/NSW_Water_Theme/MapServer/5",
+  "features": [
+    {
+      "attributes": {
+        "objectid": 1128552,
+        "topoid": 502579887,
+        "createdate": 912431840000,
+        "objectmoddate": 1262945666000,
+        "featuremoddate": 1262945666000,
+        "classsubtype": 1,
+        "featurereliabilitydate": 347155200000,
+        "attributereliabilitydate": 347155200000,
+        "capturesourcecode": 1,
+        "capturemethodcode": 8,
+        "planimetricaccuracy": 20,
+        "verticalaccuracy": null,
+        "hydronameoid": 8582,
+        "hydroname": "ROCKY",
+        "hydronametype": "RIVER",
+        "perenniality": 1,
+        "hierarchy": 0,
+        "hydrotype": 1,
+        "namedwatercourseoid": 14139,
+        "relevance": 6,
+        "startdate": 1262946094000,
+        "enddate": 32503680000000,
+        "lastupdate": 1284822000000,
+        "msoid": 1359692,
+        "centroidid": null,
+        "shapeuuid": "d10e78b9-3f0c-3a69-9a2c-69200764ab58",
+        "changetype": "M",
+        "processstate": null,
+        "urbanity": "S",
+        "shape_Length": 238.85396629706267
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              151.47289846495482,
+              -30.630542572165687
+            ],
+            [
+              151.47274764590347,
+              -30.630390758437045
+            ],
+            [
+              151.4726470696259,
+              -30.630265029323983
+            ],
+            [
+              151.4726135444995,
+              -30.630135114376692
+            ],
+            [
+              151.47262192578114,
+              -30.62998005581871
+            ],
+            [
+              151.47271831590945,
+              -30.62980822489993
+            ],
+            [
+              151.47288593345658,
+              -30.629623827321673
+            ],
+            [
+              151.47302424706086,
+              -30.629468767944456
+            ],
+            [
+              151.47309129821204,
+              -30.629351429914184
+            ],
+            [
+              151.4730990605544,
+              -30.629284164105627
+            ],
+            [
+              151.47311644205683,
+              -30.62913350633439
+            ],
+            [
+              151.4731354369335,
+              -30.6288985695949
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "attributes": {
+        "objectid": 1128580,
+        "topoid": 502579922,
+        "createdate": 912431840000,
+        "objectmoddate": null,
+        "featuremoddate": null,
+        "classsubtype": 1,
+        "featurereliabilitydate": 347155200000,
+        "attributereliabilitydate": 347155200000,
+        "capturesourcecode": 1,
+        "capturemethodcode": 8,
+        "planimetricaccuracy": 20,
+        "verticalaccuracy": null,
+        "hydronameoid": 8582,
+        "hydroname": "ROCKY",
+        "hydronametype": "RIVER",
+        "perenniality": 1,
+        "hierarchy": 0,
+        "hydrotype": 1,
+        "namedwatercourseoid": 14139,
+        "relevance": 6,
+        "startdate": 1102356361000,
+        "enddate": 32503680000000,
+        "lastupdate": 1284822000000,
+        "msoid": 1359727,
+        "centroidid": null,
+        "shapeuuid": "d356ab4d-be55-3a18-b8a9-87fa0f15ba61",
+        "changetype": "I",
+        "processstate": null,
+        "urbanity": "S",
+        "shape_Length": 90.13387607028315
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              151.4731354369335,
+              -30.6288985695949
+            ],
+            [
+              151.47308943330953,
+              -30.628761573015513
+            ],
+            [
+              151.47308943330953,
+              -30.628549574620116
+            ],
+            [
+              151.4730704384328,
+              -30.628434576091088
+            ],
+            [
+              151.4729504378839,
+              -30.628233576660275
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "attributes": {
+        "objectid": 1128599,
+        "topoid": 502579941,
+        "createdate": 912431840000,
+        "objectmoddate": 1262945666000,
+        "featuremoddate": 1262945666000,
+        "classsubtype": 1,
+        "featurereliabilitydate": 347155200000,
+        "attributereliabilitydate": 347155200000,
+        "capturesourcecode": 1,
+        "capturemethodcode": 8,
+        "planimetricaccuracy": 20,
+        "verticalaccuracy": null,
+        "hydronameoid": 8582,
+        "hydroname": "ROCKY",
+        "hydronametype": "RIVER",
+        "perenniality": 1,
+        "hierarchy": 0,
+        "hydrotype": 1,
+        "namedwatercourseoid": 14139,
+        "relevance": 6,
+        "startdate": 1262946094000,
+        "enddate": 32503680000000,
+        "lastupdate": 1284822000000,
+        "msoid": 1359746,
+        "centroidid": null,
+        "shapeuuid": "6a882153-04df-3163-8efa-b37ff9cfb6a1",
+        "changetype": "M",
+        "processstate": null,
+        "urbanity": "S",
+        "shape_Length": 401.74928699339677
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              151.4729504378839,
+              -30.628233576660275
+            ],
+            [
+              151.47282444018214,
+              -30.62817657464592
+            ],
+            [
+              151.47280218262432,
+              -30.628173392234736
+            ],
+            [
+              151.47273047999667,
+              -30.628139831201732
+            ],
+            [
+              151.4725870379104,
+              -30.62807661735625
+            ],
+            [
+              151.47246790693075,
+              -30.628088772678968
+            ],
+            [
+              151.47233662084685,
+              -30.628149556999663
+            ],
+            [
+              151.4721737356246,
+              -30.628246807195428
+            ],
+            [
+              151.472163696053,
+              -30.628254292078473
+            ],
+            [
+              151.4720983669723,
+              -30.62831001242682
+            ],
+            [
+              151.47202299742162,
+              -30.62838295189436
+            ],
+            [
+              151.47192088951655,
+              -30.62845345406781
+            ],
+            [
+              151.47182850587444,
+              -30.62848263136413
+            ],
+            [
+              151.47170694585014,
+              -30.62848991911642
+            ],
+            [
+              151.4715999789577,
+              -30.62848749038105
+            ],
+            [
+              151.47151245430297,
+              -30.62845345406781
+            ],
+            [
+              151.47144924075477,
+              -30.62840239493751
+            ],
+            [
+              151.47142007155912,
+              -30.628307582913973
+            ],
+            [
+              151.47142184663014,
+              -30.62825965277871
+            ],
+            [
+              151.47142250060367,
+              -30.62824193966353
+            ],
+            [
+              151.47136658317214,
+              -30.628166570573267
+            ],
+            [
+              151.47136386756506,
+              -30.628163549717264
+            ],
+            [
+              151.47128148846025,
+              -30.628071758318693
+            ],
+            [
+              151.47126916267626,
+              -30.628048335837256
+            ],
+            [
+              151.47125429196504,
+              -30.628020090640756
+            ],
+            [
+              151.471230438101,
+              -30.627894281148027
+            ],
+            [
+              151.4712427818513,
+              -30.6278609526898
+            ],
+            [
+              151.47127905941574,
+              -30.62776299404189
+            ],
+            [
+              151.47128878547534,
+              -30.627648730471293
+            ],
+            [
+              151.47128635553244,
+              -30.62755148044753
+            ],
+            [
+              151.47132767983217,
+              -30.62745666836328
+            ],
+            [
+              151.47128148846025,
+              -30.627359418146497
+            ],
+            [
+              151.4711745215678,
+              -30.62727189371813
+            ],
+            [
+              151.47108006820724,
+              -30.6271727255008
+            ],
+            [
+              151.47107945825115,
+              -30.62717059201866
+            ],
+            [
+              151.47092046453074,
+              -30.62697058790862
+            ]
+          ]
+        ]
+      }
+    }
+  ],
+  "selectedVertices": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    11,
+    13,
+    15,
+    19,
+    21,
+    24,
+    27,
+    30,
+    32,
+    35,
+    39,
+    42,
+    45,
+    47,
+    50
+  ],
+  "transform": {
+    "origin": [
+      151.47205,
+      -30.6288
+    ],
+    "horizontalScale": 0.48,
+    "north": "-z",
+    "units": "game metres"
+  },
+  "imageryExport": "https://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Imagery/MapServer/export?f=image&bbox=16861503.739311434%2C-3585009.6933708307%2C16862123.739311434%2C-3584389.6933708307&bboxSR=3857&imageSR=3857&size=1800%2C1800&format=jpg",
+  "limits": "HydroLine declares 20 m planimetric accuracy. Bathymetry and individual rocks are authored, not surveyed."
+}

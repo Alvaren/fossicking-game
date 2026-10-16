@@ -246,7 +246,7 @@ export class Sluice {
     if (slope > 0.35) return { ...base, eff: 0.1, ok: 'bad', why: 'too steep to stand it up' };
     const edge = this.waterEdge(x, z);
     if (!edge) return { ...base, eff: 0.1, ok: 'bad', why: `too far from the water (the intake hose is ${PUMP_REACH} m)` };
-    const lift = this.terrain.getHeight(x, z) + 1 - this.creek.surfaceY(edge.z);
+    const lift = this.terrain.getHeight(x, z) + 1 - this.creek.surfaceY(edge.z,edge.x);
     if (lift > PUMP_LIFT) return { ...base, eff: 0.1, ok: 'bad', why: 'too high above the water for the pump' };
     return { ...base, edge, lift, eff: 0.86, ok: edge.d < PUMP_REACH * 0.7 ? 'good' : 'fair', why: `${edge.d.toFixed(1)} m to the water, ${Math.max(0, lift).toFixed(1)} m lift` };
   }
@@ -387,12 +387,13 @@ export class Sluice {
     this.cons = null;
     this.loads = 0;
     const C = this.creek;
-    let z = this.spot.z - 25 - rand() * 30;
-    if (z < -100) z = this.spot.z + 15;
-    const L = C.local(this.spot.x, z, {});
-    const d = C.dcx(z);
+    let z = C.station(this.spot.x,this.spot.z) - 25 - rand() * 30;
+    if(C.course)z=Math.max(C.course.min+5,z);
+    else if(z < -100)z=this.spot.z+15;
+    const L=C.local(this.spot.x,C.course?this.spot.z:z,{});
     const side = L.nIn >= 0 ? 1 : -1;
-    const x = C.cx(z) + (C.curvature(z) >= 0 ? 1 : -1) * side * (L.w + 1.2) * Math.sqrt(1 + d * d);
+    const p=C.point(z,(C.curvature(z)>=0?1:-1)*side*((C.course?C.halfWidth(z):L.w)+1.2)),x=p.x;
+    if(C.course)z=p.z;
     this.placed = false;
     this.stranded = { x, z };
     this.model.visible = true;

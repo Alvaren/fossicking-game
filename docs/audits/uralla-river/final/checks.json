@@ -1,0 +1,224 @@
+[
+  {
+    "mode": "high",
+    "site": "boulders",
+    "pose": {
+      "x": -39.49980604892541,
+      "z": -29.86781266098031,
+      "tx": -36.57888365068013,
+      "tz": -41.67520916909051,
+      "pitch": -0.16
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 5369,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 169,
+      "textures": 16
+    }
+  },
+  {
+    "mode": "high",
+    "site": "boulder-water",
+    "pose": {
+      "x": -31.631671109931148,
+      "z": -34.237303773430106,
+      "tx": -36.57888365068013,
+      "tz": -41.67520916909051,
+      "pitch": -0.08
+    },
+    "photoLift": 2.4,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 5585,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 170,
+      "textures": 17
+    }
+  },
+  {
+    "mode": "high",
+    "site": "pool",
+    "pose": {
+      "x": 27.142623936191733,
+      "z": 46.74856360505103,
+      "tx": 38.43489948960123,
+      "tz": 44.01981827482029,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 7210,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 173,
+      "textures": 17
+    }
+  },
+  {
+    "mode": "high",
+    "site": "shallows",
+    "pose": {
+      "x": 14.13096094333122,
+      "z": -25.739597259126175,
+      "tx": 2.2305691922494635,
+      "tz": -26.18700145075937,
+      "pitch": -0.24
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 7835,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 181,
+      "textures": 17
+    }
+  },
+  {
+    "mode": "high",
+    "site": "camp",
+    "pose": {
+      "x": -45,
+      "z": 87,
+      "tx": -29,
+      "tz": 70,
+      "pitch": -0.08
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 2411,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 193,
+      "textures": 20
+    }
+  },
+  {
+    "mode": "high",
+    "site": "overhead",
+    "pose": {
+      "x": 0,
+      "z": 4,
+      "tx": 0,
+      "tz": -1,
+      "pitch": -1.35
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 9091,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 194,
+      "textures": 20
+    }
+  }
+]

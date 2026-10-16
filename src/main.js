@@ -1,3 +1,4 @@
+import { migrateUrallaSave } from './uralla/save.js';
 import { createPointerLock, bindToolWheel, TOOL_ORDER as TOOLS, toolForKey } from './controls.js';
 import { readClaim, saveClaim, claimProfile } from './claimregions.js';
 import { TRAVEL_FEE } from './regions.js';
@@ -91,6 +92,7 @@ function writeSave() {
   const data = {
     version: 3,
     activeRegion: region,
+    ...(region==='uralla'?{layoutVersion:2,layoutMigration:saved.layoutMigration}:{}),
     savedAt: Date.now(),
     seed: state.seed, cash: state.cash, gold: state.gold, up: state.up, gems: state.gems, nuggets: state.nuggets, log: state.log,
     collected: targets.list.filter((t) => t.collected && t.id < 100000).map((t) => t.id),
@@ -163,7 +165,7 @@ function restoreWorld() {
 }
 
 const existingSave = readSave();
-const saved = readClaim(existingSave || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 });
+const saved = migrateUrallaSave(readClaim(existingSave || { seed: Math.floor(Math.random() * 1e9), cash: 0, gold: 0 }));
 const region = saved.activeRegion || 'new-england';
 const profile = claimProfile(region);
 setDifficulty(saved.difficulty || 'easy'); // before the claim is built: it sets the grades and the detector
@@ -289,7 +291,7 @@ const finds = new SurfaceFinds(scene, terrain, deposits, state.seed, new Set(sav
 const environmentDetail = dressEnvironment(scene, {
   seed: state.seed, height: (x,z) => terrain.getHeight(x,z),
   bank: (x,z) => { if (region === 'coober-pedy') return 30; const l = creek.local(x,z,{}); return l.d-l.w; },
-  waterY: z => creek.surfaceY(z),
+  waterY: (z,x) => creek.surfaceY(z,x),
   anchors: scene.children.filter(o => o.isInstancedMesh && (o.userData.tree || ['Granite tors','Geological scenery rocks'].includes(o.name))),
   blocked: (x,z) => terrain.dugoutAt(x,z) || Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<15 || !!terrain.overlayAt(x,z)
     || field.sites.some(s => Math.hypot(x-s.x,z-s.z)<3)
@@ -345,7 +347,7 @@ const landscape = buildLandscape(scene, {
     ||field.sites.some(s=>Math.hypot(x-s.x,z-s.z)<5)||finds.items.some(s=>s.id<100000&&Math.hypot(x-s.x,z-s.z)<2)
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
-const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
+const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:(z,x)=>creek.surfaceY(z,x),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
 const environmentBuilder = region === 'uralla' ? buildUrallaEnvironment : region === 'graves-hill' ? buildGravesHillEnvironment : region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
 const regionalEnvironment = environmentBuilder ? environmentBuilder(scene, {
   seed:state.seed,terrain,world,landscape,field,finds,targets,boulders,settings,
@@ -2173,7 +2175,7 @@ function updateTools(dt, motion) {
 
   // Creek noise: louder near the water, loudest beside a riffle.
   const L = creek.local(player.pos.x, player.pos.z, {});
-  const near2 = creek.dry ? 0 : smoothstep(L.w + 14, L.w, L.d) * (0.45 + 0.8 * creek.riffle(player.pos.z));
+  const near2 = creek.dry ? 0 : smoothstep(L.w + 14, L.w, L.d) * (0.45 + 0.8 * creek.riffle(L.s));
   sound.setAmbience(dt, playing ? Math.min(1.6, near2 * (1 + weather.flood * 1.5)) : 0, panning || sieving);
 }
 
@@ -2311,7 +2313,9 @@ function placeName() {
     const d = Math.hypot(p.x - src.x, p.z - src.z);
     if (d < bd && state.discovered[key] && PLACE_NAMES[key]) { bd = d; best = PLACE_NAMES[key].label; }
   }
-  return best || (region === 'coober-pedy' ? profile.title : Math.abs(p.x - creek.cx(p.z)) < creek.halfWidth(p.z) + 1.5 ? (creek.dry ? 'Dry wash' : 'The creek') : creek.dry ? profile.title : 'The claim');
+  const local=creek.course?creek.local(p.x,p.z,{}):null;
+  const atCreek=local?local.d<local.w+1.5:Math.abs(p.x-creek.cx(p.z))<creek.halfWidth(p.z)+1.5;
+  return best || (region === 'coober-pedy' ? profile.title : atCreek ? (creek.dry ? 'Dry wash' : 'The creek') : creek.dry ? profile.title : 'The claim');
 }
 
 const photo = new PhotoMode({

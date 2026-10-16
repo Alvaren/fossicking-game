@@ -1,6 +1,14 @@
 # Codex and Claude collaboration
 
-## Current Uralla build (17 October 2026)
+## Current Uralla river correction (17 October 2026)
+
+Codex branch `codex/uralla-river-layout`, base `28460f8`, plan commit `91ab59e`. The first Uralla build used an invented sinusoid; geographic acceptance was reopened. NSW hydrography and inspected aerial imagery now establish the north-up hooked course at uniform 0.48 scale. [Plan](URALLA-PLAN.md#river-layout-correction--17-october-2026) and [current delivery record](URALLA-BUILD.md#river-layout-correction--17-october-2026) contain reproducible source coordinates, implementation, save handling, checks, screenshots and limits.
+
+Ownership: optional `src/rivercourse.js`, `src/uralla/{course,save,locality,scenery,map}.js`, shared Creek/world-space water hooks in terrain/deposits/rendering/bedload/sluice/map/main, affected tests and audit scripts, and these records. Original controllers, tools, recovery systems, assets and dependencies are reused. Existing Uralla cuts remain at their original grid coordinates; player/ute are safely moved to the new camp once and placed sluice contents are retained. Other maps retain their old geometry and saves. Codex uses only its own worktree and port 5191. Main and Claude are clean; Claude has no unmerged commits. No agent was launched or messaged.
+
+140 logic/asset checks, the production build, final browser/gameplay/save/fallback checks and visual inspection pass. The final High/1080p route holds 16.7 ms median/p95 frame intervals, with 5.1 ms median CPU and 5.30 ms median GPU time. Ready for the standing-authorised main push. Use the delivery record for the exact publication outcome.
+
+## Initial Uralla build (17 October 2026)
 
 Codex branch `codex/uralla`, base `dc1fc3d`, builds the requested Wooldridge Reserve destination from inspected official/visitor photographs. The [source-led plan](URALLA-PLAN.md) was committed before implementation; [delivery and evidence](URALLA-BUILD.md) track the separate save/travel profile, large granite reaches, reed pool and reused original controls/rendering. Only Uralla receives new terrain and local rock assets. Main and Claude were clean at setup and pre-integration inspection; Claude's committed work is already in main. No other agent was launched or messaged. Local build, 132 tests, 11 local-kit mesh checks, shared controls, actual desktop/touch panning/sieving, save/travel, offline/fallback and final visual checks pass. The final High/1080p RTX 3090 sample has 16.7 ms median/p95 frame intervals. Implementation `81ec2c9` is integrated into main and published by successful [Pages run 38920322805](https://github.com/Alvaren/fossicking-game/actions/runs/38920322805). Live file comparison and the full public desktop/touch gameplay checks pass. The delivery record retains limitations and final hero screenshots.
 

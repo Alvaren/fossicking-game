@@ -21,7 +21,7 @@ try{for(const phone of [false,true]){
   async function map(){if(phone)await tap('#touch [data-act="map"]');else await page.keyboard.press('KeyM');await page.locator('#map').waitFor({state:'visible'});}
   async function travel(id){await map();await tap('#map-travel');await tap('.region-location-list [data-location="'+id+'"]');assert.match(await page.locator('#region-fee').textContent(),/\$0/);await tap('#region-depart');await page.waitForFunction(id=>window.fossick?.region===id,id);}
   const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('fossicking-save-v2')));
-  const place=()=>page.evaluate(()=>{const f=fossick,c=f.creek,z=4,x=c.cx(z)-c.halfWidth(z)*.85;f.player.pos.set(x,f.terrain.getHeight(x,z+1.3),z+1.3);f.player.vel.set(0,0,0);f.player.yaw=0;f.player.pitch=-.85;});
+  const place=()=>page.evaluate(()=>{const f=fossick,c=f.creek,p=f.terrain.sources.sandyShallows,l=c.local(p.x,p.z,{}),eye=c.point(l.s+1.5,l.n);f.player.pos.set(eye.x,f.terrain.getHeight(eye.x,eye.z),eye.z);f.player.vel.set(0,0,0);f.player.yaw=Math.atan2(-(p.x-eye.x),-(p.z-eye.z));f.player.pitch=-.85;});
   try{
     await page.goto(base+'?test'+(phone?'&touch':''),{waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick);await tap('#play');
     await travel('uralla');await page.evaluate(()=>fossick.regionalEnvironment.ready);assert.equal(await page.evaluate(()=>fossick.regionalEnvironment.stats.status),'ready');await tap('#play');
@@ -38,7 +38,7 @@ try{for(const phone of [false,true]){
     assert.equal(await page.evaluate(()=>fossick.state.up.sluice),2);assert.equal(await page.evaluate(()=>fossick.targets.list.some(t=>t.kind==='gold')),false);
     await select('shovel','Digit2');await place();await page.waitForTimeout(400);await use(true);await page.waitForFunction(()=>fossick.state.bucket.length>=3);await use(false);
     assert.ok(await page.evaluate(()=>fossick.state.bucket.every(s=>s.classified)&&fossick.state.bucket.some(s=>s.gold>0)));
-    await page.evaluate(()=>{const f=fossick,z=4,x=f.creek.cx(z);f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);});await select('pan','Digit3');await page.waitForTimeout(400);await use(true);await page.waitForTimeout(150);await use(false);await page.locator('#panning').waitFor({state:'visible'});await tap('#pan-load');
+    await page.evaluate(()=>{const f=fossick,{x,z}=f.terrain.sources.sandyShallows;f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);});await select('pan','Digit3');await page.waitForTimeout(400);await use(true);await page.waitForTimeout(150);await use(false);await page.locator('#panning').waitFor({state:'visible'});await tap('#pan-load');
     if(phone){await page.waitForFunction(()=>fossick.state.panSession.time>2);assert.ok(await page.evaluate(()=>fossick.state.panSession.time>2));await tap('#pan-auto');}
     else {
       const box=await page.locator('#pan-canvas').boundingBox();
@@ -52,7 +52,7 @@ try{for(const phone of [false,true]){
     const before=await stored();assert.ok(before.claims.uralla.digs.idx.length>0);
     await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossick?.region==='uralla');
     assert.deepEqual(await page.evaluate(()=>fossick.state.panSession),partial);await tap('#play');
-    await page.evaluate(()=>{const f=fossick,z=4,x=f.creek.cx(z);f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);});await select('sieve','Digit4');await page.locator('#jig').waitFor({state:'visible'});await use(true);await page.waitForTimeout(700);await use(false);
+    await page.evaluate(()=>{const f=fossick,{x,z}=f.terrain.sources.sandyShallows;f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);});await select('sieve','Digit4');await page.locator('#jig').waitFor({state:'visible'});await use(true);await page.waitForTimeout(700);await use(false);
     assert.ok(await page.evaluate(()=>fossick.jig.I>0),'Actual Use agitates the original wet sieve');
     // Finish the existing sample after testing input, to exercise original collection.
     await page.evaluate(()=>{fossick.jig.strat=1;});const count=await page.evaluate(()=>fossick.state.bucket.length);

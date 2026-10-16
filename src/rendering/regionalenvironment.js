@@ -118,7 +118,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
       rockAnchors.push({x:pos.x,y:pos.y,z:pos.z,radius,height:scale.y,family,bearing,mass});
       // Keep every solid model paired with its original collider. Connecting
       // surfaces can withdraw near a dig; that must not reveal invisible rock.
-      groups.get(key).entries.push({matrix:transform,water:c.waterY(pos.z)});
+      groups.get(key).entries.push({matrix:transform,water:c.waterY(pos.z,pos.x)});
     }
     for(const {name,type,entries} of groups.values()) {
       if(!entries.length)continue;
@@ -153,7 +153,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
         for(let i=0;i<colours.count;i++) {colours.setXYZ(i,color.r,color.g,color.b);kind.setX(i,ROCK_ID.quartz);}
       }
       const material=stone ? (recipe.rockSurface||rockMaterial)('slate',{mixed:true,authored:true}) : wood ? bark.material : plants.material;
-      if(stone) { const setKind=rockKinds(g,batch.entries.length);batch.entries.forEach((e,i)=>setKind(i,'slate',c.waterY(e.z))); }
+      if(stone) { const setKind=rockKinds(g,batch.entries.length);batch.entries.forEach((e,i)=>setKind(i,'slate',c.waterY(e.z,e.x))); }
       batch.mesh=new THREE.InstancedMesh(g,material,batch.entries.length);
       batch.mesh.name=`${prefix} scenery ${batch.name}`;
       batch.mesh.receiveShadow=true;batch.mesh.castShadow=stone||wood||batch.name.startsWith('shrub');
@@ -246,7 +246,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
         }
         if(changed||last[n]!==e) {
           mesh.setMatrixAt(n,e.transform);
-          if(stone)mesh.geometry.attributes.aRockWater.setX(n,c.waterY(e.z));
+          if(stone)mesh.geometry.attributes.aRockWater.setX(n,c.waterY(e.z,e.x));
           dirty=true;
         }
         last[n++]=e;

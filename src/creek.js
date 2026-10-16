@@ -1,8 +1,10 @@
+import { RiverCourse } from './rivercourse.js';
 import { smoothstep } from './noise.js';
 
 // The creek: plan shape, long profile (pools and riffles), cross-section and
-// a velocity field. Water flows toward -z. Everything here is analytic so the
-// terrain, the water surface, the deposits and the drifting leaves all agree.
+// a velocity field. Stations increase upstream (z on the original analytic
+// creek). Optional mapped courses share their coordinates across terrain,
+// water, deposits and drifting leaves, including returning river bends.
 
 const TAU = Math.PI * 2;
 
@@ -34,22 +36,34 @@ export class Creek {
         r: 0.35 + r() * 0.5,
       });
     }
+    if(profile.course)this.course=new RiverCourse(profile.course);
+  }
+
+  // World-space lookup is explicit; station methods retain the original API.
+  station(x,z) { return this.course ? this.course.local(x,z,{}).s : z; }
+  point(s,n=0) {
+    if(this.course)return this.course.at(s,n);
+    return {x:this.cx(s)+n*Math.sqrt(1+this.dcx(s)**2),z:s};
   }
 
   // ---------- plan shape ----------
   cx(z) {
+    if(this.course)return this.course.at(z).x;
     const p = this.phase;
     return (this.profile.offset || 0) + (26 * Math.sin(z * 0.013 + p) + 9 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   dcx(z) {
+    if(this.course)return this.course.at(z).ux;
     const p = this.phase;
     return (26 * 0.013 * Math.cos(z * 0.013 + p) + 9 * 0.034 * Math.cos(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   ddcx(z) {
+    if(this.course){const p=this.course.at(z);return p.k*p.uz;}
     const p = this.phase;
     return (-26 * 0.013 * 0.013 * Math.sin(z * 0.013 + p) - 9 * 0.034 * 0.034 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   curvature(z) {
+    if(this.course)return this.course.at(z).k;
     const d = this.dcx(z);
     return this.ddcx(z) / Math.pow(1 + d * d, 1.5);
   }
@@ -60,9 +74,11 @@ export class Creek {
 
   // ---------- long profile ----------
   slope(z) {
+    if(this.course)return this.G;
     return this.G * (1 + 0.65 * Math.sin(TAU * z / this.lam1 + this.ph1) + 0.3 * Math.sin(TAU * z / this.lam2 + this.ph2));
   }
-  waterY(z) {
+  waterY(z,x) {
+    if(this.course)return this.G*(x===undefined?z:this.station(x,z));
     const { G, lam1, lam2, ph1, ph2 } = this;
     return G * (z - 0.65 * lam1 / TAU * Math.cos(TAU * z / lam1 + ph1) - 0.3 * lam2 / TAU * Math.cos(TAU * z / lam2 + ph2));
   }
@@ -70,15 +86,21 @@ export class Creek {
   // Keep the nominal drainage profile for terrain/deposition, while active
   // water and wet-material shading stay below the entire diggable dry bed.
   get waterOffset() { return this.dry ? -100 : this.level; }
-  surfaceY(z) { return this.waterY(z) + this.waterOffset; }
+  surfaceY(z,x) { return this.waterY(z,x) + this.waterOffset; }
   // 0 = pool (deep, flat, slow), 1 = riffle (steep, shallow, fast).
   riffle(z) {
+    if(this.course)return smoothstep(1.0,.35,this.depth(z));
     return smoothstep(1.15, 1.7, this.slope(z) / this.G);
   }
-  halfWidth(z) { return (2.7 + 1.3 * this.riffle(z)) * (this.profile.width ?? 1) + this.poolExtra(z,'width'); }
+  halfWidth(z) { if(this.course)return this.course.at(z).width; return (2.7 + 1.3 * this.riffle(z)) * (this.profile.width ?? 1) + this.poolExtra(z,'width'); }
   poolExtra(z,key) { return (this.profile.pools||[]).reduce((sum,p)=>sum+(p[key]||0)*Math.exp(-(((z-p.z)/p.length)**2)),0); }
-  depth(z) { return (0.95 - 0.6 * this.riffle(z)) * (this.profile.depth ?? 1) + this.poolExtra(z,'depth'); }
-  baseSpeed(z) { return 0.22 + 1.05 * this.riffle(z); }
+  depth(z) { if(this.course)return this.course.at(z).depth; return (0.95 - 0.6 * this.riffle(z)) * (this.profile.depth ?? 1) + this.poolExtra(z,'depth'); }
+  baseSpeed(z) {
+    // Approximate low-flow discharge / parabolic cross-section. Enlarging a
+    // pool actually slows its flow; a narrow shallow run accelerates it.
+    if(this.course)return Math.min(1.6,(this.profile.discharge??1.8)/(4/3*this.halfWidth(z)*this.depth(z)));
+    return 0.22 + 1.05 * this.riffle(z);
+  }
   // Where the current slows going downstream (riffle running into a pool).
   decel(z) {
     return Math.min(1, Math.max(0, (this.baseSpeed(z + 4) - this.baseSpeed(z)) / 0.45));
@@ -88,6 +110,12 @@ export class Creek {
   // n: signed distance from the centreline (+x side positive).
   // nIn: same, but positive toward the inside of the bend.
   local(x, z, o = this.tmp) {
+    if(this.course) {
+      this.course.local(x,z,o);o.nIn=o.k>=0?o.n:-o.n;
+      o.w=o.width;o.a=Math.min(1,Math.abs(o.k)*70);o.tx=-o.ux;o.tz=-o.uz;
+      return o;
+    }
+    o.s=z;
     const d = this.dcx(z);
     const inv = 1 / Math.sqrt(1 + d * d);
     const n = (x - this.cx(z)) * inv;
@@ -120,13 +148,13 @@ export class Creek {
     if (this.dry) return out;
     const lv = this.level;
     if (q > 1.6 + lv * 5 || q < -1.1 - lv) return out;
-    const bed = this.bedRel(q, L.a, this.depth(z), L.w);
+    const bed = this.bedRel(q, L.a, this.depth(L.s), L.w);
     if (bed > lv - 0.03) return out; // dry bar
     const sh = 0.3 * L.a;
     const t = (q + sh) / (1 + sh);
-    let u = this.baseSpeed(z) * (0.2 + 0.8 * Math.max(0, 1 - t * t));
+    let u = this.baseSpeed(L.s) * (0.2 + 0.8 * Math.max(0, 1 - t * t));
     // In flood the whole channel runs hard, bars included.
-    if (lv > 0) u = Math.max(u, this.baseSpeed(z) * 0.5) * (1 + 1.6 * lv) * Math.min(1, (lv - bed) / 0.3 + 0.3);
+    if (lv > 0) u = Math.max(u, this.baseSpeed(L.s) * 0.5) * (1 + 1.6 * lv) * Math.min(1, (lv - bed) / 0.3 + 0.3);
     let dx = L.tx, dz = L.tz;
     const px = -L.tz, pz = L.tx;
     for (const b of this.boulders) {

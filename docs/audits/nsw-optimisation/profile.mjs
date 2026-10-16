@@ -81,6 +81,11 @@ try{for(let run=1;run<=runs;run++){
       if(site==='track'){x=-51;z=58;tx=-15;tz=43;pitch=-.1;}
       if(site==='clifford'||site==='millionaires'){const p=f.terrain.workings.find(p=>site==='clifford'?p.z>45:p.z<-25);x=p.x+3;z=p.z+4;tx=p.x;tz=p.z;pitch=-.4;}
       if(site==='ruby'){x=-48;z=-18;tx=-60;tz=-26;pitch=-.22;}
+      if(f.creek.course&&['creek','bank','downstream'].includes(site)) {
+        const c=f.creek,s=site==='downstream'?-95:site==='bank'?-30:85;
+        const eye=c.point(s,-c.halfWidth(s)-(site==='bank'?.6:2)),target=c.point(s+(site==='creek'?14:-10));
+        x=eye.x;z=eye.z;tx=target.x;tz=target.z;
+      }
       const wobble=Math.sin(phase*Math.PI*2);x+=wobble*.5;
       f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);f.player.yaw=Math.atan2(-(tx-x),-(tz-z))+wobble*.12;f.player.pitch=pitch;f.daynight.hour=11;
       r.info.autoReset=false;r.info.reset();

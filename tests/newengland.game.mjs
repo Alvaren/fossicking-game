@@ -46,7 +46,7 @@ try {
     for(const level of ['low','medium','high','low']) {
       await page.locator('.set-row').filter({has:page.getByText('Environment detail',{exact:true})}).getByRole('button',{name:level[0].toUpperCase()+level.slice(1),exact:true}).click();
       const stats=await page.evaluate(()=>{
-        const f=fossick,z=24,x=f.creek.cx(z)-f.creek.halfWidth(z)-2;
+        const f=fossick,p=f.creek.course?f.creek.point(24,-f.creek.halfWidth(24)-2):{z:24,x:f.creek.cx(24)-f.creek.halfWidth(24)-2},x=p.x,z=p.z;
         f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);
         f.world.lod.update(1,f.player.pos,true);(f.regionalEnvironment||f.newEngland).update(1,0,f.player.pos);
         return {...(f.regionalEnvironment||f.newEngland).stats,triangles:f.world.lod.stats.drawnTriangles};

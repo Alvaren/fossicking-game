@@ -53,12 +53,12 @@ export class SurfaceEffects {
     }
   }
   impact(x,z,boot=false) {
-    if (this.bank(x,z) > 0 || this.height(x,z) >= this.waterY(z) - .015) return;
+    if (this.bank(x,z) > 0 || this.height(x,z) >= this.waterY(z,x) - .015) return;
     const r = this.rings[this.cursor++ % this.rings.length];
     Object.assign(r,{x,z,life:boot?1.05:.6,total:boot?1.05:.6,size:boot?.65:.18});
     if (boot) {
       this.stats.splashes++;
-      for(let i=0;i<6;i++) Object.assign(this.drops[this.dropCursor++%64],{x,y:this.waterY(z)+.03,z,vx:(this.rand()-.5)*.5,vz:(this.rand()-.5)*.5,vy:.65+this.rand()*.4,life:.35});
+      for(let i=0;i<6;i++) Object.assign(this.drops[this.dropCursor++%64],{x,y:this.waterY(z,x)+.03,z,vx:(this.rand()-.5)*.5,vz:(this.rand()-.5)*.5,vy:.65+this.rand()*.4,life:.35});
     } else this.stats.rainImpacts++;
   }
   step(x,z,surface) {
@@ -76,7 +76,7 @@ export class SurfaceEffects {
     for(const r of this.rings) {
       r.life=Math.max(0,r.life-dt);if(!r.life)continue;
       const age=1-r.life/r.total,s=.03+age*r.size;
-      this.dummy.position.set(r.x,this.waterY(r.z)+.018,r.z);this.dummy.scale.set(s,1,s);this.dummy.updateMatrix();
+      this.dummy.position.set(r.x,this.waterY(r.z,r.x)+.018,r.z);this.dummy.scale.set(s,1,s);this.dummy.updateMatrix();
       this.mesh.setMatrixAt(n,this.dummy.matrix);this.fade.setX(n++,Math.sin(Math.PI*age)*(r.size>.2?1:.5));
     }
     this.mesh.count=n;this.mesh.instanceMatrix.needsUpdate=true;this.fade.needsUpdate=true;

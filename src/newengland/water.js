@@ -16,7 +16,7 @@ export function newEnglandWater(water, creek, settings) {
   Object.assign(u,{
     sceneWater:{value:0},waterReflection:{value:reflector.getRenderTarget().texture},waterTransmission:{value:transmission.texture},
     waterSceneDepth:{value:transmission.depthTexture},waterTextureMatrix:{value:new THREE.Matrix4()},
-    waterViewport:{value:new THREE.Vector2(1,1)},waterPlane:{value:new THREE.Vector3()},
+    waterViewport:{value:new THREE.Vector2(1,1)},waterPlane:{value:new THREE.Vector3()},waterPlaneX:{value:new THREE.Vector2()},
     waterCameraRange:{value:new THREE.Vector2(.1,1000)},
   });
   // Keep the original drifting instances and velocity state. Only their
@@ -41,6 +41,7 @@ uniform sampler2D waterSceneDepth;
 uniform mat4 waterTextureMatrix;
 uniform vec2 waterViewport;
 uniform vec3 waterPlane;
+uniform vec2 waterPlaneX;
 uniform vec2 waterCameraRange;
 float waterViewDistance(float d) {
   float near=waterCameraRange.x,far=waterCameraRange.y;
@@ -72,9 +73,9 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     vec4 projected=waterTextureMatrix*vec4(vWorld,1.0);
     vec2 uv=projected.xy/projected.w+N.xz*.055;
     float edge=smoothstep(0.0,.06,min(min(uv.x,uv.y),min(1.0-uv.x,1.0-uv.y)));
-    float planeY=waterPlane.y+waterPlane.z*(vWorld.z-waterPlane.x);
+    float planeY=waterPlane.y+waterPlane.z*(vWorld.z-waterPlane.x)+waterPlaneX.y*(vWorld.x-waterPlaneX.x);
     float profileMatch=1.0-smoothstep(.035,.13,abs(vWorld.y+level-planeY));
-    float localReach=1.0-smoothstep(16.0,32.0,abs(vWorld.z-waterPlane.x));
+    float localReach=1.0-smoothstep(16.0,32.0,(abs(vWorld.z-waterPlane.x)+abs(vWorld.x-waterPlaneX.x)*step(.000001,abs(waterPlaneX.y))));
     vec2 texel=1.5/waterViewport;
     vec3 sceneReflection=(texture2D(waterReflection,clamp(uv+texel,0.0,1.0)).rgb
       +texture2D(waterReflection,clamp(uv-texel,0.0,1.0)).rgb)*.5;
@@ -113,7 +114,7 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     }
     if(scene.matrixWorldAutoUpdate)scene.updateMatrixWorld();
     camera.updateMatrixWorld();
-    const active=visibleFrom(camera)&&!disposed&&settings.water==='scene'&&underground<.1&&camera.position.y>creek.surfaceY(camera.position.z)+.05;
+    const active=visibleFrom(camera)&&!disposed&&settings.water==='scene'&&underground<.1&&camera.position.y>creek.surfaceY(camera.position.z,camera.position.x)+.05;
     stats.active=active;u.sceneWater.value=active ? 1 : 0;stats.passes=0;
     if(!active)return;
     renderer.getDrawingBufferSize(size);u.waterViewport.value.copy(size);
@@ -121,10 +122,11 @@ uniform float time;`).replace('float chop = 0.09 + spd * 0.3 + vFoam * .09;','fl
     const w=Math.max(256,Math.round(size.x*scale)),h=Math.max(144,Math.round(size.y*scale));
     if(w!==stats.width||h!==stats.height) {transmission.setSize(w,h);reflector.getRenderTarget().setSize(w,h);stats.width=w;stats.height=h;}
     u.waterCameraRange.value.set(camera.near,camera.far);
-    const z=camera.position.z,wy=creek.surfaceY(z),slope=creek.slope(z);
-    reflector.position.set(creek.cx(z),wy,z);normal.set(0,1,-slope).normalize();
+    const z=camera.position.z,x=camera.position.x,L=creek.local(x,z,{});
+    const wy=creek.surfaceY(z,x),slope=creek.slope(L.s),sx=creek.course?-L.tx*slope:0,sz=creek.course?-L.tz*slope:slope;
+    reflector.position.set(creek.course?x:creek.cx(z),wy,z);normal.set(-sx,1,-sz).normalize();
     reflector.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),normal);reflector.updateMatrixWorld(true);
-    u.waterPlane.value.set(z,wy,slope);
+    u.waterPlane.value.set(z,wy,sz);u.waterPlaneX.value.set(x,sx);
     const target=renderer.getRenderTarget(),shadows=renderer.shadowMap.autoUpdate;
     const visible=water.mesh.visible,leaves=water.leaves.visible;
     water.mesh.visible=false;water.leaves.visible=false;

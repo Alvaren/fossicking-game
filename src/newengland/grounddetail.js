@@ -65,7 +65,7 @@ export function newEnglandGroundDetail(root, terrain, kit) {
       d.position.set(x,h-.006,z);d.rotation.set(.3*r,r*6.28,.2*r);
       if(depth>.025&&r>.76&&ns<720) {
         const s=.012+r*.021;d.scale.set(s*1.2,s*.6,s);d.updateMatrix();
-        stones.setMatrixAt(ns,d.matrix);setKind(ns++,'slate',terrain.creek.waterY(z));
+        stones.setMatrixAt(ns,d.matrix);setKind(ns++,'slate',terrain.creek.waterY(z,x));
       }
       // Sparse clusters on the retained lip, not an evenly spaced pebble ring.
       // Their lower halves remain buried in the actual ground.
@@ -92,7 +92,7 @@ export function newEnglandGroundDetail(root, terrain, kit) {
       for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++) {
         const x=startX+i*spacing,z=startZ+j*spacing,h=terrain.getHeight(x,z),o=terrain.overlayAt(x,z);
         const clear=terrain.inside(x,z)&&!o?.mine&&!o?.crystals?.some(e=>!e.c.collected&&Math.hypot(e.c.x-x,e.c.z-z)<.16);
-        const rise=clear&&h>terrain.creek.waterY(z)+.03?spoilRise(terrain,x,z):0;
+        const rise=clear&&h>terrain.creek.waterY(z,x)+.03?spoilRise(terrain,x,z):0;
         grid.push({x,z,y:h+rise,rise,clear,normal:new THREE.Vector3(0,1,0)});
       }
       for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++) {

@@ -31,15 +31,15 @@ export class Bedload {
     const r = mulberry32(seed * 53 + 11);
     this.stones = [];
     for (let z = terrain.profile.id === 'coober-pedy' ? -130 : 130; z > -130; z -= 2.2 + r() * 3.5) {
-      const w = C.halfWidth(z), d = C.dcx(z);
+      const w = C.halfWidth(z);
       const n = (r() * 2 - 1) * 0.95 * w;
-      const x = C.cx(z) + n * Math.sqrt(1 + d * d);
+      const point=C.point(z,n),x=point.x;
       const s = {
-        x, z, r: 0.06 + Math.pow(r(), 1.7) * 0.2,
+        x, z:point.z, r: 0.06 + Math.pow(r(), 1.7) * 0.2,
         sx: 0.8 + r() * 0.4, sy: 0.55 + r() * 0.35, rx: r() * 3, ry: r() * 3, roll: 0, ax: 1, az: 0,
         tint: 0.36 + r() * 0.16, warm: r() * 0.05,
       };
-      if (terrain.inside(x, z)) this.stones.push(s);
+      if (terrain.inside(x, point.z)) this.stones.push(s);
     }
     const geo = lumpy(new THREE.DodecahedronGeometry(1, 1), 0.22, r);
     this.mesh = new THREE.InstancedMesh(geo, rockMaterial('slate', { mixed: true, wet: true, flat: true }), this.stones.length);
@@ -82,11 +82,11 @@ export class Bedload {
   // The flood's grip on the bed at a point, and the stone that it can just move there.
   stress(x, z) {
     const C = this.creek, lv = C.level;
-    const h = C.surfaceY(z) - this.terrain.getHeight(x, z);
+    const h = C.surfaceY(z,x) - this.terrain.getHeight(x, z);
     if (h <= 0) return { tau: 0, h };
-    const S = THREE.MathUtils.lerp(C.slope(z), C.G, Math.min(1, lv / 0.8));
+    const S = THREE.MathUtils.lerp(C.slope(C.station(x,z)), C.G, Math.min(1, lv / 0.8));
     const v = C.velocity(x, z, this.tmp);
-    const mean = C.baseSpeed(z) * (1 + 1.6 * lv) * 0.75 || 1;
+    const mean = C.baseSpeed(C.station(x,z)) * (1 + 1.6 * lv) * 0.75 || 1;
     const local = Math.min(1.6, v.speed / mean); // slack behind boulders and over bars, faster in the thalweg
     return { tau: RHO * G * h * S * local * local, h, v };
   }

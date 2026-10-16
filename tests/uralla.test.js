@@ -9,14 +9,15 @@ class Ground extends Terrain { buildMesh(){return null;} }
 const profile=CLAIM_PROFILES.uralla;
 test('Uralla has distinct open pools, massive granite reaches and accessible shallow wash',()=>{
   const t=new Ground(12345,profile),c=t.creek;
-  assert.equal(c.dry,false);assert.ok(c.halfWidth(-27)>c.halfWidth(53)*1.6);
-  assert.ok(t.waterDepth(c.cx(-27),-27)>.65);
+  const pool=t.sources.reedPool,rock=t.sources.boulderReach;
+  assert.equal(c.dry,false);assert.ok(c.halfWidth(pool.s)>c.halfWidth(rock.s)*1.25);
+  assert.ok(t.waterDepth(pool.x,pool.z)>.65);
   assert.ok(c.boulders.filter(b=>b.r>2).length>=14);
   assert.deepEqual(Object.keys(t.sources),['boulderReach','reedPool','sandyShallows']);
   assert.equal(t.heaps.length,0);assert.equal(t.workings.length,0);assert.equal(profile.crystalPockets,false);
   let accessible=0;
-  for(let z=-95;z<102;z+=2){
-    const x=c.cx(z)-c.halfWidth(z)*.88,depth=t.waterDepth(x,z);
+  for(let s=c.course.min+5;s<c.course.max-5;s+=2){
+    const {x,z}=c.point(s,-c.halfWidth(s)*.7),depth=t.waterDepth(x,z);
     if(depth>.03&&depth<.5&&!c.boulders.some(b=>Math.hypot(x-b.x,z-b.z)<b.r*1.2+.4))accessible++;
   }
   assert.ok(accessible>15,'Several banks offer real shallow tool access');

@@ -63,16 +63,16 @@ export class Deposits {
     const eAgate = this.eluvial(x, z, S.rhyolite, 42);
 
     // Hydraulic traps in the channel.
-    const bar = C.bend(z + 6) * smoothstep(-0.1, 0.5, q) * smoothstep(2.3, 1.0, q); // bar head
+    const bar = C.bend(L.s + 6) * smoothstep(-0.1, 0.5, q) * smoothstep(2.3, 1.0, q); // bar head
     const wake = C.wakeAt(x, z);
-    const decel = C.decel(z);
+    const decel = C.decel(L.s);
     const scour = q < -0.3 ? 1 - 0.65 * L.a : 1;
-    const crevice = layer === 'bedrock' ? 0.7 + 1.2 * C.riffle(z) : 0;
+    const crevice = layer === 'bedrock' ? 0.7 + 1.2 * C.riffle(L.s) : 0;
     let trapHeavy = (0.3 + 1.1 * bar + 1.4 * wake + 0.9 * decel + crevice) * scour;
     // On harder levels the traps matter more: real gold is very patchy.
     const c = base ? 1 : difficulty.contrast;
     if (c !== 1) trapHeavy = 1.2 * Math.pow(trapHeavy / 1.2, c);
-    const trapLight = 0.5 + 1.0 * C.bend(z) * smoothstep(0, 0.8, q) * smoothstep(2.4, 1.2, q) + 0.3 * wake;
+    const trapLight = 0.5 + 1.0 * C.bend(L.s) * smoothstep(0, 0.8, q) * smoothstep(2.4, 1.2, q) + 0.3 * wake;
 
     const onRock = layer === 'bedrock' ? 1.6 : 1;
     const heavyZone = inCh * trapHeavy + flat * 0.5 * onRock + bench * 1.1 * onRock;
@@ -123,7 +123,7 @@ export class Deposits {
     const C = this.creek;
     const { L, q, inCh, hill, flat } = this.zones(x, z);
     const h = this.terrain.getHeight(x, z);
-    const wy = C.waterY(z);
+    const wy = C.waterY(z,x);
     const exposedBar = inCh * smoothstep(wy - 0.15, wy + 0.05, h) * smoothstep(-0.2, 0.6, q);
     const supAgate = this.supply(z, this.S.rhyolite, 2500, 0.05);
     void L;
@@ -134,7 +134,7 @@ export class Deposits {
   barWeight(x, z, kind) {
     const { q, inCh } = this.zones(x, z);
     const h = this.terrain.getHeight(x, z);
-    const wy = this.creek.waterY(z);
+    const wy = this.creek.waterY(z,x);
     const bar = inCh * smoothstep(wy - 0.15, wy + 0.05, h) * smoothstep(-0.2, 0.6, q);
     const sup = kind === 'agate' ? this.supply(z, this.S.rhyolite, 2500, 0.05) : this.supply(z, this.S.basalt, 650, 0.03);
     return bar * sup;
@@ -146,7 +146,7 @@ export class Deposits {
     const C = this.creek;
     const { q, inCh } = this.zones(x, z);
     const h = this.terrain.getHeight(x, z);
-    const wy = C.waterY(z);
+    const wy = C.waterY(z,x);
     const exposedBar = inCh * smoothstep(wy - 0.1, wy + 0.05, h) * smoothstep(0, 0.6, q);
     return exposedBar * this.supply(z, this.S.basalt, 650, 0.03) + 0.4 * this.eluvial(x, z, this.S.basalt, 34);
   }

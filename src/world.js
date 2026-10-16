@@ -108,7 +108,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
     if (campRoom(x,z,s)) m4.scale(new THREE.Vector3(0,0,0));
     rocks.setMatrixAt(ri, m4);
     rocks.setColorAt(ri, col);
-    setRockKind(ri, rockKind, creek.waterY(z));
+    setRockKind(ri, rockKind, creek.waterY(z,x));
     ri++;
     if (collide && !campRoom(x,z,s)) colliders.push({ x, z, r: s * (shape ? 1.1 : 0.85) });
   };

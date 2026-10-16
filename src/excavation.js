@@ -367,7 +367,7 @@ export class Patch {
           const t=this.terrain,dug=this.top[k]-y;
           this.geo.attributes.aSurface.setXYZ(k,
             t.sampleGrid(t.surface,x,z,3,0)*(1-Math.min(1,dug/.08)),
-            Math.max(t.sampleGrid(t.surface,x,z,3,1),Math.min(1,dug*2)),y-t.creek.waterY(z));
+            Math.max(t.sampleGrid(t.surface,x,z,3,1),Math.min(1,dug*2)),y-t.creek.waterY(z,x));
           this.geo.attributes.aCut.setX(k,bareVein ? 1 : Math.min(1,Math.max(0,dug-.003)/.05));
           this.geo.attributes.aSoil.setXYZ(k,Math.max(0,t.sampleGrid(t.orig,x,z)-y),t.sampleGrid(t.topsoil,x,z),Math.max(0,y-this.bed[k]));
         }

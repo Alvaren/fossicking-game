@@ -139,7 +139,7 @@ export class Water {
     this.creek = terrain.creek;
     const C = this.creek;
 
-    const ROWS_FROM = 700, ROWS_TO = -700, STEP = 1.5, M = 34;
+    const mapped=!!C.course,ROWS_FROM=mapped?150:700,ROWS_TO=mapped?-150:-700,STEP=1.5,M=mapped?200:34;
     const rows = Math.floor((ROWS_FROM - ROWS_TO) / STEP) + 1;
     const count = rows * (M + 1);
     const pos = new Float32Array(count * 3);
@@ -155,13 +155,14 @@ export class Water {
       const stretch = Math.sqrt(1 + d * d);
       if (r > 0) s += STEP * stretch;
       const w = C.halfWidth(z) + 9.5; // wide enough to spill over the bars in flood
-      const wy = C.waterY(z);
+      const rowY = C.waterY(z);
       for (let k = 0; k <= M; k++) {
         const n = -w + (2 * w * k) / M;
-        const x = C.cx(z) + n * stretch; // rows run along constant z, like the terrain
+        const x = mapped ? -150+300*k/M : C.cx(z) + n * stretch;
+        const local=mapped?C.local(x,z,{}):null,wy=mapped?C.waterY(local.s):rowY;
         const i = r * (M + 1) + k;
         pos[i * 3] = x; pos[i * 3 + 1] = wy; pos[i * 3 + 2] = z;
-        uv[i * 2] = n; uv[i * 2 + 1] = s;
+        uv[i * 2] = mapped?local.n:n; uv[i * 2 + 1] = mapped?-local.s:s;
         C.velocity(x, z, vel);
         const bed = terrain.inside(x, z) ? terrain.getHeight(x, z) : terrain.rawHeight(x, z);
         const dep = wy - bed; // signed: negative where the bank is dry at normal level
@@ -229,13 +230,12 @@ export class Water {
   spawnLeaf(L, px, pz, upstreamOnly) {
     const C = this.creek;
     for (let k = 0; k < 6; k++) {
-      const z = upstreamOnly ? pz + 8 + Math.random() * 40 : pz + (Math.random() * 2 - 1) * 40;
+      const station=C.station(px,pz),z=upstreamOnly?station+8+Math.random()*40:station+(Math.random()*2-1)*40;
       const w = C.halfWidth(z);
       const n = (Math.random() * 2 - 1) * 0.85 * w;
-      const d = C.dcx(z);
-      const x = C.cx(z) + n * Math.sqrt(1 + d * d);
-      if (this.terrain.waterDepth(x, z) > 0.08) {
-        L.x = x; L.z = z; L.alive = true; L.stuck = 0;
+      const p=C.point(z,n),x=p.x;
+      if (this.terrain.waterDepth(x, p.z) > 0.08) {
+        L.x = x; L.z = p.z; L.alive = true; L.stuck = 0;
         return;
       }
     }
@@ -267,7 +267,7 @@ export class Water {
       }
       this.q.setFromAxisAngle(this.up, L.rot);
       this.m4.compose(
-        new THREE.Vector3(L.x, L.alive ? C.surfaceY(L.z) + 0.012 : -999, L.z),
+        new THREE.Vector3(L.x, L.alive ? C.surfaceY(L.z,L.x) + 0.012 : -999, L.z),
         this.q,
         new THREE.Vector3(1, 1, 1),
       );

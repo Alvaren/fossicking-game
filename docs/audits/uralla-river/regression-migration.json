@@ -1,0 +1,31 @@
+{
+  "worlds": [
+    {
+      "region": "new-england",
+      "identical": true,
+      "orig": 2854386607,
+      "bedrock": 3181258365,
+      "rocks": 3319712290
+    },
+    {
+      "region": "golden-triangle",
+      "identical": true,
+      "orig": 2437502076,
+      "bedrock": 4272060571,
+      "rocks": 3994914180
+    }
+  ],
+  "migration": {
+    "packedDigsUnchanged": true,
+    "panAndBucketUnchanged": true,
+    "sluiceConcentrateUnchanged": true,
+    "campAndFundsUnchanged": true,
+    "inactiveHomeUnchanged": true,
+    "safeInitialPlayer": {
+      "x": -36,
+      "z": 76
+    },
+    "reloadDoesNotReposition": true,
+    "errors": []
+  }
+}

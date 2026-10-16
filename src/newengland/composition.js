@@ -17,7 +17,7 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
     for (let k = 0; k < count; k++) {
       const a = rng() * Math.PI * 2, r = Math.sqrt(rng()) * radius;
       const px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r;
-      const h = terrain.getHeight(px, pz), depth = c.surfaceY(pz) - h;
+      const h = terrain.getHeight(px, pz), depth = c.surfaceY(pz,px) - h;
       if (depth > .07) continue;
       const edge = 1 - r / radius;
       if (rng() > .2 + edge * .8) continue;
@@ -48,23 +48,24 @@ export function composeNewEngland({ terrain, world, mask, workingMask, rng, add,
   for (let reach = -96; reach < 103; reach += 7) {
     const side = Math.sin(reach * .17) > 0 ? 1 : -1;
     const z = reach + rng() * 3, w = c.halfWidth(z), stretch = Math.sqrt(1 + c.dcx(z) ** 2);
-    const bank = c.cx(z) + side * (w + .7) * stretch;
-    clump(bank + side * .5, z + 1, 2.6, true, 90);
-    clump(bank + side * 4.5, z - 2, 3.4, false, 85);
+    const bank = c.point(z,side*(w+.7));
+    clump(bank.x + side * .5, bank.z + 1, 2.6, true, 90);
+    clump(bank.x + side * 4.5, bank.z - 2, 3.4, false, 85);
     // Rounded stones form local bed/bar groups; most of the creek remains open.
     for (let k = 0; k < 45; k++) {
-      const pz = z + (rng() - .5) * 5.0;
-      const px = c.cx(pz) + side * (c.halfWidth(pz) - .6 + (rng() - .5) * 2.3) * stretch;
-      const h = terrain.getHeight(px, pz), depth = c.waterY(pz) - h;
+      const station = z + (rng() - .5) * 5.0;
+      const n=side*(c.halfWidth(station)-.6+(rng()-.5)*2.3);
+      const p=c.course?c.point(station,n):{x:c.cx(station)+n*stretch,z:station},px=p.x,pz=p.z;
+      const h = terrain.getHeight(px, pz), depth = c.waterY(pz,px) - h;
       if (depth > .8 || depth < -.6) continue;
       const scale = .11 + Math.pow(rng(), 1.4) * .42;
       put(`cobble_${k % 6}`, px, pz, scale, { lift: -.08, sy: .62, rank: .15 + rng() * .5 });
     }
   }
   for(let i=0;i<3400;i++) {
-    const z=-102+rng()*204, width=c.halfWidth(z), side=rng()<.5?-1:1;
-    const x=c.cx(z)+side*(width+rng()*1.8-2.5)*Math.sqrt(1+c.dcx(z)**2);
-    const h=terrain.getHeight(x,z),depth=c.waterY(z)-h;
+    const station=-102+rng()*204,width=c.halfWidth(station),side=rng()<.5?-1:1;
+    const {x,z}=c.point(station,side*(width+rng()*1.8-2.5));
+    const h=terrain.getHeight(x,z),depth=c.waterY(z,x)-h;
     if(depth<-.6||depth>.9)continue;
     const scale=.08+Math.pow(rng(),2)*.30;
     put(`cobble_${i%6}`,x,z,scale,{surface:true,lift:-scale*.2,sy:.65,radius:.1});

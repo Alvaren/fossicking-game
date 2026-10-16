@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {mkdir,writeFile} from 'node:fs/promises';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const base=process.env.URALLA_URL||'http://127.0.0.1:5191/',out='docs/audits/uralla/'+(process.env.URALLA_LABEL||'candidate');await mkdir(out,{recursive:true});
+const base=process.env.URALLA_URL||'http://127.0.0.1:5191/',out=process.env.URALLA_OUT||'docs/audits/uralla/'+(process.env.URALLA_LABEL||'candidate');await mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--ignore-gpu-blocklist']});
 const report=[];
 try{for(const mode of (process.env.URALLA_MODES||'high').split(',')){
@@ -21,18 +21,21 @@ try{for(const mode of (process.env.URALLA_MODES||'high').split(',')){
  const views=process.env.URALLA_VIEWS?process.env.URALLA_VIEWS.split(','):['night','rain'].includes(mode)?['boulders','pool']:['boulders','pool','shallows','camp'];
  for(const site of views){
   const pose=await page.evaluate(site=>{
-   const f=fossick,c=f.creek;let x=c.cx(50)-12,z=42,tx=c.cx(53)+2,tz=53,pitch=-.18;
-   if(site==='boulder-water'){x=c.cx(38);z=38;tx=c.cx(56);tz=56;pitch=-.08;}
-   if(site==='pool'){x=c.cx(-27)-c.halfWidth(-27)-1.1;z=-34;tx=c.cx(-23)+4;tz=-23;pitch=-.12;}
-   if(site==='shallows'){x=c.cx(3)-c.halfWidth(3)-.7;z=3;tx=c.cx(10);tz=10;pitch=-.2;}
-   if(site==='camp'){x=-42;z=15;tx=-26;tz=-2;pitch=-.06;}
+   const f=fossick,c=f.creek;let x,z,tx,tz,pitch=-.16;
+   const at=(name,offset,shift=0)=>{const p=f.terrain.sources[name],station=c.station(p.x,p.z),eye=c.point(station+shift,offset),target=c.point(station);return{x:eye.x,z:eye.z,tx:target.x,tz:target.z};};
+   ({x,z,tx,tz}=at('boulderReach',-9,9));
+   if(site==='boulder-water'){({x,z,tx,tz}=at('boulderReach',0,9));pitch=-.08;}
+   if(site==='pool'){({x,z,tx,tz}=at('reedPool',-7.5,9));pitch=-.12;}
+   if(site==='shallows'){({x,z,tx,tz}=at('sandyShallows',-8,9));pitch=-.24;}
+   if(site==='camp'){x=f.terrain.camp.x-14;z=f.terrain.camp.z+15;tx=f.terrain.camp.x+2;tz=f.terrain.camp.z-2;pitch=-.08;}
+   if(site==='overhead'){x=0;z=4;tx=0;tz=-1;pitch=-1.35;}
    f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);f.player.yaw=Math.atan2(-(tx-x),-(tz-z));f.player.pitch=pitch;
    f.world.lod.update(1,f.player.pos,true);f.landscape.lod.update(1,f.player.pos,true);return{x,z,tx,tz,pitch};
   },site);
   await page.waitForTimeout(1800);
   await page.screenshot({path:out+'/'+mode+'-'+site+'.jpg',quality:92});
   if(mode==='high'&&process.env.URALLA_HERO==='1') {
-    await page.evaluate(site=>{const f=fossick;f.enterPhoto();f.photo.help=false;f.photo.grid=false;f.photo.stamp=false;f.photo.filter=0;if(site==='boulder-water'){f.photo.pos.y+=2.4;f.photo.pitch=-.20;}f.photo.applyFilter();f.photo.render();},site);
+    await page.evaluate(site=>{const f=fossick;f.enterPhoto();f.photo.help=false;f.photo.grid=false;f.photo.stamp=false;f.photo.filter=0;if(site==='boulder-water'){f.photo.pos.y+=2.4;f.photo.pitch=-.20;}if(site==='overhead'){f.photo.still=true;f.photo.pos.set(0,205,5);f.photo.yaw=0;f.photo.pitch=-Math.PI/2;}f.photo.applyFilter();f.photo.render();},site);
     await page.waitForTimeout(800);
     const pending=page.waitForEvent('download');await page.evaluate(()=>fossick.photo.snap());
     const download=await pending;await download.saveAs(out+'/hero-'+site+'.jpg');
@@ -41,5 +44,6 @@ try{for(const mode of (process.env.URALLA_MODES||'high').split(',')){
   const state=await page.evaluate(()=>({region:fossick.region,art:fossick.regionalEnvironment.stats,graniteRoles:[...new Set(fossick.regionalEnvironment.root.children.filter(o=>/^Uralla (granite|cobble)_/.test(o.name)).flatMap(o=>Array.from(o.geometry.attributes.aAuthoredRockKind.array)))],failures:fossick.renderer.info.programs.filter(p=>p.diagnostics?.runnable===false).length,water:!!fossick.creekRendering,weather:{hour:fossick.daynight.hour,storm:fossick.weather.storm,wet:fossick.environmentWeather.wet.value},memory:fossick.renderer.info.memory}));
   assert.deepEqual(state.graniteRoles,[0]);assert.equal(state.failures,0);assert.equal(state.region,'uralla');assert.equal(state.water,true);report.push({mode,site,pose,photoLift:site==='boulder-water'?2.4:0,...state});console.log(mode,site,JSON.stringify(state.art));
  }
+ if(mode==='high'){await page.keyboard.press('KeyM');await page.locator('#map').waitFor({state:'visible'});await page.screenshot({path:out+'/map.jpg',quality:92});}
  assert.deepEqual(errors,[]);await context.close();
 }}finally{await browser.close();await writeFile(out+'/checks.json',JSON.stringify(report,null,2)+'\n');}

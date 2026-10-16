@@ -56,9 +56,9 @@ Evidence now inspected: NSW Spatial Services [HydroLine layer](https://portal.sp
 
 Build: preserve the north-up plan shape at a documented uniform 0.48 horizontal scale; include the hooked bend rather than straightening its returning section to fit x(z). Add an optional mapped course to the existing Creek, with one nearest-channel coordinate shared by terrain, current, deposits, water, wet materials, map and river dressing. Retain the original analytic course/default behaviour elsewhere. Depths, seasonal water, individual rocks and camping facilities remain authored interpretations; this is not measured bathymetry or a cadastral reconstruction.
 
-- [ ] R01: Save reproducible source coordinates/transform and compare course footprint to inspected aerial; replace invented curve and reopen earlier acceptance claims.
-- [ ] R02: One mapped course drives banks, water, inside bars/outside scour, downstream flow, widening/slowing, constriction acceleration and boulder wakes.
-- [ ] R03: Place uneven boulder groups at rocky transitions, keep broad pools/bar open, fit paths/reeds/camp to corrected geography.
-- [ ] R04: Preserve existing save data and unfinished material; exercise an old Uralla snapshot through correction, reload and travel. Document any necessary repositioning.
-- [ ] R05: Build, focused geometry/flow/deposit tests and original-world regression; actual desktop/touch tool checks, pointer lock/wheel, low/high and water/reflections.
+- [x] R01: Save reproducible source coordinates/transform and compare course footprint to inspected aerial; replace invented curve and reopen earlier acceptance claims.
+- [x] R02: One mapped course drives banks, water, inside bars/outside scour, downstream flow, widening/slowing, constriction acceleration and boulder wakes.
+- [x] R03: Place uneven boulder groups at rocky transitions, keep broad pools/bar open, fit paths/reeds/camp to corrected geography.
+- [x] R04: Preserve existing save data and unfinished material; exercise an old Uralla snapshot through correction, reload and travel. Document any necessary repositioning.
+- [x] R05: Build, focused geometry/flow/deposit tests and original-world regression; actual desktop/touch tool checks, pointer lock/wheel, low/high and water/reflections.
 - [ ] R06: Inspect ground-level and overhead screenshots against source shape; record limits and performance, then integrate/push and verify Pages with final hero images.

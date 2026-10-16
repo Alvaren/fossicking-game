@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { urallaGround } from './uralla/ground.js';
-import { routeDistance, riverPath, reserveSites, reserveBoulders, reserveHeight, reserveColour } from './uralla/locality.js';
+import { routeDistance, riverPath, campPath, reserveSites, reserveBoulders, reserveHeight, reserveColour } from './uralla/locality.js';
 import { dirtyGridAttributes } from './rendering/dirtygrid.js';
 import { makeNoise, fbm, smoothstep, mulberry32 } from './noise.js';
 import { Creek } from './creek.js';
@@ -33,7 +33,7 @@ export class Terrain {
     this.n2 = this.noise.noise2;
     const rand = this.noise.rand;
     this.creek = new Creek(this.noise, profile.creek);
-    if(profile.id==='uralla')this.creek.reservePath=riverPath(this.creek);
+    if(profile.id==='uralla'){this.creek.reservePath=riverPath(this.creek);this.creek.reserveCampPath=campPath(this.creek);}
     this.benchSide = rand() < 0.5 ? 1 : -1;
     this.tmpL = {};
     this.worldHalf = HALF;
@@ -177,7 +177,7 @@ export class Terrain {
     rise += ((this.profile.benchHeight ?? 2.6) + n2(x * 0.05, z * 0.05) * 0.15 - rise) * b;
     const gf = this.graniteFactor(x, z);
     if (gf > 0.01) rise += gf * (this.pavement(x, z) * 0.45 + fbm(n2, x * 0.04 + 9, z * 0.04, 3) * 0.8);
-    return this.creek.waterY(z) + 0.95 + n2(x * 0.02 + 5, z * 0.02) * 0.2 + rise + fbm(n2, x * 0.09, z * 0.09, 3) * 0.16;
+    return this.creek.waterY(z,x) + 0.95 + n2(x * 0.02 + 5, z * 0.02) * 0.2 + rise + fbm(n2, x * 0.09, z * 0.09, 3) * 0.16;
   }
 
   rawHeight(x, z) {
@@ -188,7 +188,7 @@ export class Terrain {
     const hv = this.valleyHeight(x, z, L);
     if (L.d > 30) return hv;
     const C = this.creek;
-    const hc = C.waterY(z) + C.bedRel(L.nIn / L.w, L.a, C.depth(z), L.w) + this.n2(x * 0.25, z * 0.25) * 0.05;
+    const hc = C.waterY(z,x) + C.bedRel(L.nIn / L.w, L.a, C.depth(z), L.w) + this.n2(x * 0.25, z * 0.25) * 0.05;
     return Math.min(hv, hc);
   }
 
@@ -244,7 +244,7 @@ export class Terrain {
     const inCh = q >= 0 ? smoothstep(2.3, 1.5, q) : smoothstep(-1.25, -1.0, q);
     const nz = this.n2(x * 0.08 + 31, z * 0.08 - 17) * 0.5 + 0.5;
     // Channel gravel is thin over riffles (bedrock shows through), thick in pools and bars.
-    const chT = Math.max(0.03, 0.1 + 0.75 * (1 - C.riffle(z)) + 0.7 * L.a * smoothstep(0, 1.2, q) + (nz - 0.5) * 0.4);
+    const chT = Math.max(0.03, 0.1 + 0.75 * (1 - C.riffle(L.s)) + 0.7 * L.a * smoothstep(0, 1.2, q) + (nz - 0.5) * 0.4);
     const b = this.benchFactor(x, z, L);
     const hill = (1 - b) * smoothstep(11, 20, L.d);
     const flat = Math.max(0, 1 - b - hill);
@@ -350,7 +350,7 @@ export class Terrain {
     if (this.creek.dry) return -1;
     const L = this.creek.local(x, z, this.tmpL);
     if (L.d > L.w + 4 + this.creek.level * 8) return -1;
-    return this.creek.surfaceY(z) - this.getHeight(x, z);
+    return this.creek.surfaceY(z,x) - this.getHeight(x, z);
   }
 
   inside(x, z) { return Math.abs(x) < HALF && Math.abs(z) < HALF; }
@@ -420,7 +420,7 @@ export class Terrain {
         C.local(x, z, L);
         const q = L.nIn / L.w;
         const inChannel = q > -1.15 && q < 1.8;
-        const flooded = C.waterY(z) + peak > o;
+        const flooded = C.waterY(z,x) + peak > o;
         if (!inChannel && !flooded) continue;
         this.heights[i] = inChannel ? o : h + (o - h) * 0.6;
         changed++;
@@ -515,7 +515,7 @@ export class Terrain {
         if (this.geo.attributes.aSoil) this.geo.attributes.aSoil.setXYZ(i,Math.max(0,dug),this.topsoil[i],Math.max(0,h[i]-this.bedrock[i]));
         this.surface[i * 3] = smoothstep(-.1,.55,this.n2(x*.05+100,z*.05)) * smoothstep(1,5,bank) * (1-smoothstep(.01,.08,dug)) * (this.creek.dry ? .08 : 1);
         this.surface[i * 3 + 1] = Math.max(1-smoothstep(1,6,bank), this.graniteFactor(x,z)*.6, smoothstep(.1,.4,dug));
-        this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z);
+        this.surface[i * 3 + 2] = h[i]-this.creek.waterY(z,x);
         if(this.profile.id==='uralla')this.surface[i*3] *= smoothstep(.8,2.2,routeDistance(x,z,this.creek));
         if (this.profile.id === 'coober-pedy') {
           this.surface[i * 3] = 0;
@@ -542,7 +542,7 @@ export class Terrain {
     const C = this.creek;
     const L = C.local(x, z, this.tmpL);
     const q = L.nIn / L.w;
-    const wy = C.dry ? C.surfaceY(z) : C.waterY(z);
+    const wy = C.dry ? C.surfaceY(z,x) : C.waterY(z,x);
     const S = this.sources;
 
     const t0 = n2(x * 0.03, z * 0.03) * 0.5 + 0.5;
@@ -607,7 +607,7 @@ export class Terrain {
         if(surface) {
           const bank=this.creek.local(x,z,{}),dry=bank.d-bank.w;
           surface[i*3]=smoothstep(-.1,.55,this.n2(x*.05+100,z*.05))*smoothstep(1,5,dry);
-          surface[i*3+1]=1-smoothstep(1,6,dry);surface[i*3+2]=h-this.creek.waterY(z);
+          surface[i*3+1]=1-smoothstep(1,6,dry);surface[i*3+2]=h-this.creek.waterY(z,x);
         }
       }
     }

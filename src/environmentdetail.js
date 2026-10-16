@@ -21,7 +21,7 @@ export function dressEnvironment(scene, { seed, height, bank, waterY, anchors, b
     group.add(mesh); batches.push({ mesh, entries }); return mesh;
   }
   const chips = [], litter = [], stems = [];
-  const safe = (x,z) => !blocked(x,z) && bank(x,z) > .5 && height(x,z) > waterY(z)+.08;
+  const safe = (x,z) => !blocked(x,z) && bank(x,z) > .5 && height(x,z) > waterY(z,x)+.08;
   for (const source of anchors) {
     for (let i=0;i<source.count;i++) {
       source.getMatrixAt(i,matrix); matrix.decompose(position,quaternion,scale);

@@ -11,19 +11,19 @@ export function composeUralla(context) {
   // Denser tuft islands occupy the moist shoulders of the boulder reaches.
   // Keep the original bank path and open sampling edges between each island.
   for(let i=0;i<2200;i++) {
-    const z=22+rng()*72,side=rng()<.5?-1:1;
-    const x=c.cx(z)+side*(c.halfWidth(z)+1+rng()*8)*Math.sqrt(1+c.dcx(z)**2);
+    const station=c.course.min+rng()*(c.course.max-c.course.min),side=rng()<.5?-1:1;
+    const {x,z}=c.point(station,side*(c.halfWidth(station)+1+rng()*8));
     const y=terrain.getHeight(x,z);
-    if(y<c.surfaceY(z)+.06||safeMask.blocked(x,z,.25))continue;
+    if(y<c.surfaceY(z,x)+.06||safeMask.blocked(x,z,.25))continue;
     if(Math.sin(z*.35+Math.cos(x*.7))<-.15)continue;
     add(`grass_${i%3}`,{x,z,y,scale:.65+rng()*.55,sy:.7+rng()*.3,lift:-.03,radius:.25,rotation:rng()*6.28,rank:rng()*.8});
     if(i%17===0)add(`shrub_${i%3}`,{x:x+.4,z:z-.2,y,scale:.45+rng()*.3,lift:-.04,radius:.3,rotation:rng()*6.28,rank:rng()*.7});
   }
   for(let i=0;i<3100;i++) {
-    const z=-55+rng()*65,side=i%6===0?-1:1;
-    if(side<0&&z>-12)continue; // Sandy Shallows stays an open west-bank work area.
-    const margin=-.4+rng()*2.1,x=c.cx(z)+side*(c.halfWidth(z)+margin)*Math.sqrt(1+c.dcx(z)**2);
-    const y=terrain.getHeight(x,z),depth=c.surfaceY(z)-y;
+    const pool=terrain.sources.reedPool,centre=c.station(pool.x,pool.z);
+    const station=centre-27+rng()*52,side=i%6===0?-1:1;
+    const margin=-.4+rng()*2.1,{x,z}=c.point(station,side*(c.halfWidth(station)+margin));
+    const y=terrain.getHeight(x,z),depth=c.surfaceY(z,x)-y;
     if(depth>.14||depth<-.7||safeMask.blocked(x,z,.2))continue;
     const patch=.5+.5*Math.sin(z*.24+Math.sin(x));if(rng()>patch)continue;
     add(`sedge_${i%2}`,{x,z,y,scale:.7+rng()*.65,sy:1.7+rng()*.6,sx:.7,sz:.7,lift:-.04,radius:.18,rotation:rng()*6.28,rank:rng()*.7});

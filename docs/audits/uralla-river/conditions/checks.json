@@ -1,0 +1,224 @@
+[
+  {
+    "mode": "low",
+    "site": "shallows",
+    "pose": {
+      "x": 14.13096094333122,
+      "z": -25.739597259126175,
+      "tx": 2.2305691922494635,
+      "tz": -26.18700145075937,
+      "pitch": -0.24
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 735,
+      "quality": "low",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 81,
+      "textures": 11
+    }
+  },
+  {
+    "mode": "low",
+    "site": "pool",
+    "pose": {
+      "x": 27.142623936191733,
+      "z": 46.74856360505103,
+      "tx": 38.43489948960123,
+      "tz": 44.01981827482029,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 955,
+      "quality": "low",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 82,
+      "textures": 11
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "shallows",
+    "pose": {
+      "x": 14.13096094333122,
+      "z": -25.739597259126175,
+      "tx": 2.2305691922494635,
+      "tz": -26.18700145075937,
+      "pitch": -0.24
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 3050,
+      "quality": "medium",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 177,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "touch",
+    "site": "pool",
+    "pose": {
+      "x": 27.142623936191733,
+      "z": 46.74856360505103,
+      "tx": 38.43489948960123,
+      "tz": 44.01981827482029,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 2991,
+      "quality": "medium",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0,
+      "wet": 0
+    },
+    "memory": {
+      "geometries": 180,
+      "textures": 13
+    }
+  },
+  {
+    "mode": "rain",
+    "site": "shallows",
+    "pose": {
+      "x": 14.13096094333122,
+      "z": -25.739597259126175,
+      "tx": 2.2305691922494635,
+      "tz": -26.18700145075937,
+      "pitch": -0.24
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 7835,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0.8277008888888029,
+      "wet": 0.9500046902158937
+    },
+    "memory": {
+      "geometries": 179,
+      "textures": 18
+    }
+  },
+  {
+    "mode": "rain",
+    "site": "pool",
+    "pose": {
+      "x": 27.142623936191733,
+      "z": 46.74856360505103,
+      "tx": 38.43489948960123,
+      "tz": 44.01981827482029,
+      "pitch": -0.12
+    },
+    "photoLift": 0,
+    "region": "uralla",
+    "art": {
+      "status": "ready",
+      "assets": 42,
+      "dressing": 12845,
+      "visible": 7210,
+      "quality": "high",
+      "solidRocks": 559,
+      "landformPatches": 0,
+      "bankRoots": 12
+    },
+    "graniteRoles": [
+      0
+    ],
+    "failures": 0,
+    "water": true,
+    "weather": {
+      "hour": 11,
+      "storm": 0.7198528888891469,
+      "wet": 1
+    },
+    "memory": {
+      "geometries": 182,
+      "textures": 18
+    }
+  }
+]
