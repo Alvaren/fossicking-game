@@ -1,0 +1,58 @@
+{
+  "base": "https://alvaren.github.io/fossicking-game/",
+  "label": "public",
+  "seed": 12345,
+  "sourceSha256": "288139bb5e617b37e180abfda45894cf1080aef70cab973dfab3eed7944a8954",
+  "cases": [
+    {
+      "mode": "high",
+      "shots": [
+        {
+          "view": "rocks",
+          "pose": {
+            "x": 1.2260599524239106,
+            "z": 18.424045746237905,
+            "tx": 1.9517402241522603,
+            "tz": 21.924045746237905,
+            "pitch": -0.3
+          },
+          "clock": 20,
+          "reflection": {
+            "active": true,
+            "width": 768,
+            "height": 432,
+            "passes": 2
+          },
+          "shaderFailures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "mode": "touch",
+      "shots": [
+        {
+          "view": "rocks",
+          "pose": {
+            "x": 1.2260599524239106,
+            "z": 18.424045746237905,
+            "tx": 1.9517402241522603,
+            "tz": 21.924045746237905,
+            "pitch": -0.3
+          },
+          "clock": 20,
+          "reflection": {
+            "active": false,
+            "width": 0,
+            "height": 0,
+            "passes": 0
+          },
+          "shaderFailures": 0,
+          "tool": "shovel"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

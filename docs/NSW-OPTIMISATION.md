@@ -14,7 +14,7 @@ Branch: codex/nsw-optimisation. Base/main and Claude worktrees were clean; Claud
 - [x] Compare each candidate and retain only measured improvements.
 - [x] Verify all existing quality presets and deterministic world/save behavior across three seeds.
 - [x] Review matched stills/motion and run relevant controls/recovery/offline regressions across affected regions.
-- [ ] Record three comparable ten-minute final routes, publish and verify the exact live build.
+- [x] Record three comparable ten-minute final routes, publish and verify the exact live build. Implementation `5b5636d`; publication and public checks below.
 
 ## Measurement contract
 
@@ -139,3 +139,13 @@ Frame interval median/p95/p99 is 16.7/33.4/33.4 ms before and 16.7/33.3/33.4 ms 
 Decision: retain the candidate. The 15% median CPU target is exceeded; the 15% median GPU target is **not met** (observed 9.1%). GPU p95 improves 18.8%, all eight repeated per-site CPU/GPU p95 figures improve, and frame p99 is unchanged or better. No preset or visible effect is lowered to chase the target. Run-to-run variation remains visible, especially baseline run 3 and candidate run 3; every complete result is retained. These are measured desktop improvements, not universal-device guarantees.
 
 No page/console/GL errors were recorded in the six sustained routes. Resource counts rise as previously unseen objects/material variants warm, with 50 textures and 145 programs at every route endpoint; the separate repeated-preset post-GC checks establish the stable-cache plateau. Timed-run heap includes growing instrumentation arrays, so it is not used as the leak test.
+
+## Publication and handoff
+
+Implementation `5b5636dc44928b8b99abac54740054e135ef14a5` was fast-forwarded from `codex/nsw-optimisation` into clean main and pushed. [Pages run 38870781163](https://github.com/Alvaren/fossicking-game/actions/runs/38870781163) succeeded. [Publication verification](audits/nsw-optimisation/publication.json) confirms that all generated JS/CSS and the NSW model match the measured production build byte-for-byte; HTML matches after line-ending normalisation.
+
+[Public High desktop and emulated-touch checks](audits/nsw-optimisation/public/checks.json) pass rendering, the advancing water clock, live Simple/Full water settings, original tool selection and save/reload, with no recorded page/console errors or failed shaders. The [desktop view](audits/nsw-optimisation/public/high-rocks.jpg) and [touch view](audits/nsw-optimisation/public/touch-rocks.jpg) were inspected; [moving water](audits/nsw-optimisation/public/flow.webm) is retained. These are smoke checks of the deployed build, additional to the sustained local measurements above.
+
+Production paths are `src/main.js`, `terrain.js`, `excavation.js`, `world.js`, `water.js`, `campbuildings.js`, `vegetationlod.js`; `src/newengland/{environment,water,grounddetail,bankroots,landforms}.js`; and `src/rendering/{frame,staticbatch,exactindex,waterbounds,dirtygrid}.js`. Test additions cover rendering, exact vertex reuse and terrain-cache invalidation; two browser harnesses were adapted for production bundles and fault injection. No dependency manifest, generated model, controller, save format or difficulty setting changed.
+
+The measured desktop optimisation and publication are complete. B9-07 remains open only for physical iPhone/Android performance and thermal verification; all four presets have desktop rendering coverage. The 15% median-GPU target shortfall, bounded cache memory cost, loading results and older reference-art gaps remain explicit. Main and Claude were clean at integration, with no unintegrated ready Claude commits. This documentation/evidence follow-up is published separately; its matching Pages run and final commit are retained in the local coordination handoff.
