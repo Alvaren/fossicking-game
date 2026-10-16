@@ -118,7 +118,7 @@ export class Boulders {
         made++;
       }
     };
-    if (S.granite) place(S.granite, 12, 24, 'granite', 0.45);
+    if (S.granite && terrain.profile.crystalPockets !== false) place(S.granite, 12, 24, 'granite', 0.45);
     if (S.reef) place(S.reef, 5, 12, 'quartz', terrain.profile?.sources ? 0 : 0.55);
     for (const b of this.list) {
       this.build(b);

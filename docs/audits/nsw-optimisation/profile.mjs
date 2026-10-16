@@ -43,7 +43,8 @@ try{for(let run=1;run<=runs;run++){
   await page.evaluate(({diagnostic,seconds,passGpu})=>{
     const f=fossick,r=f.renderer,gl=r.getContext(),timer=gl.getExtension('EXT_disjoint_timer_query_webgl2');
     const original=requestAnimationFrame.bind(window),start=performance.now(),pending=[];let last=0,n=0;
-    const sites=['creek','bank','woodland','reef',f.terrain.profile.id==='golden-triangle'?'workings':'granite','camp','dig','downstream'];
+    const graves=f.terrain.profile.id==='graves-hill';
+    const sites=graves?['track','clifford','woodland','millionaires','granite','camp','dig','ruby']:['creek','bank','woodland','reef',f.terrain.profile.id==='golden-triangle'?'workings':'granite','camp','dig','downstream'];
     window.opt={frames:[],gpu:[],memory:[],callbacks:{},costs:{},renders:[],start,sites,hasGpuTimer:!!timer};
     const dx=f.terrain.camp.x+22,dz=f.terrain.camp.z+20;
     for(let i=0;i<6;i++)f.terrain.dig(dx,dz,1.1,.18);
@@ -77,6 +78,9 @@ try{for(let run=1;run<=runs;run++){
       if(site==='camp'){x=f.terrain.camp.x+12;z=f.terrain.camp.z+12;tx=f.terrain.camp.x;tz=f.terrain.camp.z;pitch=-.12;}
       if(site==='dig'){x=dx+1.8;z=dz+1.8;tx=dx;tz=dz;pitch=-.65;}
       if(site==='downstream'){z=-18;x=f.creek.cx(z)+f.creek.halfWidth(z)+2;tx=f.creek.cx(z);tz=z-14;}
+      if(site==='track'){x=-51;z=58;tx=-15;tz=43;pitch=-.1;}
+      if(site==='clifford'||site==='millionaires'){const p=f.terrain.workings.find(p=>site==='clifford'?p.z>45:p.z<-25);x=p.x+3;z=p.z+4;tx=p.x;tz=p.z;pitch=-.4;}
+      if(site==='ruby'){x=-48;z=-18;tx=-60;tz=-26;pitch=-.22;}
       const wobble=Math.sin(phase*Math.PI*2);x+=wobble*.5;
       f.player.pos.set(x,f.terrain.getHeight(x,z),z);f.player.vel.set(0,0,0);f.player.yaw=Math.atan2(-(tx-x),-(tz-z))+wobble*.12;f.player.pitch=pitch;f.daynight.hour=11;
       r.info.autoReset=false;r.info.reset();

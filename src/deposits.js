@@ -1,3 +1,4 @@
+import { washWeight } from './graveshill/locality.js';
 import { smoothstep } from './noise.js';
 import { difficulty } from './difficulty.js';
 import { goldfieldWeight } from './goldfields.js';
@@ -81,7 +82,7 @@ export class Deposits {
     const lean = layer === 'topsoil' ? 0.08 : 1;
 
     const gold = (heavyZone * supGold + hill * 0.75 * eGold * 2.2 + (flat + bench) * 0.3 * eGold) * vGold * lean;
-    const gem = (heavyZone * supGem + hill * 0.75 * eGem * 1.6 + (flat + bench) * 0.6 * eGem) * vGem * lean;
+    const gem = this.terrain.profile.id === 'graves-hill' ? washWeight(x,z)*vGem*lean*(.45+.55*Math.pow(Math.sin(x*.17+z*.11),2)) : (heavyZone * supGem + hill * 0.75 * eGem * 1.6 + (flat + bench) * 0.6 * eGem) * vGem * lean;
     const garnet = (heavyZone * 0.8 + hill * 0.2) * vGem * lean;
     const topaz = heavyZone * (0.3 + 0.7 * smoothstep(-100, 140, z)) * vGem * lean;
     const agateLag = below < 0.2 ? 0.6 : 0;
@@ -140,6 +141,7 @@ export class Deposits {
 
   // Gems you might spot glinting on a bar ("specking").
   surfaceGemWeight(x, z) {
+    if (this.terrain.profile.id === 'graves-hill') return washWeight(x,z)*.18;
     const C = this.creek;
     const { q, inCh } = this.zones(x, z);
     const h = this.terrain.getHeight(x, z);

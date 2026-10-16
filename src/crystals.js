@@ -346,7 +346,7 @@ export class CrystalField {
     this.scene = scene;
     const rand = mulberry32(seed * 41 + 17);
     this.rand = rand;
-    const g = terrain.sources.granite;
+    const g = terrain.profile.crystalPockets === false ? null : terrain.sources.granite;
     this.center = g;
 
     // Quartz veins: straight-ish lines across the granite.

@@ -20,8 +20,8 @@ function readAccessor(id) {
     binary[read](offset + i * (view.byteStride || width * size) + j * size)));
 }
 const manifest = JSON.parse(readFileSync(process.env.NSW_KIT_MANIFEST || new URL('../public/models/newengland/manifest.json', import.meta.url)));
-test('all 42 named environment assets contain finite, nonempty geometry', () => {
-  assert.equal(Object.keys(manifest.assets).length,42);
+test('all named environment assets contain finite, nonempty geometry', () => {
+  assert.equal(Object.keys(manifest.assets).length,Number(process.env.ENV_ASSET_COUNT||42));
   for(const [name,asset] of Object.entries(manifest.assets)) {
     const node=gltf.nodes.find(n=>n.name===name);
     assert.ok(node,`Missing ${name}`);
@@ -39,7 +39,7 @@ test('all 42 named environment assets contain finite, nonempty geometry', () => 
   }
 });
 const rocks = gltf.nodes.filter(n => /^(host|granite|cobble|basalt|rhyolite|slab)_\d$/.test(n.name));
-assert.equal(rocks.length, 23, 'All rock variants must be present');
+assert.equal(rocks.length, Number(process.env.ENV_ROCK_COUNT||23), 'All rock variants must be present');
 for (const node of rocks) {
   test(`${node.name}: one closed, connected rock without a through-cut`, () => {
     const vertices = new Map(), edges = new Map(), neighbours = [];

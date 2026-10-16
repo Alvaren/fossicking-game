@@ -38,7 +38,7 @@ export class Creek {
   // ---------- plan shape ----------
   cx(z) {
     const p = this.phase;
-    return (26 * Math.sin(z * 0.013 + p) + 9 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
+    return (this.profile.offset || 0) + (26 * Math.sin(z * 0.013 + p) + 9 * Math.sin(z * 0.034 + p * 1.7)) * (this.profile.meander ?? 1);
   }
   dcx(z) {
     const p = this.phase;

@@ -6,6 +6,7 @@ import bpy, bmesh, math, random, sys, os, json
 from mathutils import Vector
 
 OUT = os.path.abspath(sys.argv[sys.argv.index('--') + 1])
+GEMFIELD = 'graves-hill' in sys.argv[sys.argv.index('--') + 2:]
 GOLDFIELD = 'golden-triangle' in sys.argv[sys.argv.index('--') + 2:]
 os.makedirs(OUT, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -37,6 +38,9 @@ M = {k: material(k, v) for k, v in {
 if GOLDFIELD:
     for name, colour in {'bark':'514a3d','bark_dark':'3e3930','bark_light':'766c56','leaf':'65704a','leaf_light':'85905f','leaf_dark':'526344'}.items():
         M[name]=material(name,colour)
+
+if GEMFIELD:
+    for name,colour in {'bark':'625e50','bark_dark':'474538','bark_light':'9c9b82','leaf':'727d4f','leaf_light':'909963','leaf_dark':'576448','slab':'a89b83','cobble':'b2a58d'}.items():M[name]=material(name,colour)
 
 def parent(name):
     o = bpy.data.objects.new(name, None)
@@ -163,6 +167,53 @@ def goldfield_tree(index):
         a=j*math.tau/6+.4
         tube('bark_basal_flare',[(0,0,.36),(math.cos(a)*.30,math.sin(a)*.30,.09),(math.cos(a)*.58,math.sin(a)*.58,-.08)],[.12,.065,.006],'bark_dark',g,7)
 
+
+def gemfield_tree(index):
+    # Open, irregular branching crowns from the site photograph; species unasserted.
+    rng=random.Random(206104+index*103);g=parent('gum_'+str(index));h=[9.5,13.8,16.0,19.2][index]
+    lean=Vector((rng.uniform(-.9,.9),rng.uniform(-.7,.7),0))
+    trunk=[Vector((0,0,-.04)),Vector((.025,0,.6)),lean*.28+Vector((0,0,h*.27)),lean*.65+Vector((0,0,h*.47)),lean+Vector((0,0,h*.66))]
+    stem=tube('bark_open_woodland',trunk,[.27,.24,.19,.125,.028],'bark',g,24)
+    for v in stem.data.vertices:
+        ring=v.index//24;a=v.index%24*math.tau/24;centre=trunk[ring]
+        relief=1+.10*math.cos(a*9+.1*ring)
+        v.co.x=centre.x+(v.co.x-centre.x)*relief;v.co.y=centre.y+(v.co.y-centre.y)*relief
+    centres=[]
+    for j in range(9):
+        a=j*2.399+rng.uniform(-.7,.7);start=trunk[2].lerp(trunk[4],.06+j*.105)
+        spread=2.1+rng.random()*2.0
+        tip=Vector((start.x+math.cos(a)*spread,start.y+math.sin(a)*spread,h*(.51+j*.045)+rng.uniform(-.7,.7)))
+        elbow=start.lerp(tip,.46)+Vector((.18,-.14,.34))
+        tube('bark_woodland_fork',[start,elbow,tip],[.115*(1-j*.06),.055,.009],'bark_light' if j%3==0 else 'bark',g,10)
+        # One bare limb, multiple leafy terminal sprays on the rest.
+        if j==index%9:continue
+        for k in range(4):
+            b=a+(k-1.5)*.58;end=tip+Vector((math.cos(b)*rng.uniform(.4,1.3),math.sin(b)*rng.uniform(.4,1.3),rng.uniform(-.6,.85)))
+            tube('bark_fine_twigs',[elbow.lerp(tip,.63),end],[.023,.003],'bark_dark',g,5)
+            centres.append((end,.72+rng.random()*.40,115+rng.randrange(50)))
+    centres.append((trunk[-1]+Vector((.15,0,h*.21)),1.1,190))
+    leaves('leaf_open_woodland',centres,rng,g)
+    for j in range(5):
+        a=j*math.tau/5
+        tube('bark_root',[(0,0,.28),(math.cos(a)*.29,math.sin(a)*.29,.04),(math.cos(a)*.52,math.sin(a)*.52,-.06)],[.10,.05,.004],'bark_dark',g,7)
+
+def billy(index,family):
+    rng=random.Random(617440+index+100*(family=='slab'));g=parent(f'{family}_{index}')
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3,radius=1)
+    o=bpy.context.object;o.name='intact_silicified_billy';o.parent=g
+    power=.62+index*.055
+    for v in o.data.vertices:
+        x,y,z=v.co
+        n=1+.08*math.sin(x*4.5+y*2)+.05*math.sin(y*5-z*3)
+        v.co=(math.copysign(abs(x)**power,x)*n,math.copysign(abs(y)**power,y)*(.78+index*.023)*n,math.copysign(abs(z)**power,z)*(.62+index*.02)+.035*math.sin(x*5+y*4))
+    o.data.materials.append(M[family])
+    for suffix,colour in [('rind','9b8869'),('clast','c0b8a4'),('grey','8e9088')]:o.data.materials.append(material('cobble_'+suffix,colour))
+    for face in o.data.polygons:
+        centre=face.center
+        # Broad weathered rind and pale fragments in some silicified pieces.
+        face.material_index=1 if face.normal.z<-.25 else (2 if index%3==1 and rng.random()<.10 else 0)
+        face.use_smooth=True
+    bm=bmesh.new();bm.from_mesh(o.data);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(o.data);bm.free()
 
 def shrub(index):
     rng=random.Random(600+index);g=parent('shrub_'+str(index)); centres=[]
@@ -291,7 +342,11 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bm.to_mesh(o.data);bm.free()
     return group
 
-if GOLDFIELD:
+if GEMFIELD:
+    for i in range(4):gemfield_tree(i)
+    for i in range(3):shrub(i);billy(i,'slab')
+    for i in range(6):billy(i,'cobble')
+elif GOLDFIELD:
     for i in range(4):goldfield_tree(i)
     for i in range(3):shrub(i)
 else:
@@ -320,5 +375,5 @@ for g in [o for o in bpy.data.objects if o.type=='EMPTY']:
         coords.extend([v.co[:] for v in o.data.vertices])
     manifest[g.name]={'triangles':tris,'blenderBounds':[[min(v[k] for v in coords) for k in range(3)],[max(v[k] for v in coords) for k in range(3)]]}
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT,'environment.glb'),export_format='GLB',export_yup=True,export_apply=True,export_extras=True)
-with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
+with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'graves-hill' if GEMFIELD else 'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
 print('NEW_ENGLAND_KIT',len(manifest),'assets',sum(v['triangles'] for v in manifest.values()),'triangles')

@@ -1,0 +1,17 @@
+[
+  {
+    "failure": "offline cached reload",
+    "unchangedWorld": true,
+    "errors": []
+  },
+  {
+    "failure": "missing",
+    "unchangedWorld": true,
+    "errors": []
+  },
+  {
+    "failure": "corrupt",
+    "unchangedWorld": true,
+    "errors": []
+  }
+]

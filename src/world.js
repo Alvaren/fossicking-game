@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { pathDistance, ROAD, localityRock } from './graveshill/locality.js';
 import { batchStaticChildren } from './rendering/staticbatch.js';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { SIZE, PLAY } from './terrain.js';
@@ -28,7 +29,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const campRoom = (x,z,r=0) => [[9,7],[0,10]].some(([cx,cz]) => Math.abs((x-camp.x)*campFlip-cx)<2.5+r && Math.abs((z-camp.z)*campFlip-cz)<3.2+r);
   const nearCamp = (x, z, r) => Math.hypot(x - camp.x, z - camp.z) < r;
   const fossil = terrain.sources.fossil;
-  const blocked = (x, z, r) => avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
+  const blocked = (x, z, r) => (profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.6+r) || avoid.some((a) => Math.hypot(a.x - x, a.z - z) < r)
     || terrain.dugoutAt(x,z,r)
     || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < r + 7); // keep the shale bed clear
   const m4 = new THREE.Matrix4();
@@ -93,6 +94,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const setRockKind = rockKinds(rockGeo, rockCount);
   let ri = 0;
   const putRock = (x, z, s, sink, collide) => {
+    if (profile.id === 'graves-hill') { rockKind=localityRock(x,z,(Math.sin(x*31+z*17)+1)/2); col.setHex(rockKind==='quartz'?0xc9c1aa:rockKind==='granite'?0x9e9685:0x9c8d71); }
     if (terrain.profile.id === 'coober-pedy') { rockKind = 'sandstone'; col.setRGB(.65,.53,.4,THREE.SRGBColorSpace); }
     q.setFromEuler(new THREE.Euler(rand() * 3, rand() * 3, rand() * 3));
     const y = terrain.getHeight(x, z) - s * sink;
@@ -143,11 +145,11 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   const tors = new THREE.InstancedMesh(torGeo, rockMaterial('granite'), 90);
   tors.name = 'Granite tors';
   let ti = 0;
-  for (let k = 0; G && k < 60 && ti < 86; k++) {
-    const a = rand() * Math.PI * 2, rr = Math.sqrt(rand()) * 22;
+  for (let k = 0; G && k < (profile.id==='graves-hill'?16:60) && ti < 86; k++) {
+    const a = rand() * Math.PI * 2, rr = Math.sqrt(rand()) * (profile.id==='graves-hill'?9:22);
     const x = G.x + Math.cos(a) * rr, z = G.z + Math.sin(a) * rr;
     if (chan(x, z) < 3 || blocked(x, z, 3.2) || nearCamp(x, z, 12)) continue;
-    const n = 1 + Math.floor(rand() * 3);
+    const n = profile.id==='graves-hill' ? 1 : 1 + Math.floor(rand() * 3);
     let y = terrain.getHeight(x, z) - 0.25;
     const base = 0.7 + rand() * 0.9;
     for (let b = 0; b < n && ti < 90; b++) {
@@ -184,7 +186,7 @@ export function buildWorld(scene, terrain, seed, avoid = [], low = false) {
   for (let tries = 0; tries < 60000 && placed < tuftCount; tries++) {
     const x = (rand() * 2 - 1) * (half - 3);
     const z = (rand() * 2 - 1) * (half - 3);
-    if (chan(x, z) < 2 || nearCamp(x, z, 6) || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < 6)) continue;
+    if ((profile.id==='graves-hill' && pathDistance(x,z,ROAD)<2.4) || chan(x, z) < 2 || nearCamp(x, z, 6) || (fossil && Math.hypot(fossil.x - x, fossil.z - z) < 6)) continue;
     const patch = terrain.n2(x * 0.05 + 100, z * 0.05) * 0.5 + 0.5;
     if (rand() > 0.15 + patch * 0.6) continue;
     const sc = 0.3 + rand() * 0.45;

@@ -12,6 +12,8 @@ import { buildLandscape } from './landscape.js';
 import { buildNewEnglandEnvironment } from './newengland/environment.js';
 import { newEnglandWater } from './newengland/water.js';
 import { newEnglandLight } from './newengland/lighting.js';
+import { buildGravesHillEnvironment, gravesHillLight } from './graveshill/environment.js';
+import { pathDistance, ROAD } from './graveshill/locality.js';
 import { buildGoldenTriangleEnvironment, goldenTriangleLight } from './goldentriangle/environment.js';
 import { SurfaceEffects, surfaceUnderfoot, environmentWeather, updateEnvironmentWeather } from './environmentmotion.js';
 import { Targets } from './targets.js';
@@ -336,12 +338,12 @@ const landscape = buildLandscape(scene, {
   region, seed:state.seed, height:(x,z)=>terrain.getHeight(x,z), riverX:z=>creek.cx(z), riverWidth:z=>creek.halfWidth(z),
   placementHeight:(x,z)=>terrain.getOrigHeight(x,z),obstacles:[...world.sceneryColliders,...boulders.list.map(b=>({x:b.x,z:b.z,r:b.r}))],
   bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w;}, colliders:world.colliders, low:settings.shadows==='off',
-  blocked:(x,z)=>terrain.dugoutAt(x,z)||Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
+  blocked:(x,z)=>(region==='graves-hill'&&pathDistance(x,z,ROAD)<3.5)||terrain.dugoutAt(x,z)||Math.abs(x)>108||Math.abs(z)>108||Math.hypot(x-terrain.camp.x,z-terrain.camp.z)<17
     ||field.sites.some(s=>Math.hypot(x-s.x,z-s.z)<5)||finds.items.some(s=>s.id<100000&&Math.hypot(x-s.x,z-s.z)<2)
     ||targets.list.some(s=>s.id<50000&&Math.hypot(x-s.x,z-s.z)<2)||Object.values(terrain.sources).some(s=>Math.hypot(x-s.x,z-s.z)<9),
 });
 const surfaceEffects = new SurfaceEffects(scene, {seed:state.seed,low:settings.shadows==='off',height:(x,z)=>terrain.getHeight(x,z),waterY:z=>creek.surfaceY(z),bank:(x,z)=>{if(region==='coober-pedy')return 30;const l=creek.local(x,z,{});return l.d-l.w-creek.level*8;}});
-const environmentBuilder = region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
+const environmentBuilder = region === 'graves-hill' ? buildGravesHillEnvironment : region === 'new-england' ? buildNewEnglandEnvironment : region === 'golden-triangle' ? buildGoldenTriangleEnvironment : null;
 const regionalEnvironment = environmentBuilder ? environmentBuilder(scene, {
   seed:state.seed,terrain,world,landscape,field,finds,targets,boulders,settings,
   equipment:()=>[
@@ -352,7 +354,7 @@ const regionalEnvironment = environmentBuilder ? environmentBuilder(scene, {
 }) : null;
 const newEngland = region === 'new-england' ? regionalEnvironment : null;
 const goldenTriangle = region === 'golden-triangle' ? regionalEnvironment : null;
-const creekRendering = regionalEnvironment ? newEnglandWater(water,creek,settings) : null;
+const creekRendering = regionalEnvironment && !creek.dry ? newEnglandWater(water,creek,settings) : null;
 let driving = false;
 // The detector is held out in the world, its coil riding just above the ground.
 const worldDet = new WorldDetector(scene);
@@ -1243,7 +1245,7 @@ function dig(hit) {
   // Tell the player when they move through a layer boundary.
   const sameHole = Math.hypot(hit.x - lastDig.x, hit.z - lastDig.z) < 1.2;
   if (sameHole && sample.layer !== lastDig.layer) {
-    if (sample.layer === 'wash') hud.toast('Through the topsoil into the wash: grey gravel.');
+    if (sample.layer === 'wash') hud.toast(profile.id==='graves-hill' ? 'Below the surface soil: gravelly sapphire wash. Test small loads.' : 'Through the topsoil into the wash: grey gravel.');
     if (sample.layer === 'bedrock') hud.toast('Bedrock! The heavies sit right on top of it. Scrape it clean.', 'gold');
   }
   lastDig = { x: hit.x, z: hit.z, layer: sample.layer };
@@ -1259,7 +1261,7 @@ function dig(hit) {
   } else {
     view.dirtOnBlade = false;
     if (elapsed - lastFullWarn > 6) {
-      hud.toast(creek.dry ? "Bucket's chockers. Take your samples to the camp recovery tub." : "Bucket's chockers. Take it down to the creek to pan or sieve.");
+      hud.toast(profile.campSieve ? "Bucket's full. Take the wash to your camp sieve tub." : creek.dry ? "Bucket's chockers. Take your samples to the camp recovery tub." : "Bucket's chockers. Take it down to the creek to pan or sieve.");
       lastFullWarn = elapsed;
     }
   }
@@ -1295,7 +1297,7 @@ function finishLoad(method, opts = {}) {
     addFind(pk, method === 'pan' ? 'Picked out of the pan' : 'Picked off the sieve');
     logGold(pk.grams, false);
   }
-  const from = method === 'pan' ? (sample.crushed ? 'Panned from crushed reef ore' : sample.cons ? 'Panned from sluice concentrates' : creek.dry ? 'Panned from Mulga Flat wash' : 'Panned from creek wash') : 'Wet-sieved from creek wash';
+  const from = method === 'pan' ? (sample.crushed ? 'Panned from crushed reef ore' : sample.cons ? 'Panned from sluice concentrates' : creek.dry ? `Panned from ${profile.title} wash` : 'Panned from creek wash') : profile.campSieve ? 'Wet-sieved from Graves Hill wash at camp' : 'Wet-sieved from creek wash';
   if (sample.crushed && gold > 0.001) {
     award('reefgold');
     if (!sample.roasted) hint('roastmore', 'Raw ore holds onto its gold. Roast it on the campfire before you crush it and the pan gets a lot more.', 300);
@@ -2033,8 +2035,9 @@ function updateTools(dt, motion) {
   }
   let showJig = false;
   if (state.tool === 'sieve') {
-    if (motion.depth <= 0.15) {
-      prompt = creek.dry ? 'This wash is dry. Pan your samples in the camp recovery tub' : state.bucket.length ? 'Wade into the creek to sieve' : 'Dig some wash with the shovel first';
+    const atTub=campStation.nearSieve(player.pos);
+    if (motion.depth <= 0.15 && !atTub) {
+      prompt = profile.campSieve ? 'Carry your wash to the sieve tub beside camp' : creek.dry ? 'This wash is dry. Pan your samples in the camp recovery tub' : state.bucket.length ? 'Wade into the creek to sieve' : 'Dig some wash with the shovel first';
       resetJig();
     } else if (!state.bucket.length) {
       prompt = 'Bucket empty. Dig some wash first';
@@ -2045,6 +2048,7 @@ function updateTools(dt, motion) {
       jig.I = Math.min(1, Math.max(0, jig.I + (mouseHeld ? 1.25 + (Math.random() - 0.5) * 0.8 : -1.0) * dt));
       const [lo, hi] = jigZone();
       const time = gear(state, 'sieve').time;
+      if(profile.campSieve&&difficulty.key==='easy'&&mouseHeld)jig.I=(lo+hi)*.5;
       if (jig.I > hi) { jig.strat -= dt * 0.35 / time; jig.lost += dt; }
       else if (jig.I >= lo) jig.strat += dt / time;
       else jig.strat -= dt * 0.04;
@@ -2052,8 +2056,9 @@ function updateTools(dt, motion) {
       sieving = jig.I > 0.08;
       hud.jig(true, jig.I, lo, hi, jig.strat);
       const n = state.bucket.length;
-      prompt = jig.strat >= 1 ? 'Settled! Right-click (or F) to flip it'
-        : `Hold to jig: keep the needle in the green. Right-click to flip. (${n} load${n === 1 ? '' : 's'})`;
+      const flipHint=IS_TOUCH ? 'Tap Flip' : 'Right-click (or F)';
+      prompt = jig.strat >= 1 ? `Settled! ${flipHint} to flip it`
+        : `Hold to jig: keep the needle in the green. ${flipHint} to flip. (${n} load${n === 1 ? '' : 's'})`;
     }
     sieveProgress = jig.strat;
   }
@@ -2123,7 +2128,8 @@ function updateTools(dt, motion) {
   const near = nearestPickup();
   if (campBuildings.near(player.pos, state.camp)) prompt = 'E: camp facilities · supplies, stonework & collection';
   else if (kelpie.near(player.pos)) prompt = 'E: pat your kelpie';
-  else if (campStation.near(player.pos)) prompt = 'E: wash bench · practise, recover tailings & build camp';
+  else if (campStation.nearSieve(player.pos) && state.tool!=='sieve') prompt = IS_TOUCH ? 'Water-filled sieve tub - select Gem sieve to wash your gravel' : 'Water-filled sieve tub - select Sieve (4) to wash your gravel';
+  else if (campStation.near(player.pos) && state.tool!=='sieve') prompt = 'E: wash bench · practise, recover tailings & build camp';
   else if (near?.target) prompt = `E: pick up ${near.target.kind === 'gold' ? 'the gold' : 'it'}`;
   else if (near?.find) prompt = `E: pick up the ${near.find.gem.type === 'agate' ? 'agate' : ['thunderegg', 'geode'].includes(near.find.gem.type) ? near.find.gem.type : 'glinting stone'}`;
   else if (nearSluice() && sluice.cons && state.tool !== 'sluice') prompt = 'E: clean up the sluice';
@@ -2391,7 +2397,8 @@ function frame() {
   view.externalDetector = detShown;
   updateHud();
   daynight.update((playing || kneel) && !photo.active ? dt : 0, camera.position);
-  if(goldenTriangle)goldenTriangleLight(daynight);
+  if(region==='graves-hill')gravesHillLight(daynight);
+  else if(goldenTriangle)goldenTriangleLight(daynight);
   else if(newEngland)newEnglandLight(daynight);
   weather.daylight = daynight.daylight;
   const night = 1 - daynight.daylight;

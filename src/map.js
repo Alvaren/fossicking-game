@@ -1,3 +1,4 @@
+import { drawLocalityMap } from './graveshill/map.js';
 import { topographyCanvas } from './topography.js';
 import { PLAY } from './terrain.js';
 
@@ -63,6 +64,7 @@ export class ClaimMap {
     const ctx = cv.getContext('2d');
     cv.width = cv.height = PX;
     ctx.drawImage(this.base, 0, 0);
+    if(this.terrain.profile.id==='graves-hill')drawLocalityMap(ctx,(x,z)=>this.toPx(x,z));
     // Claim pegs.
     const [bx0, by0] = this.toPx(-PLAY, -PLAY), [bx1, by1] = this.toPx(PLAY, PLAY);
     ctx.setLineDash([6, 5]);
@@ -167,6 +169,7 @@ export class ClaimMap {
 }
 
 function label(ctx, text, x, y) {
+  x = Math.max(5, Math.min(x, PX - ctx.measureText(text).width - 5));
   ctx.lineWidth = 3;
   ctx.strokeStyle = 'rgba(255,248,236,0.9)';
   ctx.strokeText(text, x, y);

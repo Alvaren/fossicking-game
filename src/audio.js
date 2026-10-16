@@ -3,7 +3,7 @@
 export class Sound {
   constructor(region = 'new-england') {
     this.forest = region.includes('tasmania');
-    this.dry = region === 'qld-gemfields' || region === 'wa-goldfields' || region === 'coober-pedy';
+    this.dry = region === 'graves-hill' || region === 'qld-gemfields' || region === 'wa-goldfields' || region === 'coober-pedy';
   }
 
   init() {

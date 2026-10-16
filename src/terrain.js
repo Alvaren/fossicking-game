@@ -5,6 +5,8 @@ import { Creek } from './creek.js';
 import { groundMaterial } from './environmentmaterials.js';
 import { goldfieldPatches } from './goldfields.js';
 import { cooberHeight, dugoutReserved } from './cooberpedy.js';
+import { gravesGround } from './graveshill/ground.js';
+import { localityHeight, localityGeology, localityWorkings, localityColour, SITES } from './graveshill/locality.js';
 import { cooberMaterial } from './coobermaterials.js';
 
 // Diggable heightfield terrain built around the creek, with a simple geology:
@@ -24,7 +26,7 @@ const srgb = (v) => Math.pow(v, 2.2);
 export class Terrain {
   constructor(seed, profile = {}) {
     this.profile = profile;
-    this.detailedGround = ['new-england','golden-triangle'].includes(profile.id);
+    this.detailedGround = ['new-england','golden-triangle','graves-hill'].includes(profile.id);
     this.noise = makeNoise(seed);
     this.n2 = this.noise.noise2;
     const rand = this.noise.rand;
@@ -87,7 +89,8 @@ export class Terrain {
       this.sources = Object.fromEntries(Object.entries(this.sources).filter(([id]) => profile.sources.includes(id)));
       if (!this.sources.opal) { this.heaps = []; this.shafts = []; }
     }
-    this.workings = [];
+    if (profile.id === 'graves-hill') { this.sources=structuredClone(SITES); this.creek.boulders=[]; }
+    this.workings = profile.id === 'graves-hill' ? localityWorkings(seed) : [];
     if (profile.id === 'wa-goldfields') this.goldPatches = goldfieldPatches(seed, this.sources.reef, this.creek);
     if (profile.id === 'golden-triangle' || profile.id === 'wa-goldfields') {
       const reef = this.sources.reef, r = mulberry32(seed * 73 + 17);
@@ -100,9 +103,9 @@ export class Terrain {
     this.locked = null;   // terrain vertices tucked under a patch
 
     // Camp on the flats opposite the old terrace, middle of the claim.
-    const cz = 0;
+    const cz = profile.camp?.z ?? 0;
     const cd = this.creek.dcx(cz);
-    const cx = this.creek.cx(cz) - this.benchSide * 13.5 * Math.sqrt(1 + cd * cd);
+    const cx = profile.camp?.x ?? this.creek.cx(cz) - this.benchSide * 13.5 * Math.sqrt(1 + cd * cd);
     this.camp = { x: cx, z: cz, y: 0 };
     this.camp.y = this.rawHeight(cx, cz);
 
@@ -174,6 +177,7 @@ export class Terrain {
   }
 
   rawHeight(x, z) {
+    if (this.profile.id === 'graves-hill') return localityHeight(x,z,this.n2);
     if (this.profile.id === 'coober-pedy') return cooberHeight(x,z,this.n2);
     const L = this.creek.local(x, z, this.tmpL);
     const hv = this.valleyHeight(x, z, L);
@@ -220,6 +224,12 @@ export class Terrain {
 
   // How deep the loose material goes, and how much of it is topsoil.
   geology(x, z, h) {
+    if (this.profile.id === 'graves-hill') {
+      const natural=this.rawHeight(x,z),geo=localityGeology(x,z,natural,this.n2);
+      // An old excavation removes cover; it must not lower the buried wash too.
+      const bedrock=Math.min(h-.015,geo.bedrock);
+      return {bedrock,topsoil:Math.max(0,Math.min(h-bedrock,geo.topsoil-(natural-h)))};
+    }
     if (this.profile.id === 'coober-pedy') {
       return {bedrock:h-this.heapHeight(x,z)-.12-(this.n2(x*.1,z*.1)+1)*.09,topsoil:.025};
     }
@@ -469,7 +479,7 @@ export class Terrain {
     geo.computeBoundingSphere();
     geo.computeBoundingBox();
 
-    this.material = this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',goldenTriangle:this.profile.id === 'golden-triangle',workings:this.workings,excavation:this.detailedGround});
+    this.material = this.profile.id === 'graves-hill' ? gravesGround({excavation:true}) : this.profile.id === 'coober-pedy' ? cooberMaterial({ground:true}) : groundMaterial({newEngland:this.profile.id === 'new-england',goldenTriangle:this.profile.id === 'golden-triangle',workings:this.workings,excavation:this.detailedGround});
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.receiveShadow = true;
     return mesh;
@@ -514,6 +524,7 @@ export class Terrain {
   // Soil colour tells you the geology: black basalt soil, pale quartz ground,
   // pinkish rhyolite, grey creek gravel, slate where bedrock shows.
   surfaceColor(x, z, h, ny, orig, bedrock, topsoil) {
+    if (this.profile.id === 'graves-hill') return localityColour(x,z,h,orig,topsoil,this.n2,this.workings);
     if (this.profile.id === 'coober-pedy') {
       const tone=this.n2(x*.035,z*.035)*.045,heap=smoothstep(.02,.25,this.heapHeight(x,z));
       const band=(1-smoothstep(.7,.95,ny))*Math.sin(h*3.8)*.035;
@@ -599,7 +610,7 @@ export class Terrain {
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     if(surface)geo.setAttribute('aSurface',new THREE.BufferAttribute(surface,3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo,surface ? groundMaterial({newEngland:this.profile.id==='new-england',goldenTriangle:this.profile.id==='golden-triangle',workings:this.workings,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+    const mesh = new THREE.Mesh(geo,this.profile.id==='graves-hill' ? gravesGround() : surface ? groundMaterial({newEngland:this.profile.id==='new-england',goldenTriangle:this.profile.id==='golden-triangle',workings:this.workings,waterLevel:this.material.userData.waterLevel}) : new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
     mesh.receiveShadow = false;
     return mesh;
   }

@@ -1,0 +1,12 @@
+[
+  {
+    "phone": false,
+    "checks": "actual dig/classification, dry rejection, manual over-jig and controlled settling / Easy assist, actual flip, topo, $0 travel, independent Billystone/NSW, reload",
+    "errors": []
+  },
+  {
+    "phone": true,
+    "checks": "actual dig/classification, dry rejection, manual over-jig and controlled settling / Easy assist, actual flip, topo, $0 travel, independent Billystone/NSW, reload",
+    "errors": []
+  }
+]

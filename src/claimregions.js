@@ -1,6 +1,16 @@
 // Mainland destinations extend the original claim engine. New England keeps
 // its default generator and its legacy top-level world snapshot.
 export const CLAIM_PROFILES = {
+  'graves-hill': {
+    id:'graves-hill',name:'Sapphire Gemfields',title:'Graves Hill',salt:0x6a42e,startTool:'shovel',
+    description:'Graves Hill, near Sapphire: red dirt tracks, open woodland and shallow sapphire wash around Mount Clifford and Millionaires Hill. Carry gravel back to your camp tub to wash and sort.',
+    sources:['granite'],crystalPockets:false,soil:[.48,.32,.20],treeCount:235,treeBank:.05,treeHill:.055,treeTint:0xb4b190,tufts:4600,clay:.10,
+    creek:{dry:true,offset:10000,meander:0,width:1,depth:.2,slope:.003},
+    camp:{x:-48,z:29},starterCamp:{shelter:'swag',built:{tub:true}},campSieve:true,
+    minerals:{gold:0,sapphire:1.25,zircon:1,spinel:1,garnet:0,topaz:0,agate:0},
+    how:['Follow the red dirt track to Mount Clifford. Look for shallow gravel beneath brown surface soil, and compare small test loads.', 'Check the dark-red to chocolate wash around Millionaires Hill. Pale billy boulders, quartz and silicified sandstone occur in the gravel.', 'Classify coarse stones before washing. Return to the water-filled tub beside your Wash Bench and select Sieve (4).', 'Hold and release Use to settle the heavy centre; right-click or F flips the sieve. Easy steadies the jig for you.', 'Ruby Creek runs around the northern and western edge. Its bed is dry on this visit; use the water you brought to camp.', 'Press M for the topographic map, track and named diggings. Your ute is at camp.'],
+    notes:'At Mount Clifford the shallow wash contains mixed angular and rounded stones in brown soil. Millionaires Hill has darker red to chocolate soil. Sample through the gravel towards its base and compare patches; pale billy cobbles are useful ground clues, but do not guarantee a sapphire. Break up clay, classify the oversize, then carry the wash to your camp tub. Controlled jigging concentrates dense stones; flip carefully and inspect the heavy centre. The granite exposure is a landmark, not the source of the sapphire wash.',
+  },
   'new-england': {id:'new-england',name:'New England',title:'New England claim',startTool:'detector'},
   'coober-pedy': {
     id:'coober-pedy',name:'Coober Pedy',title:'Painted Ridge',salt:0xc00be,startTool:'hammer',
@@ -50,7 +60,7 @@ export function readClaim(root) {
   const id=CLAIM_REGIONS.includes(root.activeRegion)?root.activeRegion:'new-england';
   if(id==='new-england')return {...root,activeRegion:id};
   const profile=claimProfile(id);
-  const world=root.claims?.[id]||{seed:(root.seed^profile.salt)>>>0,camp:{shelter:'swag'}};
+  const world=root.claims?.[id]||{seed:(root.seed^profile.salt)>>>0,camp:structuredClone(profile.starterCamp||{shelter:'swag'})};
   return {...globals(root),...world,activeRegion:id,savedAt:root.savedAt};
 }
 // Money/finds/owned gear are shared. Ground, material in work and camp structures

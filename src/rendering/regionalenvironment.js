@@ -209,8 +209,8 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
     stats.landformPatches=landforms.patches.length;
     terrain.material.userData.nswCamp?.value.set(terrain.camp.x,terrain.camp.z);
     dressing();groundDetail=newEnglandGroundDetail(root,terrain,kit);
-    bankRoots=newEnglandBankRoots(root,terrain,world,mask,workingMask);
-    stats.bankRoots=bankRoots.branches.length;quality();
+    bankRoots=recipe.bankRoots===false ? null : newEnglandBankRoots(root,terrain,world,mask,workingMask);
+    stats.bankRoots=bankRoots?.branches.length||0;quality();
     stats.status='ready';
   });
   return {root,stats,ready,mask,quality,update(dt,time,player,wind=1) {
@@ -220,7 +220,7 @@ export function buildRegionalEnvironment(scene, { seed, terrain, world, landscap
     const low=stats.quality==='low',medium=stats.quality==='medium';
     groundDetail.update(player,low);
     const revision=String(terrain.revision)+':'+activeEquipment.map(e=>[e.x,e.z,e.r].join(',')).join(';');
-    bankRoots.update(player,low,revision);
+    bankRoots?.update(player,low,revision);
     landforms.update(player,revision);
     const distance=low ? 28 : medium ? 48 : 80,density=low ? .4 : medium ? .7 : 1;
     for(const batch of batches) {
