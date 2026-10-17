@@ -1,5 +1,10 @@
 # Codex and Claude collaboration
 
+## Northeast Tasmania fidelity — 17 October 2026
+
+Codex branch `codex/northeast-tasmania-fidelity`, base `0fa1029`, owns the user-requested overhaul of the existing northeast gem river. [Written scope and checklist](NORTHEAST-TASMANIA-ART-PLAN.md) records inspected Weld River references, NSW reuse and save/control boundaries. Main and Claude were clean; Claude has released ownership. No other agent is launched or messaged. Only the isolated Codex worktree and port 5191 are used.
+
+
 ## Current travel-map pin correction (17 October 2026)
 
 Codex branch `codex/travel-map-pins`, base `fa61e75`, corrects the display offsets that moved Uralla and Graves Hill away from their geographic coordinates. Keep dots on the shared country projection; separate only labels. Own `src/regionmap.js`, `src/region.css`, focused browser checks and Uralla plan/build/audit records. Main and Claude were clean before ownership; no other agent launched or messaged. Local terrain and saves are unchanged. [Current scope and delivery](URALLA-BUILD.md#travel-map-pin-correction--17-october-2026).
