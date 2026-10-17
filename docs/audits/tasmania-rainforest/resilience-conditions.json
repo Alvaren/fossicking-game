@@ -1,0 +1,168 @@
+[
+  {
+    "case": "cached authored scenery offline reload",
+    "worldPreserved": true,
+    "movementAndJournal": true,
+    "errors": []
+  },
+  {
+    "case": "missing",
+    "worldPreserved": true,
+    "movementAndJournal": true,
+    "errors": []
+  },
+  {
+    "case": "corrupt",
+    "worldPreserved": true,
+    "movementAndJournal": true,
+    "errors": []
+  },
+  {
+    "case": "low",
+    "stats": {
+      "environment": {
+        "status": "ready",
+        "assets": 59,
+        "trees": 430,
+        "plants": 6128,
+        "rocks": 222,
+        "visible": 369,
+        "canopy": "broadleaf rainforest"
+      },
+      "water": {
+        "active": false,
+        "width": 0,
+        "height": 0,
+        "passes": 0
+      },
+      "hour": 11.027896399999944,
+      "fogDensity": 0.01606441945519007,
+      "canopyMeshes": [
+        "NE rainforest_0",
+        "NE rainforest_1",
+        "NE rainforest_2",
+        "NE rainforest_3",
+        "NE rainforest_0 · near",
+        "NE rainforest_0 · distant",
+        "NE rainforest_1 · near",
+        "NE rainforest_1 · distant",
+        "NE rainforest_2 · near",
+        "NE rainforest_2 · distant",
+        "NE rainforest_3 · near",
+        "NE rainforest_3 · distant"
+      ]
+    },
+    "errors": []
+  },
+  {
+    "case": "rain",
+    "stats": {
+      "environment": {
+        "status": "ready",
+        "assets": 59,
+        "trees": 850,
+        "plants": 6151,
+        "rocks": 231,
+        "visible": 2752,
+        "canopy": "broadleaf rainforest"
+      },
+      "water": {
+        "active": true,
+        "width": 768,
+        "height": 432,
+        "passes": 2
+      },
+      "hour": 13.01889639999996,
+      "fogDensity": 0.020070732766248288,
+      "canopyMeshes": [
+        "NE rainforest_0",
+        "NE rainforest_1",
+        "NE rainforest_2",
+        "NE rainforest_3",
+        "NE rainforest_0 · near",
+        "NE rainforest_0 · distant",
+        "NE rainforest_1 · near",
+        "NE rainforest_1 · distant",
+        "NE rainforest_2 · near",
+        "NE rainforest_2 · distant",
+        "NE rainforest_3 · near",
+        "NE rainforest_3 · distant"
+      ]
+    },
+    "errors": []
+  },
+  {
+    "case": "night",
+    "stats": {
+      "environment": {
+        "status": "ready",
+        "assets": 59,
+        "trees": 850,
+        "plants": 6151,
+        "rocks": 231,
+        "visible": 2752,
+        "canopy": "broadleaf rainforest"
+      },
+      "water": {
+        "active": true,
+        "width": 768,
+        "height": 432,
+        "passes": 2
+      },
+      "hour": 22.03119759999993,
+      "fogDensity": 0.01776,
+      "canopyMeshes": [
+        "NE rainforest_0",
+        "NE rainforest_1",
+        "NE rainforest_2",
+        "NE rainforest_3",
+        "NE rainforest_0 · near",
+        "NE rainforest_0 · distant",
+        "NE rainforest_1 · near",
+        "NE rainforest_1 · distant",
+        "NE rainforest_2 · near",
+        "NE rainforest_2 · distant",
+        "NE rainforest_3 · near",
+        "NE rainforest_3 · distant"
+      ]
+    },
+    "errors": []
+  },
+  {
+    "case": "touch",
+    "stats": {
+      "environment": {
+        "status": "ready",
+        "assets": 59,
+        "trees": 850,
+        "plants": 6151,
+        "rocks": 231,
+        "visible": 1095,
+        "canopy": "broadleaf rainforest"
+      },
+      "water": {
+        "active": false,
+        "width": 0,
+        "height": 0,
+        "passes": 0
+      },
+      "hour": 11.032698799999933,
+      "fogDensity": 0.016063787932432395,
+      "canopyMeshes": [
+        "NE rainforest_0",
+        "NE rainforest_1",
+        "NE rainforest_2",
+        "NE rainforest_3",
+        "NE rainforest_0 · near",
+        "NE rainforest_0 · distant",
+        "NE rainforest_1 · near",
+        "NE rainforest_1 · distant",
+        "NE rainforest_2 · near",
+        "NE rainforest_2 · distant",
+        "NE rainforest_3 · near",
+        "NE rainforest_3 · distant"
+      ]
+    },
+    "errors": []
+  }
+]

@@ -49,7 +49,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     const tint=model.noise(x*.15,z*.15)*.07;
     if(d<riverWidth(z)+.5)color.setRGB((northeast?.39:.23)+tint,(northeast?.35:.27)+tint,(northeast?.28:.25)+tint);
     else if(trail<1.5)color.setRGB(.28+tint,.26+tint,.19+tint);
-    else if(northeast){const litter=.5+.5*model.noise(x*.09+32,z*.09);color.setRGB(.18+tint+ litter*.035,.18+tint-litter*.02,.11+tint-litter*.02);}
+    else if(northeast){const litter=.5+.5*model.noise(x*.09+32,z*.09);color.setRGB(.105+tint+litter*.025,.245+tint+litter*.025,.13+tint-litter*.01);}
     else color.setRGB(.15+tint,.22+tint,.13+tint);
     colors.set([color.r,color.g,color.b],i*3);
     const bank=d-riverWidth(z);

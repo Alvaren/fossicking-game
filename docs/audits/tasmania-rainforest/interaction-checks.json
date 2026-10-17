@@ -1,0 +1,47 @@
+{
+  "origin": "http://127.0.0.1:5191/",
+  "build": "production dist",
+  "tests": [
+    {
+      "script": "tests/northeast.game.mjs",
+      "result": "passed",
+      "modes": [
+        "desktop",
+        "emulated touch"
+      ],
+      "evidence": "game/checks.json"
+    },
+    {
+      "script": "tests/controls.game.mjs",
+      "result": "passed",
+      "region": "ne-tasmania",
+      "checks": [
+        "actual pointer lock without test bypass",
+        "mouse look",
+        "wheel/number selection while walking",
+        "shared held tools",
+        "map/pause/tool transitions",
+        "denied-lock recovery",
+        "original claim touch toolbar and no stale input"
+      ]
+    },
+    {
+      "script": "tests/tasmania.game.mjs",
+      "result": "passed",
+      "region": "tasmania-west",
+      "modes": [
+        "desktop",
+        "emulated touch"
+      ],
+      "checks": [
+        "actual movement",
+        "generated route/colliders both directions",
+        "sampling and pan input",
+        "partial reload/recovery",
+        "camp",
+        "home preservation and repeated travel"
+      ]
+    }
+  ],
+  "storage": "disposable contexts; user storage untouched"
+}

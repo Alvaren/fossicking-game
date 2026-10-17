@@ -2,7 +2,32 @@
 
 17 October 2026. Branch `codex/northeast-tasmania-fidelity`, base `0fa1029`; plan committed as `a16a961` before implementation. [Scope, inspected sources and checklist](NORTHEAST-TASMANIA-ART-PLAN.md).
 
-## Delivered scene
+## Rainforest correction — 17 October 2026
+
+The user correctly identified that the first overhaul lost the original dense, green, misty rainforest. This correction supersedes its open eucalypt woodland art direction. Branch `codex/tasmania-rainforest-correction`, base `d1b2a83`; correction checklist committed before implementation as `ebe3b1e`.
+
+The authored gum trees have been replaced with four broadleaf rainforest trees, inspired by myrtle and sassafras. Irregular branching crowns overlap at the original trunk anchors. Four separately authored distant variants use fewer, larger leaves to retain canopy cover; Low also uses these models with wider crowns. Green forest ground, stronger moss on rocks and a denser, larger fern layer restore the enclosure. Cool fog remains on every preset, with a base density of 0.016 and stronger mist in rain. Softer direct light, a clouded sky and green reflected ambient light replace the sunny woodland treatment. Water ripples, the visible shallow bed and reflections remain active on High/Ultra.
+
+The official [NRE temperate-rainforest guidance](https://nre.tas.gov.au/conservation/conservation-on-private-land/bush-information-and-management/identify-your-bush-type/bush-with-a-tree-layer-made-up-of-trees-that-are-not-eucalypts/temperate-rainforest) and the visually inspected [Blue Tier Heritage Trail creek photograph](https://parks.tas.gov.au/explore-our-parks/blue-tier-regional-reserve/blue-tier-heritage-trail) informed this correction. These support the regional rainforest character, not a species survey or exact reconstruction of the fictional Tin Fern River.
+
+Only the local Tasmania kit was regenerated in fresh headless Blender: 17 named meshes, 149,000 triangles across all source variants, 8,397,428 bytes. Instancing, separate distant crowns and the existing foliage distance rules remain in use. Gameplay, original trunk colliders, river course, working sites, travel and save schemas are unchanged.
+
+### Correction evidence
+
+- Production build passed (150 modules); [143 unit checks](audits/tasmania-rainforest/unit-tests.txt) and [validation of all 17 named meshes](audits/tasmania-rainforest/asset-check.txt) passed.
+- [Matched captures and renderer checks](audits/tasmania-rainforest/final/checks.json): original eye-height viewpoints, no uncaught or shader errors. Compared original, rejected and corrected river/camp views; inspected crown shape, green ground, fern layers, fog depth and water visibility.
+- [Offline, missing/corrupt-kit fallback and Low/rain/night/touch checks](audits/tasmania-rainforest/resilience-conditions.json) passed. Low retains broad crowns and mist; high-detail water follows the existing quality setting. Browser contexts are disposable; user saves are untouched.
+- [Desktop/touch gameplay and normal control checks](audits/tasmania-rainforest/interaction-checks.json) passed: northeast routes/colliders, movement, jig/flip/collection and partial saves; actual pointer lock, mouse look, wheel/number keys and menus; original-claim touch controls and Western Tasmania gameplay/save/travel regression. Physical-phone performance is not measured.
+
+[Corrected river](audits/tasmania-rainforest/final/hero-river.jpg), [camp](audits/tasmania-rainforest/final/hero-camp.jpg), [matched bend](audits/tasmania-rainforest/final/bend.jpg), [terrace](audits/tasmania-rainforest/final/terrace.jpg), [Low](audits/tasmania-rainforest/conditions/low.jpg). Hero images hide HUD/held tools only. This is the implemented response to the biome correction; user art acceptance is not presumed. Terrain remains the established smooth, compact fictional catchment, and the tree kit is stylised rather than a botanical reconstruction.
+
+### Correction performance and integration
+
+The [120-second whole-frame High/1920×1080 sweep](audits/tasmania-rainforest/performance.json), after 20 seconds of warm-up, measured 16.7 ms median/p95 frame intervals, 3.2/4.6 ms CPU callback/submission and 6.28/6.92 ms GPU on the available RTX 3090/ANGLE D3D11 desktop. No measured frame exceeded 33.5 ms. Median/p95 draw calls across all passes were 465/822. This sample supports the desktop correction; it is not a physical-phone or low-end GPU result. The source kit is larger because it now supplies the canopy as well as the understory.
+
+Main and Claude were clean at pre-integration inspection; fetched origin/main matched local main, and Claude had no unmerged commits. Only Codex's 5191 static production preview was listening. The correction is ready for the standing authorised publication; live verification follows after deployment.
+
+## Initial scene — art direction rejected by user
 
 Tin Fern River now uses the established New England foliage/material/water pipeline and Uralla granite meshes. A separate nine-model Tasmania kit adds three ground ferns, three tree ferns and three leafy understory variants. Eucalypts retain their original anchors with varied taller crowns. Jointed granite shoulders and connected low shelves frame the working reaches, with basalt/cobble wash, lichen and wet margins, ground-following roots, branches, sedges and patchy leaf litter. The portable camp tarp has poles, stakes and guy ropes; the surrounding track and forest use the same detail treatment.
 
@@ -38,7 +63,7 @@ Inspected all three reaches, camp and track plus Low, rain, night and touch capt
 
 Compared with the baseline, trees have continuous trunks/branches/crowns, fern fronds have actual shape, granite replaces repeated coarse blobs, and the water reflects the forest while retaining visible ripples and the shallow bed. The low banks and overall corridor remain the original terrain, with connected rock shelves supplying local variation.
 
-This completes the requested regional overhaul; it does **not** establish full parity with the six original promotional references. The preserved banks are smoother than the inspected Weld River bed, the forest distribution is procedural rather than a botanical survey, and the portable camp remains modest. Reference-art acceptance remains the user's judgment. No physical-phone benchmark or exact real-world river reconstruction is claimed.
+The initial overhaul was rejected for its open gum woodland, brown ground and weak fog. The technical checks below are historical evidence, not visual acceptance. It does **not** establish full parity with the six original promotional references. The preserved banks are smoother than the inspected Weld River bed, the forest distribution is procedural rather than a botanical survey, and the portable camp remains modest. Reference-art acceptance remains the user's judgment. No physical-phone benchmark or exact real-world river reconstruction is claimed.
 
 ## Performance
 

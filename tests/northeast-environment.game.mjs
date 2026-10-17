@@ -33,6 +33,6 @@ try {
     },{name,z,offset,ahead});
     await page.waitForTimeout(1400);await page.screenshot({path:out+'/'+name+'.jpg',quality:94});views.push([name,position]);
   }
-  const stats=await page.evaluate(()=>({environment:fossickTas.world.environment?.stats||null,water:fossickTas.world.waterDetail?.stats||null,renderCounters:"Use performance.json; the normal renderer resets counts between water/world/tool passes.",geometry:fossickTas.renderer.info.memory,gl:fossickTas.renderer.getContext().getParameter(fossickTas.renderer.getContext().RENDERER)}));
+  const stats=await page.evaluate(()=>({environment:fossickTas.world.environment?.stats||null,water:fossickTas.world.waterDetail?.stats||null,fog:{density:fossickTas.scene.fog.density,color:fossickTas.scene.fog.color.getHexString()},renderCounters:"Use performance.json; the normal renderer resets counts between water/world/tool passes.",geometry:fossickTas.renderer.info.memory,gl:fossickTas.renderer.getContext().getParameter(fossickTas.renderer.getContext().RENDERER)}));
   await writeFile(out+'/errors.json',JSON.stringify(errors,null,2));assert.deepEqual(errors,[]);await writeFile(out+'/checks.json',JSON.stringify({errors,stats,views,normalEyeHeight:true},null,2)+'\n');console.log('Northeast capture passed: '+out);
 } finally {await browser.close();}

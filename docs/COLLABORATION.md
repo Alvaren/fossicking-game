@@ -1,5 +1,9 @@
 # Codex and Claude collaboration
 
+## Northeast Tasmania rainforest correction — 17 October 2026
+
+Codex branch `codex/tasmania-rainforest-correction`, base `d1b2a83`, corrects the rejected open gum woodland. The original dense green rainforest and visible fog are the governing direction. [Correction checklist](NORTHEAST-TASMANIA-ART-PLAN.md) was committed first; [delivery evidence](NORTHEAST-TASMANIA-BUILD.md) records the new broadleaf near/distant trees, green ground/ferns and cool mist. Main and Claude were inspected clean at setup; no other agent was launched or messaged. Only the Codex worktree and isolated 5191 preview are used. Earlier technical passes do not constitute acceptance of the rejected art direction.
+
 ## Northeast Tasmania fidelity — 17 October 2026
 
 Codex branch `codex/northeast-tasmania-fidelity`, base `0fa1029`, owns the user-requested overhaul of the existing northeast gem river. [Written scope and checklist](NORTHEAST-TASMANIA-ART-PLAN.md) records inspected Weld River references, NSW reuse and save/control boundaries. Main and Claude were clean; Claude has released ownership. No other agent is launched or messaged. Only the isolated Codex worktree and port 5191 are used.

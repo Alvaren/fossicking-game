@@ -5,18 +5,18 @@ import { vegetationMaterial } from '../vegetation.js';
 // Regional treatments extend the shared shaders; atlas, wetness and lighting
 // remain identical to the established game rendering contracts.
 export function northeastGround() {
-  const m=groundMaterial({forest:true,dampness:.4}),compile=m.onBeforeCompile;
+  const m=groundMaterial({forest:true,dampness:.7}),compile=m.onBeforeCompile;
   m.onBeforeCompile=s=>{
     compile(s);
     s.fragmentShader=s.fragmentShader.replace('diffuseColor.rgb *= groundColour*1.38;',`
       float nePatch=soilNoise(gp*.19)+soilNoise(gp*.61)*.35;
       float humus=vSurface.x*(1.0-stone);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.105,.083,.052),humus*.36);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.085,.19,.075),humus*.45);
       diffuseColor.rgb*=mix(.84,1.10,smoothstep(.20,1.15,nePatch));
       diffuseColor.rgb*=mix(vec3(.70),groundColour,.38)*1.38;
     `).replace(".013*detail;", ".006*detail;");
   };
-  m.customProgramCacheKey=()=> 'northeast-ground-v1';return m;
+  m.customProgramCacheKey=()=> 'northeast-ground-rainforest-v2';return m;
 }
 const rocks=new Map();
 export function northeastRock(kind='granite',mixed=true) {
@@ -31,12 +31,12 @@ export function northeastRock(kind='granite',mixed=true) {
       float speck=rockNoise(vRockWorld*15.0);
       float dry= smoothstep(vRockWater+.08,vRockWater+.65,vRockWorld.y);
       float neLichen=smoothstep(.60,.73,neRind+speck*.12)*smoothstep(.12,.80,vRockUp.y)*dry;
-      float moss=smoothstep(.67,.85,neRind)*smoothstep(-.3,.5,vRockUp.y)*(1.0-smoothstep(vRockWater+.5,vRockWater+2.4,vRockWorld.y));
+      float moss=smoothstep(.34,.65,neRind)*smoothstep(-.55,.55,vRockUp.y)*smoothstep(vRockWater-.03,vRockWater+.2,vRockWorld.y);
       diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.34,.36,.24),neLichen*.42);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.08,.11,.045),moss*.48);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.075,.155,.045),moss*.72);
       #include <roughnessmap_fragment>`);
   };
-  m.customProgramCacheKey=()=> 'northeast-rock-v1:'+key;rocks.set(key,m);return m;
+  m.customProgramCacheKey=()=> 'northeast-rock-rainforest-v2:'+key;rocks.set(key,m);return m;
 }
 export function northeastFoliage(grass=false) {
   const surface=vegetationMaterial({vertexColors:true,forest:true,grass}),m=surface.material,compile=m.onBeforeCompile;

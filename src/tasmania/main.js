@@ -40,12 +40,15 @@ export function startTasmania(region = TASMANIA) {
   modal.innerHTML=`<div class="tas-panel"><header><div><div class="tas-title">FIELD JOURNAL / ${northeast?'ROADSIDE RIVER ACCESS':'FOOT ACCESS ONLY'}</div><h1 id="tas-heading">${riverName} catchment</h1></div><button id="tas-resume" class="primary">Enter the catchment</button></header><p>${northeast?'Walk in from the roadside track to Granite Bend, then follow the western bank through Tin Terrace to Basalt Run. Compare small samples of the alluvial wash: classify, wet-sieve and inspect the heavies.':'Carry your gear down to Fern Bend, then follow the river upstream through Slate Narrows to Upper Cascade. Cross at the two shallow fords. Sample small traps, compare your pans and carry your recovery back to the trailhead.'}</p><div class="tas-layout"><div><canvas id="tas-map" class="tas-map" width="520" height="610" role="img" aria-label="Catchment map with route, reaches, campsite and current position"></canvas><p class="tas-muted">North is up. Contours mark 2-metre changes in height.</p></div><div><div id="tas-journal-summary" class="tas-summary"></div><div class="tas-row"><button id="tas-camp">Pitch overnight shelter</button><button id="tas-sleep">Sleep until morning</button></div><p id="tas-camp-note" class="tas-muted"></p><h2>Read the river</h2><div id="tas-reaches"></div><h2>Work a small sample</h2><p>${northeast?'Compare pale loose bar gravel with darker wash at the base of the alluvium. Sapphire, zircon and spinel can occur together; occasional topaz occurs too. Black sands can include cassiterite.':'Gravel held behind a boulder or in a bedrock crack can differ from the loose bar beside it.'} Take a modest scoop and compare results. Heavies are dense minerals; black sand does not guarantee gold. Some parcels are barren.</p><p>${northeast?'The classifier screens out coarse gravel. Wet-sieve the retained wash: gentle jigging settles the heavies, then flip to inspect the centre. Holding too hard loses small stones through the screen. Clay-bound and unscreened wash take longer. Easy demonstrates the technique; Realistic leaves the jig and flip to you. The pan remains available for comparing techniques.':"The classifier removes oversize before loading. Clay-bound material needs breaking apart. Use the pan’s riffles: stratify, wash a thin layer, settle again, then reveal. Easy demonstrates this; Realistic leaves technique and losses to you."}</p><div id="tas-results"></div></div></div><div class="tas-summary"><b>Controls</b><p id="tas-controls"></p><p>Deep pools and steep faces block walking. A heavier pack slows your pace. ${northeast?'The track begins beside the road; this river visit is on foot.':'There is no ute here.'} Bring your finds home when you finish. Your camp and unfinished work will be there when you return.</p></div><div class="tas-row"><button id="tas-locations">Locations & travel · $${TRAVEL_FEE}</button><button id="tas-save">Save expedition</button><button id="tas-return" class="primary">Return home with finds</button><button id="tas-recover">Stuck? Recover to trailhead</button></div><p id="tas-return-note" class="tas-muted"></p><p id="tas-journal-status" role="status"></p></div>`;
   document.body.append(modal);
   const $=id=>document.getElementById(id), sound=new Sound(region);
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x8caaa0);scene.fog=new THREE.FogExp2(northeast?0xabc0b2:0x8caaa0,northeast?.006:.011);
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x8caaa0);scene.fog=new THREE.FogExp2(northeast?0xabc0b2:0x8caaa0,northeast?.016:.011);
   const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.08,400);camera.rotation.order='YXZ';scene.add(camera);
   let forestClock,forestSky;
+  const forestMist=new THREE.Color(0x88a49a),forestGround=new THREE.Color(0x3d5a43);
   if(northeast){
     camera.far=2500;camera.updateProjectionMatrix();forestSky=new Sky();forestSky.scale.setScalar(2000);scene.add(forestSky);
-    const u=forestSky.material.uniforms;u.turbidity.value=5;u.rayleigh.value=1.1;u.mieCoefficient.value=.004;u.mieDirectionalG.value=.8;if(u.cloudCoverage)u.cloudCoverage.value=.38;
+    const u=forestSky.material.uniforms;u.turbidity.value=5;u.rayleigh.value=1.1;u.mieCoefficient.value=.004;u.mieDirectionalG.value=.8;if(u.cloudCoverage)u.cloudCoverage.value=.88;if(u.cloudDensity)u.cloudDensity.value=.75;if(u.showSunDisc)u.showSunDisc.value=0;
+    u.forestOvercast={value:forestMist.clone()};
+    forestSky.material.fragmentShader='uniform vec3 forestOvercast;\n'+forestSky.material.fragmentShader.replace('gl_FragColor = vec4( texColor, 1.0 );','gl_FragColor = vec4( mix(texColor,forestOvercast,.92), 1.0 );');
     forestClock=new DayNight({scene,sky:forestSky,sunDir:new THREE.Vector3(),hour:expedition.hour});
   }
   const renderer=new THREE.WebGLRenderer({canvas,antialias:settings.aa});renderer.setPixelRatio(Math.min(devicePixelRatio,settings.res));renderer.setSize(innerWidth,innerHeight);
@@ -267,11 +270,14 @@ export function startTasmania(region = TASMANIA) {
     if(northeast){
       forestClock.hour=expedition.hour;forestClock.update(0,camera.position);forestSky.position.copy(camera.position);
       const b=forestClock.base,storm=1-world.atmosphere.rain*.45;
-      hemi.intensity=b.hemi*1.08;hemi.color.copy(b.hemiColor);hemi.groundColor.copy(b.hemiGround);
-      sun.intensity=b.sun*.93*storm;sun.color.copy(b.sunColor);renderer.toneMappingExposure=b.exposure;
+      hemi.intensity=b.hemi*1.42;hemi.color.copy(b.hemiColor).lerp(forestMist,daylight*.35);hemi.groundColor.copy(b.hemiGround).lerp(forestGround,daylight*.9);
+      sun.intensity=b.sun*.30*storm;sun.color.copy(b.sunColor).lerp(forestMist,daylight*.25);renderer.toneMappingExposure=b.exposure*1.16;
       sun.position.copy(camera.position).addScaledVector(forestClock.lightDir,90);sun.target.position.copy(camera.position);sun.target.updateMatrixWorld();
-      scene.fog.color.copy(b.fog).lerp(new THREE.Color(0xa6b7b1),daylight*.55).multiplyScalar(1-world.atmosphere.rain*.3);
-      const u=world.waterUniforms;u.sunColor.value.copy(b.sunColor).multiplyScalar(forestClock.daylight);u.skyColor.value.copy(b.waterSky);u.horizonColor.value.copy(b.waterHorizon);
+      scene.fog.color.copy(b.fog).lerp(forestMist,daylight*.94).multiplyScalar(1-world.atmosphere.rain*.15);
+      scene.fog.density=.016+world.atmosphere.rain*.004+(1-daylight)*.002;
+      forestSky.material.uniforms.forestOvercast.value.copy(scene.fog.color);
+      forestClock.stars.material.opacity*=.18;forestClock.moon.material.opacity*=.2;
+      const u=world.waterUniforms;u.sunColor.value.copy(b.sunColor).multiplyScalar(forestClock.daylight);u.skyColor.value.copy(b.waterSky).lerp(forestMist,daylight*.88);u.horizonColor.value.copy(scene.fog.color);
       u.sunDir?.value.copy(forestClock.lightDir);u.lightLevel.value=Math.max(.1,forestClock.daylight)*storm;
       world.waterDetail?.capture(renderer,scene,camera);
     }

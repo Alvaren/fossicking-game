@@ -60,7 +60,7 @@ Read [AGENTS.md](AGENTS.md) and [the collaboration guide](docs/COLLABORATION.md)
 
 The New England environment upgrade has its first implementation: authored gum/rock/plant models, the first creek section, matching ground and excavation materials, and richer water on High/Ultra. See the [delivery and screenshots](docs/NSW-ENVIRONMENT-BUILD.md), [visual audit](docs/NSW-ENVIRONMENT-AUDIT.md) and [remaining build checklist](docs/NSW-ENVIRONMENT-BUILD-PLAN.md). The full-map reference-quality gate remains open. The supplied visual references set the target; graphics presets provide hardware scaling.
 
-Northeast Tasmania’s Tin Fern River uses the same foliage and water foundations, with local fern/understory models, granite shelves and wetter forest materials informed by Weld River references. See the [regional build record and screenshots](docs/NORTHEAST-TASMANIA-BUILD.md). The established fictional river, sampling and expedition saves are retained.
+Northeast Tasmania’s Tin Fern River uses the same foliage and water foundations, with overlapping broadleaf rainforest crowns, dense ferns, green mossy ground, granite shelves and cool persistent mist. The rainforest correction follows user feedback and northeast Tasmania references. See the [regional build record and screenshots](docs/NORTHEAST-TASMANIA-BUILD.md). The established fictional river, sampling and expedition saves are retained.
 
 Gold panning: select the pan (3) in the creek, then click or tap Use. Drag on the close-up pan; the action buttons select clay breakup, stratification, washing and reveal. Put aside saves the partly worked pan. See [panning controls and model notes](docs/PANNING.md).
 

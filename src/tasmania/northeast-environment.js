@@ -24,11 +24,11 @@ export function buildNortheastEnvironment(scene,model,world,profile,settings) {
   }
   function instances(name,entries,{plant=false,tree=false,solid=false}={}) {
     if(!entries.length)return;
-    const isRock=/^(granite|cobble|basalt)_/.test(name),geo=geometry(name,plant||tree);
+    const isRock=/^(granite|cobble|basalt)_/.test(name),geo=geometry(low&&tree?name.replace('rainforest_','rainforestfar_'):name,plant);
     const surface=tree?foliage:groundFoliage;
     const mesh=new THREE.InstancedMesh(geo,isRock?northeastRock(name.startsWith('basalt')?'basalt':'granite'):surface.material,entries.length);
     const kinds=isRock?rockKinds(geo,entries.length):null;
-    mesh.name='NE '+name;mesh.receiveShadow=true;mesh.castShadow=tree||solid;mesh.userData.environmentOnly=true;
+    mesh.name='NE '+name;mesh.userData.variant=name;mesh.receiveShadow=true;mesh.castShadow=tree||solid;mesh.userData.environmentOnly=true;
     if(!isRock)mesh.customDepthMaterial=surface.depthMaterial;
     entries.forEach((e,i)=>{
       dummy.position.set(e.x,e.y,e.z);dummy.rotation.set(0,e.rotation,0);dummy.scale.set(e.scale,e.scale*(e.sy??1),e.scale);
@@ -45,15 +45,15 @@ export function buildNortheastEnvironment(scene,model,world,profile,settings) {
     const groups=new Map();for(const e of entries){if(!groups.has(e.name))groups.set(e.name,[]);groups.get(e.name).push(e);}
     for(const [name,items] of groups)instances(name,items,options);
   }
-  const ready=Promise.all([loadNewEnglandKit(),loadEnvironmentKit('models/tasmania-ne/environment.glb',{fern:3,treefern:3,understory:3}),loadEnvironmentKit('models/uralla/environment.glb',{granite:4,cobble:6})]).then(([shared,local,granite])=>{
+  const ready=Promise.all([loadNewEnglandKit(),loadEnvironmentKit('models/tasmania-ne/environment.glb',{fern:3,treefern:3,understory:3,rainforest:4,rainforestfar:4}),loadEnvironmentKit('models/uralla/environment.glb',{granite:4,cobble:6})]).then(([shared,local,granite])=>{
     if(!shared||!local||!granite){for(const k of [shared,local,granite])if(k)Object.values(k).forEach(g=>g.dispose());stats.status='fallback';return;}
     for(const name of Object.keys(granite))shared[name]?.dispose();
     kit={...shared,...local,...granite};stats.assets=Object.keys(kit).length;
-    // Rooted authored gums replace both pieces of each original cylinder/spray.
+    // Broadleaf rainforest crowns overlap at the original solid trunk anchors.
     const trees=[];
     for(let i=0;i<world.trunks.count;i++) {
       world.trunks.getMatrixAt(i,matrix);matrix.decompose(position,rotation,scale);
-      const name='gum_'+(i%4),bounds=kit[name].boundingBox,h=scale.y*(1.15+(i%7)/13),width=scale.x;
+      const name='rainforest_'+(i%4),bounds=kit[name].boundingBox,h=scale.y*(.95+(i%7)/30),width=scale.x*(low?1.37:1.12);
       trees.push({name,x:position.x,z:position.z,y:model.height(position.x,position.z)-.05,scale:width*1.13,sy:h/(bounds.max.y*width*1.13),rotation:i*2.399,rank:0});
     }
     grouped(trees,{tree:true});
@@ -103,6 +103,10 @@ export function buildNortheastEnvironment(scene,model,world,profile,settings) {
     for(const x of [-1.3,1.3])for(const z of [-1,1])pole([x,.04,z],[x*1.25,.02,z*1.24],.008,ropeMat);
     stats.rocks=rocks.length+shelves.length;stats.plants=composition.plants.length+composition.wood.length;
     lod=vegetationLOD(root,treeSources,low);
+    // Distant crowns retain cover using larger, fewer broad leaves. Generic
+    // triangle thinning exposed the sky and changed this biome into woodland.
+    for(const batch of lod.batches){batch.far.geometry.dispose();batch.far.geometry=geometry(batch.source.userData.variant.replace('rainforest_','rainforestfar_'));}
+    stats.canopy='broadleaf rainforest';
     for(const o of [world.trunks,world.crowns,world.ferns,world.fernTrunks,world.rocks])o.visible=false;
     for(const batch of world.lod.batches)for(const o of [batch.near,batch.far])o.visible=false;
     // Replace the legacy black understorey sprays at their existing anchors.

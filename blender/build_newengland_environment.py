@@ -403,9 +403,56 @@ def forest_shrub(index):
     leaves('leaf_understory',centres,rng,g,True)
 
 
+def rainforest_leaves(centres, rng, group, far=False):
+    """Broad, folded oval foliage in overlapping irregular crown volumes.
+    Coarse distant foliage conserves projected cover instead of deleting leaves.
+    """
+    verts=[];faces=[];mats=[];normals=[]
+    for centre,radius,count in centres:
+        for j in range(max(1,int(count*(.24 if far else 1)))):
+            a=rng.random()*math.tau;r=math.sqrt(rng.random())*radius
+            c=Vector(centre)+Vector((math.cos(a)*r,math.sin(a)*r,(rng.random()-.5)*radius*.90))
+            angle=a+rng.uniform(-1.2,1.2);d=Vector((math.cos(angle),math.sin(angle),rng.uniform(-.25,.20)));side=Vector((-d.y,d.x,.03))
+            length=(.16+rng.random()*.11)*(1.95 if far else 1);width=length*.69
+            v=[c-d*length,c-d*length*.48+side*width*.85,c+d*length*.45+side*width,c+d*length,c+d*length*.45-side*width,c-d*length*.48-side*width*.85,c+Vector((0,0,width*.23))]
+            n=len(verts);verts.extend(v)
+            # Three paired folds preserve full oval silhouettes without alpha cards.
+            faces.extend([(n,n+1,n+6),(n+1,n+2,n+6),(n+2,n+3,n+6),(n+3,n+4,n+6),(n+4,n+5,n+6),(n+5,n,n+6)])
+            mats.extend([rng.choices([0,1,2],[7,2,2])[0]]*6)
+            normal=Vector((math.cos(a)*.35,math.sin(a)*.35,.85)).normalized();normals.extend([normal]*18)
+    o=mesh('leaf_rainforest',verts,faces,'leaf',group);o.data.materials.append(M['leaf_light']);o.data.materials.append(M['leaf_dark'])
+    for face,mi in zip(o.data.polygons,mats):face.material_index=mi
+    o.data.normals_split_custom_set(normals)
+
+
+def rainforest_tree(index,far=False):
+    """Myrtle/sassafras-inspired branching forms, no eucalypt leaf or crown kit."""
+    rng=random.Random(98143+index*113);g=parent(('rainforestfar_' if far else 'rainforest_')+str(index))
+    h=[10.5,12.5,9.8,11.7][index];lean=Vector((rng.uniform(-.5,.5),rng.uniform(-.5,.5),0))
+    trunk=[Vector((0,0,-.04)),Vector((.035,-.025,.6)),lean*.3+Vector((0,0,h*.27)),lean*.7+Vector((0,0,h*.51)),lean+Vector((0,0,h*.80))]
+    tube('bark_rainforest',trunk,[.29,.23,.19,.12,.028],'bark',g,10 if far else 14)
+    centres=[]
+    for j in range(11):
+        a=j*2.399+rng.uniform(-.45,.45);level=.30+j*.038
+        start=lean*level+Vector((0,0,h*level));spread=(2.8+rng.random()*1.9)*[1.08,.94,1.13,1.0][index]
+        end=Vector((start.x+math.cos(a)*spread,start.y+math.sin(a)*spread,h*(.65+.12*math.sin(j*1.73+index)+rng.random()*.14)))
+        bend=start.lerp(end,.48)+Vector((0,0,.35))
+        tube('bark_limb',[start,bend,end],[.12*(1-j*.045),.065,.009],'bark',g,6 if far else 9)
+        for k in range(3):
+            b=a+(k-1)*.85;tip=end+Vector((math.cos(b)*(.45+rng.random()*.5),math.sin(b)*(.45+rng.random()*.5),rng.uniform(-.4,.5)))
+            tube('bark_twigs',[bend.lerp(end,.7),tip],[.025,.003],'bark_light',g,4 if far else 5)
+            centres.append((tip,1.0+rng.random()*.4,95))
+    centres.extend([(lean+Vector((0,0,h*.87)),1.55,220),(lean+Vector((-.8,.6,h*.72)),1.5,170)])
+    rainforest_leaves(centres,rng,g,far)
+    for j in range(5):
+        a=j*math.tau/5+.2
+        tube('bark_buttress',[(0,0,.5),(math.cos(a)*.3,math.sin(a)*.3,.14),(math.cos(a)*.65,math.sin(a)*.65,-.06)],[.12,.08,.005],'bark_dark',g,5 if far else 7)
+
+
 if TASMANIA:
-    for name,colour in {'bark':'746751','bark_dark':'504535','bark_light':'9a9566','leaf':'6c8150','leaf_light':'92a570','leaf_dark':'52683e'}.items():M[name]=material(name,colour)
+    for name,colour in {'bark':'677568','bark_dark':'3e5141','bark_light':'85907e','leaf':'477843','leaf_light':'72955b','leaf_dark':'335f38'}.items():M[name]=material(name,colour)
     for i in range(3):fern(i);fern(i,True);forest_shrub(i)
+    for i in range(4):rainforest_tree(i);rainforest_tree(i,True)
 elif URALLA:
     for kind,count in [('granite',4),('cobble',6)]:
         for i in range(count):

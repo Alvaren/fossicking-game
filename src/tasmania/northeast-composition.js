@@ -24,15 +24,15 @@ export function northeastComposition(model,profile,colliders=[]) {
     if(!workClear(x,z,r)||colliders.some(c=>Math.hypot(x-c.x,z-c.z)<c.r+.4))continue;
     stones.push({x,z,y:model.height(x,z)-.1,r,sy:.32+rand()*.12,rotation:.15+rand()*.4,name:'granite_'+(i%4),water:waterY(z)});
   }
-  for(let i=0;i<10500;i++) {
+  for(let i=0;i<15500;i++) {
     const z=rand()*290-145,x=riverX(z)+(rand()-.5)*116,b=bank(x,z),h=model.height(x,z),t=nearestTrail(x,z).distance;
     const patch=.5+.25*Math.sin(x*.39+Math.sin(z*.11))+.25*Math.sin(z*.27-x*.14);
     if(!workClear(x,z,.18)||stones.some(s=>Math.hypot(x-s.x,z-s.z)<s.r+.2))continue;
     const rotation=rand()*6.28,rank=rand();
     if(b>2&&b<48&&rand()<patch*.75) {
-      const tree= i%19===0&&b>3&&t>3.2,shrub=i%11===0&&b>4;
+      const tree= i%15===0&&b>3&&t>3.2,shrub=i%11===0&&b>4;
       const name=tree?'treefern_'+(i%3):shrub?'understory_'+(i%3):'fern_'+(i%3);
-      plants.push({name,x,z,y:h-.035,scale:tree?.7+rand()*.45:shrub?.55+rand()*.5:.7+rand()*.65,rotation,rank});
+      plants.push({name,x,z,y:h-.035,scale:tree?.7+rand()*.45:shrub?.55+rand()*.5:.9+rand()*.65,rotation,rank});
     } else if(b>-.6&&b<3&&rank<.7)plants.push({name:'sedge_'+(i%2),x,z,y:h-.04,scale:.65+rand()*.65,rotation,rank});
     if(b<5&&b>-riverWidth(z)*.85&&i%2===0) {
       if(model.sites.some(s=>Math.hypot(x-s.x,z-s.z)<1.1))continue;

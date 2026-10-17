@@ -6,13 +6,13 @@ Owner: Codex. Branch `codex/northeast-tasmania-fidelity`, base `0fa1029`. User a
 
 The user rejected the first overhaul: the original map was greener, had denser canopy, no gum-tree character and visible fog. The open, sunny eucalypt woodland is the wrong biome. This correction supersedes the earlier eucalypt/brown-ground art choices; previous technical passes do not constitute visual acceptance.
 
-- [ ] R1: Compare original/first-overhaul views and official northeast rainforest references.
-- [ ] R2: Replace every authored gum with dense broadleaf myrtle/sassafras-inspired rainforest crowns, branching trunks and green foliage; preserve original trunk anchors/colliders. Maintain closed-canopy character on Low.
-- [ ] R3: Restore green mossy ground, damp fern layers and visible cool fog at all presets; soften open-sky/direct-sun treatment. Keep river working edges readable.
-- [ ] R4: Inspect matched river, camp and forest views against both earlier scenes; verify no exposed woodland horizon, broken silhouettes or vanished ripples. Run build, asset, gameplay/save/control and fallback/quality checks plus a performance sample.
+- [x] R1: Compare original/first-overhaul views and official northeast rainforest references.
+- [x] R2: Replace every authored gum with dense broadleaf myrtle/sassafras-inspired rainforest crowns, branching trunks and green foliage; preserve original trunk anchors/colliders. Maintain closed-canopy character on Low.
+- [x] R3: Restore green mossy ground, damp fern layers and visible cool fog at all presets; soften open-sky/direct-sun treatment. Keep river working edges readable.
+- [x] R4: Inspect matched river, camp and forest views against both earlier scenes; verify no exposed woodland horizon, broken silhouettes or vanished ripples. Run build, asset, gameplay/save/control and fallback/quality checks plus a performance sample.
 - [ ] R5: Publish the correction, verify live files/gameplay and share actual final screenshots. User art approval remains separate.
 
-Reference: [NRE Tasmania temperate rainforest](https://nre.tas.gov.au/conservation/conservation-on-private-land/bush-information-and-management/identify-your-bush-type/bush-with-a-tree-layer-made-up-of-trees-that-are-not-eucalypts/temperate-rainforest) describes rainforest in the northeast highlands, with myrtle and sassafras among canopy trees. [Parks Blue Tier Heritage Trail](https://parks.tas.gov.au/explore-our-parks/blue-tier-regional-reserve/blue-tier-heritage-trail) supplies a nearby forest-creek photo. These guide vegetation form and moisture, not a new claim that Tin Fern is a surveyed real river. User direction governs the fictional scene's cold rainforest identity.
+Reference: [NRE Tasmania temperate rainforest](https://nre.tas.gov.au/conservation/conservation-on-private-land/bush-information-and-management/identify-your-bush-type/bush-with-a-tree-layer-made-up-of-trees-that-are-not-eucalypts/temperate-rainforest) describes rainforest in the northeast highlands, with myrtle and sassafras among canopy trees. [Parks Blue Tier Heritage Trail](https://parks.tas.gov.au/explore-our-parks/blue-tier-regional-reserve/blue-tier-heritage-trail) supplies a nearby forest-creek photo. The Craig Vertigan creek photograph was visually inspected: near-continuous moss over boulders/banks, interlocking trees and layered green foliage enclosing dark clear water. These guide vegetation form and moisture, not a new claim that Tin Fern is a surveyed real river. User direction governs the fictional scene's cold rainforest identity.
 
 ## Evidence and fidelity boundary
 
