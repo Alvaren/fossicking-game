@@ -6,6 +6,7 @@ import bpy, bmesh, math, random, sys, os, json
 from mathutils import Vector
 
 OUT = os.path.abspath(sys.argv[sys.argv.index('--') + 1])
+TASMANIA = 'tasmania-ne' in sys.argv[sys.argv.index('--') + 2:]
 URALLA = 'uralla' in sys.argv[sys.argv.index('--') + 2:]
 GEMFIELD = 'graves-hill' in sys.argv[sys.argv.index('--') + 2:]
 GOLDFIELD = 'golden-triangle' in sys.argv[sys.argv.index('--') + 2:]
@@ -353,7 +354,59 @@ def block(name, rng, group, role, scale=(1,1,1), rounded=False, seam=False):
         bm.to_mesh(o.data);bm.free()
     return group
 
-if URALLA:
+def fern(index, tree_fern=False):
+    """Pinnate, arching fronds: rooted crowns, folded leaflets, fibrous stems."""
+    rng=random.Random(21790+index*101+(900 if tree_fern else 0))
+    g=parent(('treefern_' if tree_fern else 'fern_')+str(index))
+    height=[1.65,2.5,3.1][index] if tree_fern else 0
+    if tree_fern:
+        tube('bark_fibrous_stem',[(0,0,-.08),(.04,-.02,height*.55),(.10,0,height)],[.22,.17,.13],'bark_dark',g,11)
+        for i in range(14):
+            a=i*math.tau/14; r=.18
+            tube('bark_fibre',[(math.cos(a)*r,math.sin(a)*r,0),(math.cos(a)*r*.9+.04,math.sin(a)*r*.9,height*.55),(.1+math.cos(a)*.12,math.sin(a)*.12,height*.94)],[.013,.009,.003],'bark',g,4)
+    verts=[];faces=[];mats=[]
+    count=13 if tree_fern else 9+index
+    for f in range(count):
+        a=f*2.399+rng.uniform(-.16,.16); length=(2.05 if tree_fern else .83)*( .8+rng.random()*.4)
+        d=Vector((math.cos(a),math.sin(a),0));cross=Vector((-d.y,d.x,0))
+        rise=(.78 if tree_fern else .5)*( .8+rng.random()*.4)
+        def point(t):return d*(length*t)+Vector((.1 if tree_fern else 0,0,height+rise*math.sin(t*math.pi*.83)-(.38 if tree_fern else .04)*t*t))
+        tube('bark_rachis',[point(t/9) for t in range(10)],[.012*(1-t/10)+.001 for t in range(10)],'bark_light',g,4)
+        for j in range(2,24):
+            t=j/24;p=point(t);width=length*.20*math.sin(t*math.pi)**.65
+            for side in [-1,1]:
+                tip=p+cross*width*side+d*length*.065+Vector((0,0,-.035))
+                mid=p.lerp(tip,.53)+Vector((0,0,.025));w=length*(.018 if tree_fern else .022)*(1-t*.6)
+                v=[p-d*w,mid-d*w*.85,tip,mid+d*w*.8,p+d*w,mid+Vector((0,0,.018))]
+                n=len(verts);verts.extend(v)
+                faces.extend([(n,n+1,n+5),(n+1,n+2,n+5),(n+2,n+3,n+5),(n+3,n+4,n+5)])
+                mats.extend([rng.choices([0,1,2],[6,3,1])[0]]*4)
+    obj=mesh('leaf_fronds',verts,faces,'leaf',g)
+    obj.data.materials.append(M['leaf_light']);obj.data.materials.append(M['leaf_dark'])
+    for face,mi in zip(obj.data.polygons,mats):face.material_index=mi
+    obj.data.normals_split_custom_set([Vector((obj.data.vertices[i].co.x*.12,obj.data.vertices[i].co.y*.12,.85)).normalized() for face in obj.data.polygons for i in face.vertices])
+
+def forest_shrub(index):
+    rng=random.Random(7152+index*113);g=parent('understory_'+str(index));centres=[]
+    h=[1.5,2.8,4.2][index]
+    for j in range(7):
+        a=j*2.399;start=Vector((0,0,.05));tip=Vector((math.cos(a)*(.6+rng.random()*.35),math.sin(a)*(.6+rng.random()*.35),h*(.58+rng.random()*.4)))
+        tube('bark_branch',[start,tip*.54+Vector((0,0,.16)),tip],[.035,.02,.004],'bark_dark',g,5)
+        # Branching foliage starts below the tips: avoid a bare fan of sticks.
+        for k,t in enumerate([.43,.68,.9]):
+            origin=tip*t
+            side=Vector((-math.sin(a),math.cos(a),.15))*(.22+index*.07)*(-1 if k%2 else 1)
+            end=origin+side
+            tube('bark_twig',[origin,end],[.012,.002],'bark',g,4)
+            centres.append((end,.35+index*.08,45 if k<2 else 55))
+        centres.append((tip,.40+index*.08,40))
+    leaves('leaf_understory',centres,rng,g,True)
+
+
+if TASMANIA:
+    for name,colour in {'bark':'746751','bark_dark':'504535','bark_light':'9a9566','leaf':'6c8150','leaf_light':'92a570','leaf_dark':'52683e'}.items():M[name]=material(name,colour)
+    for i in range(3):fern(i);fern(i,True);forest_shrub(i)
+elif URALLA:
     for kind,count in [('granite',4),('cobble',6)]:
         for i in range(count):
             rng=random.Random(17031+i*71);g=parent(f'{kind}_{i}')
@@ -391,5 +444,5 @@ for g in [o for o in bpy.data.objects if o.type=='EMPTY']:
         coords.extend([v.co[:] for v in o.data.vertices])
     manifest[g.name]={'triangles':tris,'blenderBounds':[[min(v[k] for v in coords) for k in range(3)],[max(v[k] for v in coords) for k in range(3)]]}
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT,'environment.glb'),export_format='GLB',export_yup=True,export_apply=True,export_extras=True)
-with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'uralla' if URALLA else 'graves-hill' if GEMFIELD else 'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
+with open(os.path.join(OUT,'manifest.json'),'w',encoding='utf-8') as f:json.dump({'generator':'blender/build_newengland_environment.py','recipe':'tasmania-ne' if TASMANIA else 'uralla' if URALLA else 'graves-hill' if GEMFIELD else 'golden-triangle' if GOLDFIELD else 'new-england','units':'metres','sourceUp':'Z','gameUp':'Y','assets':manifest},f,indent=2);f.write('\n')
 print('NEW_ENGLAND_KIT',len(manifest),'assets',sum(v['triangles'] for v in manifest.values()),'triangles')

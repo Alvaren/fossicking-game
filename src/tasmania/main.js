@@ -16,6 +16,9 @@ import { PanningUI } from '../panningui.js';
 import { IS_TOUCH, TouchControls } from '../touch.js';
 import { Sound } from '../audio.js';
 import { surfaceUnderfoot, environmentWeather } from '../environmentmotion.js';
+import { clearNewScenery } from './northeast-composition.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { DayNight } from '../daynight.js';
 import { settings } from '../settings.js';
 import './style.css';
 
@@ -37,14 +40,21 @@ export function startTasmania(region = TASMANIA) {
   modal.innerHTML=`<div class="tas-panel"><header><div><div class="tas-title">FIELD JOURNAL / ${northeast?'ROADSIDE RIVER ACCESS':'FOOT ACCESS ONLY'}</div><h1 id="tas-heading">${riverName} catchment</h1></div><button id="tas-resume" class="primary">Enter the catchment</button></header><p>${northeast?'Walk in from the roadside track to Granite Bend, then follow the western bank through Tin Terrace to Basalt Run. Compare small samples of the alluvial wash: classify, wet-sieve and inspect the heavies.':'Carry your gear down to Fern Bend, then follow the river upstream through Slate Narrows to Upper Cascade. Cross at the two shallow fords. Sample small traps, compare your pans and carry your recovery back to the trailhead.'}</p><div class="tas-layout"><div><canvas id="tas-map" class="tas-map" width="520" height="610" role="img" aria-label="Catchment map with route, reaches, campsite and current position"></canvas><p class="tas-muted">North is up. Contours mark 2-metre changes in height.</p></div><div><div id="tas-journal-summary" class="tas-summary"></div><div class="tas-row"><button id="tas-camp">Pitch overnight shelter</button><button id="tas-sleep">Sleep until morning</button></div><p id="tas-camp-note" class="tas-muted"></p><h2>Read the river</h2><div id="tas-reaches"></div><h2>Work a small sample</h2><p>${northeast?'Compare pale loose bar gravel with darker wash at the base of the alluvium. Sapphire, zircon and spinel can occur together; occasional topaz occurs too. Black sands can include cassiterite.':'Gravel held behind a boulder or in a bedrock crack can differ from the loose bar beside it.'} Take a modest scoop and compare results. Heavies are dense minerals; black sand does not guarantee gold. Some parcels are barren.</p><p>${northeast?'The classifier screens out coarse gravel. Wet-sieve the retained wash: gentle jigging settles the heavies, then flip to inspect the centre. Holding too hard loses small stones through the screen. Clay-bound and unscreened wash take longer. Easy demonstrates the technique; Realistic leaves the jig and flip to you. The pan remains available for comparing techniques.':"The classifier removes oversize before loading. Clay-bound material needs breaking apart. Use the pan’s riffles: stratify, wash a thin layer, settle again, then reveal. Easy demonstrates this; Realistic leaves technique and losses to you."}</p><div id="tas-results"></div></div></div><div class="tas-summary"><b>Controls</b><p id="tas-controls"></p><p>Deep pools and steep faces block walking. A heavier pack slows your pace. ${northeast?'The track begins beside the road; this river visit is on foot.':'There is no ute here.'} Bring your finds home when you finish. Your camp and unfinished work will be there when you return.</p></div><div class="tas-row"><button id="tas-locations">Locations & travel · $${TRAVEL_FEE}</button><button id="tas-save">Save expedition</button><button id="tas-return" class="primary">Return home with finds</button><button id="tas-recover">Stuck? Recover to trailhead</button></div><p id="tas-return-note" class="tas-muted"></p><p id="tas-journal-status" role="status"></p></div>`;
   document.body.append(modal);
   const $=id=>document.getElementById(id), sound=new Sound(region);
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x8caaa0);scene.fog=new THREE.FogExp2(0x8caaa0,northeast?.0085:.011);
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x8caaa0);scene.fog=new THREE.FogExp2(northeast?0xabc0b2:0x8caaa0,northeast?.006:.011);
   const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.08,400);camera.rotation.order='YXZ';scene.add(camera);
+  let forestClock,forestSky;
+  if(northeast){
+    camera.far=2500;camera.updateProjectionMatrix();forestSky=new Sky();forestSky.scale.setScalar(2000);scene.add(forestSky);
+    const u=forestSky.material.uniforms;u.turbidity.value=5;u.rayleigh.value=1.1;u.mieCoefficient.value=.004;u.mieDirectionalG.value=.8;if(u.cloudCoverage)u.cloudCoverage.value=.38;
+    forestClock=new DayNight({scene,sky:forestSky,sunDir:new THREE.Vector3(),hour:expedition.hour});
+  }
   const renderer=new THREE.WebGLRenderer({canvas,antialias:settings.aa});renderer.setPixelRatio(Math.min(devicePixelRatio,settings.res));renderer.setSize(innerWidth,innerHeight);
   renderer.autoClear=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
   const low=settings.shadows==='off', hemi=new THREE.HemisphereLight(0xc3e0da,0x34432e,2.4);scene.add(hemi);
   const sun=new THREE.DirectionalLight(0xe0e6c4,2.1);sun.position.set(-45,80,25);scene.add(sun);
   renderer.shadowMap.enabled=!low;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   sun.castShadow=!low;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-90,right:90,top:110,bottom:-110,near:1,far:200});sun.shadow.bias=-.001;
+  if(northeast){sun.shadow.mapSize.set(low?512:settings.shadows==='ultra'?4096:2048,low?512:settings.shadows==='ultra'?4096:2048);Object.assign(sun.shadow.camera,{left:-48,right:48,top:55,bottom:-55});sun.shadow.normalBias=.035;scene.add(sun.target);}
   const lamp=new THREE.PointLight(0xffe4b3,0,20,1.5);camera.add(lamp);lamp.position.set(0,.1,.1);
   const world=buildCatchment(scene,model,expedition,low,profile);
   const player={x:TRAILHEAD.x,z:TRAILHEAD.z,yaw:.39,pitch:-.14,...expedition.player};
@@ -240,7 +250,7 @@ export function startTasmania(region = TASMANIA) {
     view.setLight(daylight,lampOn,false);
     view.update(dt,{moving:playing&&movingSpeed>.1,running:keys.has('ShiftLeft')||!!touch?.run,stridePhase:stride,landDip:0,lookDX:0,lookDY:0,panProgress:0,panning:false,sieving:false,sieveProgress:0,jig:0,dirtOnBlade:work>0});
     if(work>0&&view.digT<0)view.playDig();
-    scene.background.setHex(0x8caaa0).multiplyScalar(.09+daylight*.91);scene.fog.color.copy(scene.background);
+    scene.background.setHex(northeast?0xabc0b2:0x8caaa0).multiplyScalar(.09+daylight*.91);scene.fog.color.copy(scene.background);
     world.update(playing?dt:0,elapsed,expedition,player);sound.setAmbience(dt,playing?Math.max(0,1-Math.abs(player.x-riverX(player.z))/45):0,panUI.isOpen);
     sound.setEnvironment(dt,{active:playing||panUI.isOpen||!!sieveUI?.isOpen,storm:world.atmosphere.rain});
     sound.setRain(playing?world.atmosphere.rain:0);
@@ -254,9 +264,23 @@ export function startTasmania(region = TASMANIA) {
     if(now>messageUntil)$('tas-message').classList.add('hidden');
     if(tool==='mask'&&!sniping?.active)$('tas-prompt').textContent=nearestSnipingSite(model,player)?'Use · inspect the bedrock pool with your mask':'Follow the banks to a bedrock pool at one of the three reaches';
     sniping?.update(dt,{using:held||touch.use,playing});
+    if(northeast){
+      forestClock.hour=expedition.hour;forestClock.update(0,camera.position);forestSky.position.copy(camera.position);
+      const b=forestClock.base,storm=1-world.atmosphere.rain*.45;
+      hemi.intensity=b.hemi*1.08;hemi.color.copy(b.hemiColor);hemi.groundColor.copy(b.hemiGround);
+      sun.intensity=b.sun*.93*storm;sun.color.copy(b.sunColor);renderer.toneMappingExposure=b.exposure;
+      sun.position.copy(camera.position).addScaledVector(forestClock.lightDir,90);sun.target.position.copy(camera.position);sun.target.updateMatrixWorld();
+      scene.fog.color.copy(b.fog).lerp(new THREE.Color(0xa6b7b1),daylight*.55).multiplyScalar(1-world.atmosphere.rain*.3);
+      const u=world.waterUniforms;u.sunColor.value.copy(b.sunColor).multiplyScalar(forestClock.daylight);u.skyColor.value.copy(b.waterSky);u.horizonColor.value.copy(b.waterHorizon);
+      u.sunDir?.value.copy(forestClock.lightDir);u.lightLevel.value=Math.max(.1,forestClock.daylight)*storm;
+      world.waterDetail?.capture(renderer,scene,camera);
+    }
     renderer.clear();renderer.render(sniping?.active?sniping.scene:scene,sniping?.active?sniping.camera:camera);
     if(playing&&!sniping?.active&&tool!=='mask'){renderer.clearDepth();renderer.render(view.scene,view.camera);}
   }
+  if(northeast)world.environment.ready.then(()=>{
+    if(clearNewScenery(player,model,profile,world.environment.additions,world.colliders)){save();notify('Your pack is beside the bank track.');}
+  });
   setInterval(save,30000);openJournal();requestAnimationFrame(frame);
   // Same objects and movement rule as play, exposed for reproducible disposable-save checks.
   window.fossickTas={get playing(){return playing;},get tool(){return tool;},view,region,profile,sieveUI,regionUI,expedition,model,world,player,panUI,sniping,save,openJournal,resume,interact,collectSample,move,touch,keys,renderer,camera,scene};

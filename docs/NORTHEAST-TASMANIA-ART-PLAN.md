@@ -4,7 +4,7 @@ Owner: Codex. Branch `codex/northeast-tasmania-fidelity`, base `0fa1029`. User a
 
 ## Evidence and fidelity boundary
 
-The established Tin Fern River is a compact fictional catchment inspired by Weld River, Moorina. Keep its route, sampling IDs, bank heights, saved positions and fixed assays; this pass brings its scenery up to the NSW benchmark. It does not rename a synthetic river as a surveyed real site. The original six supplied environment references and the current Uralla/New England assets set the rendering target, with quality presets providing scaling.
+The established Tin Fern River is a compact fictional catchment inspired by Weld River, Moorina. Keep its route, sampling IDs, bank heights and fixed assays; retain saved positions unless newly added solid scenery occupies them, then move only to the closest clear route point; this pass brings its scenery up to the NSW benchmark. It does not rename a synthetic river as a surveyed real site. The original six supplied environment references and the current Uralla/New England assets set the rendering target, with quality presets providing scaling.
 
 Inspected sources before building:
 
@@ -21,12 +21,12 @@ The northeast still uses cylindrical trunks, separate repetitive canopy sprays, 
 ## Build checklist
 
 - [x] N01: Inspect locality map/geology and photographs; choose one destination; record ownership and baseline.
-- [ ] N02: Capture current river/camp/track views and save a disposable old expedition fixture before changes.
-- [ ] N03: Add a local headless Blender kit: varied tree ferns, ground ferns and leafy understory. Reuse NSW trees, granite/cobbles, roots/logs, materials, foliage LOD and loader contracts; retain fallback scenery on asset failure.
-- [ ] N04: Compose the whole river corridor: weathered granite shelves/boulders, basalt-rich smaller wash, wet margins/lichen, rooted leaf-litter banks, patchy ferns and open sample edges. Ground meshes follow actual terrain; keep existing colliders and routes usable. No world helper rings or route lines.
-- [ ] N05: Reuse NSW reflection/refraction and ripples on the existing water mesh; keep shallow-bed visibility, tannin colour and local turbulence. Add soft daylight and less uniform forest depth without obscuring finds.
-- [ ] N06: Bring camp, trailhead and walking transitions to the same visual standard. Scale dressing/foliage and water passes with existing presets; leave all input/gameplay systems unchanged.
-- [ ] N07: Build, focused asset/composition tests, actual desktop/touch sampling and sieving, normal pointer lock/wheel/menu checks, old save/reload and travel, Western regression, offline and failed-asset fallback. Inspect baseline-matched river/camp/track screenshots plus Low/rain/night. Measure desktop GPU/CPU/frame time and record hardware; no physical-phone performance claim.
+- [x] N02: Capture current river/camp/track views and save a disposable old expedition fixture before changes.
+- [x] N03: Add a local headless Blender kit using an additive recipe in the existing generator: varied tree ferns, ground ferns and leafy understory. Reuse NSW trees, granite/cobbles, roots/logs, materials, foliage LOD and loader contracts; retain fallback scenery on asset failure.
+- [x] N04: Compose the whole river corridor: weathered granite shelves/boulders, basalt-rich smaller wash, wet margins/lichen, rooted leaf-litter banks, patchy ferns and open sample edges. Ground meshes follow actual terrain; keep existing colliders and routes usable. No world helper rings or route lines.
+- [x] N05: Reuse NSW reflection/refraction and ripples on the existing water mesh; keep shallow-bed visibility, tannin colour and local turbulence. Add soft daylight and less uniform forest depth without obscuring finds.
+- [x] N06: Bring camp, trailhead and walking transitions to the same visual standard. Scale dressing/foliage and water passes with existing presets; leave all input/gameplay systems unchanged.
+- [x] N07: Build, focused asset/composition tests, actual desktop/touch sampling and sieving, normal pointer lock/wheel/menu checks, old save/reload and travel, Western regression, offline and failed-asset fallback. Inspect baseline-matched river/camp/track screenshots plus Low/rain/night. Measure desktop GPU/CPU/frame time and record hardware; no physical-phone performance claim.
 - [ ] N08: Final visual audit against inspected photos and NSW benchmark; fix visible defects, capture final hero screenshots, update build record, integrate ready work, push main and verify Pages/public game.
 
 ## Implementation constraints

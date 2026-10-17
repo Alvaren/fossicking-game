@@ -2,7 +2,7 @@
 // through the same movement rule; panning completion uses the shared simulation.
 import {createRequire} from 'node:module';
 import assert from 'node:assert/strict';
-import {createPan} from '../src/panning.js';
+import {createPan,stepPan,automaticStroke,panResult} from '../src/panning.js';
 const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const origin=process.env.TASMANIA_TEST_ORIGIN||'http://127.0.0.1:5191';
 const browser=await chromium.launch({headless:true});
@@ -34,7 +34,7 @@ try{
     console.log(`${phone?'Touch':'Desktop'} actual movement passed.`);
     // Traverse every segment, with this generated scene's actual tree/rock colliders.
     const route=await page.evaluate(async()=>{
-      const {ROUTE}=await import('/src/tasmania/model.js'),f=fossickTas;Object.assign(f.player,ROUTE[0]);const results=[];
+      const f=fossickTas,{ROUTE}=f.profile;Object.assign(f.player,ROUTE[0]);const results=[];
       for(const points of [ROUTE,[...ROUTE].reverse()])for(const target of points.slice(1)){
         f.keys.add('KeyW');let count=0;
         while(Math.hypot(f.player.x-target.x,f.player.z-target.z)>.14&&count++<3500){f.player.yaw=Math.atan2(-(target.x-f.player.x),-(target.z-f.player.z));f.move(1/60);}
@@ -66,15 +66,15 @@ try{
     await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>window.fossickTas);
     const resumed=await page.evaluate(()=>structuredClone(fossickTas.expedition));assert.deepEqual(resumed.panSession,partial.expeditions['tasmania-west'].panSession);assert.equal(resumed.siteUse[site.id],1);
     await tap('#tas-resume');await tap('#tas-pan');await tap(phone?'#t-use':'#game');
-    const expected=await page.evaluate(async()=>{const {stepPan,automaticStroke,panResult}=await import('/src/panning.js');const s=fossickTas.expedition.panSession;for(let i=0;i<20000&&!s.finished;i++)stepPan(s,automaticStroke(s),1/60);if(!s.finished)throw Error('Unfinished');fossickTas.panUI.refresh();return panResult(s).gold;});
+    const settled=await page.evaluate(()=>fossickTas.expedition.panSession);for(let i=0;i<20000&&!settled.finished;i++)stepPan(settled,automaticStroke(settled),1/60);assert.ok(settled.finished);const expected=panResult(settled).gold;await page.evaluate(s=>{fossickTas.expedition.panSession=s;fossickTas.panUI.refresh();},settled);
     await page.locator('#pan-collect').evaluate(b=>{b.click();b.click();});assert.equal((await stored(page)).expeditions['tasmania-west'].gold,expected);assert.ok(expected>0);
     await tap('#pan-close');
-    await page.evaluate(async()=>{const {CAMP}=await import('/src/tasmania/model.js');Object.assign(fossickTas.player,{x:CAMP.x+2,z:CAMP.z+2,yaw:.1,pitch:-.1});});
+    await page.evaluate(async()=>{const {CAMP}=fossickTas.profile;Object.assign(fossickTas.player,{x:CAMP.x+2,z:CAMP.z+2,yaw:.1,pitch:-.1});});
     await tap('#tas-interact');await tap('#tas-camp');await tap('#tas-sleep');assert.equal(await page.evaluate(()=>fossickTas.expedition.nights),1);
     assert.equal(await page.locator('#tas-return').isDisabled(),true);await tap('#tas-resume');await page.waitForTimeout(250);
     await page.screenshot({path:`node_modules/.cache/tas-${phone?'touch':'desktop'}-camp.png`});
     // Normal route back to the gate, using the same movement rule, not Recovery.
-    const walkOut=await page.evaluate(async()=>{const {ROUTE,CAMP}=await import('/src/tasmania/model.js'),f=fossickTas;Object.assign(f.player,{x:CAMP.x,z:CAMP.z});const index=ROUTE.findIndex(p=>p.x===CAMP.x&&p.z===CAMP.z);const failures=[];for(const target of ROUTE.slice(0,index).reverse()){f.keys.add('KeyW');let n=0;while(Math.hypot(f.player.x-target.x,f.player.z-target.z)>.14&&n++<3500){f.player.yaw=Math.atan2(-(target.x-f.player.x),-(target.z-f.player.z));f.move(1/60);}f.keys.clear();if(n>=3500)failures.push(target);}return failures;});assert.deepEqual(walkOut,[]);
+    const walkOut=await page.evaluate(async()=>{const f=fossickTas,{ROUTE,CAMP}=f.profile;Object.assign(f.player,{x:CAMP.x,z:CAMP.z});const index=ROUTE.findIndex(p=>p.x===CAMP.x&&p.z===CAMP.z);const failures=[];for(const target of ROUTE.slice(0,index).reverse()){f.keys.add('KeyW');let n=0;while(Math.hypot(f.player.x-target.x,f.player.z-target.z)>.14&&n++<3500){f.player.yaw=Math.atan2(-(target.x-f.player.x),-(target.z-f.player.z));f.move(1/60);}f.keys.clear();if(n>=3500)failures.push(target);}return failures;});assert.deepEqual(walkOut,[]);
     await tap('#tas-interact');assert.equal(await page.locator('#tas-return').isDisabled(),false);await tap('#tas-return');await page.waitForFunction(()=>window.fossick);
     const returned=await stored(page);assert.equal(returned.activeRegion,'new-england');assert.equal(returned.gold,homeSnapshot.gold+expected);
     for(const k of ['seed','cash','camp','digs','bucket','panSession'])assert.deepEqual(returned[k],homeSnapshot[k],k);

@@ -1,0 +1,309 @@
+{
+  "hardware": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3090 (0x00002204) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "buffer": [
+      1920,
+      1080
+    ]
+  },
+  "warmupSeconds": 20,
+  "measuredSeconds": 120,
+  "preset": "High",
+  "frames": 7203,
+  "frameMs": {
+    "median": 16.69999999999709,
+    "p95": 16.70000000001164,
+    "p99": 16.80000000000291
+  },
+  "cpuSubmissionMs": {
+    "median": 3.2000000029802322,
+    "p95": 5.4000000059604645,
+    "p99": 6.5999999940395355
+  },
+  "drawCalls": {
+    "median": 471,
+    "p95": 828,
+    "p99": 828
+  },
+  "trianglesAcrossAllPasses": {
+    "median": 31496859,
+    "p95": 33333565,
+    "p99": 33340369
+  },
+  "over33ms": 0,
+  "gpuMs": {
+    "median": 6.163456,
+    "p95": 6.588416,
+    "p99": 7.00416
+  },
+  "gpuSamples": 240,
+  "memory": [
+    {
+      "age": 0.026100000008940697,
+      "heap": 78354474,
+      "geometries": 109,
+      "textures": 12
+    },
+    {
+      "age": 10.65820000000298,
+      "heap": 78312659,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 20.65779999999702,
+      "heap": 81579919,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 30.6585,
+      "heap": 83505466,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 40.657,
+      "heap": 87010701,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 50.65660000000894,
+      "heap": 91255425,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 60.65570000000298,
+      "heap": 87262737,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 70.65610000000893,
+      "heap": 83236633,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 80.65579999999701,
+      "heap": 74181625,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 90.655,
+      "heap": 71411729,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 100.65490000000597,
+      "heap": 79497553,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 110.65490000000597,
+      "heap": 69303977,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 120.65379999999702,
+      "heap": 82719487,
+      "geometries": 121,
+      "textures": 16
+    },
+    {
+      "age": 130.65379999999703,
+      "heap": 88224041,
+      "geometries": 121,
+      "textures": 16
+    }
+  ],
+  "errors": [],
+  "sites": {
+    "bend": {
+      "frames": 1200,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291
+      },
+      "cpuSubmissionMs": {
+        "median": 2.3999999910593033,
+        "p95": 3.4000000059604645,
+        "p99": 4.5
+      },
+      "drawCalls": {
+        "median": 296,
+        "p95": 299,
+        "p99": 299
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 31890777,
+        "p95": 31924409,
+        "p99": 31941251
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 6.107136,
+        "p95": 6.520832,
+        "p99": 6.551552
+      }
+    },
+    "terrace": {
+      "frames": 1200,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.700000000004366,
+        "p99": 16.80000000000291
+      },
+      "cpuSubmissionMs": {
+        "median": 3.7999999970197678,
+        "p95": 5.600000008940697,
+        "p99": 7.600000008940697
+      },
+      "drawCalls": {
+        "median": 614,
+        "p95": 616,
+        "p99": 616
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 32648785,
+        "p95": 32689161,
+        "p99": 32791885
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 6.13376,
+        "p95": 7.176192,
+        "p99": 7.284736
+      }
+    },
+    "upstream": {
+      "frames": 1200,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuSubmissionMs": {
+        "median": 4.299999997019768,
+        "p95": 6.5,
+        "p99": 7.100000008940697
+      },
+      "drawCalls": {
+        "median": 828,
+        "p95": 828,
+        "p99": 828
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 33323817,
+        "p95": 33340369,
+        "p99": 33353241
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 6.546432,
+        "p95": 6.623232,
+        "p99": 6.718464
+      }
+    },
+    "camp": {
+      "frames": 1200,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.70000000001164,
+        "p99": 16.80000000000291
+      },
+      "cpuSubmissionMs": {
+        "median": 3.2000000029802322,
+        "p95": 5.4000000059604645,
+        "p99": 6.4000000059604645
+      },
+      "drawCalls": {
+        "median": 471,
+        "p95": 471,
+        "p99": 471
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 30995547,
+        "p95": 31023033,
+        "p99": 31023033
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 5.9904,
+        "p95": 6.165504,
+        "p99": 6.166528
+      }
+    },
+    "track": {
+      "frames": 1200,
+      "frameMs": {
+        "median": 16.69999999999709,
+        "p95": 16.79999999998836,
+        "p99": 16.80000000000291
+      },
+      "cpuSubmissionMs": {
+        "median": 3.2999999970197678,
+        "p95": 4.4000000059604645,
+        "p99": 5.399999991059303
+      },
+      "drawCalls": {
+        "median": 503,
+        "p95": 721,
+        "p99": 728
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 28747201,
+        "p95": 28783621,
+        "p99": 30821611
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 6.085632,
+        "p95": 6.419456,
+        "p99": 6.521856
+      }
+    },
+    "forest": {
+      "frames": 1203,
+      "frameMs": {
+        "median": 16.699999999982538,
+        "p95": 16.70000000001164,
+        "p99": 16.800000000017462
+      },
+      "cpuSubmissionMs": {
+        "median": 2.7999999970197678,
+        "p95": 3.7000000029802322,
+        "p99": 4.5
+      },
+      "drawCalls": {
+        "median": 426,
+        "p95": 433,
+        "p99": 433
+      },
+      "trianglesAcrossAllPasses": {
+        "median": 31453411,
+        "p95": 31496539,
+        "p99": 31497019
+      },
+      "over33ms": 0,
+      "gpuMs": {
+        "median": 6.24128,
+        "p95": 6.31808,
+        "p99": 6.332416
+      }
+    }
+  }
+}

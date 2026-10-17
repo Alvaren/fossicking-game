@@ -1,4 +1,8 @@
 import * as THREE from 'three';
+import { buildNortheastEnvironment } from './northeast-environment.js';
+import { northeastGround } from './northeast-materials.js';
+import { newEnglandWater } from '../newengland/water.js';
+import { settings } from '../settings.js';
 import { mulberry32 } from '../noise.js';
 import * as western from './model.js';
 import { rockMaterial, rockKinds } from '../rockmaterials.js';
@@ -45,6 +49,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
     const tint=model.noise(x*.15,z*.15)*.07;
     if(d<riverWidth(z)+.5)color.setRGB((northeast?.39:.23)+tint,(northeast?.35:.27)+tint,(northeast?.28:.25)+tint);
     else if(trail<1.5)color.setRGB(.28+tint,.26+tint,.19+tint);
+    else if(northeast){const litter=.5+.5*model.noise(x*.09+32,z*.09);color.setRGB(.18+tint+ litter*.035,.18+tint-litter*.02,.11+tint-litter*.02);}
     else color.setRGB(.15+tint,.22+tint,.13+tint);
     colors.set([color.r,color.g,color.b],i*3);
     const bank=d-riverWidth(z);
@@ -52,7 +57,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   }
   groundGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));groundGeo.computeVertexNormals();
   groundGeo.setAttribute('aSurface',new THREE.BufferAttribute(surfaces,3));
-  const ground=new THREE.Mesh(groundGeo,groundMaterial({forest:true,dampness:northeast?.35:.75}));ground.receiveShadow=true;scene.add(ground);
+  const ground=new THREE.Mesh(groundGeo,northeast?northeastGround():groundMaterial({forest:true,dampness:.75}));ground.receiveShadow=true;scene.add(ground);
 
   const waterGeo=new THREE.PlaneGeometry(1,1,16,360),wp=waterGeo.attributes.position;
   const speeds=new Float32Array(wp.count),depths=new Float32Array(wp.count),foams=new Float32Array(wp.count);
@@ -69,6 +74,7 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   waterGeo.setAttribute('aSpeed',new THREE.BufferAttribute(speeds,1));
   waterGeo.setAttribute('aDepth',new THREE.BufferAttribute(depths,1));
   waterGeo.setAttribute('aFoam',new THREE.BufferAttribute(foams,1));
+  waterGeo.userData.grid={columns:16,rows:360};
   const waterSurface=riverWaterMaterial(),waterMat=waterSurface.material;
   waterMat.side=THREE.DoubleSide;
   waterSurface.uniforms.deepColor.value.setHex(northeast?0x47594b:0x315b54);
@@ -207,14 +213,24 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
   const lod=vegetationLOD(scene,[crowns,ferns],low);
   const effects=new SurfaceEffects(scene,{height:(x,z)=>model.height(x,z),waterY,bank:(x,z)=>Math.abs(x-riverX(z))-riverWidth(z),seed:model.seed,low,rainStreaks:true});
   const atmosphere={time:0,rain:0,override:null};
-  return {ground,water,camp,colliders,siteGroups,cloud,landscape,lod,effects,atmosphere,campKit,
+  const environment=northeast?buildNortheastEnvironment(scene,model,{ground,water,camp,trunks,crowns,ferns,fernTrunks,rocks,siteGroups,lod,landscape,colliders},profile,settings):null;
+  let waterDetail=null,driftLeaves=null;
+  if(northeast) {
+    driftLeaves=new THREE.InstancedMesh(new THREE.PlaneGeometry(.1,.1),new THREE.MeshStandardMaterial({color:0x71613b,side:THREE.DoubleSide,roughness:.95}),36);scene.add(driftLeaves);
+    waterDetail=newEnglandWater({mesh:water,uniforms:waterSurface.uniforms,leaves:driftLeaves},
+      {cx:riverX,surfaceY:waterY,waterY,slope:()=>-.012,local:(x,z,out)=>Object.assign(out,{s:z})},settings);
+    waterSurface.uniforms.deepColor.value.setHex(0x455247);
+  }
+  return {ground,water,camp,colliders,siteGroups,cloud,landscape,lod,effects,atmosphere,campKit,environment,waterDetail,waterUniforms:waterSurface.uniforms,
     disturb(site){cloud.position.set(site.x,waterY(site.z)+.025,site.z);cloud.material.opacity=.55;},
     update(dt,time,state,player){
       atmosphere.time+=dt;atmosphere.rain=atmosphere.override??showerAt(atmosphere.time);
       updateEnvironmentWeather(dt,atmosphere.rain);
       const wind=.7+atmosphere.rain*1.5,position=player||TRAILHEAD;
       barkSurface.update(time,wind);canopySurface.update(time,wind);fernSurface.update(time,wind);
-      detail.update(dt,time,position,wind);landscape.update(dt,time,position,wind);lod.update(dt,position);
+      detail.update(dt,time,position,wind);landscape.update(dt,time,position,wind);
+      if(environment?.stats.status!=='ready')lod.update(dt,position);
+      environment?.update(dt,time,position,wind);
       effects.update(dt,position,atmosphere.rain,dt>0);campKit.visible=state.campPitched;
       camp.visible=state.campPitched;
       for(const p of siteGroups){const empty=(state.siteUse[p.s.id]||0)>=p.s.capacity;p.pocket.material.color.setHex(empty?0x343e38:p.s.kind==='bar'?0x8d8a70:0x232b28);}
@@ -226,6 +242,13 @@ export function buildCatchment(scene,model,expedition,low=false,profile=western)
       waterSurface.uniforms.horizonColor.value.setHex(0xa4bcb0).multiplyScalar(light);
       cascade.material.opacity=.45+Math.sin(time*3)*.07;
       ripples.forEach((r,i)=>{const z=((r.z+time*.55+170)%340)-170;dummy.position.set(riverX(z)+r.q*riverWidth(z),waterY(z)+.025,z);dummy.rotation.set(0,Math.sin(z*.03)*.2,0);dummy.scale.set(r.s,1,r.s);dummy.updateMatrix();foam.setMatrixAt(i,dummy.matrix);});foam.instanceMatrix.needsUpdate=true;
+      if(driftLeaves) {
+        for(let i=0;i<driftLeaves.count;i++) {
+          const z=((i*9.47+time*.22+170)%340)-170;
+          dummy.position.set(riverX(z)+Math.sin(i*2.41)*riverWidth(z)*.7,waterY(z)+.012,z);dummy.rotation.set(0,i*2.399+time*.03,0);dummy.scale.setScalar(1);dummy.updateMatrix();driftLeaves.setMatrixAt(i,dummy.matrix);
+        }
+        driftLeaves.instanceMatrix.needsUpdate=true;
+      }
       cloud.material.opacity=Math.max(0,cloud.material.opacity-dt*.023);cloud.position.z+=dt*.16;
     }};
 }
