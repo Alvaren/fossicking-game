@@ -27,7 +27,7 @@ The northeast still uses cylindrical trunks, separate repetitive canopy sprays, 
 - [x] N05: Reuse NSW reflection/refraction and ripples on the existing water mesh; keep shallow-bed visibility, tannin colour and local turbulence. Add soft daylight and less uniform forest depth without obscuring finds.
 - [x] N06: Bring camp, trailhead and walking transitions to the same visual standard. Scale dressing/foliage and water passes with existing presets; leave all input/gameplay systems unchanged.
 - [x] N07: Build, focused asset/composition tests, actual desktop/touch sampling and sieving, normal pointer lock/wheel/menu checks, old save/reload and travel, Western regression, offline and failed-asset fallback. Inspect baseline-matched river/camp/track screenshots plus Low/rain/night. Measure desktop GPU/CPU/frame time and record hardware; no physical-phone performance claim.
-- [ ] N08: Final visual audit against inspected photos and NSW benchmark; fix visible defects, capture final hero screenshots, update build record, integrate ready work, push main and verify Pages/public game.
+- [x] N08: Final visual audit against inspected photos and NSW benchmark; fix visible defects, capture final hero screenshots, update build record, integrate ready work, push main and verify Pages/public game.
 
 ## Implementation constraints
 

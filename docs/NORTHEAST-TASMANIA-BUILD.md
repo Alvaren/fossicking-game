@@ -55,4 +55,8 @@ This is one available desktop, not a physical phone or low-end GPU. Raw samples 
 
 ## Publication
 
-Pending final integration and public deployment verification. Do not treat this entry as proof of deployment until the record is updated.
+Implementation `f200970` was fast-forwarded into clean main and pushed to origin. [Pages run 38996650731](https://github.com/Alvaren/fossicking-game/actions/runs/38996650731) succeeded. [Nine deployed-file comparisons](audits/tasmania-ne/public.json) match the locally tested JS/CSS/GLBs; HTML and JSON differ only in platform line endings. The full [public desktop and emulated-touch gameplay checks](audits/tasmania-ne/public-game/checks.json) passed sampling, partial saves, sieve/recovery, actual route colliders, independent expedition state and travel.
+
+Touched gameplay/render files: `src/tasmania/{main,world,northeast-composition,northeast-environment,northeast-materials}.js`. Also touched the additive Blender generator/new kit, northeast/Western production browser checks, focused environment checks, README, collaboration guide and this plan/audit evidence. No dependencies, original input/tool implementations or regional geology/sampling profiles changed.
+
+Main and Claude were re-inspected clean before integration; Claude had no unmerged commits. Only Codex's isolated 5191 static preview was listening. No user or Claude server/process was stopped. Final evidence is published in the follow-up documentation commit; the game assets are identical to this verified implementation.

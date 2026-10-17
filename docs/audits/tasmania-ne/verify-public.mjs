@@ -14,5 +14,5 @@ for(const path of files) {
   assert.deepEqual(normalise(publicBytes),normalise(local),'Live file differs: '+path);
   assets.push({path,bytes:publicBytes.length,sha256:hash(publicBytes),localSha256:hash(local),comparison:/\.(html|json)$/.test(path)?'CRLF/LF normalised':'byte-identical'});
 }
-await writeFile('docs/audits/tasmania-ne/public.json',JSON.stringify({publishedHead:head,verifiedAt:new Date().toISOString(),url,pagesRun:'https://github.com/Alvaren/fossicking-game/actions/runs/'+run,assets},null,2)+'\n');
+await writeFile(process.env.NE_VERIFY_OUT||'docs/audits/tasmania-ne/public.json',JSON.stringify({publishedHead:head,verifiedAt:new Date().toISOString(),url,pagesRun:'https://github.com/Alvaren/fossicking-game/actions/runs/'+run,assets},null,2)+'\n');
 console.log(files.length+' deployed files match the tested production build');

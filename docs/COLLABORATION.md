@@ -4,7 +4,7 @@
 
 Codex branch `codex/northeast-tasmania-fidelity`, base `0fa1029`, owns the user-requested overhaul of the existing northeast gem river. [Written scope and checklist](NORTHEAST-TASMANIA-ART-PLAN.md) records inspected Weld River references, NSW reuse and save/control boundaries. Main and Claude were clean; Claude has released ownership. No other agent is launched or messaged. Only the isolated Codex worktree and port 5191 are used.
 
-The art implementation and local validation are complete: 143 logic/asset tests, production build, northeast/western desktop and touch gameplay/save checks, normal shared controls, offline/fallback and final visual conditions. The High/1080p desktop sweep measured 16.7 ms median/p95 frames, 3.2 ms median CPU and 6.16 ms median GPU. [Delivery and limits](NORTHEAST-TASMANIA-BUILD.md). Publication is recorded there after verification.
+The art implementation and local validation are complete: 143 logic/asset tests, production build, northeast/western desktop and touch gameplay/save checks, normal shared controls, offline/fallback and final visual conditions. The High/1080p desktop sweep measured 16.7 ms median/p95 frames, 3.2 ms median CPU and 6.16 ms median GPU. [Delivery and limits](NORTHEAST-TASMANIA-BUILD.md). Implementation `f200970` is published on main; Pages run `38996650731` succeeded, nine deployed files match the tested build, and public desktop/touch gameplay checks pass. Final evidence is published separately without changing game assets.
 
 ## Current travel-map pin correction (17 October 2026)
 
