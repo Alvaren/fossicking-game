@@ -2,6 +2,18 @@
 
 Owner: Codex. Branch `codex/northeast-tasmania-fidelity`, base `0fa1029`. User authorised one Tasmanian location on 17 October 2026. Selected the existing northeast gem river. Western Tasmania and its sniping scene are outside the art scope.
 
+## Rainforest correction — user review, 17 October 2026
+
+The user rejected the first overhaul: the original map was greener, had denser canopy, no gum-tree character and visible fog. The open, sunny eucalypt woodland is the wrong biome. This correction supersedes the earlier eucalypt/brown-ground art choices; previous technical passes do not constitute visual acceptance.
+
+- [ ] R1: Compare original/first-overhaul views and official northeast rainforest references.
+- [ ] R2: Replace every authored gum with dense broadleaf myrtle/sassafras-inspired rainforest crowns, branching trunks and green foliage; preserve original trunk anchors/colliders. Maintain closed-canopy character on Low.
+- [ ] R3: Restore green mossy ground, damp fern layers and visible cool fog at all presets; soften open-sky/direct-sun treatment. Keep river working edges readable.
+- [ ] R4: Inspect matched river, camp and forest views against both earlier scenes; verify no exposed woodland horizon, broken silhouettes or vanished ripples. Run build, asset, gameplay/save/control and fallback/quality checks plus a performance sample.
+- [ ] R5: Publish the correction, verify live files/gameplay and share actual final screenshots. User art approval remains separate.
+
+Reference: [NRE Tasmania temperate rainforest](https://nre.tas.gov.au/conservation/conservation-on-private-land/bush-information-and-management/identify-your-bush-type/bush-with-a-tree-layer-made-up-of-trees-that-are-not-eucalypts/temperate-rainforest) describes rainforest in the northeast highlands, with myrtle and sassafras among canopy trees. [Parks Blue Tier Heritage Trail](https://parks.tas.gov.au/explore-our-parks/blue-tier-regional-reserve/blue-tier-heritage-trail) supplies a nearby forest-creek photo. These guide vegetation form and moisture, not a new claim that Tin Fern is a surveyed real river. User direction governs the fictional scene's cold rainforest identity.
+
 ## Evidence and fidelity boundary
 
 The established Tin Fern River is a compact fictional catchment inspired by Weld River, Moorina. Keep its route, sampling IDs, bank heights and fixed assays; retain saved positions unless newly added solid scenery occupies them, then move only to the closest clear route point; this pass brings its scenery up to the NSW benchmark. It does not rename a synthetic river as a surveyed real site. The original six supplied environment references and the current Uralla/New England assets set the rendering target, with quality presets providing scaling.
