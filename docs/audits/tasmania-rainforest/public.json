@@ -1,0 +1,71 @@
+{
+  "publishedHead": "4f991908c5be760761cb09d78cd5adecbbed0fea",
+  "verifiedAt": "2026-10-17T03:26:04.629Z",
+  "url": "https://alvaren.github.io/fossicking-game/",
+  "pagesRun": "https://github.com/Alvaren/fossicking-game/actions/runs/38998678103",
+  "assets": [
+    {
+      "path": "index.html",
+      "bytes": 12863,
+      "sha256": "95352879fef49a0f4ddd3825934c619bc2ceb9b6d7f4659467b3cf67427ba1fc",
+      "localSha256": "f7b6c59586a51e1ee0f2a2b466712f92600ff8632e61e7a4534448635ac66dbd",
+      "comparison": "CRLF/LF normalised"
+    },
+    {
+      "path": "assets/index-23Gg20h6.css",
+      "bytes": 32390,
+      "sha256": "e9f0902ab06045eb961d2e1b25d172aba386678af9795dc804f32898f770e92f",
+      "localSha256": "e9f0902ab06045eb961d2e1b25d172aba386678af9795dc804f32898f770e92f",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/index-C3up604d.js",
+      "bytes": 1030769,
+      "sha256": "d80fddeab2faf6229a7e245a946d5fce1b1ec167eb69528fff6c8663f74714dd",
+      "localSha256": "d80fddeab2faf6229a7e245a946d5fce1b1ec167eb69528fff6c8663f74714dd",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-Bby6b-CO.js",
+      "bytes": 309111,
+      "sha256": "aeb4f00019d20d64cf67194f7a6e02db2e76680c4b7911791454446b89468121",
+      "localSha256": "aeb4f00019d20d64cf67194f7a6e02db2e76680c4b7911791454446b89468121",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "assets/main-sQn9NTkG.css",
+      "bytes": 5754,
+      "sha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "localSha256": "14ed8f20e16fe57a9a7d4b29d1eeefc5da1345c261dbdb3f288637db3c3e6baf",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/newengland/environment.glb",
+      "bytes": 5832052,
+      "sha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "localSha256": "4cafbdc860a69075c25d8e7ba530b3a62354736ae0e7e469a4ff3db8b7a5e5e7",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/uralla/environment.glb",
+      "bytes": 520232,
+      "sha256": "42a6c10bc51276558c48f4fde577e2c8824b10989e601156a98467baaf02d2f8",
+      "localSha256": "42a6c10bc51276558c48f4fde577e2c8824b10989e601156a98467baaf02d2f8",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/tasmania-ne/environment.glb",
+      "bytes": 8397428,
+      "sha256": "d50968ea1f14a0c08cd0c6eaa92a5f2b87c7160ddfdfeeedbe484158f776e9b8",
+      "localSha256": "d50968ea1f14a0c08cd0c6eaa92a5f2b87c7160ddfdfeeedbe484158f776e9b8",
+      "comparison": "byte-identical"
+    },
+    {
+      "path": "models/tasmania-ne/manifest.json",
+      "bytes": 5370,
+      "sha256": "5d959d586bd2f1be760233a691a8af7ed96b0b20eff936888ef099372a9cf377",
+      "localSha256": "3d810efd834ddbdcdafd4366ed8467e6fbc1fc5c5411f82d60d28d1ce9d84e79",
+      "comparison": "CRLF/LF normalised"
+    }
+  ]
+}

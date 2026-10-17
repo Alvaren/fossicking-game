@@ -1,0 +1,12 @@
+[
+  {
+    "phone": false,
+    "errors": [],
+    "checks": "Rendered authored scene; route with actual colliders; mouse/touch movement, sample and jig/flip; partial save reload; unchanged home pan/funds; exactly-once collection and direct western travel"
+  },
+  {
+    "phone": true,
+    "errors": [],
+    "checks": "Rendered authored scene; route with actual colliders; mouse/touch movement, sample and jig/flip; partial save reload; unchanged home pan/funds; exactly-once collection and direct western travel"
+  }
+]

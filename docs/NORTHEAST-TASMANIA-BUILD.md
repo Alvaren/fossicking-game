@@ -25,7 +25,7 @@ Only the local Tasmania kit was regenerated in fresh headless Blender: 17 named 
 
 The [120-second whole-frame High/1920×1080 sweep](audits/tasmania-rainforest/performance.json), after 20 seconds of warm-up, measured 16.7 ms median/p95 frame intervals, 3.2/4.6 ms CPU callback/submission and 6.28/6.92 ms GPU on the available RTX 3090/ANGLE D3D11 desktop. No measured frame exceeded 33.5 ms. Median/p95 draw calls across all passes were 465/822. This sample supports the desktop correction; it is not a physical-phone or low-end GPU result. The source kit is larger because it now supplies the canopy as well as the understory.
 
-Main and Claude were clean at pre-integration inspection; fetched origin/main matched local main, and Claude had no unmerged commits. Only Codex's 5191 static production preview was listening. The correction is ready for the standing authorised publication; live verification follows after deployment.
+Main and Claude were clean at pre-integration inspection; fetched origin/main matched local main, and Claude had no unmerged commits. Only Codex's 5191 static production preview was listening. Implementation `4f99190` was fast-forwarded into main and pushed. [Pages run 38998678103](https://github.com/Alvaren/fossicking-game/actions/runs/38998678103) succeeded. [Nine live file comparisons](audits/tasmania-rainforest/public.json) match the tested production build, and the full [public desktop/emulated-touch gameplay checks](audits/tasmania-rainforest/public-game/checks.json) passed movement, route/colliders, sampling, partial save/reload, sieve/collection and travel. The follow-up evidence commit changes no game assets.
 
 ## Initial scene — art direction rejected by user
 
